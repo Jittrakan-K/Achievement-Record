@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=20260910_4">
+  <link rel="stylesheet" href="styles.css?v=20260910_6">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -540,26 +540,25 @@
           <!-- 9.1 PDF Job Request Attachment -->
           <div class="form-group">
             <label class="form-label" for="achvPdfInput">
-              <span>ใบ JOB REQUEST (ไฟล์ PDF)</span>
-              <small>(แนบไฟล์ PDF จากเครื่อง หรือระบุ PATH / LINK)</small>
+              <span>ใบ PRODUCTION TECHNOLOGY DEPARTMENT JOB REQUEST (ไฟล์ PDF)</span>
+              <small>(อัพโหลดไฟล์ .PDF เก็บลงระบบ - สามารถดาวน์โหลดกลับได้)</small>
             </label>
 
             <!-- Hidden File Input with inline onchange and broad accept filter -->
             <input type="file" id="achvPdfInput" style="display: none;" accept=".pdf,.PDF,application/pdf,application/x-pdf" onchange="handlePdfUpload(event)">
 
-            <!-- Button to browse and attach a PDF -->
+            <!-- Button to browse and upload a PDF -->
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <button type="button" class="btn btn-outline" id="btnSelectPdf" onclick="document.getElementById('achvPdfInput').click()" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b; font-weight: 700;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                📄 เลือกแนบไฟล์ PDF จากเครื่อง (SELECT PDF)
+                📄 อัพโหลดไฟล์ PDF (UPLOAD PDF)
               </button>
-              <span style="font-size: 11.5px; color: var(--text-muted);">หรือระบุ PATH ด้านล่าง (วิเคราะห์และกรอกข้อมูลอัตโนมัติ)</span>
             </div>
 
             <!-- Loading Indicator for large PDFs -->
             <div id="pdfLoadingIndicator" style="display: none; align-items: center; gap: 8px; font-size: 12px; color: #991b1b; margin-top: 6px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; border: 1px dashed #fca5a5;">
               <span>⏳</span>
-              <span id="pdfLoadingText">กำลังอ่านและวิเคราะห์ข้อมูลจากใบ JOB REQUEST (PDF)...</span>
+              <span id="pdfLoadingText">กำลังอ่านไฟล์ PDF...</span>
             </div>
 
             <!-- PDF Preview Bar when a PDF is attached -->
@@ -577,50 +576,24 @@
                 <button type="button" id="btnRemovePdf" onclick="removeModalPdf()" class="btn btn-danger btn-sm">ลบไฟล์</button>
               </div>
             </div>
-
-            <!-- Optional Path / Link for PDF -->
-            <div style="margin-top: 6px;">
-              <div style="display: flex; gap: 6px;">
-                <input type="text" id="achvPdfPath" class="form-control" style="flex: 1;" placeholder="ระบุ PATH เครื่อง (เช่น D:\...) หรือ ลิงก์ไฟล์ PDF">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="copyPdfPath()" title="คัดลอก PATH">
-                  📋 คัดลอก PATH
-                </button>
-              </div>
-            </div>
-
-            <!-- PDF Auto-Fill Result Summary Banner -->
-            <div id="pdfAutofillBanner" style="display: none;" class="pdf-autofill-banner">
-              <div class="pdf-autofill-header">
-                <div class="pdf-autofill-title">
-                  <span>✨</span>
-                  <span>ตรวจพบและกรอกข้อมูลจากใบ JOB REQUEST อัตโนมัติ</span>
-                  <span class="pdf-autofill-badge">AUTO-FILLED</span>
-                </div>
-                <button type="button" class="pdf-autofill-close" onclick="hidePdfAutofillBanner()" title="ปิดการแจ้งเตือน">&times;</button>
-              </div>
-              <div id="pdfAutofillDetails" class="pdf-autofill-grid">
-                <!-- Dynamically populated by JS -->
-              </div>
-            </div>
           </div>
 
           <!-- 9.2 Work Folder Attachment -->
           <div class="form-group">
             <label class="form-label" for="achvFolderInput">
               <span>โฟลเดอร์ผลงาน (WORK FOLDER ATTACHMENT)</span>
-              <small>(แนบโฟลเดอร์จากเครื่อง หรือระบุ PATH / LINK)</small>
+              <small>(อัพโหลดโฟลเดอร์เก็บลงระบบ - ดาวน์โหลดเป็นไฟล์ .ZIP ได้)</small>
             </label>
 
             <!-- Hidden Folder Picker Input with webkitdirectory -->
             <input type="file" id="achvFolderInput" webkitdirectory directory multiple style="display: none;">
 
-            <!-- Button to browse and attach a folder -->
+            <!-- Button to browse and upload a folder -->
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <button type="button" class="btn btn-outline" id="btnSelectFolder" onclick="document.getElementById('achvFolderInput').click()" style="background: #fffbeb; border-color: #fcd34d; color: #92400e; font-weight: 700;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                📁 เลือกแนบโฟลเดอร์จากเครื่อง (SELECT FOLDER)
+                📁 อัพโหลดโฟลเดอร์ผลงาน (UPLOAD FOLDER)
               </button>
-              <span style="font-size: 11.5px; color: var(--text-muted);">หรือระบุ PATH ด้านล่าง</span>
             </div>
 
             <!-- Folder Preview Bar when a folder is attached -->
@@ -640,16 +613,6 @@
                   📑 ดูรายชื่อไฟล์ (<span id="folderFileCountBadge">0</span>)
                 </button>
                 <button type="button" id="btnRemoveFolder" class="btn btn-danger btn-sm">ลบโฟลเดอร์</button>
-              </div>
-            </div>
-
-            <!-- Optional Path / OneDrive Link -->
-            <div style="margin-top: 6px;">
-              <div style="display: flex; gap: 6px;">
-                <input type="text" id="achvWorkFolder" class="form-control" style="flex: 1;" placeholder="ระบุ PATH เครื่อง (เช่น D:\...) หรือ ลิงก์ ONEDRIVE / SHAREPOINT">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="copyWorkFolderPath()" title="คัดลอก PATH">
-                  📋 คัดลอก PATH
-                </button>
               </div>
             </div>
           </div>
@@ -850,7 +813,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260910_4"></script>
+  <script src="app.js?v=20260910_6"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">

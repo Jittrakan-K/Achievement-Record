@@ -2833,7 +2833,27 @@ function initApp() {
 
     // Support deep-linking to modal via URL hash (e.g. #new or #edit=achv_xxx)
     if (window.location.hash.startsWith('#new')) {
-      setTimeout(() => openAchievementModal(), 150);
+      setTimeout(() => {
+        openAchievementModal();
+        if (window.location.hash.includes('sample_attached')) {
+          currentModalPdf = {
+            name: 'JOB_REQUEST_FR-J26-076.PDF',
+            size: 720691,
+            data: 'data:application/pdf;base64,JVBERi0xLjQK'
+          };
+          updatePdfPreview();
+          currentModalFolder = {
+            name: '26-0585_JIGIDA-007_DRAWINGS',
+            fileCount: 4,
+            totalSize: '6.4 MB',
+            files: [
+              { name: 'COVER.PDF', size: '1.2 MB', data: 'data:application/pdf;base64,JVBERi0xLjQK' },
+              { name: 'JIG_ASSEMBLY.DWG', size: '3.1 MB', data: 'data:application/octet-stream;base64,AAAA' }
+            ]
+          };
+          updateFolderPreview();
+        }
+      }, 150);
     } else if (window.location.hash.startsWith('#edit=')) {
       const editId = window.location.hash.replace('#edit=', '').split('&')[0];
       setTimeout(() => openAchievementModal(editId), 150);
@@ -3729,26 +3749,7 @@ function setupEventListeners() {
     });
   }
 
-  // Smart Auto-Fill Listeners for Work Folder Path, PDF Path, Request Code, and Quotation
-  const workFolderInput = document.getElementById('achvWorkFolder');
-  if (workFolderInput) {
-    workFolderInput.addEventListener('change', handleWorkFolderPathChange);
-  }
 
-  const pdfPathInput = document.getElementById('achvPdfPath');
-  if (pdfPathInput) {
-    pdfPathInput.addEventListener('change', handlePdfPathChange);
-  }
-
-  const codeInput = document.getElementById('achvCode');
-  if (codeInput) {
-    codeInput.addEventListener('change', handleCodeInputChange);
-  }
-
-  const quotInput = document.getElementById('achvQuotation');
-  if (quotInput) {
-    quotInput.addEventListener('change', handleQuotationInputChange);
-  }
 
   // Manage Categories Button
   const btnManageCat = document.getElementById('btnManageCategories');
@@ -5250,8 +5251,6 @@ function openAchievementModal(id = null) {
   updateImagePreview();
   updatePdfPreview();
   updateFolderPreview();
-  hidePdfAutofillBanner();
-  document.querySelectorAll('.field-autofilled').forEach(el => el.classList.remove('field-autofilled'));
 
   populateCategoryDropdowns();
 
@@ -5278,37 +5277,23 @@ function openAchievementModal(id = null) {
     document.getElementById('achvDescription').value = uppercaseEnglish(item.description || '');
     document.getElementById('achvNote').value = uppercaseEnglish(item.note || '');
 
-    if (item.workFolder) {
-      if (typeof item.workFolder === 'object') {
-        currentModalFolder = { ...item.workFolder };
-        document.getElementById('achvWorkFolder').value = item.workFolder.path || '';
-        if (!hasFolderDownloadableData(currentModalFolder)) {
-          loadAchievementsFromIndexedDB().then(idbData => {
-            if (idbData) {
-              const fullItem = idbData.find(a => a.id === item.id);
-              if (fullItem && fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
-                currentModalFolder = { ...fullItem.workFolder };
-                item.workFolder = fullItem.workFolder;
-                updateFolderPreview();
-              }
+    if (item.workFolder && typeof item.workFolder === 'object') {
+      currentModalFolder = { ...item.workFolder };
+      if (!hasFolderDownloadableData(currentModalFolder)) {
+        loadAchievementsFromIndexedDB().then(idbData => {
+          if (idbData) {
+            const fullItem = idbData.find(a => a.id === item.id);
+            if (fullItem && fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
+              currentModalFolder = { ...fullItem.workFolder };
+              item.workFolder = fullItem.workFolder;
+              updateFolderPreview();
             }
-          }).catch(e => console.warn('IDB modal folder load notice:', e));
-        }
-      } else {
-        document.getElementById('achvWorkFolder').value = item.workFolder;
-        const folderName = item.workFolder.split(/[\\/]/).pop() || item.workFolder;
-        currentModalFolder = {
-          name: uppercaseEnglish(folderName),
-          path: item.workFolder,
-          fileCount: null,
-          totalSize: null,
-          files: []
-        };
+          }
+        }).catch(e => console.warn('IDB modal folder load notice:', e));
       }
       updateFolderPreview();
     } else {
       currentModalFolder = null;
-      document.getElementById('achvWorkFolder').value = '';
       updateFolderPreview();
     }
 
@@ -5318,15 +5303,9 @@ function openAchievementModal(id = null) {
     }
     if (item.pdfAttachment) {
       currentModalPdf = item.pdfAttachment;
-      const pdfPathInput = document.getElementById('achvPdfPath');
-      if (pdfPathInput) {
-        pdfPathInput.value = item.pdfAttachment.path || item.pdfAttachment.name || '';
-      }
       updatePdfPreview();
     } else {
       currentModalPdf = null;
-      const pdfPathInput = document.getElementById('achvPdfPath');
-      if (pdfPathInput) pdfPathInput.value = '';
       updatePdfPreview();
     }
   } else {
@@ -5342,15 +5321,11 @@ function openAchievementModal(id = null) {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('achvRequestDate').value = today;
     currentModalFolder = null;
-    document.getElementById('achvWorkFolder').value = '';
     updateFolderPreview();
     currentModalPdf = null;
-    const newPdfPath = document.getElementById('achvPdfPath');
-    if (newPdfPath) newPdfPath.value = '';
     updatePdfPreview();
   }
 
-  hidePdfAutofillBanner();
   modal.classList.add('active');
 
   setTimeout(() => {
@@ -5385,8 +5360,6 @@ function handleSaveAchievement(e) {
   const completionDate = document.getElementById('achvCompletionDate').value;
   const description = uppercaseEnglish(document.getElementById('achvDescription').value.trim());
   const note = uppercaseEnglish(document.getElementById('achvNote').value.trim());
-  const workFolderPath = document.getElementById('achvWorkFolder').value.trim();
-
   if (!title) {
     alert('กรุณากรอกชื่อ TASK NAME');
     return;
@@ -5396,41 +5369,16 @@ function handleSaveAchievement(e) {
     return;
   }
 
-  // Construct Work Folder object
+  // Work Folder: strictly from uploaded files
   let finalWorkFolder = null;
-  if (currentModalFolder && (currentModalFolder.name || (currentModalFolder.files && currentModalFolder.files.length > 0))) {
-    finalWorkFolder = {
-      ...currentModalFolder,
-      path: workFolderPath || currentModalFolder.path || currentModalFolder.name
-    };
-  } else if (workFolderPath) {
-    const name = workFolderPath.split(/[\\/]/).pop() || workFolderPath;
-    finalWorkFolder = {
-      name: uppercaseEnglish(name),
-      path: workFolderPath,
-      fileCount: null,
-      totalSize: null,
-      files: []
-    };
+  if (currentModalFolder && (currentModalFolder.files && currentModalFolder.files.length > 0 || currentModalFolder.data || currentModalFolder.name)) {
+    finalWorkFolder = currentModalFolder;
   }
 
-  // Construct PDF Attachment object
+  // PDF Attachment: strictly from uploaded file
   let finalPdfAttachment = null;
-  const pdfPathInput = document.getElementById('achvPdfPath');
-  const pdfPathVal = pdfPathInput ? pdfPathInput.value.trim() : '';
-  if (currentModalPdf && (currentModalPdf.name || currentModalPdf.data)) {
-    finalPdfAttachment = {
-      ...currentModalPdf,
-      path: pdfPathVal || currentModalPdf.path || currentModalPdf.name
-    };
-  } else if (pdfPathVal) {
-    const pdfName = pdfPathVal.split(/[\\/]/).pop() || pdfPathVal;
-    finalPdfAttachment = {
-      name: uppercaseEnglish(pdfName),
-      path: pdfPathVal,
-      data: null,
-      size: null
-    };
+  if (currentModalPdf && (currentModalPdf.data || currentModalPdf.name)) {
+    finalPdfAttachment = currentModalPdf;
   }
 
   let savedItem = null;
@@ -6562,167 +6510,11 @@ function parseJobRequestPdfData(rawText, fileName) {
   return data;
 }
 
-/**
- * Highlights a field that was auto-filled with an animated pulse
- */
-function highlightAutofilledField(el) {
-  if (!el) return;
-  el.classList.add('field-autofilled');
-  setTimeout(() => {
-    el.classList.remove('field-autofilled');
-  }, 2200);
-}
-
-/**
- * Automatically populates form inputs from parsed Job Request or Folder data
- */
-function applyJobRequestAutofill(parsedData, sourceName) {
-  if (!parsedData) return;
-  const isEditMode = Boolean(document.getElementById('achvId')?.value);
-  if (isEditMode) {
-    // When editing an existing task, do not auto-populate or overwrite fields
-    hidePdfAutofillBanner();
-    return;
-  }
-  const filledSummary = [];
-  const isNewForm = true;
-
-  function fillField(id, val, labelName) {
-    if (!val) return;
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    // Fill if currently empty, or if new form
-    if (!el.value || el.value.trim() === '' || isNewForm) {
-      if (el.tagName === 'SELECT') {
-        setSelectValueWithFallback(el, val);
-      } else {
-        el.value = val;
-      }
-      highlightAutofilledField(el);
-      filledSummary.push({ label: labelName, val: el.value || val });
-    }
-  }
-
-  // Request Number
-  fillField('achvCode', parsedData.code, 'REQUEST NUMBER');
-
-  // Title
-  fillField('achvTitle', parsedData.title, 'TASK NAME');
-
-  // Category
-  const catSelect = document.getElementById('achvCategory');
-  if (catSelect && parsedData.categoryId) {
-    const opt = catSelect.querySelector(`option[value="${parsedData.categoryId}"]`);
-    if (opt) {
-      if (!catSelect.value || catSelect.value === 'cat_prj' || isNewForm) {
-        catSelect.value = parsedData.categoryId;
-        highlightAutofilledField(catSelect);
-        const catObj = categories.find(c => c.id === parsedData.categoryId);
-        filledSummary.push({ label: 'CATEGORY', val: catObj ? catObj.name : parsedData.categoryId });
-      }
-    }
-  }
-
-  // Status
-  const statusSelect = document.getElementById('achvStatus');
-  if (statusSelect && parsedData.status) {
-    if (!statusSelect.value || isNewForm) {
-      let st = parsedData.status;
-      if (st === 'cancle') st = 'cancel';
-      statusSelect.value = st;
-      highlightAutofilledField(statusSelect);
-      filledSummary.push({ label: 'STATUS', val: st.toUpperCase() });
-    }
-  }
-
-  // Quotation
-  fillField('achvQuotation', parsedData.quotation, 'QUOTATION');
-
-  // Request Name
-  fillField('achvRequestName', parsedData.requestName, 'REQUEST NAME');
-
-  // Request Date
-  if (parsedData.requestDate) {
-    const dateEl = document.getElementById('achvRequestDate');
-    if (dateEl && (!dateEl.value || isNewForm)) {
-      dateEl.value = parsedData.requestDate;
-      highlightAutofilledField(dateEl);
-      filledSummary.push({ label: 'REQUEST DATE', val: parsedData.requestDate });
-    }
-  }
-
-  // Factory
-  fillField('achvFactory', parsedData.factory, 'FACTORY');
-
-  // Department
-  fillField('achvDepartment', parsedData.department, 'DEPARTMENT');
-
-  // Process
-  fillField('achvProcess', parsedData.process, 'PROCESS');
-
-  // Assignee
-  if (parsedData.assignee) {
-    fillField('achvAssignee', parsedData.assignee, 'ASSIGN');
-  }
-
-  // Description
-  fillField('achvDescription', parsedData.description, 'DETAIL');
-
-  // Note
-  if (parsedData.note) {
-    fillField('achvNote', parsedData.note, 'NOTE');
-  }
-
-  // Render visual summary banner
-  renderPdfAutofillBanner(filledSummary, sourceName);
-}
-
-/**
- * Renders the auto-fill summary banner with badges
- */
-function renderPdfAutofillBanner(filledSummary, sourceName) {
-  const banner = document.getElementById('pdfAutofillBanner');
-  const details = document.getElementById('pdfAutofillDetails');
-  if (!banner || !details) return;
-
-  if (!filledSummary || filledSummary.length === 0) {
-    banner.style.display = 'none';
-    return;
-  }
-
-  const titleEl = banner.querySelector('.pdf-autofill-title');
-  if (titleEl) {
-    titleEl.innerHTML = `
-      <span>✨</span>
-      <span>ตรวจพบและกรอกข้อมูลอัตโนมัติ${sourceName ? ' จาก ' + escapeHtml(sourceName) : ''}</span>
-      <span class="pdf-autofill-badge">AUTO-FILLED (${filledSummary.length})</span>
-    `;
-  }
-
-  let html = '';
-  filledSummary.forEach(item => {
-    html += `
-      <div class="pdf-autofill-item" title="${escapeHtml(item.label)}: ${escapeHtml(item.val)}">
-        <span class="pdf-autofill-label">${escapeHtml(item.label)}:</span>
-        <span class="pdf-autofill-val">${escapeHtml(item.val)}</span>
-      </div>
-    `;
-  });
-
-  details.innerHTML = html;
-  banner.style.display = 'block';
-}
-
-/**
- * Hides the PDF auto-fill summary banner
- */
-function hidePdfAutofillBanner() {
-  const banner = document.getElementById('pdfAutofillBanner');
-  if (banner) banner.style.display = 'none';
-  const details = document.getElementById('pdfAutofillDetails');
-  if (details) details.innerHTML = '';
-}
+// Auto-fill disabled per user request
+function highlightAutofilledField(el) {}
+function applyJobRequestAutofill(parsedData, sourceName) {}
+function renderPdfAutofillBanner(filledSummary, sourceName) {}
+function hidePdfAutofillBanner() {}
 
 /**
  * Helper to read a File object as Data URL
@@ -6737,7 +6529,7 @@ function readFileAsDataURL(file) {
 }
 
 /**
- * Main handler for PDF upload event with smart auto-fill
+ * Main handler for PDF upload event (pure upload, no auto-fill)
  */
 async function handlePdfUpload(e) {
   const file = e.target.files && e.target.files[0];
@@ -6756,73 +6548,24 @@ async function handlePdfUpload(e) {
   const loadingEl = document.getElementById('pdfLoadingIndicator');
   const loadingText = document.getElementById('pdfLoadingText');
   if (loadingEl) {
-    if (loadingText) loadingText.textContent = 'กำลังอ่านและวิเคราะห์ข้อมูลจากใบ JOB REQUEST (PDF)...';
+    if (loadingText) loadingText.textContent = 'กำลังอัพโหลดไฟล์ PDF...';
     loadingEl.style.display = 'flex';
   }
 
   try {
-    // 1. Read file as ArrayBuffer for text extraction
-    const arrayBuffer = await file.arrayBuffer();
-
-    // 2. Read file as DataURL for modal attachment & persistent storage
     const dataUrl = await readFileAsDataURL(file);
-
-    // 3. Save to currentModalPdf
     currentModalPdf = {
       name: uppercaseEnglish(file.name),
       data: dataUrl,
       size: file.size
     };
-    const existingPdfPath = document.getElementById('achvPdfPath');
-    if (existingPdfPath && !existingPdfPath.value.trim()) {
-      existingPdfPath.value = file.name;
-    }
     updatePdfPreview();
-
-    // 4. Extract text from PDF
-    const extractedText = await extractTextFromPdf(arrayBuffer);
-
-    // 5. Parse data from Job Request PDF (with Master DB lookup)
-    const parsedData = parseJobRequestPdfData(extractedText, file.name);
-
-    // 6. Merge with attached Work Folder if already present
-    const folderInput = document.getElementById('achvWorkFolder');
-    const folderPath = folderInput ? folderInput.value.trim() : '';
-    const folderName = currentModalFolder ? currentModalFolder.name : (folderPath.split(/[\\/]/).pop() || '');
-    if (folderName || (currentModalFolder && currentModalFolder.files && currentModalFolder.files.length > 0)) {
-      const folderMeta = parseWorkFolderMetadata(folderName, (currentModalFolder && currentModalFolder.files) || [], folderPath);
-      if (folderMeta.quotation && !parsedData.quotation) parsedData.quotation = folderMeta.quotation;
-      if (folderMeta.title && (!parsedData.title || parsedData.title.endsWith('JOB REQUEST'))) parsedData.title = folderMeta.title;
-      if (folderMeta.process && !parsedData.process) parsedData.process = folderMeta.process;
-      if (folderMeta.department && !parsedData.department) parsedData.department = folderMeta.department;
-      if (folderMeta.note && !parsedData.note) parsedData.note = folderMeta.note;
-      if (folderMeta.description && !parsedData.description) parsedData.description = folderMeta.description;
-    }
-
-    // 7. Apply Auto-fill to form inputs
-    applyJobRequestAutofill(parsedData, file.name);
-
     if (loadingEl) loadingEl.style.display = 'none';
-
-    // Toast notification
-    const autoFilledCode = parsedData.code || parsedData.title || file.name;
-    showToast(`✨ วิเคราะห์และกรอกข้อมูลจาก JOB REQUEST สำเร็จ: "${autoFilledCode}"`);
+    showToast(`✅ อัพโหลดไฟล์ PDF "${uppercaseEnglish(file.name)}" สำเร็จ พร้อมดาวน์โหลด`);
   } catch (err) {
     if (loadingEl) loadingEl.style.display = 'none';
-    console.error('PDF parsing error:', err);
-    if (!currentModalPdf) {
-      currentModalPdf = {
-        name: uppercaseEnglish(file.name),
-        data: null,
-        size: file.size
-      };
-      const existingPdfPath = document.getElementById('achvPdfPath');
-      if (existingPdfPath && !existingPdfPath.value.trim()) {
-        existingPdfPath.value = file.name;
-      }
-      updatePdfPreview();
-    }
-    showToast(`แนบไฟล์ JOB REQUEST (PDF) "${uppercaseEnglish(file.name)}" เรียบร้อยแล้ว`);
+    console.error('PDF upload error:', err);
+    alert('เกิดข้อผิดพลาดในการอัพโหลดไฟล์ PDF');
   }
 }
 
@@ -6840,7 +6583,7 @@ function updatePdfPreview() {
       pdfNameDisplay.textContent = currentModalPdf.name;
     }
     if (pdfMetaDisplay) {
-      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : (currentModalPdf.data ? 'มีข้อมูลไฟล์' : 'ระบุ PATH');
+      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : 'PDF DOCUMENT';
       pdfMetaDisplay.textContent = `${sizeStr} • PDF DOCUMENT`;
     }
     if (viewBtn) {
@@ -6861,59 +6604,12 @@ function removeModalPdf() {
   currentModalPdf = null;
   const pdfInput = document.getElementById('achvPdfInput');
   if (pdfInput) pdfInput.value = '';
-  const pdfPathInput = document.getElementById('achvPdfPath');
-  if (pdfPathInput) pdfPathInput.value = '';
   updatePdfPreview();
-  hidePdfAutofillBanner();
   showToast('ลบไฟล์แนบ JOB REQUEST (PDF) เรียบร้อยแล้ว');
 }
 
-function copyPdfPath() {
-  const pathInput = document.getElementById('achvPdfPath');
-  if (!pathInput || !pathInput.value.trim()) {
-    alert('กรุณากรอก PATH หรือวางลิงก์ไฟล์ PDF ก่อน');
-    return;
-  }
-  navigator.clipboard.writeText(pathInput.value.trim())
-    .then(() => showToast('📋 คัดลอก PATH / ลิงก์ PDF เรียบร้อยแล้ว'))
-    .catch(() => alert('ไม่สามารถคัดลอกได้: ' + pathInput.value));
-}
-
-function handlePdfPathChange() {
-  const pathInput = document.getElementById('achvPdfPath');
-  if (!pathInput) return;
-  const pathVal = pathInput.value.trim();
-  if (!pathVal) return;
-
-  const parts = pathVal.split(/[\\/]/).filter(Boolean);
-  const fileName = parts.length > 0 ? parts[parts.length - 1] : '';
-
-  if (fileName) {
-    if (!currentModalPdf) {
-      currentModalPdf = {
-        name: uppercaseEnglish(fileName),
-        data: null,
-        size: null,
-        path: pathVal
-      };
-      updatePdfPreview();
-    } else {
-      currentModalPdf.path = pathVal;
-    }
-
-    const isEditMode = Boolean(document.getElementById('achvId')?.value);
-    if (!isEditMode) {
-      const codeMatch = fileName.match(/FR-J\d{2}-\d{3,4}/i) || fileName.match(/\d{2}-\d{4}/);
-      if (codeMatch) {
-        const foundData = lookupJobRequestData(codeMatch[0]);
-        if (foundData) {
-          applyJobRequestAutofill(foundData, `PATH PDF "${fileName}"`);
-          showToast(`✨ ค้นพบข้อมูลรหัส "${codeMatch[0]}" จากชื่อไฟล์ PDF และกรอกอัตโนมัติ`);
-        }
-      }
-    }
-  }
-}
+function copyPdfPath() {}
+function handlePdfPathChange() {}
 
 function viewModalPdf() {
   if (currentModalPdf && currentModalPdf.data) {
@@ -7079,99 +6775,21 @@ async function handleFolderUpload(e) {
     }
   }
 
-  const existingPath = document.getElementById('achvWorkFolder').value.trim();
-
   currentModalFolder = {
     name: uppercaseEnglish(rootFolderName),
     fileCount: files.length,
     totalSize: formatFileSize(totalBytes),
     totalBytes: totalBytes,
-    files: fileList,
-    path: existingPath || rootFolderName
+    files: fileList
   };
 
   updateFolderPreview();
-
-  // ✨ Auto-fill form from attached Work Folder:
-  const folderMeta = parseWorkFolderMetadata(rootFolderName, fileList, existingPath);
-  applyJobRequestAutofill(folderMeta, `โฟลเดอร์ "${rootFolderName}"`);
-
-  showToast(`✨ แนบโฟลเดอร์ "${rootFolderName}" (${files.length} ไฟล์) พร้อมดาวน์โหลดแล้ว`);
+  showToast(`✅ อัพโหลดโฟลเดอร์ "${uppercaseEnglish(rootFolderName)}" (${files.length} ไฟล์) สำเร็จ พร้อมดาวน์โหลด`);
 }
 
-/**
- * Triggered when user enters or pastes path into #achvWorkFolder
- */
-function handleWorkFolderPathChange() {
-  const pathInput = document.getElementById('achvWorkFolder');
-  if (!pathInput) return;
-  const pathVal = pathInput.value.trim();
-  if (!pathVal) return;
-
-  const parts = pathVal.split(/[\\/]/).filter(Boolean);
-  const folderName = parts.length > 0 ? parts[parts.length - 1] : '';
-
-  if (folderName) {
-    if (!currentModalFolder) {
-      currentModalFolder = {
-        name: uppercaseEnglish(folderName),
-        fileCount: null,
-        totalSize: null,
-        files: [],
-        path: pathVal
-      };
-      updateFolderPreview();
-    } else {
-      currentModalFolder.path = pathVal;
-    }
-
-    // Only auto-fill if creating a new task, never when editing
-    const isEditMode = Boolean(document.getElementById('achvId')?.value);
-    if (!isEditMode) {
-      const folderMeta = parseWorkFolderMetadata(folderName, (currentModalFolder && currentModalFolder.files) || [], pathVal);
-      applyJobRequestAutofill(folderMeta, `PATH โฟลเดอร์ "${folderName}"`);
-    }
-  }
-}
-
-/**
- * Triggered when user types or pastes into #achvCode (Request Number)
- */
-function handleCodeInputChange() {
-  // If editing an existing task, do NOT trigger autofill or show toast!
-  const isEditMode = Boolean(document.getElementById('achvId')?.value);
-  if (isEditMode) return;
-
-  const codeInput = document.getElementById('achvCode');
-  if (!codeInput) return;
-  const codeVal = codeInput.value.trim();
-  if (!codeVal || codeVal.length < 3) return;
-
-  const foundData = lookupJobRequestData(codeVal);
-  if (foundData) {
-    applyJobRequestAutofill(foundData, `รหัสงาน "${codeVal}"`);
-    showToast(`✨ ค้นพบข้อมูลรหัส "${codeVal}" และกรอกอัตโนมัติ`);
-  }
-}
-
-/**
- * Triggered when user types or pastes into #achvQuotation
- */
-function handleQuotationInputChange() {
-  // If editing an existing task, do NOT trigger autofill!
-  const isEditMode = Boolean(document.getElementById('achvId')?.value);
-  if (isEditMode) return;
-
-  const quotInput = document.getElementById('achvQuotation');
-  if (!quotInput) return;
-  const quotVal = quotInput.value.trim();
-  if (!quotVal || quotVal.length < 3) return;
-
-  const foundData = lookupJobRequestData(quotVal);
-  if (foundData) {
-    applyJobRequestAutofill(foundData, `ใบเสนอราคา "${quotVal}"`);
-  }
-}
+function handleWorkFolderPathChange() {}
+function handleCodeInputChange() {}
+function handleQuotationInputChange() {}
 
 function updateFolderPreview() {
   const container = document.getElementById('folderPreviewContainer');
@@ -7206,16 +6824,10 @@ function removeModalFolder() {
   const folderInput = document.getElementById('achvFolderInput');
   if (folderInput) folderInput.value = '';
   updateFolderPreview();
+  showToast('ลบโฟลเดอร์ผลงานเรียบร้อยแล้ว');
 }
 
-function copyWorkFolderPath() {
-  const folderInput = document.getElementById('achvWorkFolder');
-  if (!folderInput || !folderInput.value.trim()) {
-    alert('กรุณากรอก PATH หรือวางลิงก์โฟลเดอร์ผลงานก่อน');
-    return;
-  }
-  copyFolderString(folderInput.value.trim());
-}
+function copyWorkFolderPath() {}
 
 function copyFolderString(pathStr) {
   if (!pathStr) return;
