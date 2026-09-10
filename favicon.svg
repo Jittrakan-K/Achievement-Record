@@ -1,0 +1,20 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="folderBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="folderFront" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <!-- Back Folder with Tab -->
+  <path d="M6 14C6 11.79 7.79 10 10 10H23.5C24.85 10 26.13 10.68 26.88 11.8L29.32 15.4C30.07 16.52 31.35 17.2 32.7 17.2H54C56.21 17.2 58 18.99 58 21.2V48C58 50.21 56.21 52 54 52H10C7.79 52 6 50.21 6 48V14Z" fill="url(#folderBack)"/>
+  <!-- Document Sheet Inside -->
+  <rect x="13" y="14" width="38" height="20" rx="3" fill="#FFFFFF"/>
+  <line x1="19" y1="19.5" x2="33" y2="19.5" stroke="#94A3B8" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="19" y1="24" x2="27" y2="24" stroke="#CBD5E1" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Front Folder Body -->
+  <path d="M6 22.5C6 20.29 7.79 18.5 10 18.5H54C56.21 18.5 58 20.29 58 22.5V48C58 50.21 56.21 52 54 52H10C7.79 52 6 50.21 6 48V22.5Z" fill="url(#folderFront)"/>
+</svg>
