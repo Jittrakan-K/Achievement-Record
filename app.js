@@ -2533,6 +2533,7 @@ async function uploadPdfFileToFirestore(db, achvId, pdfObj) {
       }
     }
     console.log(`Cloud PDF uploaded for achievement ${achvId} (${name})`);
+    showToast(`☁️ อัปโหลดไฟล์ PDF "${name}" ขึ้นคลาวด์เรียบร้อยแล้ว`);
   } catch (err) {
     console.warn('Failed to upload PDF to Firestore:', err);
   }
@@ -3481,6 +3482,11 @@ async function initFirebase(config, showToasts = false) {
       // If cloud is empty and we have local achievements, keep local records
       if (snapshot.empty) {
         console.info('Cloud achievements collection is currently empty.');
+        if (isInitial) {
+          setTimeout(() => {
+            autoSyncLocalAttachmentsToCloud(firebaseDb);
+          }, 1500);
+        }
         return;
       }
 
@@ -3544,6 +3550,10 @@ async function initFirebase(config, showToasts = false) {
         renderAll();
         if (!isInitial) {
           showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
+        } else {
+          setTimeout(() => {
+            autoSyncLocalAttachmentsToCloud(firebaseDb);
+          }, 1500);
         }
         return;
       }
@@ -3561,6 +3571,10 @@ async function initFirebase(config, showToasts = false) {
       renderAll();
       if (!isInitial) {
         showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
+      } else {
+        setTimeout(() => {
+          autoSyncLocalAttachmentsToCloud(firebaseDb);
+        }, 1500);
       }
     }, (error) => {
       console.error('Firestore listener error:', error);
@@ -3802,6 +3816,123 @@ async function migrateLocalDataToFirebase() {
       btnSync.disabled = false;
       btnSync.innerHTML = originalText;
     }
+  }
+}
+
+let isAutoSyncingInProgress = false;
+
+async function autoSyncLocalAttachmentsToCloud(db) {
+  if (!db || !isFirebaseConnected || isAutoSyncingInProgress) return;
+  if (sessionStorage.getItem('orbray_auto_sync_attachments_done')) return;
+
+  try {
+    isAutoSyncingInProgress = true;
+
+    // 1. Prefer IndexedDB data which holds original heavy attachments
+    let itemsToScan = achievements;
+    try {
+      const idbData = await loadAchievementsFromIndexedDB();
+      if (idbData && idbData.length > 0) {
+        itemsToScan = idbData;
+      }
+    } catch (idbErr) {
+      console.warn('Auto-sync using in-memory achievements:', idbErr);
+    }
+
+    // Filter items with actual file data attached
+    const itemsToUpload = itemsToScan.filter(item => {
+      const hasPdfData = item.pdfAttachment && item.pdfAttachment.data;
+      const hasImageData = item.imageData && (typeof item.imageData === 'string' || (item.imageData && item.imageData.data));
+      const hasFolderData = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!f.data);
+      return hasPdfData || hasImageData || hasFolderData;
+    });
+
+    if (itemsToUpload.length === 0) {
+      sessionStorage.setItem('orbray_auto_sync_attachments_done', 'true');
+      return;
+    }
+
+    console.info(`[Auto-Sync] Found ${itemsToUpload.length} tasks with local files. Starting automatic background cloud sync...`);
+
+    let uploadedCount = 0;
+    for (const item of itemsToUpload) {
+      try {
+        let hasUpdatedMeta = false;
+        const mainDocRef = db.collection('achievements').doc(item.id);
+
+        // 1. Upload PDF Attachment
+        if (item.pdfAttachment && item.pdfAttachment.data) {
+          await uploadPdfFileToFirestore(db, item.id, item.pdfAttachment);
+          item.pdfAttachment.hasCloudPdf = true;
+          hasUpdatedMeta = true;
+        }
+
+        // 2. Upload Image / Drawing
+        if (item.imageData) {
+          const imgData = typeof item.imageData === 'object' ? item.imageData.data : item.imageData;
+          if (imgData) {
+            await uploadImageFileToFirestore(db, item.id, item.imageData);
+            if (typeof item.imageData === 'object') item.imageData.hasCloudImage = true;
+            hasUpdatedMeta = true;
+          }
+        }
+
+        // 3. Upload Work Folder files
+        if (item.workFolder && Array.isArray(item.workFolder.files)) {
+          const filesWithData = item.workFolder.files.filter(f => !!f.data);
+          if (filesWithData.length > 0) {
+            await uploadFolderFilesToFirestore(db, item.id, item.workFolder.files);
+            item.workFolder.hasCloudFiles = true;
+            hasUpdatedMeta = true;
+          }
+        }
+
+        // 4. Update cloud document flags so other machines know cloud files exist
+        if (hasUpdatedMeta) {
+          const updateObj = {};
+          if (item.pdfAttachment) {
+            updateObj['pdfAttachment.hasCloudPdf'] = true;
+            if (item.pdfAttachment.name) updateObj['pdfAttachment.name'] = item.pdfAttachment.name;
+            if (item.pdfAttachment.size) updateObj['pdfAttachment.size'] = item.pdfAttachment.size;
+            if (item.pdfAttachment.type) updateObj['pdfAttachment.type'] = item.pdfAttachment.type;
+          }
+          if (item.workFolder) {
+            updateObj['workFolder.hasCloudFiles'] = true;
+            if (item.workFolder.name) updateObj['workFolder.name'] = item.workFolder.name;
+            if (item.workFolder.fileCount) updateObj['workFolder.fileCount'] = item.workFolder.fileCount;
+            if (item.workFolder.totalSize) updateObj['workFolder.totalSize'] = item.workFolder.totalSize;
+          }
+          if (item.imageData && typeof item.imageData === 'object') {
+            updateObj['imageData.hasCloudImage'] = true;
+          }
+          await mainDocRef.set(updateObj, { merge: true });
+        }
+
+        // Update in-memory copy
+        const memItem = achievements.find(a => a.id === item.id);
+        if (memItem) {
+          if (item.pdfAttachment) memItem.pdfAttachment = item.pdfAttachment;
+          if (item.imageData) memItem.imageData = item.imageData;
+          if (item.workFolder) memItem.workFolder = item.workFolder;
+        }
+
+        uploadedCount++;
+      } catch (err) {
+        console.warn(`[Auto-Sync] Upload error for item ${item.id}:`, err);
+      }
+    }
+
+    // Persist updated metadata in local IndexedDB
+    saveAchievementsToIndexedDB(achievements);
+    sessionStorage.setItem('orbray_auto_sync_attachments_done', 'true');
+    console.info(`[Auto-Sync] Finished syncing ${uploadedCount} tasks.`);
+    if (uploadedCount > 0) {
+      showToast(`☁️ ซิงค์ไฟล์แนบ ${uploadedCount} งานขึ้นคลาวด์อัตโนมัติเรียบร้อยแล้ว`);
+    }
+  } catch (err) {
+    console.error('[Auto-Sync] Failed auto-sync attachments to cloud:', err);
+  } finally {
+    isAutoSyncingInProgress = false;
   }
 }
 
@@ -7153,7 +7284,7 @@ async function openPdfAttachment(achvId) {
     }
   }
 
-  alert('ไม่พบไฟล์ PDF แนบสำหรับงานนี้\n\nหากเพิ่งแนบไฟล์จากเครื่องอื่น กรุณาเปิดเครื่องต้นทางแล้วกดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" เพื่ออัปโหลดไฟล์ขึ้นระบบครับ');
+  alert('ไม่พบไฟล์ PDF แนบสำหรับงานนี้บนคลาวด์\n\n- หากเพิ่งแนบไฟล์จากคอมพิวเตอร์อีกเครื่อง: เมื่อเครื่องนั้นเปิดเว็บและต่อเน็ต ระบบจะซิงค์ไฟล์ขึ้นคลาวด์ให้อัตโนมัติในพื้นหลังครับ\n- หรือที่เครื่องต้นทาง ไปที่ปุ่ม "CLOUD: ONLINE" > กด "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์"');
 }
 
 async function downloadPdfAttachment(achvId) {
@@ -7213,7 +7344,7 @@ async function downloadPdfAttachment(achvId) {
     }
   }
 
-  alert('ไม่พบข้อมูลไฟล์ PDF ที่สามารถดาวน์โหลดได้สำหรับงานนี้\n\nหากเพิ่งแนบไฟล์จากเครื่องอื่น กรุณาเปิดเครื่องต้นทางแล้วกดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" เพื่ออัปโหลดไฟล์ขึ้นระบบครับ');
+  alert('ไม่พบข้อมูลไฟล์ PDF ที่สามารถดาวน์โหลดได้สำหรับงานนี้บนคลาวด์\n\n- หากเพิ่งแนบไฟล์จากคอมพิวเตอร์อีกเครื่อง: เมื่อเครื่องนั้นเปิดเว็บและต่อเน็ต ระบบจะซิงค์ไฟล์ขึ้นคลาวด์ให้อัตโนมัติในพื้นหลังครับ\n- หรือที่เครื่องต้นทาง ไปที่ปุ่ม "CLOUD: ONLINE" > กด "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์"');
 }
 
 function openPdfData(base64Data) {
