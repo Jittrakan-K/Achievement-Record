@@ -733,9 +733,12 @@
             <h4 class="cloud-status-heading" id="cloudStatusHeading">กำลังตรวจสอบสถานะ...</h4>
             <p class="cloud-status-desc" id="cloudStatusDesc">รอการเชื่อมต่อกับ Google Firebase Firestore</p>
           </div>
-          <div class="cloud-status-action">
+          <div class="cloud-status-action" style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="btn btn-sm btn-primary" id="btnSyncLocalToCloud" onclick="migrateLocalDataToFirebase()" title="อัปโหลดข้อมูลงานทั้งหมดในเครื่องนี้ขึ้นฐานข้อมูลคลาวด์">
               ⬆️ ซิงค์ข้อมูลเดิมขึ้นคลาวด์
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" id="btnSyncAllAttachments" onclick="syncAllAttachmentsToCloud()" title="อัปโหลดไฟล์ PDF โฟลเดอร์ และรูปภาพทั้งหมดในเครื่องนี้ขึ้นคลาวด์ เพื่อให้เครื่องอื่นเปิดได้" style="background: #ffffff; color: #163282; border-color: #2563eb; font-weight: 600;">
+              ☁️ ซิงค์ไฟล์แนบทั้งหมด (PDF / โฟลเดอร์) ขึ้นคลาวด์
             </button>
           </div>
         </div>
@@ -745,11 +748,12 @@
           <h4 class="cloud-card-title">📱 วิธีให้คนอื่นเปิดใช้งานผ่านมือถือหรือคอมเครื่องอื่น</h4>
           <div class="cloud-share-content">
             <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">
-              เมื่อเชื่อมต่อ Firebase สำเร็จ ข้อมูลจะบันทึกอยู่บนคลาวด์กลาง ทำให้ทุกคนเปิดใช้งานร่วมกันได้แบบ Real-time:
+              เมื่อเชื่อมต่อ Firebase สำเร็จ ข้อมูลและไฟล์แนบจะบันทึกอยู่บนคลาวด์กลาง ทำให้ทุกคนเปิดใช้งานร่วมกันได้แบบ Real-time:
             </p>
             <ul style="font-size: 12.5px; color: #334155; line-height: 1.6; margin-left: 18px; margin-bottom: 0;">
-              <li><b>วิธีที่ 1 (แนะนำที่สุด):</b> นำขึ้น <b>Firebase Hosting</b> (ฟรี) จะได้ลิงก์ เช่น <code>https://achievement-record.web.app</code> ส่งเข้าไลน์กลุ่มให้ทุกคนเปิดในมือถือหรือเซฟ Bookmark บนคอมได้ทันที</li>
-              <li><b>วิธีที่ 2:</b> ส่งไฟล์ <code>ACHIEVEMENT RECORD.html</code> นี้ให้เครื่องอื่นเปิดได้เลย ทุกเครื่องจะดึงข้อมูลจากคลาวด์เดียวกันอัตโนมัติ</li>
+              <li><b>วิธีที่ 1 (แนะนำที่สุด):</b> ใช้งานผ่านเว็บไซต์ GitHub Pages หรือ Firebase Hosting ส่งลิงก์ให้ทุกคนเปิดในมือถือหรือเซฟ Bookmark บนคอมได้ทันที</li>
+              <li><b>วิธีที่ 2:</b> ส่งไฟล์ <code>ACHIEVEMENT RECORD.html</code> นี้ให้เครื่องอื่นเปิดได้เลย ทุกเครื่องจะดึงข้อมูลและไฟล์แนบจากคลาวด์เดียวกันอัตโนมัติ</li>
+              <li><b>💡 การเปิดไฟล์ PDF / โฟลเดอร์ ข้ามเครื่อง:</b> หากอัปโหลดไฟล์แนบไว้ที่เครื่องหนึ่ง แล้วไปเปิดที่อีกเครื่อง ให้กดปุ่ม <b>"☁️ ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์"</b> ด้านบนนี้เพียง 1 ครั้ง เครื่องอื่นทุกเครื่องจะสามารถกดเปิดดูและดาวน์โหลดไฟล์ PDF / โฟลเดอร์ นั้นได้ทันที</li>
             </ul>
           </div>
         </div>
@@ -813,7 +817,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260910_6"></script>
+  <script src="app.js?v=20260911_1"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">

@@ -2490,6 +2490,195 @@ async function downloadFolderFilesFromFirestore(db, achvId, filesMeta) {
   }
 }
 
+async function uploadPdfFileToFirestore(db, achvId, pdfObj) {
+  if (!db || !achvId || !pdfObj) return;
+  try {
+    const rawData = pdfObj.data || '';
+    if (!rawData) return;
+
+    const colRef = db.collection('achievements').doc(achvId).collection('pdfFiles');
+    const name = pdfObj.name || 'JOB_REQUEST.PDF';
+    const size = pdfObj.size || '';
+    const type = pdfObj.type || 'application/pdf';
+    const path = pdfObj.path || '';
+
+    if (rawData.length <= FIRESTORE_CHUNK_SIZE) {
+      await colRef.doc('main').set({
+        name,
+        size,
+        type,
+        path,
+        data: rawData,
+        isChunked: false,
+        uploadedAt: new Date().toISOString()
+      });
+    } else {
+      const totalChunks = Math.ceil(rawData.length / FIRESTORE_CHUNK_SIZE);
+      await colRef.doc('main').set({
+        name,
+        size,
+        type,
+        path,
+        isChunked: true,
+        totalChunks: totalChunks,
+        uploadedAt: new Date().toISOString()
+      });
+
+      for (let c = 0; c < totalChunks; c++) {
+        const chunkStr = rawData.substring(c * FIRESTORE_CHUNK_SIZE, (c + 1) * FIRESTORE_CHUNK_SIZE);
+        await colRef.doc(`chunk_${c}`).set({
+          chunkIndex: c,
+          data: chunkStr
+        });
+      }
+    }
+    console.log(`Cloud PDF uploaded for achievement ${achvId} (${name})`);
+  } catch (err) {
+    console.warn('Failed to upload PDF to Firestore:', err);
+  }
+}
+
+async function downloadPdfFileFromFirestore(db, achvId) {
+  if (!db || !achvId) return null;
+  try {
+    const colRef = db.collection('achievements').doc(achvId).collection('pdfFiles');
+    const mainDocSnap = await colRef.doc('main').get();
+
+    // Fallback: check if stored in main achievement doc itself
+    if (!mainDocSnap.exists) {
+      const achvSnap = await db.collection('achievements').doc(achvId).get();
+      if (achvSnap.exists) {
+        const aData = achvSnap.data();
+        if (aData && aData.pdfAttachment && aData.pdfAttachment.data) {
+          return aData.pdfAttachment;
+        }
+      }
+      return null;
+    }
+
+    const mainMeta = mainDocSnap.data();
+    let fullData = '';
+
+    if (!mainMeta.isChunked) {
+      fullData = mainMeta.data || '';
+    } else {
+      const chunks = [];
+      const totalChunks = mainMeta.totalChunks || 1;
+      for (let c = 0; c < totalChunks; c++) {
+        const cSnap = await colRef.doc(`chunk_${c}`).get();
+        if (cSnap.exists && cSnap.data() && cSnap.data().data) {
+          chunks.push(cSnap.data().data);
+        }
+      }
+      fullData = chunks.join('');
+    }
+
+    if (!fullData) return null;
+
+    return {
+      name: mainMeta.name || 'JOB_REQUEST.PDF',
+      size: mainMeta.size || '',
+      type: mainMeta.type || 'application/pdf',
+      path: mainMeta.path || '',
+      data: fullData,
+      hasCloudPdf: true
+    };
+  } catch (err) {
+    console.error('Error downloading PDF from Firestore:', err);
+    return null;
+  }
+}
+
+async function uploadImageFileToFirestore(db, achvId, imgObj) {
+  if (!db || !achvId || !imgObj) return;
+  try {
+    const rawData = typeof imgObj === 'object' ? (imgObj.data || '') : (typeof imgObj === 'string' ? imgObj : '');
+    if (!rawData) return;
+
+    const colRef = db.collection('achievements').doc(achvId).collection('imageFiles');
+    const name = (typeof imgObj === 'object' && imgObj.name) ? imgObj.name : 'IMAGE';
+    const type = (typeof imgObj === 'object' && imgObj.type) ? imgObj.type : 'image/png';
+
+    if (rawData.length <= FIRESTORE_CHUNK_SIZE) {
+      await colRef.doc('main').set({
+        name,
+        type,
+        data: rawData,
+        isChunked: false,
+        uploadedAt: new Date().toISOString()
+      });
+    } else {
+      const totalChunks = Math.ceil(rawData.length / FIRESTORE_CHUNK_SIZE);
+      await colRef.doc('main').set({
+        name,
+        type,
+        isChunked: true,
+        totalChunks: totalChunks,
+        uploadedAt: new Date().toISOString()
+      });
+
+      for (let c = 0; c < totalChunks; c++) {
+        const chunkStr = rawData.substring(c * FIRESTORE_CHUNK_SIZE, (c + 1) * FIRESTORE_CHUNK_SIZE);
+        await colRef.doc(`chunk_${c}`).set({
+          chunkIndex: c,
+          data: chunkStr
+        });
+      }
+    }
+    console.log(`Cloud Image uploaded for achievement ${achvId} (${name})`);
+  } catch (err) {
+    console.warn('Failed to upload image to Firestore:', err);
+  }
+}
+
+async function downloadImageFileFromFirestore(db, achvId) {
+  if (!db || !achvId) return null;
+  try {
+    const colRef = db.collection('achievements').doc(achvId).collection('imageFiles');
+    const mainDocSnap = await colRef.doc('main').get();
+
+    if (!mainDocSnap.exists) {
+      const achvSnap = await db.collection('achievements').doc(achvId).get();
+      if (achvSnap.exists) {
+        const aData = achvSnap.data();
+        if (aData && aData.imageData && (typeof aData.imageData === 'string' || aData.imageData.data)) {
+          return aData.imageData;
+        }
+      }
+      return null;
+    }
+
+    const mainMeta = mainDocSnap.data();
+    let fullData = '';
+
+    if (!mainMeta.isChunked) {
+      fullData = mainMeta.data || '';
+    } else {
+      const chunks = [];
+      const totalChunks = mainMeta.totalChunks || 1;
+      for (let c = 0; c < totalChunks; c++) {
+        const cSnap = await colRef.doc(`chunk_${c}`).get();
+        if (cSnap.exists && cSnap.data() && cSnap.data().data) {
+          chunks.push(cSnap.data().data);
+        }
+      }
+      fullData = chunks.join('');
+    }
+
+    if (!fullData) return null;
+
+    return {
+      name: mainMeta.name || 'IMAGE',
+      type: mainMeta.type || 'image/png',
+      data: fullData,
+      hasCloudImage: true
+    };
+  } catch (err) {
+    console.error('Error downloading image from Firestore:', err);
+    return null;
+  }
+}
+
 async function downloadFolderObject(folder, achvId) {
   if (!folder) {
     alert('ไม่พบข้อมูลโฟลเดอร์สำหรับดาวน์โหลด');
@@ -2759,8 +2948,23 @@ async function openDrawingAttachment(achvId) {
     }
   }
 
+  // Fallback to Cloud Firestore
+  if (!dataUrl && firebaseDb) {
+    showToast('☁️ กำลังดาวน์โหลดไฟล์รูปภาพจากระบบคลาวด์...');
+    try {
+      const cloudImg = await downloadImageFileFromFirestore(firebaseDb, achvId);
+      if (cloudImg && (cloudImg.data || typeof cloudImg === 'string')) {
+        item.imageData = cloudImg;
+        dataUrl = getDrawingDataUrl(cloudImg);
+        saveAchievementsToIndexedDB(achievements);
+      }
+    } catch (cErr) {
+      console.warn('Cloud image fetch error:', cErr);
+    }
+  }
+
   if (!dataUrl) {
-    alert('ไม่พบข้อมูลภาพหรือไฟล์ DRAWING สำหรับงานนี้');
+    alert('ไม่พบข้อมูลภาพหรือไฟล์ DRAWING สำหรับงานนี้\n(หากเพิ่งอัปโหลดจากเครื่องอื่น กรุณากดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" บนเครื่องนั้นก่อน)');
     return;
   }
 
@@ -2808,8 +3012,23 @@ async function downloadImageAttachment(achvId) {
     }
   }
 
+  // Cloud Firestore fallback
+  if (!dataUrl && firebaseDb) {
+    showToast('☁️ กำลังดาวน์โหลดไฟล์ภาพจากระบบคลาวด์...');
+    try {
+      const cloudImg = await downloadImageFileFromFirestore(firebaseDb, achvId);
+      if (cloudImg && (cloudImg.data || typeof cloudImg === 'string')) {
+        item.imageData = cloudImg;
+        dataUrl = getDrawingDataUrl(cloudImg);
+        saveAchievementsToIndexedDB(achievements);
+      }
+    } catch (cErr) {
+      console.warn('Cloud image download error:', cErr);
+    }
+  }
+
   if (!dataUrl) {
-    alert('ไม่พบข้อมูลภาพหรือไฟล์ DRAWING สำหรับงานนี้');
+    alert('ไม่พบข้อมูลภาพหรือไฟล์ DRAWING สำหรับงานนี้\n(หากเพิ่งอัปโหลดจากเครื่องอื่น กรุณากดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" บนเครื่องนั้นก่อน)');
     return;
   }
 
@@ -3392,25 +3611,47 @@ async function saveAchievementToCloud(item) {
     const itemToSave = cleanFirestoreObject({ ...item });
     delete itemToSave._pendingSync;
 
-    // Guard Firestore 1MB document limit for large base64 attachments
-    if (itemToSave.pdfAttachment && itemToSave.pdfAttachment.data && itemToSave.pdfAttachment.data.length > 500000) {
-      itemToSave.pdfAttachment = {
-        name: itemToSave.pdfAttachment.name || '',
-        size: itemToSave.pdfAttachment.size || '',
-        type: itemToSave.pdfAttachment.type || '',
-        data: '',
-        isLargeFile: true,
-        note: 'ไฟล์ขนาดใหญ่ บันทึกใน IndexedDB เครื่องนี้'
-      };
+    // Handle PDF Attachment upload to subcollection & guard 1MB Firestore limit
+    if (itemToSave.pdfAttachment && typeof itemToSave.pdfAttachment === 'object') {
+      const pdf = { ...itemToSave.pdfAttachment };
+      if (pdf.data) {
+        pdf.hasCloudPdf = true;
+        uploadPdfFileToFirestore(firebaseDb, item.id, pdf);
+      } else if (item.pdfAttachment && item.pdfAttachment.hasCloudPdf) {
+        pdf.hasCloudPdf = true;
+      }
+      if (pdf.data && pdf.data.length > 300000) {
+        pdf.data = '';
+      }
+      itemToSave.pdfAttachment = pdf;
     }
-    if (itemToSave.imageData && itemToSave.imageData.data && itemToSave.imageData.data.length > 500000) {
-      itemToSave.imageData = {
-        name: itemToSave.imageData.name || '',
-        type: itemToSave.imageData.type || '',
-        data: '',
-        isLargeFile: true
-      };
+
+    // Handle Image Data upload to subcollection & guard 1MB Firestore limit
+    if (itemToSave.imageData && typeof itemToSave.imageData === 'object') {
+      const img = { ...itemToSave.imageData };
+      if (img.data) {
+        img.hasCloudImage = true;
+        uploadImageFileToFirestore(firebaseDb, item.id, img);
+      } else if (item.imageData && item.imageData.hasCloudImage) {
+        img.hasCloudImage = true;
+      }
+      if (img.data && img.data.length > 300000) {
+        img.data = '';
+      }
+      itemToSave.imageData = img;
+    } else if (itemToSave.imageData && typeof itemToSave.imageData === 'string') {
+      if (itemToSave.imageData.length > 300000) {
+        uploadImageFileToFirestore(firebaseDb, item.id, itemToSave.imageData);
+        itemToSave.imageData = {
+          name: 'IMAGE',
+          type: 'image/png',
+          data: '',
+          hasCloudImage: true
+        };
+      }
     }
+
+    // Handle Work Folder upload to subcollection
     if (itemToSave.workFolder && typeof itemToSave.workFolder === 'object') {
       const wf = { ...itemToSave.workFolder };
       let hasData = false;
@@ -3422,6 +3663,8 @@ async function saveAchievementToCloud(item) {
       if (hasData) {
         wf.hasCloudFiles = true;
         uploadFolderFilesToFirestore(firebaseDb, item.id, wf.files);
+      } else if (item.workFolder && item.workFolder.hasCloudFiles) {
+        wf.hasCloudFiles = true;
       }
 
       // In main doc, sanitize files to avoid hitting Firestore 1MB document limit
@@ -3446,16 +3689,21 @@ async function saveAchievementToCloud(item) {
 async function deleteAchievementFromCloud(id) {
   if (!firebaseDb || !id) return;
   try {
-    // Delete subcollection folderFiles if any
-    try {
-      const subDocs = await firebaseDb.collection('achievements').doc(id).collection('folderFiles').get();
-      const batch = firebaseDb.batch();
-      subDocs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-    } catch (subErr) {
-      console.warn('Notice cleaning folderFiles on delete:', subErr);
+    const achvDocRef = firebaseDb.collection('achievements').doc(id);
+    const subcollections = ['folderFiles', 'pdfFiles', 'imageFiles'];
+    for (const subName of subcollections) {
+      try {
+        const subDocs = await achvDocRef.collection(subName).get();
+        if (!subDocs.empty) {
+          const batch = firebaseDb.batch();
+          subDocs.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+        }
+      } catch (subErr) {
+        console.warn(`Notice cleaning ${subName} on delete:`, subErr);
+      }
     }
-    await firebaseDb.collection('achievements').doc(id).delete();
+    await achvDocRef.delete();
     console.log('Deleted from cloud successfully:', id);
   } catch (err) {
     console.error('Failed to delete achievement from cloud:', err);
@@ -3492,22 +3740,42 @@ async function migrateLocalDataToFirebase() {
       chunk.forEach(item => {
         const docRef = colRef.doc(item.id);
         const itemToSave = cleanFirestoreObject({ ...item });
-        if (itemToSave.pdfAttachment && itemToSave.pdfAttachment.data && itemToSave.pdfAttachment.data.length > 500000) {
-          itemToSave.pdfAttachment = {
-            name: itemToSave.pdfAttachment.name || '',
-            size: itemToSave.pdfAttachment.size || '',
-            type: itemToSave.pdfAttachment.type || '',
+        if (itemToSave.pdfAttachment && typeof itemToSave.pdfAttachment === 'object') {
+          if (itemToSave.pdfAttachment.data) {
+            itemToSave.pdfAttachment.hasCloudPdf = true;
+          }
+          if (itemToSave.pdfAttachment.data && itemToSave.pdfAttachment.data.length > 300000) {
+            itemToSave.pdfAttachment.data = '';
+          }
+        }
+        if (itemToSave.imageData && typeof itemToSave.imageData === 'object') {
+          if (itemToSave.imageData.data) {
+            itemToSave.imageData.hasCloudImage = true;
+          }
+          if (itemToSave.imageData.data && itemToSave.imageData.data.length > 300000) {
+            itemToSave.imageData.data = '';
+          }
+        } else if (itemToSave.imageData && typeof itemToSave.imageData === 'string' && itemToSave.imageData.length > 300000) {
+          itemToSave.imageData = {
+            name: 'IMAGE',
+            type: 'image/png',
             data: '',
-            isLargeFile: true
+            hasCloudImage: true
           };
         }
-        if (itemToSave.imageData && itemToSave.imageData.data && itemToSave.imageData.data.length > 500000) {
-          itemToSave.imageData = {
-            name: itemToSave.imageData.name || '',
-            type: itemToSave.imageData.type || '',
-            data: '',
-            isLargeFile: true
-          };
+        if (itemToSave.workFolder && typeof itemToSave.workFolder === 'object') {
+          const wf = { ...itemToSave.workFolder };
+          if (Array.isArray(wf.files) && wf.files.some(f => !!f.data)) {
+            wf.hasCloudFiles = true;
+          }
+          if (Array.isArray(wf.files)) {
+            wf.files = wf.files.map(f => {
+              const { data, ...rest } = f;
+              return rest;
+            });
+          }
+          wf.zipData = '';
+          itemToSave.workFolder = wf;
         }
         batch.set(docRef, itemToSave, { merge: true });
       });
@@ -3515,7 +3783,17 @@ async function migrateLocalDataToFirebase() {
     }
 
     showToast(`ซิงค์ข้อมูล ${achievements.length} รายการขึ้นคลาวด์สำเร็จ! 🎉`);
-    alert(`ซิงค์ข้อมูล ${achievements.length} รายการขึ้น Google Firebase Firestore สำเร็จเรียบร้อยแล้ว!\nอุปกรณ์เครื่องอื่นจะเห็นข้อมูลนี้ทันที`);
+    
+    // Check if user also wants to sync heavy attachments
+    const hasAttachments = achievements.some(a => (a.pdfAttachment && a.pdfAttachment.data) || (a.workFolder && Array.isArray(a.workFolder.files) && a.workFolder.files.some(f => !!f.data)));
+    if (hasAttachments) {
+      if (confirm(`ซิงค์ข้อมูลงาน ${achievements.length} รายการขึ้น Google Firebase Firestore สำเร็จเรียบร้อยแล้ว!\n\nตรวจพบว่ามีไฟล์แนบ (PDF / โฟลเดอร์) ในเครื่องนี้\nต้องการเริ่มอัปโหลดไฟล์แนบทั้งหมดขึ้นคลาวด์ต่อทันทีเลยหรือไม่?\n(เพื่อให้คอมพิวเตอร์เครื่องอื่นและมือถือเปิดไฟล์แนบได้ทุกไฟล์)`)) {
+        syncAllAttachmentsToCloud();
+        return;
+      }
+    } else {
+      alert(`ซิงค์ข้อมูล ${achievements.length} รายการขึ้น Google Firebase Firestore สำเร็จเรียบร้อยแล้ว!\nอุปกรณ์เครื่องอื่นจะเห็นข้อมูลนี้ทันที`);
+    }
   } catch (err) {
     console.error('Migration to Firebase failed:', err);
     alert('เกิดข้อผิดพลาดในการซิงค์ข้อมูล: ' + err.message);
@@ -3523,6 +3801,143 @@ async function migrateLocalDataToFirebase() {
     if (btnSync) {
       btnSync.disabled = false;
       btnSync.innerHTML = originalText;
+    }
+  }
+}
+
+async function syncAllAttachmentsToCloud() {
+  if (!isFirebaseConnected || !firebaseDb) {
+    alert('กรุณาเชื่อมต่อ Firebase ให้สำเร็จก่อนทำการซิงค์ (สถานะต้องเป็น ONLINE สีเขียว)');
+    return;
+  }
+
+  const btn = document.getElementById('btnSyncAllAttachments');
+  const originalText = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '🔄 กำลังค้นหาไฟล์แนบในเครื่อง...';
+  }
+
+  try {
+    // 1. Prefer IndexedDB data which holds original heavy attachments
+    let itemsToScan = achievements;
+    try {
+      const idbData = await loadAchievementsFromIndexedDB();
+      if (idbData && idbData.length > 0) {
+        itemsToScan = idbData;
+      }
+    } catch (idbErr) {
+      console.warn('Using in-memory achievements for attachment scan:', idbErr);
+    }
+
+    // Filter items with actual file data attached
+    const itemsWithAttachments = itemsToScan.filter(item => {
+      const hasPdf = item.pdfAttachment && item.pdfAttachment.data;
+      const hasImg = item.imageData && (typeof item.imageData === 'string' || (item.imageData && item.imageData.data));
+      const hasFolder = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!f.data);
+      return hasPdf || hasImg || hasFolder;
+    });
+
+    if (itemsWithAttachments.length === 0) {
+      alert('ไม่พบไฟล์แนบตัวจริง (PDF / โฟลเดอร์ / รูป) ในเบราว์เซอร์เครื่องนี้ที่ยังไม่ได้ขึ้นคลาวด์\n\n(หากแนบไฟล์จากคอมพิวเตอร์เครื่องอื่น กรุณาเปิดเว็บนี้บนเครื่องนั้นแล้วกดปุ่มซิงค์ครับ)');
+      return;
+    }
+
+    if (!confirm(`ตรวจพบงานที่มีไฟล์แนบตัวจริงในเครื่องนี้ทั้งหมด ${itemsWithAttachments.length} งาน\n\nต้องการเริ่มอัปโหลดไฟล์แนบทั้งหมดขึ้น Google Firebase Firestore ใช่หรือไม่?\n(เมื่ออัปโหลดเสร็จ คอมพิวเตอร์หรือมือถือทุกเครื่องจะสามารถเปิดดูและดาวน์โหลดไฟล์ PDF / โฟลเดอร์ ได้ทันที)`)) {
+      return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < itemsWithAttachments.length; i++) {
+      const item = itemsWithAttachments[i];
+      const title = item.code || item.title || `TASK #${i + 1}`;
+      if (btn) {
+        btn.innerHTML = `🔄 กำลังอัปโหลด (${i + 1}/${itemsWithAttachments.length})...`;
+      }
+      showToast(`☁️ [${i + 1}/${itemsWithAttachments.length}] กำลังส่งไฟล์: "${title}"`);
+
+      try {
+        let hasUpdatedMeta = false;
+        const mainDocRef = firebaseDb.collection('achievements').doc(item.id);
+
+        // 1. Upload PDF Attachment
+        if (item.pdfAttachment && item.pdfAttachment.data) {
+          await uploadPdfFileToFirestore(firebaseDb, item.id, item.pdfAttachment);
+          item.pdfAttachment.hasCloudPdf = true;
+          hasUpdatedMeta = true;
+        }
+
+        // 2. Upload Image / Drawing
+        if (item.imageData) {
+          const imgData = typeof item.imageData === 'object' ? item.imageData.data : item.imageData;
+          if (imgData) {
+            await uploadImageFileToFirestore(firebaseDb, item.id, item.imageData);
+            if (typeof item.imageData === 'object') item.imageData.hasCloudImage = true;
+            hasUpdatedMeta = true;
+          }
+        }
+
+        // 3. Upload Work Folder files
+        if (item.workFolder && Array.isArray(item.workFolder.files)) {
+          const filesWithData = item.workFolder.files.filter(f => !!f.data);
+          if (filesWithData.length > 0) {
+            await uploadFolderFilesToFirestore(firebaseDb, item.id, item.workFolder.files);
+            item.workFolder.hasCloudFiles = true;
+            hasUpdatedMeta = true;
+          }
+        }
+
+        // 4. Update cloud document flags so other machines know cloud files exist
+        if (hasUpdatedMeta) {
+          const updateObj = {};
+          if (item.pdfAttachment) {
+            updateObj['pdfAttachment.hasCloudPdf'] = true;
+            if (item.pdfAttachment.name) updateObj['pdfAttachment.name'] = item.pdfAttachment.name;
+            if (item.pdfAttachment.size) updateObj['pdfAttachment.size'] = item.pdfAttachment.size;
+            if (item.pdfAttachment.type) updateObj['pdfAttachment.type'] = item.pdfAttachment.type;
+          }
+          if (item.workFolder) {
+            updateObj['workFolder.hasCloudFiles'] = true;
+            if (item.workFolder.name) updateObj['workFolder.name'] = item.workFolder.name;
+            if (item.workFolder.fileCount) updateObj['workFolder.fileCount'] = item.workFolder.fileCount;
+            if (item.workFolder.totalSize) updateObj['workFolder.totalSize'] = item.workFolder.totalSize;
+          }
+          if (item.imageData && typeof item.imageData === 'object') {
+            updateObj['imageData.hasCloudImage'] = true;
+          }
+          await mainDocRef.set(updateObj, { merge: true });
+        }
+
+        // Update in-memory copy
+        const memItem = achievements.find(a => a.id === item.id);
+        if (memItem) {
+          if (item.pdfAttachment) memItem.pdfAttachment = item.pdfAttachment;
+          if (item.imageData) memItem.imageData = item.imageData;
+          if (item.workFolder) memItem.workFolder = item.workFolder;
+        }
+
+        successCount++;
+      } catch (err) {
+        console.error(`Upload error for item ${item.id}:`, err);
+        failCount++;
+      }
+    }
+
+    // Persist updated metadata in local IndexedDB
+    saveAchievementsToIndexedDB(achievements);
+    renderAll();
+
+    showToast(`✅ ซิงค์ไฟล์แนบทั้งหมดสำเร็จ ${successCount} รายการ! 🎉`);
+    alert(`🎉 ซิงค์ไฟล์แนบขึ้น Google Firebase Firestore สำเร็จเรียบร้อยแล้ว!\n\n- สำเร็จ: ${successCount} งาน\n- ข้อผิดพลาด: ${failCount} งาน\n\nตอนนี้คุณสามารถเปิดเว็บไซต์นี้จากคอมพิวเตอร์หรือมือถือเครื่องอื่น แล้วกดเปิดดูและดาวน์โหลดไฟล์ PDF / โฟลเดอร์ ได้ทุกไฟล์แล้วครับ!`);
+  } catch (err) {
+    console.error('syncAllAttachmentsToCloud failed:', err);
+    alert('เกิดข้อผิดพลาดในการซิงค์ไฟล์แนบ: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
     }
   }
 }
@@ -5299,10 +5714,34 @@ function openAchievementModal(id = null) {
 
     if (item.imageData) {
       currentModalImageData = item.imageData;
+      if (!getDrawingDataUrl(currentModalImageData)) {
+        loadAchievementsFromIndexedDB().then(idbData => {
+          if (idbData) {
+            const fullItem = idbData.find(a => a.id === item.id);
+            if (fullItem && fullItem.imageData && getDrawingDataUrl(fullItem.imageData)) {
+              currentModalImageData = fullItem.imageData;
+              item.imageData = fullItem.imageData;
+              updateImagePreview();
+            }
+          }
+        }).catch(e => console.warn('IDB modal image load notice:', e));
+      }
       updateImagePreview();
     }
     if (item.pdfAttachment) {
       currentModalPdf = item.pdfAttachment;
+      if (!item.pdfAttachment.data) {
+        loadAchievementsFromIndexedDB().then(idbData => {
+          if (idbData) {
+            const fullItem = idbData.find(a => a.id === item.id);
+            if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
+              currentModalPdf = fullItem.pdfAttachment;
+              item.pdfAttachment = fullItem.pdfAttachment;
+              updatePdfPreview();
+            }
+          }
+        }).catch(e => console.warn('IDB modal pdf load notice:', e));
+      }
       updatePdfPreview();
     } else {
       currentModalPdf = null;
@@ -6583,14 +7022,14 @@ function updatePdfPreview() {
       pdfNameDisplay.textContent = currentModalPdf.name;
     }
     if (pdfMetaDisplay) {
-      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : 'PDF DOCUMENT';
+      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : (currentModalPdf.data ? 'มีข้อมูลไฟล์' : (currentModalPdf.hasCloudPdf ? 'เก็บบนระบบคลาวด์' : 'PDF DOCUMENT'));
       pdfMetaDisplay.textContent = `${sizeStr} • PDF DOCUMENT`;
     }
     if (viewBtn) {
-      viewBtn.style.display = currentModalPdf.data ? 'inline-flex' : 'none';
+      viewBtn.style.display = (currentModalPdf.data || currentModalPdf.hasCloudPdf) ? 'inline-flex' : 'none';
     }
     if (dlBtn) {
-      dlBtn.style.display = currentModalPdf.data ? 'inline-flex' : 'none';
+      dlBtn.style.display = (currentModalPdf.data || currentModalPdf.hasCloudPdf) ? 'inline-flex' : 'none';
     }
     if (pdfContainer) pdfContainer.style.display = 'flex';
   } else {
@@ -6611,22 +7050,54 @@ function removeModalPdf() {
 function copyPdfPath() {}
 function handlePdfPathChange() {}
 
-function viewModalPdf() {
+async function viewModalPdf() {
   if (currentModalPdf && currentModalPdf.data) {
     openPdfData(currentModalPdf.data);
-  } else {
-    alert('ยังไม่ได้แนบไฟล์ PDF หรือไม่พบข้อมูลไฟล์');
+    return;
   }
+  const achvId = document.getElementById('achvId')?.value;
+  if (firebaseDb && achvId) {
+    showToast('☁️ กำลังดึงไฟล์ PDF จากระบบคลาวด์...');
+    const cloudPdf = await downloadPdfFileFromFirestore(firebaseDb, achvId);
+    if (cloudPdf && cloudPdf.data) {
+      if (currentModalPdf) {
+        currentModalPdf.data = cloudPdf.data;
+      } else {
+        currentModalPdf = cloudPdf;
+      }
+      updatePdfPreview();
+      openPdfData(cloudPdf.data);
+      return;
+    }
+  }
+  alert('ยังไม่ได้แนบไฟล์ PDF หรือไม่พบข้อมูลไฟล์บนคลาวด์');
 }
 
-function downloadModalPdf() {
+async function downloadModalPdf() {
   if (currentModalPdf && currentModalPdf.data) {
     const filename = currentModalPdf.name || 'JOB_REQUEST.PDF';
     downloadBase64File(currentModalPdf.data, filename, 'application/pdf');
     showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
-  } else {
-    alert('ยังไม่ได้แนบไฟล์ PDF หรือไม่พบข้อมูลไฟล์');
+    return;
   }
+  const achvId = document.getElementById('achvId')?.value;
+  if (firebaseDb && achvId) {
+    showToast('☁️ กำลังดาวน์โหลดไฟล์ PDF จากระบบคลาวด์...');
+    const cloudPdf = await downloadPdfFileFromFirestore(firebaseDb, achvId);
+    if (cloudPdf && cloudPdf.data) {
+      if (currentModalPdf) {
+        currentModalPdf.data = cloudPdf.data;
+      } else {
+        currentModalPdf = cloudPdf;
+      }
+      updatePdfPreview();
+      const filename = cloudPdf.name || currentModalPdf?.name || 'JOB_REQUEST.PDF';
+      downloadBase64File(cloudPdf.data, filename, 'application/pdf');
+      showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
+      return;
+    }
+  }
+  alert('ยังไม่ได้แนบไฟล์ PDF หรือไม่พบข้อมูลไฟล์');
 }
 
 async function openPdfAttachment(achvId) {
@@ -6638,19 +7109,51 @@ async function openPdfAttachment(achvId) {
     return;
   }
 
-  const idbData = await loadAchievementsFromIndexedDB();
-  if (idbData) {
-    const fullItem = idbData.find(a => a.id === achvId);
-    if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
-      if (item.pdfAttachment) {
-        item.pdfAttachment.data = fullItem.pdfAttachment.data;
+  // 1. Check local IndexedDB
+  try {
+    const idbData = await loadAchievementsFromIndexedDB();
+    if (idbData) {
+      const fullItem = idbData.find(a => a.id === achvId);
+      if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
+        if (item.pdfAttachment) {
+          item.pdfAttachment.data = fullItem.pdfAttachment.data;
+        } else {
+          item.pdfAttachment = fullItem.pdfAttachment;
+        }
+        openPdfData(fullItem.pdfAttachment.data);
+        return;
       }
-      openPdfData(fullItem.pdfAttachment.data);
-      return;
+    }
+  } catch (idbErr) {
+    console.warn('IndexedDB read error for PDF:', idbErr);
+  }
+
+  // 2. Fetch on-demand from Firebase Cloud Firestore
+  if (firebaseDb) {
+    showToast('☁️ กำลังดาวน์โหลดไฟล์ PDF จากระบบคลาวด์...');
+    try {
+      const cloudPdf = await downloadPdfFileFromFirestore(firebaseDb, achvId);
+      if (cloudPdf && cloudPdf.data) {
+        if (item.pdfAttachment) {
+          item.pdfAttachment.data = cloudPdf.data;
+          if (!item.pdfAttachment.name && cloudPdf.name) item.pdfAttachment.name = cloudPdf.name;
+          item.pdfAttachment.hasCloudPdf = true;
+        } else {
+          item.pdfAttachment = cloudPdf;
+        }
+
+        // Cache in local IndexedDB
+        saveAchievementsToIndexedDB(achievements);
+        showToast('✅ ดาวน์โหลด PDF จากคลาวด์สำเร็จ');
+        openPdfData(cloudPdf.data);
+        return;
+      }
+    } catch (cloudErr) {
+      console.error('Error fetching PDF from Firestore:', cloudErr);
     }
   }
 
-  alert('ไม่พบไฟล์ PDF แนบสำหรับงานนี้');
+  alert('ไม่พบไฟล์ PDF แนบสำหรับงานนี้\n\nหากเพิ่งแนบไฟล์จากเครื่องอื่น กรุณาเปิดเครื่องต้นทางแล้วกดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" เพื่ออัปโหลดไฟล์ขึ้นระบบครับ');
 }
 
 async function downloadPdfAttachment(achvId) {
@@ -6665,7 +7168,7 @@ async function downloadPdfAttachment(achvId) {
   }
 
   try {
-    showToast('กำลังดึงไฟล์ PDF จากฐานข้อมูล...');
+    showToast('กำลังตรวจสอบไฟล์ในเครื่อง...');
     const idbData = await loadAchievementsFromIndexedDB();
     if (idbData) {
       const fullItem = idbData.find(a => a.id === achvId);
@@ -6685,7 +7188,32 @@ async function downloadPdfAttachment(achvId) {
     console.warn('IndexedDB fetch error during PDF download:', err);
   }
 
-  alert('ไม่พบข้อมูลไฟล์ PDF ที่สามารถดาวน์โหลดได้สำหรับงานนี้');
+  // Fetch on-demand from Firebase Cloud Firestore
+  if (firebaseDb) {
+    showToast('☁️ กำลังดาวน์โหลดไฟล์ PDF จากระบบคลาวด์...');
+    try {
+      const cloudPdf = await downloadPdfFileFromFirestore(firebaseDb, achvId);
+      if (cloudPdf && cloudPdf.data) {
+        if (item.pdfAttachment) {
+          item.pdfAttachment.data = cloudPdf.data;
+          if (!item.pdfAttachment.name && cloudPdf.name) item.pdfAttachment.name = cloudPdf.name;
+          item.pdfAttachment.hasCloudPdf = true;
+        } else {
+          item.pdfAttachment = cloudPdf;
+        }
+
+        saveAchievementsToIndexedDB(achievements);
+        const filename = cloudPdf.name || `${item.code || 'JOB_REQUEST'}.PDF`;
+        downloadBase64File(cloudPdf.data, filename, 'application/pdf');
+        showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
+        return;
+      }
+    } catch (cloudErr) {
+      console.error('Error fetching PDF from Firestore for download:', cloudErr);
+    }
+  }
+
+  alert('ไม่พบข้อมูลไฟล์ PDF ที่สามารถดาวน์โหลดได้สำหรับงานนี้\n\nหากเพิ่งแนบไฟล์จากเครื่องอื่น กรุณาเปิดเครื่องต้นทางแล้วกดปุ่ม "CLOUD: ONLINE" > "ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์" เพื่ออัปโหลดไฟล์ขึ้นระบบครับ');
 }
 
 function openPdfData(base64Data) {
