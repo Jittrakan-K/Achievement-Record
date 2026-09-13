@@ -3050,6 +3050,7 @@ function initApp() {
     updateRequesterRankingVisibility();
     renderAll();
     initFirebaseFromStorage();
+    initMurataComponents();
 
     // Support deep-linking to modal via URL hash (e.g. #new or #edit=achv_xxx)
     if (window.location.hash.startsWith('#new')) {
@@ -3077,6 +3078,8 @@ function initApp() {
     } else if (window.location.hash.startsWith('#edit=')) {
       const editId = window.location.hash.replace('#edit=', '').split('&')[0];
       setTimeout(() => openAchievementModal(editId), 150);
+    } else if (window.location.hash.includes('search') || window.location.hash.includes('controls')) {
+      setTimeout(() => scrollToSearchAndControls(), 250);
     }
   } catch (initErr) {
     console.error('App initialization error:', initErr);
@@ -4156,13 +4159,43 @@ function initFirebaseFromStorage() {
 
 // --- Setup Event Listeners ---
 function setupEventListeners() {
-  // Search Input
+  // Search Input & Murata Keyword Search Sync
   const searchInput = document.getElementById('searchInput');
+  const murataKeywordInput = document.getElementById('murataKeywordInput');
+  const btnMurataSearchClear = document.getElementById('btnMurataSearchClear');
+
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       currentSearch = e.target.value.trim().toLowerCase();
+      if (murataKeywordInput && murataKeywordInput.value !== e.target.value) {
+        murataKeywordInput.value = e.target.value;
+        if (btnMurataSearchClear) {
+          btnMurataSearchClear.style.display = e.target.value ? 'block' : 'none';
+        }
+      }
       renderContent();
       renderRequesterRanking();
+    });
+  }
+
+  if (murataKeywordInput) {
+    murataKeywordInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value.trim().toLowerCase();
+      if (searchInput && searchInput.value !== e.target.value) {
+        searchInput.value = e.target.value;
+      }
+      if (btnMurataSearchClear) {
+        btnMurataSearchClear.style.display = e.target.value ? 'block' : 'none';
+      }
+      renderContent();
+      renderRequesterRanking();
+    });
+
+    murataKeywordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerMurataKeywordSearch();
+      }
     });
   }
 
@@ -4425,6 +4458,11 @@ function resetAllFilters() {
   currentSearch = '';
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.value = '';
+
+  const murataInput = document.getElementById('murataKeywordInput');
+  if (murataInput) murataInput.value = '';
+  const murataClear = document.getElementById('btnMurataSearchClear');
+  if (murataClear) murataClear.style.display = 'none';
 
   currentCategoryFilter = 'all';
   const catSelect = document.getElementById('categoryFilter');
@@ -7816,4 +7854,204 @@ function dismissAllToasts() {
     container.innerHTML = '';
   }
 }
+
+// ==========================================================================
+// Murata Manufacturing Aesthetic Enhancements (Hero, Carousel, Search, FAB)
+// ==========================================================================
+
+const MURATA_HERO_SLIDES = [
+  {
+    badge: "TASK TRACKING PORTAL",
+    title: "ACHIEVEMENT <span>RECORD</span>",
+    desc: "ศูนย์รวมบันทึกผลงาน ติดตามความคืบหน้างวดงาน ออกแบบระบบ และจัดเก็บเอกสาร",
+    checklist: [
+      "■ ระบบบันทึกผลงานและแนบไฟล์ Job Request (PDF) & โฟลเดอร์งาน (.ZIP)",
+      "■ ค้นหาและดาวน์โหลดไฟล์ผลงานกลับมาเปิดดูได้ทุกที่ทุกเวลา",
+      "■ แสดงผลสถานะงานแบบ Real-time พร้อมกราฟสถิติและความคืบหน้า 100%"
+    ]
+  },
+  {
+    badge: "CONTINUOUS IMPROVEMENT • KAIZEN & INNOVATION",
+    title: "Kaizen Hub <span>/ Smart Engineering</span>",
+    desc: "ยกระดับกระบวนการผลิต พัฒนาระบบอัตโนมัติ (Automation & Jig/Fixture) และบันทึกคำร้องขออย่างเป็นระบบ",
+    checklist: [
+      "■ ติดตามสถานะงานตามประเภท : DESIGN JIG & FIXTURE, ACCESSORIES, PR / PURCHASING, IMPROVEMENT / KAIZEN, SPECIAL PROJECT",
+      "■ ตรวจสอบการจัดซื้อ อนุมัติงบประมาณ PR/PO และงวดงานพร้อมประเมินผล",
+      "■ จัดอันดับคำร้องขอและสรุปแนวโน้มงานด้วยสถิติเชิงลึก"
+    ]
+  },
+  {
+    badge: "CLOUD & LOCAL STORAGE • ZERO DATA LOSS",
+    title: "Cloud Sync <span>/ Multi-Device Access</span>",
+    desc: "เชื่อมต่อข้อมูลแบบเรียลไทม์ระหว่างอุปกรณ์ พร้อมระบบสำรองข้อมูลทั้งแบบ Offline และ Firebase Cloud",
+    checklist: [
+      "■ ใช้งานได้ทั้งบนคอมพิวเตอร์ แท็บเล็ต และสมาร์ทโฟน",
+      "■ ส่งออกไฟล์ Excel (CSV) และ JSON Backup ได้ในคลิกเดียว",
+      "■ เอกสารและไฟล์แนบปลอดภัย บันทึกและดึงข้อมูลกลับมาใช้งานได้ทันที"
+    ]
+  },
+  {
+    badge: "DOCUMENTATION ARCHIVE • AUDIT & COMPLIANCE",
+    title: "Digital Archive <span>/ 100% Traceability</span>",
+    desc: "เก็บบันทึกประวัติผลงานย้อนหลัง ตรวจสอบที่มาของเอกสาร และพิมพ์รายงานสรุปผลงานเป็น PDF ได้ทันที",
+    checklist: [
+      "■ รองรับการพิมพ์ใบสรุปงานและ Export รายงานผลงานทางการ",
+      "■ ค้นหาเอกสารย้อนหลังได้รวดเร็วผ่าน Keyword Search ความเร็วสูง",
+      "■ มาตรฐานการทำงานระดับสากล สอดคล้องกับระบบบริหารคุณภาพงานวิศวกรรม"
+    ]
+  }
+];
+
+let currentMurataSlideIndex = 0; // Starts at 01 / 04
+let murataCarouselTimer = null;
+let isMurataCarouselPlaying = true;
+
+function updateMurataSlide(index) {
+  if (index < 0) index = MURATA_HERO_SLIDES.length - 1;
+  if (index >= MURATA_HERO_SLIDES.length) index = 0;
+  currentMurataSlideIndex = index;
+
+  const slide = MURATA_HERO_SLIDES[currentMurataSlideIndex];
+  const badgeEl = document.getElementById('murataHeroBadge');
+  const titleEl = document.getElementById('murataHeroTitle');
+  const descEl = document.getElementById('murataHeroDesc');
+  const listEl = document.getElementById('murataHeroChecklist');
+  const curSlideEl = document.getElementById('murataCurSlide');
+  const progressFillEl = document.getElementById('murataProgressFill');
+
+  if (badgeEl) badgeEl.textContent = slide.badge;
+  if (titleEl) titleEl.innerHTML = slide.title;
+  if (descEl) descEl.textContent = slide.desc;
+  if (listEl) {
+    listEl.innerHTML = slide.checklist.map(item => `<li><span class="chk-box">■</span> ${escapeHtml(item.replace(/^■\s*/, ''))}</li>`).join('');
+  }
+
+  if (curSlideEl) {
+    curSlideEl.textContent = String(currentMurataSlideIndex + 1).padStart(2, '0');
+  }
+  if (progressFillEl) {
+    const percent = ((currentMurataSlideIndex + 1) / MURATA_HERO_SLIDES.length) * 100;
+    progressFillEl.style.width = `${percent}%`;
+  }
+}
+
+function prevMurataSlide() {
+  updateMurataSlide(currentMurataSlideIndex - 1);
+  resetMurataCarouselTimer();
+}
+
+function nextMurataSlide() {
+  updateMurataSlide(currentMurataSlideIndex + 1);
+  resetMurataCarouselTimer();
+}
+
+function toggleMurataCarousel() {
+  const btn = document.getElementById('btnCarouselPlayPause');
+  if (isMurataCarouselPlaying) {
+    isMurataCarouselPlaying = false;
+    clearInterval(murataCarouselTimer);
+    if (btn) btn.textContent = '▶';
+  } else {
+    isMurataCarouselPlaying = true;
+    startMurataCarouselTimer();
+    if (btn) btn.textContent = '||';
+  }
+}
+
+function startMurataCarouselTimer() {
+  clearInterval(murataCarouselTimer);
+  murataCarouselTimer = setInterval(() => {
+    if (isMurataCarouselPlaying) {
+      updateMurataSlide(currentMurataSlideIndex + 1);
+    }
+  }, 6000);
+}
+
+function resetMurataCarouselTimer() {
+  if (isMurataCarouselPlaying) {
+    startMurataCarouselTimer();
+  }
+}
+
+function triggerMurataKeywordSearch() {
+  const murataInput = document.getElementById('murataKeywordInput');
+  const searchInput = document.getElementById('searchInput');
+  const val = (murataInput ? murataInput.value : '').trim();
+  
+  currentSearch = val.toLowerCase();
+  if (searchInput) searchInput.value = val;
+  
+  const clearBtn = document.getElementById('btnMurataSearchClear');
+  if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+  
+  renderContent();
+  renderRequesterRanking();
+  
+  // Smoothly scroll down to the controls / task list section
+  const targetSec = document.querySelector('.controls-bar') || document.querySelector('.stats-grid');
+  if (targetSec) {
+    targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function clearMurataKeywordSearch() {
+  const murataInput = document.getElementById('murataKeywordInput');
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('btnMurataSearchClear');
+  
+  if (murataInput) murataInput.value = '';
+  if (searchInput) searchInput.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+  
+  currentSearch = '';
+  renderContent();
+  renderRequesterRanking();
+}
+
+function initMurataComponents() {
+  // Initialize carousel slide
+  updateMurataSlide(currentMurataSlideIndex);
+  startMurataCarouselTimer();
+
+  // Floating scroll-to-top visibility toggle
+  const btnScrollTop = document.getElementById('btnScrollTop');
+  if (btnScrollTop) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        btnScrollTop.style.display = 'flex';
+      } else {
+        btnScrollTop.style.display = 'none';
+      }
+    }, { passive: true });
+    btnScrollTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  }
+}
+
+function scrollToSearchAndControls() {
+  const controls = document.getElementById('controlsBar') || document.querySelector('.controls-bar');
+  const searchInput = document.getElementById('searchInput');
+  const header = document.querySelector('.app-header');
+  const headerHeight = header ? header.offsetHeight : 64;
+
+  if (controls) {
+    const rect = controls.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const targetY = scrollTop + rect.top - headerHeight - 12;
+
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: 'smooth'
+    });
+  }
+
+  if (searchInput) {
+    setTimeout(() => {
+      searchInput.focus();
+      searchInput.select();
+      searchInput.classList.add('search-highlight-pulse');
+      setTimeout(() => searchInput.classList.remove('search-highlight-pulse'), 1500);
+    }, 450);
+  }
+}
+
 

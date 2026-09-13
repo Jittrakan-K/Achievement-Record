@@ -1,66 +1,76 @@
 /* ==========================================================================
    Work Achievement Record & Tracker - Stylesheet
    ORBRAY CO., LTD. — PRODUCTION TECHNOLOGY DEPARTMENT
-   Official Orbray Corporate Aesthetic (orbray.com)
-   THEME: WHITE & SOFT LIGHT BLUE (สบายตา)
+   Theme: MURATA MANUFACTURING AESTHETIC (muRata - INNOVATOR IN ELECTRONICS)
+   Colors: Murata Red (#E60012), Charcoal Slate (#333E48), Crisp White & Grey
    ALL ENGLISH CHARACTERS ARE UPPERCASE
    ========================================================================== */
 
 :root {
-  /* Modern White & Soft Light Blue Palette (Orbray Techno - Comfort & Elegance) */
-  --primary: #2563eb;          /* Clean Modern Blue */
-  --primary-hover: #1d4ed8;
-  --primary-light: #f0f7ff;    /* Softest Ice Blue Background Tint */
-  --primary-soft: #e0f2fe;     /* Gentle Pastel Blue */
-  --primary-border: #bfdbfe;   /* Light Sky Blue Border */
-  --primary-glow: rgba(37, 99, 235, 0.16);
-  --orbray-navy: #0f2e6b;      /* Refined Corporate Navy for Text */
-  --orbray-dark: #0f172a;
-  --orbray-accent: #3b82f6;
+  /* Murata Manufacturing Corporate Aesthetic (muRata - INNOVATOR IN ELECTRONICS) */
+  --primary: #E60012;          /* Signature Murata Vibrant Red */
+  --primary-hover: #C40010;    /* Deep Murata Red */
+  --primary-light: #fff5f5;    /* Soft Red Background Tint */
+  --primary-soft: #fee2e2;     /* Gentle Red Highlight */
+  --primary-border: #fca5a5;   /* Light Red Border */
+  --primary-glow: rgba(230, 0, 18, 0.2);
 
-  --secondary: #475569;
-  --success: #10b981;
-  --success-light: #ecfdf5;
-  --warning: #f59e0b;
-  --warning-light: #fffbeb;
-  --danger: #ef4444;
-  --danger-light: #fef2f2;
-  --purple: #8b5cf6;
-  --purple-light: #f5f3ff;
-  --cyan: #06b6d4;
-  --cyan-light: #f0fdfa;
+  --murata-red: #E60012;
+  --murata-red-hover: #C40010;
+  --murata-charcoal: #333E48;  /* Murata Dark Slate / Charcoal */
+  --murata-dark: #242A31;      /* Murata Deep Tech Black */
+  --murata-slate: #4A545E;     /* Medium Slate */
+  --murata-border: #E2E5E8;    /* Precision Border */
+  --murata-bg-light: #F4F6F8;  /* Industrial Light Grey */
+  --murata-text-dark: #222222; /* High-contrast Charcoal Black */
 
-  --status-done: #10b981;
-  --status-in_progress: #2563eb;
-  --status-wait: #f43f5e;
+  --orbray-navy: #333E48;      /* Murata Slate */
+  --orbray-dark: #222222;
+  --orbray-accent: #E60012;
 
-  --bg-main: #f5f9fd;          /* Very Soft Light Blue-Tinted White */
-  --bg-card: #ffffff;
-  --bg-input: #f8faff;
-  --border-color: #e2ecf8;     /* Soft Blue-Grey Border */
-  --border-focus: #3b82f6;
+  --secondary: #4A545E;
+  --success: #00875A;          /* Precision Green */
+  --success-light: #E3FCEF;
+  --warning: #FF991F;          /* Amber */
+  --warning-light: #FFF0B3;
+  --danger: #DE350B;
+  --danger-light: #FFEBE6;
+  --purple: #6554C0;
+  --purple-light: #EAE6FF;
+  --cyan: #00B8D9;
+  --cyan-light: #E6FCFF;
 
-  --text-main: #0f172a;
-  --text-navy: #0f2e6b;
-  --text-muted: #475569;
-  --text-light: #64748b;
+  --status-done: #00875A;
+  --status-in_progress: #333E48;
+  --status-wait: #E60012;
 
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  --bg-main: #F4F6F8;          /* Murata Light Grey */
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --border-color: #E2E5E8;     /* Clean Murata Border */
+  --border-focus: #E60012;
 
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.03);
-  --shadow-sm: 0 2px 6px rgba(37, 99, 235, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 6px 20px -3px rgba(37, 99, 235, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  --shadow-lg: 0 14px 32px -6px rgba(37, 99, 235, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
-  --shadow-xl: 0 20px 40px -10px rgba(37, 99, 235, 0.08), 0 0 1px 1px rgba(191, 219, 254, 0.6);
-  --shadow-glow: 0 8px 24px -4px rgba(37, 99, 235, 0.22);
+  --text-main: #222222;
+  --text-navy: #333E48;
+  --text-muted: #555E67;
+  --text-light: #767E86;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-full: 4px; /* Precision rectangular engineering aesthetic */
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.10);
+  --shadow-glow: 0 4px 16px rgba(230, 0, 18, 0.25);
 
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Sarabun", sans-serif;
-  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: all 0.18s ease-in-out;
 }
 
 /* Reset & Base */
@@ -91,12 +101,7 @@ body, button, input, select, textarea, .btn, .stat-card, .badge,
 
 body {
   font-family: var(--font-family);
-  background: 
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(224, 242, 254, 0.7), transparent 75%),
-    radial-gradient(circle at 90% 12%, rgba(239, 246, 255, 0.8), transparent 45%),
-    radial-gradient(circle at 10% 25%, rgba(240, 249, 255, 0.7), transparent 40%),
-    linear-gradient(180deg, #f0f7ff 0%, #f6faff 260px, #fbfdff 600px, #ffffff 100%);
-  background-attachment: fixed;
+  background: #f4f6f8;
   color: var(--text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -111,15 +116,15 @@ body {
   padding: 0 24px;
 }
 
-/* System Top Status Strip - Soft Light Blue Aesthetic */
+/* System Top Status Strip - Murata Aesthetic */
 .system-top-strip,
 .orbray-top-strip {
-  background: #f0f7ff;
-  color: #1e3a8a;
-  font-size: 11px;
-  letter-spacing: 0.8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #dbeafe;
+  background: #ffffff;
+  color: #333E48;
+  font-size: 11.5px;
+  letter-spacing: 0.6px;
+  padding: 8px 0;
+  border-bottom: 1px solid #E2E5E8;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -142,51 +147,49 @@ body {
 
 .system-top-corp,
 .orbray-top-corp {
-  font-weight: 800;
-  color: #1e40af;
-  letter-spacing: 1px;
+  font-weight: 900;
+  color: #E60012;
+  letter-spacing: 0.5px;
 }
 
 .system-top-sep,
 .orbray-top-sep {
-  color: #93c5fd;
+  color: #D6D9DE;
 }
 
 .system-top-dept,
 .orbray-top-dept {
-  color: #2563eb;
-  font-weight: 600;
+  color: #4A545E;
+  font-weight: 700;
 }
 
 .system-top-strip-right,
 .orbray-top-strip-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  color: #0284c7;
-  font-weight: 700;
+  gap: 12px;
+  font-size: 11px;
+  color: #555E67;
+  font-weight: 600;
 }
 
 .status-indicator-dot {
   width: 7px;
   height: 7px;
-  background: #10b981;
+  background: #E60012;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.3);
   display: inline-block;
 }
 
-/* Header - Frosted Glass Floating Navbar */
+/* Header - Murata Clean Corporate Navbar */
 .app-header {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid #e2ecf8;
+  background: #ffffff;
+  border-bottom: 2px solid #E60012;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 14px rgba(37, 99, 235, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .header-inner {
@@ -201,18 +204,20 @@ body {
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .brand-app-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: #E60012;
+  color: #ffffff;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(230, 0, 18, 0.3);
   transition: transform 0.2s ease;
 }
 
@@ -221,9 +226,9 @@ body {
 }
 
 .brand-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #0f2e6b;
+  font-size: 17px;
+  font-weight: 900;
+  color: #222222;
   letter-spacing: 0.8px;
   display: flex;
   align-items: center;
@@ -233,20 +238,22 @@ body {
 
 .brand-badge {
   font-size: 10px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  color: #1e40af;
+  font-weight: 800;
+  background: #fff5f5;
+  color: #E60012;
   padding: 2px 8px;
-  border-radius: var(--radius-full);
-  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  border: 1px solid #fca5a5;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
 .brand-subtitle {
-  font-size: 11.5px;
-  color: #475569;
+  font-size: 11px;
+  color: #666666;
   letter-spacing: 0.4px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .header-actions {
@@ -272,16 +279,16 @@ body {
   display: none !important;
 }
 
-/* Modern Pill Buttons */
+/* Murata Precision Rectangular Buttons (4px radius) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   padding: 8px 16px;
-  border-radius: var(--radius-full);
+  border-radius: 4px;
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
   transition: var(--transition);
@@ -289,43 +296,44 @@ body {
   background: transparent;
   white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: #E60012;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  border: 1px solid #E60012;
+  box-shadow: 0 2px 6px rgba(230, 0, 18, 0.25);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 4px 14px rgba(230, 0, 18, 0.35);
+  background: #C40010;
+  border-color: #C40010;
 }
 
 .btn-secondary {
   background-color: #ffffff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.04);
+  color: #333E48;
+  border: 1px solid #D6D9DE;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 .btn-secondary:hover {
-  background-color: #f0f7ff;
-  border-color: #93c5fd;
-  color: #1d4ed8;
+  background-color: #F4F6F8;
+  border-color: #B8BFC6;
+  color: #222222;
 }
 
 .btn-outline {
   background-color: #ffffff;
-  color: #334155;
-  border: 1px solid #e2ecf8;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  color: #333E48;
+  border: 1px solid #D6D9DE;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 .btn-outline:hover {
-  background-color: #f8faff;
-  border-color: #bfdbfe;
-  color: #1e40af;
+  background-color: #fff5f5;
+  border-color: #fca5a5;
+  color: #E60012;
 }
 
 .btn-danger {
@@ -341,17 +349,18 @@ body {
 .btn-sm {
   padding: 5px 12px;
   font-size: 11.5px;
+  border-radius: 3px;
 }
 
 .btn-icon {
   width: 32px;
   height: 32px;
   padding: 0;
-  border-radius: var(--radius-full);
+  border-radius: 4px;
 }
 
 /* ==========================================================================
-   KPI Summary Metric Cards (White & Soft Light Blue - สบายตา)
+   KPI Summary Metric Cards (Murata Precision Engineering Aesthetic)
    ========================================================================== */
 .stats-grid {
   display: grid;
@@ -362,40 +371,41 @@ body {
 
 .stat-card {
   background: #ffffff;
-  border: 1px solid #e2ecf8;
-  border-radius: var(--radius-md);
+  border: 1px solid #E2E5E8;
+  border-top: 3px solid #333E48;
+  border-radius: 4px;
   padding: 16px 18px;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   transition: var(--transition);
   position: relative;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  border-color: #93c5fd;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12);
+  border-top-color: #E60012;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .stat-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: var(--radius-sm);
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.stat-blue { background: #eff6ff; color: #1e5bf0; border: 1px solid #dbeafe; }
-.stat-green { background: #ecfdf5; color: #059669; border: 1px solid #d1fae5; }
-.stat-sky { background: #f0f9ff; color: #0284c7; border: 1px solid #e0f2fe; }
-.stat-rose { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
-.stat-slate { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+.stat-blue { background: #F4F6F8; color: #333E48; border: 1px solid #D6D9DE; }
+.stat-green { background: #E3FCEF; color: #00875A; border: 1px solid #ABF5D1; }
+.stat-sky { background: #E6FCFF; color: #00B8D9; border: 1px solid #B3F5FF; }
+.stat-rose { background: #fff5f5; color: #E60012; border: 1px solid #fecdd3; }
+.stat-slate { background: #F4F6F8; color: #555E67; border: 1px solid #D6D9DE; }
 
 .stat-info {
   display: flex;
@@ -406,8 +416,8 @@ body {
 
 .stat-label {
   font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 700;
+  color: #555E67;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding-right: 76px;
@@ -416,17 +426,18 @@ body {
 
 .stat-value {
   font-size: 26px;
-  font-weight: 800;
-  color: #0f2e6b;
+  font-weight: 900;
+  color: #222222;
   line-height: 1.15;
   margin-top: 3px;
 }
 
 .stat-subtext {
   font-size: 11px;
-  color: var(--text-light);
+  color: #767E86;
   margin-top: 3px;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .stat-trend-pill {
@@ -434,18 +445,18 @@ body {
   top: 14px;
   right: 14px;
   font-size: 9.5px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.4px;
   padding: 2px 7px;
-  border-radius: var(--radius-full);
+  border-radius: 3px;
   text-transform: uppercase;
 }
 
-.trend-blue { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; }
-.trend-green { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-.trend-sky { background: #f0f9ff; color: #075985; border: 1px solid #bae6fd; }
-.trend-rose { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
-.trend-slate { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.trend-blue { background: #F4F6F8; color: #333E48; border: 1px solid #D6D9DE; }
+.trend-green { background: #E3FCEF; color: #00875A; border: 1px solid #ABF5D1; }
+.trend-sky { background: #E6FCFF; color: #00B8D9; border: 1px solid #B3F5FF; }
+.trend-rose { background: #fff5f5; color: #E60012; border: 1px solid #fecdd3; }
+.trend-slate { background: #F4F6F8; color: #555E67; border: 1px solid #D6D9DE; }
 
 /* Analytics Section (Charts) */
 .analytics-section {
@@ -1026,19 +1037,18 @@ body {
   border-radius: 8px;
 }
 
-/* Controls & Filter Bar - Modern Floating Segmented Controls */
+/* Controls & Filter Bar - Murata Clean Precision Style */
 .controls-bar {
-  margin-top: 24px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #e2ecf8;
-  border-radius: var(--radius-xl);
-  padding: 18px 22px;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.05);
+  margin-top: 20px;
+  background: #ffffff;
+  border: 1px solid #E2E5E8;
+  border-radius: 4px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: 14px;
+  scroll-margin-top: 80px;
 }
 
 .controls-row-top {
@@ -1057,48 +1067,49 @@ body {
 
 .search-input {
   width: 100%;
-  padding: 10px 18px 10px 42px;
-  border: 1px solid #cfe2fe;
-  border-radius: var(--radius-full);
+  padding: 9px 16px 9px 38px;
+  border: 1px solid #D6D9DE;
+  border-radius: 3px;
   font-size: 13px;
-  background: #fbfdff;
+  background: #ffffff;
   outline: none;
   transition: var(--transition);
-  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.03);
+  box-shadow: none;
+  color: #222222;
 }
 
 .search-input:focus {
   background: #ffffff;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: #E60012;
+  box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.15);
 }
 
 .search-icon {
   position: absolute;
-  left: 15px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-light);
-  font-size: 15px;
+  color: #767E86;
+  font-size: 14px;
 }
 
 .view-tabs {
   display: flex;
-  background: #f0f6ff;
-  padding: 4px;
-  border-radius: var(--radius-full);
-  gap: 3px;
-  border: 1px solid #e2ecf8;
+  background: #F4F6F8;
+  padding: 3px;
+  border-radius: 3px;
+  gap: 2px;
+  border: 1px solid #E2E5E8;
 }
 
 .view-tab {
   border: none;
   background: transparent;
   padding: 6px 14px;
-  border-radius: var(--radius-full);
+  border-radius: 2px;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: #555E67;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1109,13 +1120,13 @@ body {
 }
 
 .view-tab.active {
-  background: #ffffff;
-  color: #1d4ed8;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+  background: #E60012;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(230, 0, 18, 0.3);
 }
 
-/* Secondary Filter Controls Section - Modern Clean Filters */
+/* Secondary Filter Controls Section - Murata Precision Filters */
 .controls-filters {
   display: flex;
   flex-direction: column;
@@ -4005,3 +4016,415 @@ textarea.form-control {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   Murata Manufacturing Component Styles (Hero Banner, Keyword Search, FAB)
+   ========================================================================== */
+
+/* 1. Murata Hero Showcase Banner ("my Murata" Style) */
+.murata-hero-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.murata-hero-card {
+  background: linear-gradient(135deg, #333E48 0%, #2A333C 55%, #1F262D 100%);
+  border-radius: 6px;
+  padding: 34px 38px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  border: 1px solid #434D57;
+}
+
+.murata-hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(circle at 75% 50%, rgba(230, 0, 18, 0.14), transparent 60%),
+              radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.04), transparent 40%);
+  pointer-events: none;
+}
+
+.murata-hero-content {
+  flex: 1;
+  max-width: 900px;
+  position: relative;
+  z-index: 2;
+}
+
+.murata-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #ffffff;
+  background: #E60012;
+  padding: 3px 10px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.murata-hero-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.murata-hero-title span {
+  color: #E60012;
+}
+
+.murata-hero-desc {
+  font-size: 14.5px;
+  color: #D6D9DE;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.murata-hero-checklist {
+  list-style: none;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.murata-hero-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.8px;
+  color: #F4F6F8;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.murata-hero-checklist .chk-box {
+  color: #ffffff;
+  font-size: 13px;
+  display: inline-block;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.murata-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-murata-red {
+  background: #E60012;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: 3px;
+  border: 1px solid #E60012;
+  box-shadow: 0 4px 12px rgba(230, 0, 18, 0.4);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.btn-murata-red:hover {
+  background: #C40010;
+  border-color: #C40010;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(230, 0, 18, 0.5);
+}
+
+.btn-murata-outline {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.btn-murata-outline:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.murata-hero-visual {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .murata-hero-card {
+    padding: 22px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .murata-hero-visual {
+    display: none;
+  }
+  .murata-hero-title {
+    font-size: 24px;
+  }
+}
+
+/* Murata Carousel Controls Bar (02 / 04 with red progress and < > ||) */
+.murata-carousel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.murata-carousel-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #333E48;
+}
+
+.murata-carousel-indicator .cur-slide {
+  color: #222222;
+  font-weight: 800;
+}
+
+.murata-carousel-indicator .slash {
+  color: #999999;
+}
+
+.murata-carousel-indicator .total-slides {
+  color: #666666;
+}
+
+.murata-progress-track {
+  width: 120px;
+  height: 3px;
+  background: #D6D9DE;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.murata-progress-fill {
+  height: 100%;
+  background: #E60012;
+  transition: width 0.3s ease;
+}
+
+.murata-carousel-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-carousel-arrow {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #D6D9DE;
+  color: #333E48;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-carousel-arrow:hover {
+  border-color: #E60012;
+  color: #E60012;
+}
+
+.btn-carousel-arrow.btn-pause {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* 2. Murata Keyword Search Bar (Dark Slate container with Red Search Button) */
+.murata-keyword-search-section {
+  margin-top: 20px;
+  margin-bottom: 24px;
+  background: #333E48;
+  border-radius: 4px;
+  padding: 20px 24px;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.murata-ks-header {
+  margin-bottom: 12px;
+}
+
+.murata-ks-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.4px;
+  margin-bottom: 3px;
+}
+
+.murata-ks-subtitle {
+  font-size: 12px;
+  color: #B8BFC6;
+  font-weight: 500;
+}
+
+.murata-ks-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #ffffff;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.murata-ks-input-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.murata-ks-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px 0 40px;
+  border: none;
+  outline: none;
+  font-size: 13.5px;
+  color: #222222;
+  font-weight: 600;
+  background: #ffffff;
+}
+
+.murata-ks-input::placeholder {
+  color: #888888;
+  font-weight: 400;
+}
+
+.murata-ks-input-wrapper::before {
+  content: "🔍";
+  position: absolute;
+  left: 14px;
+  font-size: 14px;
+  color: #888888;
+  pointer-events: none;
+}
+
+.murata-ks-clear {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #888888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.murata-ks-clear:hover {
+  color: #222222;
+}
+
+.btn-murata-search {
+  height: 44px;
+  padding: 0 28px;
+  background: #E60012;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-murata-search:hover {
+  background: #C40010;
+}
+
+@keyframes searchHighlightPulse {
+  0% { box-shadow: 0 0 0 0 rgba(230, 0, 18, 0.5); border-color: #E60012; }
+  50% { box-shadow: 0 0 0 4px rgba(230, 0, 18, 0.3); border-color: #E60012; }
+  100% { box-shadow: 0 0 0 0 rgba(230, 0, 18, 0); }
+}
+
+.search-highlight-pulse {
+  animation: searchHighlightPulse 1.4s ease-out;
+}
+
+/* 3. Floating Murata Red Scroll-To-Top Button ([ ↑ ]) */
+.murata-floating-scroll-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
+  background: #E60012;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(230, 0, 18, 0.4);
+  z-index: 999;
+  transition: all 0.2s ease;
+}
+
+.murata-floating-scroll-top:hover {
+  background: #C40010;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(230, 0, 18, 0.55);
+}
+
