@@ -5559,9 +5559,9 @@ function renderTableView(container, items) {
         <thead>
           <tr>
             <th class="col-no" style="width: 48px; min-width: 48px; text-align: center; white-space: nowrap;">#</th>
-            <th style="width: 25%;">TASK & CATEGORY</th>
-            <th style="width: 105px;">STATUS</th>
-            <th style="width: 22%;">REQUEST & LOCATION</th>
+            <th style="width: 23%;">TASK & CATEGORY</th>
+            <th class="col-status" style="width: 125px; min-width: 120px; text-align: center; white-space: nowrap;">STATUS</th>
+            <th style="width: 23%;">REQUEST & LOCATION</th>
             <th style="width: 24%;">NOTE & DETAIL</th>
             <th style="width: 130px;">FILES & ASSIGN</th>
             <th style="width: 90px; text-align: right; white-space: nowrap;">DATE</th>
@@ -5587,7 +5587,7 @@ function renderTableView(container, items) {
               ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
             </div>
           </td>
-          <td>${statusHtml}</td>
+          <td class="col-status" style="text-align: center;">${statusHtml}</td>
           <td>
             <div class="cell-stacked">
               <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
@@ -5686,7 +5686,7 @@ function renderTableView(container, items) {
           <tr>
             <th class="sticky-col-no" style="white-space: nowrap; text-align: center;">#</th>
             <th class="sticky-col-task">TASK NAME</th>
-            <th style="min-width: 120px;">STATUS</th>
+            <th class="col-status" style="min-width: 125px; text-align: center; white-space: nowrap;">STATUS</th>
             <th style="min-width: 90px;">ASSIGN</th>
             <th style="min-width: 140px;">REQUEST NUMBER</th>
             <th style="min-width: 130px;">QUOTATION</th>
@@ -5719,7 +5719,7 @@ function renderTableView(container, items) {
               ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
             </div>
           </td>
-          <td>${statusHtml}</td>
+          <td class="col-status" style="text-align: center;">${statusHtml}</td>
           <td>
             ${item.assignee ? `<span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะงานของ: ${escapeHtml(uppercaseEnglish(item.assignee))}">😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
           </td>
