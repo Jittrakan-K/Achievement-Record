@@ -1926,6 +1926,20 @@ const STORAGE_KEY_ACHIEVEMENTS = 'orbray_prod_techno_achievements_v4';
 const STORAGE_KEY_CATEGORIES = 'orbray_prod_techno_categories_v4';
 const STORAGE_KEY_SHOW_RANKING = 'orbray_show_requester_ranking';
 const STORAGE_KEY_FIREBASE_CONFIG = 'orbray_firebase_config_v1';
+const STORAGE_KEY_AUTH_USER = 'orbray_auth_current_user_v1';
+const STORAGE_KEY_TEAM_PINS = 'orbray_team_account_pins_v1';
+
+// --- Production Technology Team Accounts & Initial PINs ---
+const DEFAULT_TEAM_ACCOUNTS = [
+  { id: 'usr_20523', pin: '20523', name: 'JITTRAKAN K.', role: 'ADMIN', avatar: '👑' },
+  { id: 'usr_20524', pin: '20524', name: 'SUTTHIPONG M.', role: 'MEMBER', avatar: '👨‍💼' },
+  { id: 'usr_20525', pin: '20525', name: 'TANIN P.', role: 'MEMBER', avatar: '👨‍💻' },
+  { id: 'usr_20526', pin: '20526', name: 'KITTISAK P.', role: 'MEMBER', avatar: '👷' },
+  { id: 'usr_20527', pin: '20527', name: 'NARUEBODEE C.', role: 'MEMBER', avatar: '🧑‍🔧' }
+];
+
+let currentUser = null;
+let pendingAuthSuccessCallback = null;
 
 // --- IndexedDB for Persistent Large Attachment Storage (Unlimited Size) ---
 const IDB_NAME = 'OrbrayAchievementDB';
@@ -3046,6 +3060,7 @@ async function downloadImageAttachment(achvId) {
 function initApp() {
   try {
     loadData();
+    initAuthSession();
     setupEventListeners();
     updateRequesterRankingVisibility();
     renderAll();
@@ -3078,6 +3093,13 @@ function initApp() {
     } else if (window.location.hash.startsWith('#edit=')) {
       const editId = window.location.hash.replace('#edit=', '').split('&')[0];
       setTimeout(() => openAchievementModal(editId), 150);
+    } else if (window.location.hash.startsWith('#login=') || window.location.hash.startsWith('#pin=')) {
+      const autoPin = window.location.hash.split('=')[1];
+      if (autoPin) {
+        setTimeout(() => loginWithPin(autoPin), 150);
+      }
+    } else if (window.location.hash.includes('login') || window.location.hash.includes('pin')) {
+      setTimeout(() => openAuthPinModal(), 150);
     } else if (window.location.hash.includes('search') || window.location.hash.includes('controls')) {
       setTimeout(() => scrollToSearchAndControls(), 250);
     }
@@ -4157,6 +4179,361 @@ function initFirebaseFromStorage() {
   updateCloudStatusUI('disconnected');
 }
 
+// --- PIN Authentication & Team Account Management ---
+function getTeamAccounts() {
+  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+  let customPins = {};
+  if (customPinsRaw) {
+    try {
+      customPins = JSON.parse(customPinsRaw) || {};
+    } catch (e) {
+      console.warn('Error reading custom pins:', e);
+    }
+  }
+
+  return DEFAULT_TEAM_ACCOUNTS.map(acc => {
+    return {
+      ...acc,
+      pin: customPins[acc.id] || acc.pin
+    };
+  });
+}
+
+function findAccountByPin(pin) {
+  if (!pin) return null;
+  const cleanPin = String(pin).trim();
+  const accounts = getTeamAccounts();
+  return accounts.find(a => a.pin === cleanPin) || null;
+}
+
+function initAuthSession() {
+  const savedUserRaw = localStorage.getItem(STORAGE_KEY_AUTH_USER);
+  if (savedUserRaw) {
+    try {
+      const saved = JSON.parse(savedUserRaw);
+      const accounts = getTeamAccounts();
+      const current = accounts.find(a => a.id === saved.id);
+      if (current) {
+        currentUser = current;
+      }
+    } catch (e) {
+      console.warn('Error reading saved auth session:', e);
+    }
+  }
+  updateAuthHeaderUI();
+}
+
+function updateAuthHeaderUI() {
+  const btnHeaderAuth = document.getElementById('btnHeaderAuth');
+  const headerAuthIcon = document.getElementById('headerAuthIcon');
+  const headerAuthText = document.getElementById('headerAuthText');
+  const dropdownUserName = document.getElementById('dropdownUserName');
+  const dropdownUserPin = document.getElementById('dropdownUserPin');
+  const mobileToolsAuthBtn = document.getElementById('mobileToolsAuthBtn');
+
+  if (currentUser) {
+    if (btnHeaderAuth) {
+      btnHeaderAuth.classList.remove('unauthenticated');
+      btnHeaderAuth.classList.add('authenticated');
+      btnHeaderAuth.title = `เข้าสู่ระบบในชื่อ: ${currentUser.name} (${currentUser.role}) คลิกเพื่อจัดการบัญชี`;
+    }
+    if (headerAuthIcon) headerAuthIcon.textContent = currentUser.avatar;
+    if (headerAuthText) {
+      const roleBadge = `<span class="auth-user-role-badge ${currentUser.role === 'ADMIN' ? 'admin' : 'member'}">${currentUser.role}</span>`;
+      headerAuthText.innerHTML = `${escapeHtml(currentUser.name)} ${roleBadge}`;
+    }
+    if (dropdownUserName) dropdownUserName.textContent = `${currentUser.avatar} ${currentUser.name}`;
+    if (dropdownUserPin) dropdownUserPin.textContent = `รหัส PIN: ••••• (${currentUser.role})`;
+    if (mobileToolsAuthBtn) {
+      mobileToolsAuthBtn.innerHTML = `${currentUser.avatar} บัญชี: ${currentUser.name} (${currentUser.role})`;
+    }
+  } else {
+    if (btnHeaderAuth) {
+      btnHeaderAuth.classList.remove('authenticated');
+      btnHeaderAuth.classList.add('unauthenticated');
+      btnHeaderAuth.title = 'เข้าสู่ระบบด้วยรหัส PIN เพื่อเพิ่มหรือแก้ไขงาน';
+    }
+    if (headerAuthIcon) headerAuthIcon.textContent = '🔑';
+    if (headerAuthText) headerAuthText.textContent = 'เข้าสู่ระบบ (LOGIN)';
+    if (dropdownUserName) dropdownUserName.textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+    if (dropdownUserPin) dropdownUserPin.textContent = 'PUBLIC VIEW MODE';
+    if (mobileToolsAuthBtn) {
+      mobileToolsAuthBtn.innerHTML = '🔑 เข้าสู่ระบบ PIN / LOGIN';
+    }
+  }
+}
+
+function handleAuthHeaderClick() {
+  const dropdown = document.getElementById('authUserDropdown');
+  if (currentUser) {
+    if (dropdown) dropdown.classList.toggle('active');
+  } else {
+    if (dropdown) dropdown.classList.remove('active');
+    openAuthPinModal();
+  }
+}
+
+function openAuthPinModal(actionType = null, item = null, onSuccess = null) {
+  const modal = document.getElementById('authPinModal');
+  const pinInput = document.getElementById('pinInputField');
+  const pinError = document.getElementById('pinErrorMessage');
+  const subtext = document.getElementById('pinModalSubtext');
+  const avatar = document.getElementById('pinTargetAvatar');
+
+  if (!modal) return;
+
+  if (pinInput) {
+    pinInput.value = '';
+    pinInput.type = 'password';
+  }
+  const visIcon = document.getElementById('pinVisibilityIcon');
+  if (visIcon) visIcon.textContent = '👁️';
+
+  if (pinError) pinError.textContent = '';
+
+  pendingAuthSuccessCallback = onSuccess;
+
+  if (avatar) avatar.textContent = '🔐';
+
+  if (subtext) {
+    if (actionType === 'add') {
+      subtext.innerHTML = 'กรุณาระบุ <strong>รหัส PIN ประจำตัว</strong> ของคุณเพื่อเพิ่มงานใหม่';
+    } else if (actionType === 'edit') {
+      const taskTitle = item ? uppercaseEnglish(item.title) : '';
+      subtext.innerHTML = `กรุณาระบุ <strong>รหัส PIN ประจำตัว</strong> เพื่อแก้ไขงาน:<br><span style="color:#0f172a;font-weight:700;">"${escapeHtml(taskTitle)}"</span>`;
+    } else if (actionType === 'delete') {
+      const taskTitle = item ? uppercaseEnglish(item.title) : '';
+      subtext.innerHTML = `กรุณาระบุ <strong>รหัส PIN ประจำตัว</strong> เพื่อลบงาน:<br><span style="color:#e11d48;font-weight:700;">"${escapeHtml(taskTitle)}"</span>`;
+    } else {
+      subtext.textContent = 'กรุณาระบุรหัส PIN ประจำตัวของคุณเพื่อจัดการงาน (Protected Edit Mode)';
+    }
+  }
+
+  modal.classList.add('active');
+  setTimeout(() => {
+    if (pinInput) pinInput.focus();
+  }, 100);
+}
+
+function closeAuthPinModal() {
+  const modal = document.getElementById('authPinModal');
+  if (modal) modal.classList.remove('active');
+  pendingAuthSuccessCallback = null;
+}
+
+function pressPinKey(digit) {
+  const pinInput = document.getElementById('pinInputField');
+  if (!pinInput) return;
+  if (pinInput.value.length < 8) {
+    pinInput.value += digit;
+  }
+  const pinError = document.getElementById('pinErrorMessage');
+  if (pinError) pinError.textContent = '';
+  pinInput.focus();
+}
+
+function clearPinKey() {
+  const pinInput = document.getElementById('pinInputField');
+  if (pinInput) pinInput.value = '';
+  const pinError = document.getElementById('pinErrorMessage');
+  if (pinError) pinError.textContent = '';
+}
+
+function togglePinVisibility() {
+  const pinInput = document.getElementById('pinInputField');
+  const visIcon = document.getElementById('pinVisibilityIcon');
+  if (!pinInput) return;
+  if (pinInput.type === 'password') {
+    pinInput.type = 'text';
+    if (visIcon) visIcon.textContent = '🙈';
+  } else {
+    pinInput.type = 'password';
+    if (visIcon) visIcon.textContent = '👁️';
+  }
+}
+
+function handlePinInputKeydown(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    submitPinLogin();
+  }
+}
+
+function loginWithPin(pinVal) {
+  if (!pinVal) return false;
+  const clean = String(pinVal).trim();
+  const account = findAccountByPin(clean);
+  if (!account) return false;
+
+  // Successful login
+  currentUser = account;
+  localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
+  updateAuthHeaderUI();
+
+  const cb = pendingAuthSuccessCallback;
+  closeAuthPinModal();
+
+  showToast(`🎉 เข้าสู่ระบบสำเร็จ: ${currentUser.avatar} ${currentUser.name} (${currentUser.role === 'ADMIN' ? 'ผู้ดูแลระบบ' : 'สมาชิกทีม'})`);
+
+  if (cb && typeof cb === 'function') {
+    setTimeout(() => cb(), 100);
+  }
+  return true;
+}
+
+function submitPinLogin() {
+  const pinInput = document.getElementById('pinInputField');
+  const pinError = document.getElementById('pinErrorMessage');
+  if (!pinInput) return;
+  const pinVal = pinInput.value.trim();
+
+  if (!pinVal) {
+    if (pinError) pinError.textContent = '⚠️ กรุณากรอกรหัส PIN';
+    return;
+  }
+
+  const ok = loginWithPin(pinVal);
+  if (!ok) {
+    if (pinError) pinError.textContent = '❌ รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
+    pinInput.value = '';
+    pinInput.focus();
+  }
+}
+
+function logoutUser() {
+  currentUser = null;
+  localStorage.removeItem(STORAGE_KEY_AUTH_USER);
+  const dropdown = document.getElementById('authUserDropdown');
+  if (dropdown) dropdown.classList.remove('active');
+  updateAuthHeaderUI();
+  showToast('🚪 ออกจากระบบเรียบร้อยแล้ว (PUBLIC VIEW MODE)');
+}
+
+function openChangePinModal() {
+  const dropdown = document.getElementById('authUserDropdown');
+  if (dropdown) dropdown.classList.remove('active');
+
+  if (!currentUser) {
+    openAuthPinModal();
+    return;
+  }
+
+  const modal = document.getElementById('changePinModal');
+  const curPinInput = document.getElementById('currentPinInput');
+  const newPinInput = document.getElementById('newPinInput');
+  const confirmPinInput = document.getElementById('confirmNewPinInput');
+  const errDiv = document.getElementById('changePinErrorMessage');
+
+  if (curPinInput) curPinInput.value = '';
+  if (newPinInput) newPinInput.value = '';
+  if (confirmPinInput) confirmPinInput.value = '';
+  if (errDiv) errDiv.textContent = '';
+
+  if (modal) modal.classList.add('active');
+  setTimeout(() => {
+    if (curPinInput) curPinInput.focus();
+  }, 100);
+}
+
+function closeChangePinModal() {
+  const modal = document.getElementById('changePinModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function submitChangePin() {
+  if (!currentUser) return;
+  const curPin = (document.getElementById('currentPinInput')?.value || '').trim();
+  const newPin = (document.getElementById('newPinInput')?.value || '').trim();
+  const confirmPin = (document.getElementById('confirmNewPinInput')?.value || '').trim();
+  const errDiv = document.getElementById('changePinErrorMessage');
+
+  if (!curPin || !newPin || !confirmPin) {
+    if (errDiv) errDiv.textContent = '⚠️ กรุณากรอกข้อมูลให้ครบทุกช่อง';
+    return;
+  }
+
+  if (curPin !== currentUser.pin) {
+    if (errDiv) errDiv.textContent = '❌ รหัส PIN ปัจจุบันไม่ถูกต้อง';
+    return;
+  }
+
+  if (newPin.length < 4 || newPin.length > 8 || !/^\d+$/.test(newPin)) {
+    if (errDiv) errDiv.textContent = '⚠️ รหัส PIN ใหม่ต้องเป็นตัวเลข 4 - 8 หลัก';
+    return;
+  }
+
+  if (newPin !== confirmPin) {
+    if (errDiv) errDiv.textContent = '❌ ยืนยันรหัส PIN ใหม่ไม่ตรงกัน';
+    return;
+  }
+
+  // Check if PIN is already used by another user
+  const allAccounts = getTeamAccounts();
+  const duplicate = allAccounts.find(a => a.id !== currentUser.id && a.pin === newPin);
+  if (duplicate) {
+    if (errDiv) errDiv.textContent = '⚠️ รหัส PIN นี้ถูกใช้งานโดยบัญชีอื่นแล้ว กรุณาเลือกรหัสอื่น';
+    return;
+  }
+
+  // Save custom PIN
+  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+  let customPins = {};
+  if (customPinsRaw) {
+    try { customPins = JSON.parse(customPinsRaw) || {}; } catch(e){}
+  }
+  customPins[currentUser.id] = newPin;
+  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+
+  currentUser.pin = newPin;
+  localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
+  updateAuthHeaderUI();
+
+  closeChangePinModal();
+  showToast('🔑 เปลี่ยนรหัส PIN สำเร็จเรียบร้อยแล้ว');
+}
+
+function canUserEditTask(user, item) {
+  if (!user) return { allowed: false, reason: 'NOT_LOGGED_IN' };
+  if (!item) return { allowed: true, isOverride: false };
+
+  // 1. Admin Override (Option ก): 20523 has full access to all tasks
+  if (user.role === 'ADMIN' || user.pin === '20523') {
+    const isOwn = (
+      (item.creatorPin && item.creatorPin === user.pin) ||
+      (item.editorPin && item.editorPin === user.pin) ||
+      (item.assignee && item.assignee.toUpperCase().trim() === user.name.toUpperCase().trim())
+    );
+    return {
+      allowed: true,
+      isOverride: !isOwn,
+      ownerName: item.assignee || 'ผู้รับผิดชอบงาน'
+    };
+  }
+
+  // 2. Creator or Editor PIN match
+  if (item.creatorPin && item.creatorPin === user.pin) {
+    return { allowed: true, isOverride: false };
+  }
+  if (item.editorPin && item.editorPin === user.pin) {
+    return { allowed: true, isOverride: false };
+  }
+
+  // 3. Legacy task match by Assignee Name
+  if (item.assignee && user.name) {
+    const cleanAssignee = item.assignee.toUpperCase().trim();
+    const cleanUserName = user.name.toUpperCase().trim();
+    if (cleanAssignee === cleanUserName) {
+      return { allowed: true, isOverride: false };
+    }
+  }
+
+  return {
+    allowed: false,
+    reason: 'NOT_OWNER',
+    ownerName: item.assignee || 'ผู้รับผิดชอบงานท่านอื่น'
+  };
+}
+
 // --- Setup Event Listeners ---
 function setupEventListeners() {
   // Search Input & Murata Keyword Search Sync
@@ -4375,6 +4752,33 @@ function setupEventListeners() {
       if (e.target === cloudModal) closeCloudModal();
     });
   }
+
+  // Auth PIN Modal Outside Click Close
+  const authPinModal = document.getElementById('authPinModal');
+  if (authPinModal) {
+    authPinModal.addEventListener('click', (e) => {
+      if (e.target === authPinModal) closeAuthPinModal();
+    });
+  }
+
+  // Change PIN Modal Outside Click Close
+  const changePinModal = document.getElementById('changePinModal');
+  if (changePinModal) {
+    changePinModal.addEventListener('click', (e) => {
+      if (e.target === changePinModal) closeChangePinModal();
+    });
+  }
+
+  // Outside click to close Auth User Dropdown
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('authUserDropdown');
+    const authBtn = document.getElementById('btnHeaderAuth');
+    if (dropdown && dropdown.classList.contains('active')) {
+      if (!dropdown.contains(e.target) && (!authBtn || !authBtn.contains(e.target))) {
+        dropdown.classList.remove('active');
+      }
+    }
+  });
 }
 
 // --- Populate Category Dropdowns ---
@@ -5822,6 +6226,15 @@ function resetAssigneeDropdown() {
 
 // --- Achievement Modal (Add / Edit) ---
 function openAchievementModal(id = null) {
+  // Auth check: Must be logged in with PIN to add or edit
+  if (!currentUser) {
+    const targetItem = id ? achievements.find(a => a.id === id) : null;
+    openAuthPinModal(id ? 'edit' : 'add', targetItem, () => {
+      openAchievementModal(id);
+    });
+    return;
+  }
+
   dismissAllToasts();
   const modal = document.getElementById('achievementModal');
   const modalTitle = document.getElementById('modalAchievementTitle');
@@ -5842,7 +6255,19 @@ function openAchievementModal(id = null) {
     const item = achievements.find(a => a.id === id);
     if (!item) return;
 
-    modalTitle.textContent = 'แก้ไขข้อมูลงาน (EDIT TASK / ACHIEVEMENT)';
+    // Check edit permissions
+    const perm = canUserEditTask(currentUser, item);
+    if (!perm.allowed) {
+      alert(`⛔ ขออภัย คุณไม่มีสิทธิ์แก้ไขงานนี้\n\n📌 งานนี้เป็นของ: ${perm.ownerName}\n👤 คุณเข้าสู่ระบบในชื่อ: ${currentUser.name}\n\n(สิทธิ์แก้ไขจำกัดเฉพาะเจ้าของงาน หรือผู้ดูแลระบบ ADMIN เท่านั้น)`);
+      return;
+    }
+
+    if (perm.isOverride) {
+      modalTitle.innerHTML = 'แก้ไขข้อมูลงาน (EDIT TASK) <span class="task-admin-override-badge">👑 ADMIN OVERRIDE</span>';
+    } else {
+      modalTitle.textContent = 'แก้ไขข้อมูลงาน (EDIT TASK / ACHIEVEMENT)';
+    }
+
     document.getElementById('achvId').value = item.id;
     document.getElementById('achvTitle').value = uppercaseEnglish(item.title);
     document.getElementById('achvCategory').value = item.categoryId;
@@ -5921,7 +6346,7 @@ function openAchievementModal(id = null) {
     document.getElementById('achvId').value = '';
     document.getElementById('achvFactory').value = '';
     document.getElementById('achvDepartment').value = '';
-    document.getElementById('achvAssignee').value = '';
+    setSelectValueWithFallback(document.getElementById('achvAssignee'), currentUser.name || '');
     document.getElementById('achvStatus').value = 'in_progress';
     if (categories.length > 0) {
       document.getElementById('achvCategory').value = categories[0].id;
@@ -5952,6 +6377,12 @@ function closeAchievementModal() {
 
 function handleSaveAchievement(e) {
   e.preventDefault();
+
+  if (!currentUser) {
+    alert('กรุณาเข้าสู่ระบบด้วยรหัส PIN ก่อนบันทึกข้อมูล');
+    openAuthPinModal();
+    return;
+  }
 
   const id = document.getElementById('achvId').value;
   const title = uppercaseEnglish(document.getElementById('achvTitle').value.trim());
@@ -5993,8 +6424,15 @@ function handleSaveAchievement(e) {
   if (id) {
     const index = achievements.findIndex(a => a.id === id);
     if (index !== -1) {
+      const existing = achievements[index];
+      const perm = canUserEditTask(currentUser, existing);
+      if (!perm.allowed) {
+        alert('⛔ ขออภัย คุณไม่มีสิทธิ์บันทึกการแก้ไขงานนี้');
+        return;
+      }
+
       savedItem = {
-        ...achievements[index],
+        ...existing,
         title,
         categoryId,
         code,
@@ -6012,6 +6450,10 @@ function handleSaveAchievement(e) {
         workFolder: finalWorkFolder,
         pdfAttachment: finalPdfAttachment,
         imageData: currentModalImageData,
+        creatorPin: existing.creatorPin || (perm.isOverride ? (existing.assignee ? null : currentUser.pin) : currentUser.pin),
+        editorPin: currentUser.pin,
+        lastEditedBy: currentUser.name,
+        lastEditedRole: currentUser.role,
         updatedAt: new Date().toISOString()
       };
       achievements[index] = savedItem;
@@ -6038,6 +6480,10 @@ function handleSaveAchievement(e) {
       workFolder: finalWorkFolder,
       pdfAttachment: finalPdfAttachment,
       imageData: currentModalImageData,
+      creatorPin: currentUser.pin,
+      editorPin: currentUser.pin,
+      lastEditedBy: currentUser.name,
+      lastEditedRole: currentUser.role,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -6059,7 +6505,23 @@ function deleteAchievement(id) {
   const item = achievements.find(a => a.id === id);
   if (!item) return;
 
-  if (confirm(`คุณต้องการลบงาน "${item.title}" ใช่หรือไม่?`)) {
+  if (!currentUser) {
+    openAuthPinModal('delete', item, () => deleteAchievement(id));
+    return;
+  }
+
+  const perm = canUserEditTask(currentUser, item);
+  if (!perm.allowed) {
+    alert(`⛔ ขออภัย คุณไม่มีสิทธิ์ลบงานนี้\n\n📌 งานนี้เป็นของ: ${perm.ownerName}\n👤 คุณเข้าสู่ระบบในชื่อ: ${currentUser.name}\n\n(สิทธิ์ลบจำกัดเฉพาะเจ้าของงาน หรือผู้ดูแลระบบ ADMIN เท่านั้น)`);
+    return;
+  }
+
+  let promptMsg = `คุณต้องการลบงาน "${item.title}" ใช่หรือไม่?`;
+  if (perm.isOverride) {
+    promptMsg = `👑 [ADMIN OVERRIDE]\nคุณกำลังจะลบงานของ: ${item.assignee || 'ผู้รับผิดชอบงาน'}\nชื่องาน: "${item.title}"\n\nต้องการยืนยันการลบใช่หรือไม่?`;
+  }
+
+  if (confirm(promptMsg)) {
     achievements = achievements.filter(a => a.id !== id);
     saveAchievements();
     if (firebaseDb) {

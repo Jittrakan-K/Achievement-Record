@@ -63,6 +63,9 @@
         </div>
         <div class="mobile-nav-title" id="mobileNavTitle">DOCUMENTS</div>
         <div class="mobile-nav-actions">
+          <button type="button" class="mobile-nav-btn" id="mobileAuthBtn" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วย PIN" style="font-size: 15px; padding: 0 4px;">
+            <span id="mobileAuthIcon">🔑</span>
+          </button>
           <button type="button" class="mobile-nav-btn mobile-nav-btn-add" onclick="openAchievementModal()" title="เพิ่มงานใหม่">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#2563eb"/><path d="M12 7v10M7 12h10" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/></svg>
           </button>
@@ -153,6 +156,26 @@
             <span class="cloud-status-dot" id="cloudStatusDot"></span>
             <span id="cloudStatusText">CLOUD: LOCAL</span>
           </button>
+
+          <!-- Account / PIN Authentication Control -->
+          <div style="position: relative; display: inline-block;">
+            <button id="btnHeaderAuth" class="auth-header-btn unauthenticated" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วยรหัส PIN เพื่อเพิ่มหรือแก้ไขงาน">
+              <span id="headerAuthIcon">🔑</span>
+              <span id="headerAuthText">เข้าสู่ระบบ (LOGIN)</span>
+            </button>
+            <div id="authUserDropdown" class="auth-user-dropdown">
+              <div class="auth-dropdown-header">
+                <div class="auth-dropdown-name" id="dropdownUserName">JITTRAKAN K.</div>
+                <div class="auth-dropdown-pin" id="dropdownUserPin">รหัส PIN: 20523</div>
+              </div>
+              <div class="auth-dropdown-item" onclick="openChangePinModal()">
+                <span>🔑</span> เปลี่ยนรหัส PIN ของฉัน
+              </div>
+              <div class="auth-dropdown-item text-danger" onclick="logoutUser()">
+                <span>🚪</span> ออกจากระบบ (LOGOUT)
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -868,6 +891,101 @@
     </div>
   </div>
 
+  <!-- Modal: PIN Authentication Login (Employee PIN) -->
+  <div id="authPinModal" class="modal-overlay">
+    <div class="modal-card modal-card-sm" style="max-width: 400px;">
+      <div class="modal-header" style="border-bottom: 1px solid #f1f5f9;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <span>🔐</span> เข้าสู่ระบบด้วยรหัส PIN (LOGIN)
+        </h3>
+        <button class="modal-close" onclick="closeAuthPinModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div class="pin-login-box">
+          <div class="pin-avatar-large" id="pinTargetAvatar">👤</div>
+          <p id="pinModalSubtext" style="font-size: 13px; color: #475569; margin-bottom: 16px; font-weight: 500;">
+            กรุณาระบุรหัส PIN ประจำตัวของคุณเพื่อเพิ่มหรือแก้ไขงาน
+          </p>
+
+          <div class="pin-display-container">
+            <input type="password" id="pinInputField" class="pin-input-field" maxlength="8" placeholder="•••••" autocomplete="off" onkeydown="handlePinInputKeydown(event)" />
+            <button type="button" class="pin-toggle-visibility-btn" onclick="togglePinVisibility()" title="แสดง/ซ่อนรหัส PIN">
+              <span id="pinVisibilityIcon">👁️</span>
+            </button>
+          </div>
+
+          <div id="pinErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px; margin-bottom: 12px;"></div>
+
+          <!-- 2D Numeric Keypad -->
+          <div class="pin-keypad">
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('1')">1</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('2')">2</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('3')">3</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('4')">4</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('5')">5</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('6')">6</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('7')">7</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('8')">8</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('9')">9</button>
+            <button type="button" class="pin-key-btn action-btn clear-btn" onclick="clearPinKey()">CLEAR</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('0')">0</button>
+            <button type="button" class="pin-key-btn action-btn submit-btn" onclick="submitPinLogin()">OK</button>
+          </div>
+
+          <!-- Team Accounts Guide / Hint -->
+          <div class="pin-accounts-list">
+            <div style="font-weight: 700; color: #1e293b; margin-bottom: 4px; font-size: 11.5px;">
+              💡 รหัส PIN เริ่มต้นของทีมงาน:
+            </div>
+            <div style="line-height: 1.5;">
+              <span class="pin-account-tag">👑 20523 : JITTRAKAN K. (ADMIN)</span>
+              <span class="pin-account-tag">👨‍💼 20524 : SUTTHIPONG M.</span>
+              <span class="pin-account-tag">👨‍💻 20525 : TANIN P.</span>
+              <span class="pin-account-tag">👷 20526 : KITTISAK P.</span>
+              <span class="pin-account-tag">🧑‍🔧 20527 : NARUEBODEE C.</span>
+            </div>
+            <div style="font-size: 10.5px; color: #94a3b8; margin-top: 6px;">
+              * สามารถเปลี่ยนรหัส PIN ของตนเองได้เมื่อเข้าสู่ระบบแล้ว
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 11px; color: #64748b;">PUBLIC VIEW: เข้าชมได้ทุกคน</span>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAuthPinModal()">ยกเลิก (CANCEL)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Change PIN -->
+  <div id="changePinModal" class="modal-overlay">
+    <div class="modal-card modal-card-sm" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🔑 เปลี่ยนรหัส PIN ของฉัน</h3>
+        <button class="modal-close" onclick="closeChangePinModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="currentPinInput">รหัส PIN ปัจจุบัน</label>
+          <input type="password" id="currentPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN เดิม" />
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="newPinInput">รหัส PIN ใหม่ (4-8 หลัก)</label>
+          <input type="password" id="newPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN ใหม่" />
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="confirmNewPinInput">ยืนยันรหัส PIN ใหม่</label>
+          <input type="password" id="confirmNewPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN ใหม่อีกครั้ง" />
+        </div>
+        <div id="changePinErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeChangePinModal()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="submitChangePin()">บันทึกรหัส PIN ใหม่</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Date Helper for Print Header -->
   <script>
     document.getElementById('printDate').textContent = new Date().toLocaleDateString('th-TH', {
@@ -932,6 +1050,9 @@
         <span class="ios-action-header-title">TOOLS &amp; SETTINGS</span>
       </div>
       <div class="ios-action-group ios-action-scrollable">
+        <button type="button" class="ios-action-btn" id="mobileToolsAuthBtn" onclick="closeMobileToolsSheet(); handleAuthHeaderClick();">
+          🔑 เข้าสู่ระบบ PIN / สลับบัญชี
+        </button>
         <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCloudModal();">
           ☁️ CLOUD SYNC (คลาวด์ซิงค์)
         </button>

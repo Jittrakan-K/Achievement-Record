@@ -4453,3 +4453,305 @@ textarea.form-control {
   box-shadow: 0 6px 18px rgba(230, 0, 18, 0.55);
 }
 
+/* ==========================================================================
+   Personal PIN Authentication & Protected Edit System (Minimal 2D Style)
+   ========================================================================== */
+
+/* 1. Header Auth Controls */
+.auth-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 13px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.auth-header-btn.unauthenticated {
+  background: #f8fafc;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+}
+
+.auth-header-btn.unauthenticated:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.auth-header-btn.authenticated {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1.5px solid #93c5fd;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+}
+
+.auth-header-btn.authenticated:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
+}
+
+.auth-user-role-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.auth-user-role-badge.admin {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.auth-user-role-badge.member {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.auth-dot-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* 2. PIN Login Modal & Keypad */
+.pin-login-box {
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pin-avatar-large {
+  font-size: 40px;
+  margin-bottom: 6px;
+  display: inline-block;
+  animation: bounceSoft 0.4s ease;
+}
+
+@keyframes bounceSoft {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.pin-display-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 20px 0;
+  position: relative;
+}
+
+.pin-input-field {
+  width: 100%;
+  max-width: 240px;
+  height: 48px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 12px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.pin-input-field:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.pin-toggle-visibility-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #64748b;
+  padding: 6px;
+  position: absolute;
+  right: calc(50% - 145px);
+}
+
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 270px;
+  margin: 0 auto 16px auto;
+}
+
+.pin-key-btn {
+  height: 52px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 0 2px 0 #e2e8f0;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-key-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+  background: #f1f5f9;
+}
+
+.pin-key-btn.action-btn {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.pin-key-btn.clear-btn {
+  color: #e11d48;
+  background: #fff1f2;
+  border-color: #fecdd3;
+  box-shadow: 0 2px 0 #fecdd3;
+}
+
+.pin-key-btn.clear-btn:active {
+  background: #ffe4e6;
+  box-shadow: none;
+}
+
+.pin-key-btn.submit-btn {
+  color: #ffffff;
+  background: #2563eb;
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 0 #1e40af;
+}
+
+.pin-key-btn.submit-btn:active {
+  background: #1d4ed8;
+  box-shadow: none;
+}
+
+.pin-accounts-list {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #64748b;
+  text-align: left;
+  margin-top: 14px;
+}
+
+.pin-account-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin: 3px 2px;
+  font-weight: 600;
+  color: #334155;
+  font-size: 11px;
+}
+
+/* 3. Account Menu Popover / Dropdown */
+.auth-user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  min-width: 220px;
+  padding: 10px 0;
+  z-index: 1000;
+  display: none;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.auth-user-dropdown.active {
+  display: block;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-dropdown-header {
+  padding: 8px 16px 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.auth-dropdown-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.auth-dropdown-pin {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.auth-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.auth-dropdown-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.auth-dropdown-item.text-danger {
+  color: #e11d48;
+}
+
+.auth-dropdown-item.text-danger:hover {
+  background: #fff1f2;
+}
+
+/* 4. Task Ownership Badges & Indicators */
+.task-admin-override-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+
