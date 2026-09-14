@@ -4548,25 +4548,33 @@ textarea.form-control {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
   margin: 18px 0 20px 0;
+}
+
+.pin-input-wrapper {
   position: relative;
+  width: 100%;
+  max-width: 250px;
+  display: flex;
+  align-items: center;
 }
 
 .pin-input-field {
   width: 100%;
-  max-width: 240px;
-  height: 48px;
+  height: 50px;
   text-align: center;
   font-size: 26px;
   font-weight: 800;
   letter-spacing: 12px;
+  padding-left: 42px;
+  padding-right: 42px;
   border: 2px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #f8fafc;
   color: #0f172a;
   outline: none;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .pin-input-field:focus {
@@ -4576,14 +4584,33 @@ textarea.form-control {
 }
 
 .pin-toggle-visibility-btn {
-  background: none;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
   border: none;
   cursor: pointer;
   font-size: 18px;
   color: #64748b;
-  padding: 6px;
-  position: absolute;
-  right: calc(50% - 145px);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.pin-toggle-visibility-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.pin-toggle-visibility-btn:active {
+  transform: translateY(-50%) scale(0.92);
 }
 
 .pin-keypad {
@@ -4737,6 +4764,190 @@ textarea.form-control {
 
 .auth-dropdown-item.text-danger:hover {
   background: #fff1f2;
+}
+
+.auth-dropdown-item.admin-only-item {
+  color: #1e40af;
+  font-weight: 600;
+  border-top: 1px dashed #e2e8f0;
+  background: #f8fafc;
+}
+
+.auth-dropdown-item.admin-only-item:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* ADMIN Team PINs Modal Styles */
+.admin-team-pins-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.admin-pin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: all 0.15s ease;
+  gap: 12px;
+}
+
+.admin-pin-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.admin-pin-card.admin-highlight {
+  background: #fffdf5;
+  border-color: #fde68a;
+  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.08);
+}
+
+.admin-pin-card-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-pin-avatar {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-pin-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-pin-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-pin-badge-you {
+  font-size: 9.5px;
+  font-weight: 700;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.admin-pin-sub {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.badge-pin-status {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.badge-pin-status.default {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.badge-pin-status.custom {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.admin-pin-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-pin-value-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.admin-pin-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.admin-pin-display {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: 2px;
+  min-width: 55px;
+  text-align: center;
+}
+
+.btn-icon-admin-pin {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 4px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+}
+
+.btn-icon-admin-pin:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.admin-btn-reset {
+  font-size: 11px;
+  padding: 4px 8px;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.admin-btn-reset:hover {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
 }
 
 /* 4. Task Ownership Badges & Indicators */

@@ -4230,8 +4230,11 @@ function updateAuthHeaderUI() {
   const dropdownUserName = document.getElementById('dropdownUserName');
   const dropdownUserPin = document.getElementById('dropdownUserPin');
   const mobileToolsAuthBtn = document.getElementById('mobileToolsAuthBtn');
+  const adminDropdownItem = document.getElementById('adminViewTeamPinsDropdownItem');
+  const mobileAdminBtn = document.getElementById('mobileAdminTeamPinsBtn');
 
   if (currentUser) {
+    const isAdmin = (currentUser.role === 'ADMIN' || currentUser.id === 'usr_20523');
     if (btnHeaderAuth) {
       btnHeaderAuth.classList.remove('unauthenticated');
       btnHeaderAuth.classList.add('authenticated');
@@ -4247,6 +4250,12 @@ function updateAuthHeaderUI() {
     if (mobileToolsAuthBtn) {
       mobileToolsAuthBtn.innerHTML = `${currentUser.avatar} บัญชี: ${currentUser.name} (${currentUser.role})`;
     }
+    if (adminDropdownItem) {
+      adminDropdownItem.style.display = isAdmin ? 'flex' : 'none';
+    }
+    if (mobileAdminBtn) {
+      mobileAdminBtn.style.display = isAdmin ? 'flex' : 'none';
+    }
   } else {
     if (btnHeaderAuth) {
       btnHeaderAuth.classList.remove('authenticated');
@@ -4259,6 +4268,12 @@ function updateAuthHeaderUI() {
     if (dropdownUserPin) dropdownUserPin.textContent = 'PUBLIC VIEW MODE';
     if (mobileToolsAuthBtn) {
       mobileToolsAuthBtn.innerHTML = '🔑 เข้าสู่ระบบ PIN / LOGIN';
+    }
+    if (adminDropdownItem) {
+      adminDropdownItem.style.display = 'none';
+    }
+    if (mobileAdminBtn) {
+      mobileAdminBtn.style.display = 'none';
     }
   }
 }
@@ -4405,6 +4420,7 @@ function logoutUser() {
   localStorage.removeItem(STORAGE_KEY_AUTH_USER);
   const dropdown = document.getElementById('authUserDropdown');
   if (dropdown) dropdown.classList.remove('active');
+  closeAdminTeamPinsModal();
   updateAuthHeaderUI();
   showToast('🚪 ออกจากระบบเรียบร้อยแล้ว (PUBLIC VIEW MODE)');
 }
@@ -4490,6 +4506,165 @@ function submitChangePin() {
 
   closeChangePinModal();
   showToast('🔑 เปลี่ยนรหัส PIN สำเร็จเรียบร้อยแล้ว');
+}
+
+// --- ADMIN: View & Manage All Team Member PINs (ADMIN ONLY) ---
+let adminAllPinsVisible = false;
+
+function openAdminTeamPinsModal() {
+  const dropdown = document.getElementById('authUserDropdown');
+  if (dropdown) dropdown.classList.remove('active');
+
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถดูรหัส PIN ของทีมงานได้');
+    return;
+  }
+
+  adminAllPinsVisible = false;
+  const toggleBtn = document.getElementById('btnAdminToggleAllPins');
+  if (toggleBtn) {
+    toggleBtn.innerHTML = '👁️ แสดงรหัสทั้งหมด';
+  }
+
+  renderAdminTeamPinsModal();
+
+  const modal = document.getElementById('adminTeamPinsModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAdminTeamPinsModal() {
+  const modal = document.getElementById('adminTeamPinsModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function renderAdminTeamPinsModal() {
+  const container = document.getElementById('adminTeamPinsList');
+  if (!container) return;
+
+  const accounts = getTeamAccounts();
+  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+  let customPins = {};
+  if (customPinsRaw) {
+    try { customPins = JSON.parse(customPinsRaw) || {}; } catch(e){}
+  }
+
+  container.innerHTML = accounts.map(acc => {
+    const isCustom = Boolean(customPins[acc.id]);
+    const isCurrentUser = currentUser && currentUser.id === acc.id;
+    const initialMasked = !adminAllPinsVisible;
+    const displayPin = initialMasked ? '•••••' : escapeHtml(acc.pin);
+    const eyeIcon = initialMasked ? '👁️' : '🙈';
+
+    return `
+      <div class="admin-pin-card ${acc.role === 'ADMIN' ? 'admin-highlight' : ''}">
+        <div class="admin-pin-card-info">
+          <div class="admin-pin-avatar">${acc.avatar}</div>
+          <div class="admin-pin-details">
+            <div class="admin-pin-name">
+              ${escapeHtml(acc.name)}
+              <span class="auth-user-role-badge ${acc.role === 'ADMIN' ? 'admin' : 'member'}">${acc.role}</span>
+              ${isCurrentUser ? '<span class="admin-pin-badge-you">บัญชีของคุณ</span>' : ''}
+            </div>
+            <div class="admin-pin-sub">
+              รหัสพนักงาน: <strong>${acc.id.replace('usr_', '')}</strong> &bull; 
+              สถานะ: <span class="badge-pin-status ${isCustom ? 'custom' : 'default'}">${isCustom ? '🔄 เปลี่ยนรหัสแล้ว' : '💡 รหัสเริ่มต้น'}</span>
+            </div>
+          </div>
+        </div>
+        <div class="admin-pin-actions">
+          <div class="admin-pin-value-box">
+            <span class="admin-pin-label">PIN:</span>
+            <span class="admin-pin-display" id="adminPinVal_${acc.id}" data-pin="${escapeHtml(acc.pin)}" data-masked="${initialMasked ? 'true' : 'false'}">${displayPin}</span>
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleAdminPinRow('${acc.id}')" title="แสดง/ซ่อนรหัส PIN">
+              <span id="adminPinEye_${acc.id}">${eyeIcon}</span>
+            </button>
+          </div>
+          ${isCustom ? `
+            <button type="button" class="admin-btn-reset" onclick="adminResetMemberPin('${acc.id}', '${escapeHtml(acc.name)}')" title="รีเซ็ตกลับเป็นรหัสเริ่มต้นตามรหัสพนักงาน">
+              ↺ รีเซ็ต PIN
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleAdminPinRow(accId) {
+  const pinSpan = document.getElementById(`adminPinVal_${accId}`);
+  const eyeSpan = document.getElementById(`adminPinEye_${accId}`);
+  if (!pinSpan || !eyeSpan) return;
+
+  const isMasked = pinSpan.getAttribute('data-masked') === 'true';
+  const realPin = pinSpan.getAttribute('data-pin');
+
+  if (isMasked) {
+    pinSpan.textContent = realPin;
+    pinSpan.setAttribute('data-masked', 'false');
+    eyeSpan.textContent = '🙈';
+  } else {
+    pinSpan.textContent = '•••••';
+    pinSpan.setAttribute('data-masked', 'true');
+    eyeSpan.textContent = '👁️';
+  }
+}
+
+function toggleAdminAllPins() {
+  adminAllPinsVisible = !adminAllPinsVisible;
+  const toggleBtn = document.getElementById('btnAdminToggleAllPins');
+  const accounts = getTeamAccounts();
+
+  accounts.forEach(acc => {
+    const pinSpan = document.getElementById(`adminPinVal_${acc.id}`);
+    const eyeSpan = document.getElementById(`adminPinEye_${acc.id}`);
+    if (!pinSpan || !eyeSpan) return;
+
+    if (adminAllPinsVisible) {
+      pinSpan.textContent = pinSpan.getAttribute('data-pin');
+      pinSpan.setAttribute('data-masked', 'false');
+      eyeSpan.textContent = '🙈';
+    } else {
+      pinSpan.textContent = '•••••';
+      pinSpan.setAttribute('data-masked', 'true');
+      eyeSpan.textContent = '👁️';
+    }
+  });
+
+  if (toggleBtn) {
+    toggleBtn.innerHTML = adminAllPinsVisible ? '🙈 ซ่อนรหัสทั้งหมด' : '👁️ แสดงรหัสทั้งหมด';
+  }
+}
+
+function adminResetMemberPin(accId, accName) {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถรีเซ็ตรหัส PIN ได้');
+    return;
+  }
+
+  const defaultAcc = DEFAULT_TEAM_ACCOUNTS.find(a => a.id === accId);
+  const defaultPin = defaultAcc ? defaultAcc.pin : accId.replace('usr_', '');
+
+  if (!confirm(`คุณต้องการรีเซ็ตรหัส PIN ของ ${accName} กลับไปเป็นรหัสเริ่มต้น (${defaultPin}) ใช่หรือไม่?`)) {
+    return;
+  }
+
+  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+  let customPins = {};
+  if (customPinsRaw) {
+    try { customPins = JSON.parse(customPinsRaw) || {}; } catch(e){}
+  }
+
+  delete customPins[accId];
+  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+
+  if (currentUser.id === accId) {
+    currentUser.pin = defaultPin;
+    localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
+    updateAuthHeaderUI();
+  }
+
+  renderAdminTeamPinsModal();
+  showToast(`↺ รีเซ็ตรหัส PIN ของ ${accName} เป็นรหัสเริ่มต้น (${defaultPin}) สำเร็จเรียบร้อย`);
 }
 
 function canUserEditTask(user, item) {
