@@ -1928,17 +1928,20 @@ const STORAGE_KEY_SHOW_RANKING = 'orbray_show_requester_ranking';
 const STORAGE_KEY_FIREBASE_CONFIG = 'orbray_firebase_config_v1';
 const STORAGE_KEY_AUTH_USER = 'orbray_auth_current_user_v1';
 const STORAGE_KEY_TEAM_PINS = 'orbray_team_account_pins_v1';
+const STORAGE_KEY_CUSTOM_ACCOUNTS = 'orbray_team_custom_accounts_v1';
 
 // --- Production Technology Team Accounts & Initial PINs ---
 const DEFAULT_TEAM_ACCOUNTS = [
-  { id: 'usr_20523', pin: '20523', name: 'JITTRAKAN K.', role: 'ADMIN', avatar: '👑' },
-  { id: 'usr_20524', pin: '20524', name: 'SUTTHIPONG M.', role: 'MEMBER', avatar: '👨‍💼' },
-  { id: 'usr_20525', pin: '20525', name: 'TANIN P.', role: 'MEMBER', avatar: '👨‍💻' },
-  { id: 'usr_20526', pin: '20526', name: 'KITTISAK P.', role: 'MEMBER', avatar: '👷' },
-  { id: 'usr_20527', pin: '20527', name: 'NARUEBODEE C.', role: 'MEMBER', avatar: '🧑‍🔧' }
+  { id: 'usr_20523', empId: '20523', pin: '20523', name: 'JITTRAKAN K.', company: 'ORBRAY', role: 'ADMIN', avatar: '👑' },
+  { id: 'usr_20524', empId: '20524', pin: '20524', name: 'SUTTHIPONG M.', company: 'ORBRAY', role: 'MEMBER', avatar: '👨‍💼' },
+  { id: 'usr_20525', empId: '20525', pin: '20525', name: 'TANIN P.', company: 'ORBRAY', role: 'MEMBER', avatar: '👨‍💻' },
+  { id: 'usr_20526', empId: '20526', pin: '20526', name: 'KITTISAK P.', company: 'ORBRAY', role: 'MEMBER', avatar: '👷' },
+  { id: 'usr_20527', empId: '20527', pin: '20527', name: 'NARUEBODEE C.', company: 'ORBRAY', role: 'MEMBER', avatar: '🧑‍🔧' }
 ];
 
 let currentUser = null;
+window.currentUser = null;
+window.getCurrentUser = function() { return currentUser; };
 let pendingAuthSuccessCallback = null;
 
 // --- IndexedDB for Persistent Large Attachment Storage (Unlimited Size) ---
@@ -3322,6 +3325,7 @@ function saveCategories() {
 function renderAll() {
   populateCategoryDropdowns();
   populateAssigneeDropdown();
+  resetAssigneeDropdown();
   renderStats();
   renderCharts();
   renderRequesterRanking();
@@ -3613,6 +3617,36 @@ async function initFirebase(config, showToasts = false) {
         alert('เกิดข้อผิดพลาดจาก Firestore: ' + userFriendlyMsg);
       }
     });
+
+    // Real-time subscribe to team accounts & pins settings
+    try {
+      firebaseDb.collection('settings').doc('team_accounts').onSnapshot(docSnap => {
+        if (docSnap && docSnap.exists) {
+          const data = docSnap.data();
+          let changed = false;
+          if (data.customAccounts) {
+            localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(data.customAccounts));
+            changed = true;
+          }
+          if (data.customPins) {
+            localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(data.customPins));
+            changed = true;
+          }
+          if (changed) {
+            initAuthSession();
+            resetAssigneeDropdown();
+            const modal = document.getElementById('adminTeamPinsModal');
+            if (modal && modal.classList.contains('active')) {
+              renderAdminTeamPinsModal();
+            }
+          }
+        }
+      }, err => {
+        console.warn('Team accounts settings listener notice:', err);
+      });
+    } catch (settErr) {
+      console.warn('Could not subscribe to settings/team_accounts:', settErr);
+    }
 
     if (showToasts) {
       showToast('เชื่อมต่อ Google Firebase สำเร็จ! ☁️');
@@ -4191,10 +4225,28 @@ function getTeamAccounts() {
     }
   }
 
+  const customAccountsRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+  let customAccounts = {};
+  if (customAccountsRaw) {
+    try {
+      customAccounts = JSON.parse(customAccountsRaw) || {};
+    } catch (e) {
+      console.warn('Error reading custom accounts:', e);
+    }
+  }
+
   return DEFAULT_TEAM_ACCOUNTS.map(acc => {
+    const custom = customAccounts[acc.id] || {};
+    const pin = custom.pin || customPins[acc.id] || acc.pin;
+    const name = custom.name || acc.name;
+    const empId = custom.empId || acc.empId || acc.id.replace('usr_', '');
+    const company = custom.company || acc.company || 'ORBRAY';
     return {
       ...acc,
-      pin: customPins[acc.id] || acc.pin
+      name,
+      pin,
+      empId,
+      company
     };
   });
 }
@@ -4224,6 +4276,7 @@ function initAuthSession() {
 }
 
 function updateAuthHeaderUI() {
+  window.currentUser = currentUser;
   const btnHeaderAuth = document.getElementById('btnHeaderAuth');
   const headerAuthIcon = document.getElementById('headerAuthIcon');
   const headerAuthText = document.getElementById('headerAuthText');
@@ -4246,9 +4299,17 @@ function updateAuthHeaderUI() {
       headerAuthText.innerHTML = `${escapeHtml(currentUser.name)} ${roleBadge}`;
     }
     if (dropdownUserName) dropdownUserName.textContent = `${currentUser.avatar} ${currentUser.name}`;
+    const dropdownEmpId = document.getElementById('dropdownEmpId');
+    if (dropdownEmpId) dropdownEmpId.textContent = currentUser.empId || currentUser.id.replace('usr_', '');
+    const dropdownCompany = document.getElementById('dropdownCompany');
+    if (dropdownCompany) dropdownCompany.textContent = `🏢 ${currentUser.company || 'ORBRAY'}`;
     if (dropdownUserPin) dropdownUserPin.textContent = `รหัส PIN: ••••• (${currentUser.role})`;
     if (mobileToolsAuthBtn) {
       mobileToolsAuthBtn.innerHTML = `${currentUser.avatar} บัญชี: ${currentUser.name} (${currentUser.role})`;
+    }
+    const mobileToolsProfileBtn = document.getElementById('mobileToolsProfileBtn');
+    if (mobileToolsProfileBtn) {
+      mobileToolsProfileBtn.style.display = 'block';
     }
     if (adminDropdownItem) {
       adminDropdownItem.style.display = isAdmin ? 'flex' : 'none';
@@ -4265,9 +4326,17 @@ function updateAuthHeaderUI() {
     if (headerAuthIcon) headerAuthIcon.textContent = '🔑';
     if (headerAuthText) headerAuthText.textContent = 'เข้าสู่ระบบ (LOGIN)';
     if (dropdownUserName) dropdownUserName.textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+    const dropdownEmpId = document.getElementById('dropdownEmpId');
+    if (dropdownEmpId) dropdownEmpId.textContent = '-';
+    const dropdownCompany = document.getElementById('dropdownCompany');
+    if (dropdownCompany) dropdownCompany.textContent = '🏢 -';
     if (dropdownUserPin) dropdownUserPin.textContent = 'PUBLIC VIEW MODE';
     if (mobileToolsAuthBtn) {
       mobileToolsAuthBtn.innerHTML = '🔑 เข้าสู่ระบบ PIN / LOGIN';
+    }
+    const mobileToolsProfileBtn = document.getElementById('mobileToolsProfileBtn');
+    if (mobileToolsProfileBtn) {
+      mobileToolsProfileBtn.style.display = 'none';
     }
     if (adminDropdownItem) {
       adminDropdownItem.style.display = 'none';
@@ -4500,23 +4569,54 @@ function submitChangePin() {
   customPins[currentUser.id] = newPin;
   localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
 
+  // Sync to STORAGE_KEY_CUSTOM_ACCOUNTS
+  let customAccounts = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    if (raw) customAccounts = JSON.parse(raw) || {};
+  } catch(e) {}
+  customAccounts[currentUser.id] = {
+    name: currentUser.name,
+    pin: newPin
+  };
+  localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
+
   currentUser.pin = newPin;
   localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
   updateAuthHeaderUI();
+  syncTeamAccountsToFirestore();
 
   closeChangePinModal();
   showToast('🔑 เปลี่ยนรหัส PIN สำเร็จเรียบร้อยแล้ว');
 }
 
-// --- ADMIN: View & Manage All Team Member PINs (ADMIN ONLY) ---
+// --- ADMIN: View & Manage All Team Member Accounts & PINs (ADMIN ONLY) ---
 let adminAllPinsVisible = false;
+let adminEditPinVisible = true;
+
+async function syncTeamAccountsToFirestore() {
+  if (!firebaseDb) return;
+  try {
+    const customAccountsRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    const customAccounts = customAccountsRaw ? JSON.parse(customAccountsRaw) : {};
+    const customPins = customPinsRaw ? JSON.parse(customPinsRaw) : {};
+    await firebaseDb.collection('settings').doc('team_accounts').set({
+      customAccounts,
+      customPins,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    console.warn('Failed to sync team accounts to Firestore:', err);
+  }
+}
 
 function openAdminTeamPinsModal() {
   const dropdown = document.getElementById('authUserDropdown');
   if (dropdown) dropdown.classList.remove('active');
 
   if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
-    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถดูรหัส PIN ของทีมงานได้');
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถจัดการบัญชีทีมงานได้');
     return;
   }
 
@@ -4548,12 +4648,28 @@ function renderAdminTeamPinsModal() {
     try { customPins = JSON.parse(customPinsRaw) || {}; } catch(e){}
   }
 
+  const customAccountsRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+  let customAccounts = {};
+  if (customAccountsRaw) {
+    try { customAccounts = JSON.parse(customAccountsRaw) || {}; } catch(e){}
+  }
+
   container.innerHTML = accounts.map(acc => {
-    const isCustom = Boolean(customPins[acc.id]);
+    const defaultAcc = DEFAULT_TEAM_ACCOUNTS.find(a => a.id === acc.id) || acc;
+    const isCustomPin = Boolean(customPins[acc.id]) || (acc.pin !== defaultAcc.pin);
+    const isCustomName = Boolean(customAccounts[acc.id] && customAccounts[acc.id].name && customAccounts[acc.id].name !== defaultAcc.name);
+    const isCustomEmpId = Boolean(customAccounts[acc.id] && customAccounts[acc.id].empId && customAccounts[acc.id].empId !== defaultAcc.empId);
+    const isCustomCompany = Boolean(customAccounts[acc.id] && customAccounts[acc.id].company && customAccounts[acc.id].company !== defaultAcc.company);
+    const isCustom = isCustomPin || isCustomName || isCustomEmpId || isCustomCompany;
     const isCurrentUser = currentUser && currentUser.id === acc.id;
     const initialMasked = !adminAllPinsVisible;
     const displayPin = initialMasked ? '•••••' : escapeHtml(acc.pin);
     const eyeIcon = initialMasked ? '👁️' : '🙈';
+
+    let statusText = '💡 รหัสเริ่มต้น';
+    if (isCustom) {
+      statusText = '🔄 มีการแก้ไขข้อมูล';
+    }
 
     return `
       <div class="admin-pin-card ${acc.role === 'ADMIN' ? 'admin-highlight' : ''}">
@@ -4565,9 +4681,12 @@ function renderAdminTeamPinsModal() {
               <span class="auth-user-role-badge ${acc.role === 'ADMIN' ? 'admin' : 'member'}">${acc.role}</span>
               ${isCurrentUser ? '<span class="admin-pin-badge-you">บัญชีของคุณ</span>' : ''}
             </div>
-            <div class="admin-pin-sub">
-              รหัสพนักงาน: <strong>${acc.id.replace('usr_', '')}</strong> &bull; 
-              สถานะ: <span class="badge-pin-status ${isCustom ? 'custom' : 'default'}">${isCustom ? '🔄 เปลี่ยนรหัสแล้ว' : '💡 รหัสเริ่มต้น'}</span>
+            <div class="admin-pin-sub" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+              <span>รหัสพนักงาน: <strong class="badge-empid-tag">${escapeHtml(acc.empId || acc.id.replace('usr_', ''))}</strong></span>
+              <span>&bull;</span>
+              <span>สังกัด: <span class="badge-company-tag">🏢 ${escapeHtml(acc.company || 'ORBRAY')}</span></span>
+              <span>&bull;</span>
+              <span>สถานะ: <span class="badge-pin-status ${isCustom ? 'custom' : 'default'}">${statusText}</span></span>
             </div>
           </div>
         </div>
@@ -4579,9 +4698,12 @@ function renderAdminTeamPinsModal() {
               <span id="adminPinEye_${acc.id}">${eyeIcon}</span>
             </button>
           </div>
+          <button type="button" class="admin-btn-edit" onclick="openAdminEditAccountModal('${acc.id}')" title="แก้ไขชื่อและรหัส PIN ของ ${escapeHtml(acc.name)}">
+            ✏️ แก้ไข
+          </button>
           ${isCustom ? `
-            <button type="button" class="admin-btn-reset" onclick="adminResetMemberPin('${acc.id}', '${escapeHtml(acc.name)}')" title="รีเซ็ตกลับเป็นรหัสเริ่มต้นตามรหัสพนักงาน">
-              ↺ รีเซ็ต PIN
+            <button type="button" class="admin-btn-reset" onclick="adminResetMemberAccount('${acc.id}', '${escapeHtml(acc.name)}')" title="รีเซ็ตชื่อและรหัสกลับเป็นค่าเริ่มต้นตามรหัสพนักงาน">
+              ↺ รีเซ็ต
             </button>
           ` : ''}
         </div>
@@ -4635,36 +4757,425 @@ function toggleAdminAllPins() {
   }
 }
 
-function adminResetMemberPin(accId, accName) {
+function openAdminEditAccountModal(accId) {
   if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
-    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถรีเซ็ตรหัส PIN ได้');
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถแก้ไขข้อมูลบัญชีได้');
+    return;
+  }
+
+  const accounts = getTeamAccounts();
+  const acc = accounts.find(a => a.id === accId);
+  if (!acc) {
+    showToast('❌ ไม่พบบัญชีผู้ใช้งานที่ต้องการแก้ไข');
+    return;
+  }
+
+  const modal = document.getElementById('adminEditAccountModal');
+  const idInput = document.getElementById('adminEditAccId');
+  const avatarEl = document.getElementById('adminEditAccAvatar');
+  const empIdEl = document.getElementById('adminEditEmpId');
+  const roleEl = document.getElementById('adminEditAccRole');
+  const namePreviewEl = document.getElementById('adminEditCurrentNamePreview');
+  const nameInput = document.getElementById('adminEditAccName');
+  const empInput = document.getElementById('adminEditAccEmpId');
+  const compInput = document.getElementById('adminEditAccCompany');
+  const pinInput = document.getElementById('adminEditAccPin');
+  const errEl = document.getElementById('adminEditAccountErrorMessage');
+  const taskCheck = document.getElementById('adminEditUpdateExistingTasks');
+
+  if (idInput) idInput.value = acc.id;
+  if (avatarEl) avatarEl.textContent = acc.avatar || '👤';
+  if (empIdEl) empIdEl.textContent = acc.empId || acc.id.replace('usr_', '');
+  if (roleEl) {
+    roleEl.textContent = acc.role;
+    roleEl.className = `auth-user-role-badge ${acc.role === 'ADMIN' ? 'admin' : 'member'}`;
+  }
+  if (namePreviewEl) namePreviewEl.textContent = `ชื่อปัจจุบัน: ${acc.name}`;
+  if (nameInput) nameInput.value = acc.name;
+  if (empInput) empInput.value = acc.empId || acc.id.replace('usr_', '');
+  if (compInput) compInput.value = acc.company || 'ORBRAY';
+  if (pinInput) {
+    pinInput.value = acc.pin;
+    pinInput.type = 'text';
+  }
+  adminEditPinVisible = true;
+  const pinEye = document.getElementById('adminEditPinEye');
+  if (pinEye) pinEye.textContent = '👁️';
+
+  if (taskCheck) taskCheck.checked = true;
+  if (errEl) errEl.textContent = '';
+
+  if (modal) modal.classList.add('active');
+  setTimeout(() => {
+    if (nameInput) {
+      nameInput.focus();
+      nameInput.select();
+    }
+  }, 100);
+}
+
+function closeAdminEditAccountModal() {
+  const modal = document.getElementById('adminEditAccountModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function toggleAdminEditPinVisibility() {
+  const pinInput = document.getElementById('adminEditAccPin');
+  const pinEye = document.getElementById('adminEditPinEye');
+  if (!pinInput) return;
+
+  adminEditPinVisible = !adminEditPinVisible;
+  pinInput.type = adminEditPinVisible ? 'text' : 'password';
+  if (pinEye) pinEye.textContent = adminEditPinVisible ? '👁️' : '🙈';
+}
+
+async function saveAdminEditAccount() {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถแก้ไขข้อมูลบัญชีได้');
+    return;
+  }
+
+  const accId = (document.getElementById('adminEditAccId')?.value || '').trim();
+  const newName = (document.getElementById('adminEditAccName')?.value || '').trim();
+  const newEmpId = (document.getElementById('adminEditAccEmpId')?.value || '').trim();
+  const newCompany = (document.getElementById('adminEditAccCompany')?.value || '').trim();
+  const newPin = (document.getElementById('adminEditAccPin')?.value || '').trim();
+  const updateExistingTasks = Boolean(document.getElementById('adminEditUpdateExistingTasks')?.checked);
+  const errEl = document.getElementById('adminEditAccountErrorMessage');
+
+  if (!accId) {
+    if (errEl) errEl.textContent = '❌ ไม่พบรหัสบัญชีผู้ใช้งาน';
+    return;
+  }
+
+  if (!newName || newName.length < 2) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อ-นามสกุล หรือชื่อผู้ใช้งาน (อย่างน้อย 2 ตัวอักษร)';
+    return;
+  }
+
+  if (!newEmpId) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุรหัสพนักงาน';
+    return;
+  }
+
+  if (!newCompany) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อบริษัท / สังกัด';
+    return;
+  }
+
+  if (!newPin || newPin.length < 4 || newPin.length > 8 || !/^\d+$/.test(newPin)) {
+    if (errEl) errEl.textContent = '⚠️ รหัส PIN ต้องเป็นตัวเลขล้วน 4 - 8 หลัก';
+    return;
+  }
+
+  const allAccounts = getTeamAccounts();
+  const targetAcc = allAccounts.find(a => a.id === accId);
+  if (!targetAcc) {
+    if (errEl) errEl.textContent = '❌ ไม่พบบัญชีผู้ใช้งานในระบบ';
+    return;
+  }
+
+  // Duplicate PIN validation across other accounts
+  const dup = allAccounts.find(a => a.id !== accId && a.pin === newPin);
+  if (dup) {
+    if (errEl) errEl.textContent = `⚠️ รหัส PIN "${newPin}" ถูกใช้งานโดยบัญชี "${dup.name}" แล้ว กรุณาตั้งรหัสอื่น`;
+    return;
+  }
+
+  const oldName = targetAcc.name;
+
+  // Save to STORAGE_KEY_CUSTOM_ACCOUNTS
+  let customAccounts = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    if (raw) customAccounts = JSON.parse(raw) || {};
+  } catch(e) {}
+
+  customAccounts[accId] = {
+    name: newName,
+    empId: newEmpId,
+    company: newCompany,
+    pin: newPin
+  };
+  localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
+
+  // Save to STORAGE_KEY_TEAM_PINS for full backward compatibility
+  let customPins = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    if (raw) customPins = JSON.parse(raw) || {};
+  } catch(e) {}
+  customPins[accId] = newPin;
+  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+
+  // If current logged-in user is this account, update session
+  if (currentUser && currentUser.id === accId) {
+    currentUser.name = newName;
+    currentUser.empId = newEmpId;
+    currentUser.company = newCompany;
+    currentUser.pin = newPin;
+    localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
+    updateAuthHeaderUI();
+  }
+
+  // Update existing achievements assignee if requested and name changed
+  let updatedTaskCount = 0;
+  if (updateExistingTasks && oldName && oldName.toUpperCase() !== newName.toUpperCase()) {
+    achievements.forEach(item => {
+      if (item.assignee && item.assignee.trim().toUpperCase() === oldName.toUpperCase()) {
+        item.assignee = newName;
+        updatedTaskCount++;
+      }
+    });
+
+    if (updatedTaskCount > 0) {
+      saveAchievements();
+      renderContent();
+      renderStats();
+      populateAssigneeDropdown();
+    }
+  }
+
+  // Refresh dropdowns and UI
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
+  renderAdminTeamPinsModal();
+
+  // Cloud sync
+  syncTeamAccountsToFirestore();
+
+  closeAdminEditAccountModal();
+
+  const taskMsg = updatedTaskCount > 0 ? ` (อัปเดตประวัติงานเดิม ${updatedTaskCount} รายการ)` : '';
+  showToast(`✅ แก้ไขข้อมูลบัญชี "${newName}" (PIN: ${newPin}) สำเร็จเรียบร้อย${taskMsg}`);
+}
+
+function adminResetMemberAccount(accId, accName) {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถรีเซ็ตข้อมูลบัญชีได้');
     return;
   }
 
   const defaultAcc = DEFAULT_TEAM_ACCOUNTS.find(a => a.id === accId);
   const defaultPin = defaultAcc ? defaultAcc.pin : accId.replace('usr_', '');
+  const defaultName = defaultAcc ? defaultAcc.name : accName;
+  const defaultEmpId = defaultAcc ? defaultAcc.empId : accId.replace('usr_', '');
+  const defaultCompany = defaultAcc ? defaultAcc.company : 'ORBRAY';
 
-  if (!confirm(`คุณต้องการรีเซ็ตรหัส PIN ของ ${accName} กลับไปเป็นรหัสเริ่มต้น (${defaultPin}) ใช่หรือไม่?`)) {
+  if (!confirm(`คุณต้องการรีเซ็ตบัญชี "${accName}" กลับไปเป็นค่าเริ่มต้น\n(ชื่อ: "${defaultName}", รหัส: "${defaultEmpId}", บริษัท: "${defaultCompany}", PIN: "${defaultPin}") ใช่หรือไม่?`)) {
     return;
   }
 
-  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
-  let customPins = {};
-  if (customPinsRaw) {
-    try { customPins = JSON.parse(customPinsRaw) || {}; } catch(e){}
-  }
+  // Remove custom account record
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    if (raw) {
+      const customAccounts = JSON.parse(raw) || {};
+      delete customAccounts[accId];
+      localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
+    }
+  } catch(e) {}
 
-  delete customPins[accId];
-  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+  // Remove custom pin record
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    if (raw) {
+      const customPins = JSON.parse(raw) || {};
+      delete customPins[accId];
+      localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+    }
+  } catch(e) {}
 
-  if (currentUser.id === accId) {
+  // If current logged-in user is this account, update session
+  if (currentUser && currentUser.id === accId) {
+    currentUser.name = defaultName;
+    currentUser.empId = defaultEmpId;
+    currentUser.company = defaultCompany;
     currentUser.pin = defaultPin;
     localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
     updateAuthHeaderUI();
   }
 
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
   renderAdminTeamPinsModal();
-  showToast(`↺ รีเซ็ตรหัส PIN ของ ${accName} เป็นรหัสเริ่มต้น (${defaultPin}) สำเร็จเรียบร้อย`);
+
+  // Cloud sync
+  syncTeamAccountsToFirestore();
+
+  showToast(`↺ รีเซ็ตบัญชี "${defaultName}" (PIN: ${defaultPin}) กลับเป็นค่าเริ่มต้นเรียบร้อย`);
+}
+
+// Backward compatibility alias
+const adminResetMemberPin = adminResetMemberAccount;
+
+// --- User Profile Management (Every Account) ---
+let userProfilePinVisible = false;
+
+function openUserProfileModal() {
+  const dropdown = document.getElementById('authUserDropdown');
+  if (dropdown) dropdown.classList.remove('active');
+
+  if (!currentUser) {
+    openAuthPinModal();
+    return;
+  }
+
+  const modal = document.getElementById('userProfileModal');
+  const avatarEl = document.getElementById('userProfileAvatar');
+  const roleEl = document.getElementById('userProfileRole');
+  const previewEl = document.getElementById('userProfileCurrentNamePreview');
+  const nameInput = document.getElementById('userProfileName');
+  const empIdInput = document.getElementById('userProfileEmpId');
+  const companyInput = document.getElementById('userProfileCompany');
+  const pinInput = document.getElementById('userProfilePin');
+  const errEl = document.getElementById('userProfileErrorMessage');
+  const taskCheck = document.getElementById('userProfileUpdateExistingTasks');
+
+  if (avatarEl) avatarEl.textContent = currentUser.avatar || '👤';
+  if (roleEl) {
+    roleEl.textContent = currentUser.role;
+    roleEl.className = `auth-user-role-badge ${currentUser.role === 'ADMIN' ? 'admin' : 'member'}`;
+  }
+  if (previewEl) previewEl.textContent = `ชื่อปัจจุบัน: ${currentUser.name}`;
+  if (nameInput) nameInput.value = currentUser.name;
+  if (empIdInput) empIdInput.value = currentUser.empId || currentUser.id.replace('usr_', '');
+  if (companyInput) companyInput.value = currentUser.company || 'ORBRAY';
+  if (pinInput) {
+    pinInput.value = currentUser.pin;
+    pinInput.type = 'password';
+  }
+  userProfilePinVisible = false;
+  const pinEye = document.getElementById('userProfilePinEye');
+  if (pinEye) pinEye.textContent = '👁️';
+
+  if (taskCheck) taskCheck.checked = true;
+  if (errEl) errEl.textContent = '';
+
+  if (modal) modal.classList.add('active');
+  setTimeout(() => {
+    if (nameInput) {
+      nameInput.focus();
+      nameInput.select();
+    }
+  }, 100);
+}
+
+function closeUserProfileModal() {
+  const modal = document.getElementById('userProfileModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function toggleProfilePinVisibility() {
+  const pinInput = document.getElementById('userProfilePin');
+  const pinEye = document.getElementById('userProfilePinEye');
+  if (!pinInput) return;
+
+  userProfilePinVisible = !userProfilePinVisible;
+  pinInput.type = userProfilePinVisible ? 'text' : 'password';
+  if (pinEye) pinEye.textContent = userProfilePinVisible ? '🙈' : '👁️';
+}
+
+async function saveUserProfile() {
+  if (!currentUser) return;
+
+  const newName = (document.getElementById('userProfileName')?.value || '').trim();
+  const newEmpId = (document.getElementById('userProfileEmpId')?.value || '').trim();
+  const newCompany = (document.getElementById('userProfileCompany')?.value || '').trim();
+  const newPin = (document.getElementById('userProfilePin')?.value || '').trim();
+  const updateExistingTasks = Boolean(document.getElementById('userProfileUpdateExistingTasks')?.checked);
+  const errEl = document.getElementById('userProfileErrorMessage');
+
+  if (!newName || newName.length < 2) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อ-นามสกุล หรือชื่อผู้ใช้งาน (อย่างน้อย 2 ตัวอักษร)';
+    return;
+  }
+
+  if (!newEmpId) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุรหัสพนักงาน';
+    return;
+  }
+
+  if (!newCompany) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อบริษัท / สังกัด';
+    return;
+  }
+
+  if (!newPin || newPin.length < 4 || newPin.length > 8 || !/^\d+$/.test(newPin)) {
+    if (errEl) errEl.textContent = '⚠️ รหัส PIN ต้องเป็นตัวเลขล้วน 4 - 8 หลัก';
+    return;
+  }
+
+  const allAccounts = getTeamAccounts();
+  const dup = allAccounts.find(a => a.id !== currentUser.id && a.pin === newPin);
+  if (dup) {
+    if (errEl) errEl.textContent = `⚠️ รหัส PIN "${newPin}" ถูกใช้งานโดยบัญชีอื่นแล้ว กรุณาตั้งรหัสอื่น`;
+    return;
+  }
+
+  const oldName = currentUser.name;
+
+  // Save to STORAGE_KEY_CUSTOM_ACCOUNTS
+  let customAccounts = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    if (raw) customAccounts = JSON.parse(raw) || {};
+  } catch(e) {}
+
+  customAccounts[currentUser.id] = {
+    name: newName,
+    empId: newEmpId,
+    company: newCompany,
+    pin: newPin
+  };
+  localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
+
+  // Sync to STORAGE_KEY_TEAM_PINS
+  let customPins = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    if (raw) customPins = JSON.parse(raw) || {};
+  } catch(e) {}
+  customPins[currentUser.id] = newPin;
+  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+
+  currentUser.name = newName;
+  currentUser.empId = newEmpId;
+  currentUser.company = newCompany;
+  currentUser.pin = newPin;
+  localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
+  updateAuthHeaderUI();
+
+  // Update existing achievements if requested
+  let updatedTaskCount = 0;
+  if (updateExistingTasks && oldName && oldName.toUpperCase() !== newName.toUpperCase()) {
+    achievements.forEach(item => {
+      if (item.assignee && item.assignee.trim().toUpperCase() === oldName.toUpperCase()) {
+        item.assignee = newName;
+        updatedTaskCount++;
+      }
+    });
+
+    if (updatedTaskCount > 0) {
+      saveAchievements();
+      renderContent();
+      renderStats();
+      populateAssigneeDropdown();
+    }
+  }
+
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
+  const adminModal = document.getElementById('adminTeamPinsModal');
+  if (adminModal && adminModal.classList.contains('active')) {
+    renderAdminTeamPinsModal();
+  }
+
+  syncTeamAccountsToFirestore();
+  closeUserProfileModal();
+
+  const taskMsg = updatedTaskCount > 0 ? ` (อัปเดตประวัติงานเดิม ${updatedTaskCount} รายการ)` : '';
+  showToast(`✅ บันทึกข้อมูลโปรไฟล์ของคุณเรียบร้อยแล้ว${taskMsg}`);
 }
 
 function canUserEditTask(user, item) {
@@ -6389,13 +6900,11 @@ function renderTableView(container, items) {
 function resetAssigneeDropdown() {
   const select = document.getElementById('achvAssignee');
   if (!select) return;
+  const accounts = getTeamAccounts();
+  const optionsHtml = accounts.map(acc => `<option value="${escapeHtml(acc.name)}">${escapeHtml(acc.name)}</option>`).join('\n    ');
   select.innerHTML = `
     <option value="">-- เลือกผู้รับผิดชอบ (SELECT ASSIGNEE) --</option>
-    <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
-    <option value="JITTRAKAN K.">JITTRAKAN K.</option>
-    <option value="TANIN P.">TANIN P.</option>
-    <option value="KITTISAK P.">KITTISAK P.</option>
-    <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+    ${optionsHtml}
   `;
 }
 

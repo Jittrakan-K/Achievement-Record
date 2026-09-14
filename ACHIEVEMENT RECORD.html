@@ -166,13 +166,21 @@
             <div id="authUserDropdown" class="auth-user-dropdown">
               <div class="auth-dropdown-header">
                 <div class="auth-dropdown-name" id="dropdownUserName">JITTRAKAN K.</div>
-                <div class="auth-dropdown-pin" id="dropdownUserPin">รหัส PIN: 20523</div>
+                <div class="auth-dropdown-meta" id="dropdownUserMeta" style="font-size: 11px; color: #64748b; margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span>รหัส: <strong id="dropdownEmpId" style="font-family: monospace; color: #0f172a;">20523</strong></span>
+                  <span>&bull;</span>
+                  <span id="dropdownCompany">🏢 ORBRAY</span>
+                </div>
+                <div class="auth-dropdown-pin" id="dropdownUserPin" style="margin-top: 4px;">รหัส PIN: •••••</div>
+              </div>
+              <div class="auth-dropdown-item" onclick="openUserProfileModal()">
+                <span>👤</span> ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
               </div>
               <div class="auth-dropdown-item" onclick="openChangePinModal()">
                 <span>🔑</span> เปลี่ยนรหัส PIN ของฉัน
               </div>
               <div class="auth-dropdown-item admin-only-item" id="adminViewTeamPinsDropdownItem" style="display: none;" onclick="openAdminTeamPinsModal()">
-                <span>🛡️</span> ดูรหัส PIN ทีมงานทั้งหมด (ADMIN)
+                <span>🛡️</span> จัดการบัญชีและรหัส PIN (ADMIN)
               </div>
               <div class="auth-dropdown-item text-danger" onclick="logoutUser()">
                 <span>🚪</span> ออกจากระบบ (LOGOUT)
@@ -974,19 +982,19 @@
     </div>
   </div>
 
-  <!-- Modal: Admin View & Manage Team PINs (ADMIN ONLY) -->
+  <!-- Modal: Admin View & Manage Team Accounts & PINs (ADMIN ONLY) -->
   <div id="adminTeamPinsModal" class="modal-overlay">
-    <div class="modal-card modal-card-md" style="max-width: 540px;">
+    <div class="modal-card modal-card-md" style="max-width: 560px;">
       <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
-          <span>🛡️</span> รหัส PIN ทีมงานทั้งหมด (ADMIN ONLY)
+          <span>🛡️</span> จัดการบัญชีและรหัส PIN ทีมงาน (ADMIN ONLY)
         </h3>
         <button class="modal-close" onclick="closeAdminTeamPinsModal()">&times;</button>
       </div>
       <div class="modal-body" style="padding: 18px 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; gap: 10px;">
           <div style="font-size: 12px; color: #1e40af; line-height: 1.4;">
-            👑 <strong>เฉพาะผู้ดูแลระบบ (ADMIN)</strong> เท่านั้นที่สามารถตรวจสอบรหัส PIN ของทีมงานได้
+            👑 <strong>เฉพาะผู้ดูแลระบบ (ADMIN)</strong> สามารถดูรหัส PIN และแก้ไขชื่อ/รหัสของสมาชิกได้ทุกบัญชี
           </div>
           <button type="button" class="btn btn-outline btn-xs" id="btnAdminToggleAllPins" onclick="toggleAdminAllPins()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #93c5fd; color: #1e40af; font-weight: 600;">
             👁️ แสดงรหัสทั้งหมด
@@ -998,11 +1006,179 @@
         </div>
 
         <div style="margin-top: 14px; font-size: 11px; color: #64748b; line-height: 1.5; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-          💡 <strong>หมายเหตุ:</strong> หากสมาชิกทีมลืมรหัส PIN ท่านสามารถกดปุ่ม <strong>"↺ รีเซ็ต PIN"</strong> เพื่อให้รหัสกลับเป็นรหัสพนักงานเริ่มต้นได้ทันที
+          💡 <strong>คำแนะนำ:</strong> แอดมินสามารถกดปุ่ม <strong>"✏️ แก้ไข"</strong> เพื่อเปลี่ยนชื่อหรือรหัส PIN ของบัญชีใดก็ได้ หรือกด <strong>"↺ รีเซ็ต"</strong> เพื่อคืนค่าเริ่มต้นตามรหัสพนักงาน
         </div>
       </div>
       <div class="modal-footer" style="display: flex; justify-content: flex-end;">
         <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminTeamPinsModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Edit Account (Name & PIN) (ADMIN ONLY) -->
+  <div id="adminEditAccountModal" class="modal-overlay" style="z-index: 10050;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>✏️</span> แก้ไขข้อมูลบัญชีผู้ใช้งาน (ADMIN)
+        </h3>
+        <button class="modal-close" onclick="closeAdminEditAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <input type="hidden" id="adminEditAccId" value="" />
+
+        <!-- Account Badge Preview -->
+        <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div id="adminEditAccAvatar" style="font-size: 26px; width: 44px; height: 44px; border-radius: 10px; background: #ffffff; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0;">👤</div>
+          <div style="min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="adminEditAccRole" class="auth-user-role-badge member">MEMBER</span>
+              <span style="font-size: 11px; color: #64748b;">รหัสพนักงาน: <strong id="adminEditEmpId" style="color: #0f172a; font-family: monospace;">20524</strong></span>
+            </div>
+            <div style="font-size: 12px; color: #475569; margin-top: 3px; font-weight: 600;" id="adminEditCurrentNamePreview">ชื่อเดิม: SUTTHIPONG M.</div>
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccName" style="font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+            <span>ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span></span>
+          </label>
+          <input type="text" id="adminEditAccName" class="form-control" placeholder="เช่น SUTTHIPONG M." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อนี้จะแสดงในระบบและในตัวเลือกผู้รับผิดชอบงาน (Assignee)
+          </div>
+        </div>
+
+        <!-- Employee ID & Company in 2-column grid -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminEditAccEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminEditAccEmpId" class="form-control" placeholder="เช่น 20524" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminEditAccCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminEditAccCompany" class="form-control" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccPin" style="font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+            <span>รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span></span>
+          </label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" id="adminEditAccPin" class="form-control" maxlength="8" placeholder="เช่น 20524" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 38px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleAdminEditPinVisibility()" style="position: absolute; right: 8px; font-size: 15px;" title="สลับแสดง/ซ่อนรหัส PIN">
+              <span id="adminEditPinEye">👁️</span>
+            </button>
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับบัญชีอื่น)
+          </div>
+        </div>
+
+        <!-- Option to update existing assignments -->
+        <div style="margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #1e40af; cursor: pointer; user-select: none; margin: 0;">
+            <input type="checkbox" id="adminEditUpdateExistingTasks" checked style="margin-top: 2px; accent-color: #2563eb;" />
+            <span style="line-height: 1.4;">อัปเดตชื่อผู้รับผิดชอบในประวัติผลงานเดิมของบุคคลนี้ด้วย (แนะนำ)</span>
+          </label>
+        </div>
+
+        <div id="adminEditAccountErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminEditAccountModal()">ยกเลิก (CANCEL)</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminEditAccount()">💾 บันทึกข้อมูล (SAVE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: User Profile (Edit Own Profile: Name, Employee ID, Company, PIN) -->
+  <div id="userProfileModal" class="modal-overlay" style="z-index: 10040;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>👤</span> ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
+        </h3>
+        <button class="modal-close" onclick="closeUserProfileModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <!-- Profile Header Badge -->
+        <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div id="userProfileAvatar" style="font-size: 26px; width: 44px; height: 44px; border-radius: 10px; background: #ffffff; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0;">👤</div>
+          <div style="min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="userProfileRole" class="auth-user-role-badge member">MEMBER</span>
+              <span style="font-size: 11px; color: #64748b;">บัญชีผู้ใช้งานระบบ</span>
+            </div>
+            <div style="font-size: 12px; color: #475569; margin-top: 3px; font-weight: 600;" id="userProfileCurrentNamePreview">ชื่อปัจจุบัน: -</div>
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfileName" style="font-weight: 700; color: #1e293b;">
+            ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="userProfileName" class="form-control" placeholder="เช่น JITTRAKAN K." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อนี้จะแสดงในประวัติผลงาน และในตัวเลือกผู้รับผิดชอบงาน (Assignee)
+          </div>
+        </div>
+
+        <!-- Employee ID & Company in 2-column grid -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="userProfileEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="userProfileEmpId" class="form-control" placeholder="เช่น 20523" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="userProfileCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="userProfileCompany" class="form-control" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfilePin" style="font-weight: 700; color: #1e293b;">
+            รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span>
+          </label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" id="userProfilePin" class="form-control" maxlength="8" placeholder="รหัส PIN สำหรับเข้าสู่ระบบ" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 38px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleProfilePinVisibility()" style="position: absolute; right: 8px; font-size: 15px;" title="สลับแสดง/ซ่อนรหัส PIN">
+              <span id="userProfilePinEye">👁️</span>
+            </button>
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับบัญชีอื่น)
+          </div>
+        </div>
+
+        <!-- Option to update existing assignments -->
+        <div style="margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #1e40af; cursor: pointer; user-select: none; margin: 0;">
+            <input type="checkbox" id="userProfileUpdateExistingTasks" checked style="margin-top: 2px; accent-color: #2563eb;" />
+            <span style="line-height: 1.4;">อัปเดตชื่อผู้รับผิดชอบในประวัติผลงานเดิมของฉันด้วย (แนะนำ)</span>
+          </label>
+        </div>
+
+        <div id="userProfileErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeUserProfileModal()">ยกเลิก (CANCEL)</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveUserProfile()">💾 บันทึกโปรไฟล์ (SAVE)</button>
       </div>
     </div>
   </div>
@@ -1074,8 +1250,11 @@
         <button type="button" class="ios-action-btn" id="mobileToolsAuthBtn" onclick="closeMobileToolsSheet(); handleAuthHeaderClick();">
           🔑 เข้าสู่ระบบ PIN / สลับบัญชี
         </button>
+        <button type="button" class="ios-action-btn logged-in-only-item" id="mobileToolsProfileBtn" style="display: none;" onclick="closeMobileToolsSheet(); openUserProfileModal();">
+          👤 ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
+        </button>
         <button type="button" class="ios-action-btn admin-only-item" id="mobileAdminTeamPinsBtn" style="display: none;" onclick="closeMobileToolsSheet(); openAdminTeamPinsModal();">
-          🛡️ ดูรหัส PIN ทีมงานทั้งหมด (ADMIN)
+          🛡️ จัดการบัญชีและรหัส PIN (ADMIN)
         </button>
         <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCloudModal();">
           ☁️ CLOUD SYNC (คลาวด์ซิงค์)
