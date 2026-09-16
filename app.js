@@ -1929,6 +1929,7 @@ const STORAGE_KEY_FIREBASE_CONFIG = 'orbray_firebase_config_v1';
 const STORAGE_KEY_AUTH_USER = 'orbray_auth_current_user_v1';
 const STORAGE_KEY_TEAM_PINS = 'orbray_team_account_pins_v1';
 const STORAGE_KEY_CUSTOM_ACCOUNTS = 'orbray_team_custom_accounts_v1';
+const STORAGE_KEY_DELETED_ACCOUNTS = 'orbray_team_deleted_accounts_v1';
 
 // --- Production Technology Team Accounts & Initial PINs ---
 const DEFAULT_TEAM_ACCOUNTS = [
@@ -3632,9 +3633,14 @@ async function initFirebase(config, showToasts = false) {
             localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(data.customPins));
             changed = true;
           }
+          if (data.deletedAccountIds) {
+            localStorage.setItem(STORAGE_KEY_DELETED_ACCOUNTS, JSON.stringify(data.deletedAccountIds));
+            changed = true;
+          }
           if (changed) {
             initAuthSession();
             resetAssigneeDropdown();
+            populateAssigneeDropdown();
             const modal = document.getElementById('adminTeamPinsModal');
             if (modal && modal.classList.contains('active')) {
               renderAdminTeamPinsModal();
@@ -4214,6 +4220,22 @@ function initFirebaseFromStorage() {
 }
 
 // --- PIN Authentication & Team Account Management ---
+function getDeletedAccountIds() {
+  const raw = localStorage.getItem(STORAGE_KEY_DELETED_ACCOUNTS);
+  if (!raw) return [];
+  try {
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveDeletedAccountIds(ids) {
+  const clean = Array.from(new Set(ids || []));
+  localStorage.setItem(STORAGE_KEY_DELETED_ACCOUNTS, JSON.stringify(clean));
+}
+
 function getTeamAccounts() {
   const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
   let customPins = {};
@@ -4235,20 +4257,108 @@ function getTeamAccounts() {
     }
   }
 
-  return DEFAULT_TEAM_ACCOUNTS.map(acc => {
+  const deletedIds = getDeletedAccountIds();
+
+  // 1. Filter out deleted accounts from default list
+  const accounts = DEFAULT_TEAM_ACCOUNTS
+    .filter(acc => !deletedIds.includes(acc.id))
+    .map(acc => {
+      const custom = customAccounts[acc.id] || {};
+      const pin = custom.pin || customPins[acc.id] || acc.pin;
+      const name = custom.name || acc.name;
+      const empId = custom.empId || acc.empId || acc.id.replace('usr_', '');
+      const company = custom.company || acc.company || 'ORBRAY';
+      const role = custom.role || acc.role || 'MEMBER';
+      const avatar = custom.avatar || acc.avatar || '👤';
+      return {
+        ...acc,
+        name,
+        pin,
+        empId,
+        company,
+        role,
+        avatar
+      };
+    });
+
+  // 2. Include custom newly added accounts (if not deleted)
+  Object.keys(customAccounts).forEach(accId => {
+    if (!DEFAULT_TEAM_ACCOUNTS.some(a => a.id === accId) && !deletedIds.includes(accId)) {
+      const c = customAccounts[accId];
+      if (c && c.name && !c.deleted) {
+        accounts.push({
+          id: accId,
+          name: c.name,
+          pin: c.pin || customPins[accId] || '',
+          empId: c.empId || accId.replace('usr_', ''),
+          company: c.company || 'ORBRAY',
+          role: c.role || 'MEMBER',
+          avatar: c.avatar || '👤',
+          isCustomAdded: true
+        });
+      }
+    }
+  });
+
+  return accounts;
+}
+
+function getAllTeamAccountsWithDeleted() {
+  const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+  let customPins = {};
+  if (customPinsRaw) {
+    try { customPins = JSON.parse(customPinsRaw) || {}; } catch (e) {}
+  }
+
+  const customAccountsRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+  let customAccounts = {};
+  if (customAccountsRaw) {
+    try { customAccounts = JSON.parse(customAccountsRaw) || {}; } catch (e) {}
+  }
+
+  const deletedIds = getDeletedAccountIds();
+
+  const accounts = DEFAULT_TEAM_ACCOUNTS.map(acc => {
     const custom = customAccounts[acc.id] || {};
     const pin = custom.pin || customPins[acc.id] || acc.pin;
     const name = custom.name || acc.name;
     const empId = custom.empId || acc.empId || acc.id.replace('usr_', '');
     const company = custom.company || acc.company || 'ORBRAY';
+    const role = custom.role || acc.role || 'MEMBER';
+    const avatar = custom.avatar || acc.avatar || '👤';
+    const isDeleted = deletedIds.includes(acc.id);
     return {
       ...acc,
       name,
       pin,
       empId,
-      company
+      company,
+      role,
+      avatar,
+      isDeleted
     };
   });
+
+  Object.keys(customAccounts).forEach(accId => {
+    if (!DEFAULT_TEAM_ACCOUNTS.some(a => a.id === accId)) {
+      const c = customAccounts[accId];
+      if (c && c.name) {
+        accounts.push({
+          id: accId,
+          name: c.name,
+          pin: c.pin || customPins[accId] || '',
+          empId: c.empId || accId.replace('usr_', ''),
+          company: c.company || 'ORBRAY',
+          role: c.role || 'MEMBER',
+          avatar: c.avatar || '👤',
+          isCustomAdded: true,
+          isDeleted: deletedIds.includes(accId)
+        });
+      }
+    }
+  });
+
+  return accounts;
 }
 
 function findAccountByPin(pin) {
@@ -4267,10 +4377,19 @@ function initAuthSession() {
       const current = accounts.find(a => a.id === saved.id);
       if (current) {
         currentUser = current;
+      } else {
+        const wasLoggedIn = Boolean(currentUser);
+        currentUser = null;
+        localStorage.removeItem(STORAGE_KEY_AUTH_USER);
+        if (wasLoggedIn) {
+          showToast('⚠️ บัญชีของคุณถูกระงับหรือลบออกจากระบบ กรุณาติดต่อผู้ดูแลระบบ (ADMIN)');
+        }
       }
     } catch (e) {
       console.warn('Error reading saved auth session:', e);
     }
+  } else {
+    currentUser = null;
   }
   updateAuthHeaderUI();
 }
@@ -4599,11 +4718,14 @@ async function syncTeamAccountsToFirestore() {
   try {
     const customAccountsRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
     const customPinsRaw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    const deletedAccountsRaw = localStorage.getItem(STORAGE_KEY_DELETED_ACCOUNTS);
     const customAccounts = customAccountsRaw ? JSON.parse(customAccountsRaw) : {};
     const customPins = customPinsRaw ? JSON.parse(customPinsRaw) : {};
+    const deletedAccountIds = deletedAccountsRaw ? JSON.parse(deletedAccountsRaw) : [];
     await firebaseDb.collection('settings').doc('team_accounts').set({
       customAccounts,
       customPins,
+      deletedAccountIds,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   } catch (err) {
@@ -4706,10 +4828,51 @@ function renderAdminTeamPinsModal() {
               ↺ รีเซ็ต
             </button>
           ` : ''}
+          ${!isCurrentUser && acc.id !== 'usr_20523' ? `
+            <button type="button" class="admin-btn-delete" onclick="adminDeleteAccount('${acc.id}', '${escapeHtml(acc.name)}')" title="ลบบัญชี ${escapeHtml(acc.name)} ออกจากระบบ">
+              🗑️ ลบ
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
   }).join('');
+
+  // Render Deleted Accounts Section (if any exist)
+  const allAccounts = getAllTeamAccountsWithDeleted();
+  const deletedAccounts = allAccounts.filter(a => a.isDeleted);
+  const deletedSection = document.getElementById('adminDeletedAccountsSection');
+  const deletedList = document.getElementById('adminDeletedAccountsList');
+  const deletedCount = document.getElementById('adminDeletedAccountsCount');
+
+  if (deletedSection && deletedList) {
+    if (deletedAccounts.length > 0) {
+      deletedSection.style.display = 'block';
+      if (deletedCount) deletedCount.textContent = deletedAccounts.length;
+      deletedList.innerHTML = deletedAccounts.map(dAcc => `
+        <div class="admin-deleted-item">
+          <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+            <div style="font-size: 20px; opacity: 0.7;">${dAcc.avatar || '👤'}</div>
+            <div style="min-width: 0;">
+              <div style="font-size: 13px; font-weight: 700; color: #881337; text-decoration: line-through;">
+                ${escapeHtml(dAcc.name)}
+              </div>
+              <div style="font-size: 11px; color: #9f1239; opacity: 0.85;">
+                รหัสพนักงาน: ${escapeHtml(dAcc.empId || dAcc.id.replace('usr_', ''))} &bull; 🏢 ${escapeHtml(dAcc.company || 'ORBRAY')}
+              </div>
+            </div>
+          </div>
+          <div>
+            <button type="button" class="admin-btn-restore" onclick="adminRestoreAccount('${dAcc.id}', '${escapeHtml(dAcc.name)}')" title="กู้คืนบัญชีนี้กลับมาใช้งานตามปกติ">
+              ↺ กู้คืน (RESTORE)
+            </button>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      deletedSection.style.display = 'none';
+    }
+  }
 }
 
 function toggleAdminPinRow(accId) {
@@ -4804,6 +4967,19 @@ function openAdminEditAccountModal(accId) {
 
   if (taskCheck) taskCheck.checked = true;
   if (errEl) errEl.textContent = '';
+
+  const btnDeleteThisAcc = document.getElementById('btnAdminEditDeleteThisAcc');
+  if (btnDeleteThisAcc) {
+    if (acc.id !== currentUser.id && acc.id !== 'usr_20523') {
+      btnDeleteThisAcc.style.display = 'inline-flex';
+      btnDeleteThisAcc.setAttribute('data-target-id', acc.id);
+      btnDeleteThisAcc.setAttribute('data-target-name', acc.name);
+    } else {
+      btnDeleteThisAcc.style.display = 'none';
+      btnDeleteThisAcc.removeAttribute('data-target-id');
+      btnDeleteThisAcc.removeAttribute('data-target-name');
+    }
+  }
 
   if (modal) modal.classList.add('active');
   setTimeout(() => {
@@ -5008,6 +5184,224 @@ function adminResetMemberAccount(accId, accName) {
 
 // Backward compatibility alias
 const adminResetMemberPin = adminResetMemberAccount;
+
+// --- ADMIN: Delete & Restore Team Member Accounts (ADMIN ONLY) ---
+function adminDeleteAccount(accId, accName) {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถลบบัญชีผู้ใช้งานได้');
+    return;
+  }
+
+  if (currentUser.id === accId) {
+    alert('⚠️ ไม่อนุญาตให้ลบบัญชีของตนเองที่กำลังเข้าสู่ระบบอยู่\nเพื่อป้องกันการสูญเสียสิทธิ์การดูแลระบบ');
+    return;
+  }
+
+  if (accId === 'usr_20523') {
+    alert('⚠️ ไม่สามารถลบบัญชีผู้ดูแลระบบหลัก (Master Admin: 20523) ได้');
+    return;
+  }
+
+  const allAccounts = getAllTeamAccountsWithDeleted();
+  const targetAcc = allAccounts.find(a => a.id === accId);
+  const empId = targetAcc ? (targetAcc.empId || accId.replace('usr_', '')) : '';
+  const displayName = targetAcc ? targetAcc.name : accName;
+
+  const confirmMsg = `⚠️ คุณต้องการลบบัญชีผู้ใช้งานนี้ออกจากระบบใช่หรือไม่?\n\n` +
+    `👤 ชื่อ: ${displayName}\n` +
+    `🆔 รหัสพนักงาน: ${empId}\n\n` +
+    `📌 ข้อมูลสำคัญ:\n` +
+    `• บัญชีนี้จะไม่สามารถใช้รหัส PIN เข้าสู่ระบบได้อีก\n` +
+    `• ประวัติผลงานเดิมที่เคยบันทึกไว้ในชื่อ "${displayName}" จะยังคงอยู่ครบถ้วน ไม่สูญหาย\n` +
+    `• คุณสามารถกดกู้คืนบัญชีนี้ได้ตลอดเวลาในหน้าต่างจัดการบัญชี\n\n` +
+    `ต้องการยืนยันการลบบัญชีนี้หรือไม่?`;
+
+  if (!confirm(confirmMsg)) {
+    return;
+  }
+
+  const deletedIds = getDeletedAccountIds();
+  if (!deletedIds.includes(accId)) {
+    deletedIds.push(accId);
+    saveDeletedAccountIds(deletedIds);
+  }
+
+  // If this account is being edited in adminEditAccountModal, close it
+  const editModal = document.getElementById('adminEditAccountModal');
+  const editAccIdInput = document.getElementById('adminEditAccId');
+  if (editModal && editModal.classList.contains('active') && editAccIdInput && editAccIdInput.value === accId) {
+    closeAdminEditAccountModal();
+  }
+
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
+  renderAdminTeamPinsModal();
+
+  // Cloud sync
+  syncTeamAccountsToFirestore();
+
+  showToast(`🗑️ ลบบัญชี "${displayName}" เรียบร้อย (สามารถกู้คืนได้ที่ด้านล่าง)`);
+}
+
+function adminRestoreAccount(accId, accName) {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถกู้คืนบัญชีได้');
+    return;
+  }
+
+  const deletedIds = getDeletedAccountIds().filter(id => id !== accId);
+  saveDeletedAccountIds(deletedIds);
+
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
+  renderAdminTeamPinsModal();
+
+  // Cloud sync
+  syncTeamAccountsToFirestore();
+
+  showToast(`✅ กู้คืนบัญชี "${accName}" กลับสู่ระบบเรียบร้อยแล้ว`);
+}
+
+function triggerDeleteFromEditModal() {
+  const btnDeleteThisAcc = document.getElementById('btnAdminEditDeleteThisAcc');
+  const accId = btnDeleteThisAcc ? btnDeleteThisAcc.getAttribute('data-target-id') : (document.getElementById('adminEditAccId')?.value || '');
+  const accName = btnDeleteThisAcc ? btnDeleteThisAcc.getAttribute('data-target-name') : (document.getElementById('adminEditAccName')?.value || '');
+  if (!accId) return;
+  adminDeleteAccount(accId, accName);
+}
+
+function openAdminAddAccountModal() {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถเพิ่มบัญชีใหม่ได้');
+    return;
+  }
+  const modal = document.getElementById('adminAddAccountModal');
+  const nameInput = document.getElementById('adminAddAccName');
+  const empIdInput = document.getElementById('adminAddAccEmpId');
+  const compInput = document.getElementById('adminAddAccCompany');
+  const pinInput = document.getElementById('adminAddAccPin');
+  const errEl = document.getElementById('adminAddAccountErrorMessage');
+
+  if (nameInput) nameInput.value = '';
+  if (empIdInput) empIdInput.value = '';
+  if (compInput) compInput.value = 'ORBRAY';
+  if (pinInput) pinInput.value = '';
+  if (errEl) errEl.textContent = '';
+
+  selectAdminAddAvatar('👨‍💻');
+
+  if (modal) modal.classList.add('active');
+  setTimeout(() => {
+    if (nameInput) nameInput.focus();
+  }, 100);
+}
+
+function closeAdminAddAccountModal() {
+  const modal = document.getElementById('adminAddAccountModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function selectAdminAddAvatar(avatar) {
+  const hiddenInput = document.getElementById('adminAddAccAvatar');
+  if (hiddenInput) hiddenInput.value = avatar;
+  const buttons = document.querySelectorAll('#adminAddAvatarSelector .avatar-opt-btn');
+  buttons.forEach(btn => {
+    if (btn.getAttribute('data-avatar') === avatar) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+async function saveAdminAddAccount() {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.id !== 'usr_20523')) {
+    showToast('⚠️ เฉพาะผู้ดูแลระบบ (ADMIN) เท่านั้นที่สามารถเพิ่มบัญชีใหม่ได้');
+    return;
+  }
+
+  const name = (document.getElementById('adminAddAccName')?.value || '').trim();
+  const empId = (document.getElementById('adminAddAccEmpId')?.value || '').trim();
+  const company = (document.getElementById('adminAddAccCompany')?.value || '').trim();
+  const pin = (document.getElementById('adminAddAccPin')?.value || '').trim();
+  const avatar = document.getElementById('adminAddAccAvatar')?.value || '👨‍💻';
+  const errEl = document.getElementById('adminAddAccountErrorMessage');
+
+  if (!name || name.length < 2) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อ-นามสกุล (อย่างน้อย 2 ตัวอักษร)';
+    return;
+  }
+
+  if (!empId) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุรหัสพนักงาน';
+    return;
+  }
+
+  if (!company) {
+    if (errEl) errEl.textContent = '⚠️ กรุณาระบุชื่อบริษัท / สังกัด';
+    return;
+  }
+
+  if (!pin || pin.length < 4 || pin.length > 8 || !/^\d+$/.test(pin)) {
+    if (errEl) errEl.textContent = '⚠️ รหัส PIN ต้องเป็นตัวเลขล้วน 4 - 8 หลัก';
+    return;
+  }
+
+  const allAccounts = getTeamAccounts();
+  const dupPin = allAccounts.find(a => a.pin === pin);
+  if (dupPin) {
+    if (errEl) errEl.textContent = `⚠️ รหัส PIN "${pin}" ถูกใช้งานโดย "${dupPin.name}" แล้ว กรุณาตั้งรหัสอื่น`;
+    return;
+  }
+
+  const dupEmp = allAccounts.find(a => (a.empId || '').toUpperCase() === empId.toUpperCase());
+  if (dupEmp) {
+    if (errEl) errEl.textContent = `⚠️ รหัสพนักงาน "${empId}" มีอยู่ในระบบแล้ว (${dupEmp.name})`;
+    return;
+  }
+
+  const newId = `usr_${empId}`;
+
+  // If this ID was previously deleted, remove it from deleted list
+  const deletedIds = getDeletedAccountIds().filter(id => id !== newId);
+  saveDeletedAccountIds(deletedIds);
+
+  // Save to custom accounts
+  let customAccounts = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_ACCOUNTS);
+    if (raw) customAccounts = JSON.parse(raw) || {};
+  } catch (e) {}
+
+  customAccounts[newId] = {
+    id: newId,
+    name: name.toUpperCase(),
+    empId: empId,
+    company: company.toUpperCase(),
+    pin: pin,
+    role: 'MEMBER',
+    avatar: avatar
+  };
+  localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
+
+  // Save to custom pins
+  let customPins = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_TEAM_PINS);
+    if (raw) customPins = JSON.parse(raw) || {};
+  } catch (e) {}
+  customPins[newId] = pin;
+  localStorage.setItem(STORAGE_KEY_TEAM_PINS, JSON.stringify(customPins));
+
+  closeAdminAddAccountModal();
+  resetAssigneeDropdown();
+  populateAssigneeDropdown();
+  renderAdminTeamPinsModal();
+
+  syncTeamAccountsToFirestore();
+
+  showToast(`🎉 เพิ่มบัญชีสมาชิกใหม่ "${name.toUpperCase()}" (PIN: ${pin}) สำเร็จเรียบร้อย`);
+}
 
 // --- User Profile Management (Every Account) ---
 let userProfilePinVisible = false;

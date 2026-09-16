@@ -984,7 +984,7 @@
 
   <!-- Modal: Admin View & Manage Team Accounts & PINs (ADMIN ONLY) -->
   <div id="adminTeamPinsModal" class="modal-overlay">
-    <div class="modal-card modal-card-md" style="max-width: 560px;">
+    <div class="modal-card modal-card-md" style="max-width: 580px;">
       <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
           <span>🛡️</span> จัดการบัญชีและรหัส PIN ทีมงาน (ADMIN ONLY)
@@ -992,21 +992,37 @@
         <button class="modal-close" onclick="closeAdminTeamPinsModal()">&times;</button>
       </div>
       <div class="modal-body" style="padding: 18px 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; gap: 10px;">
-          <div style="font-size: 12px; color: #1e40af; line-height: 1.4;">
-            👑 <strong>เฉพาะผู้ดูแลระบบ (ADMIN)</strong> สามารถดูรหัส PIN และแก้ไขชื่อ/รหัสของสมาชิกได้ทุกบัญชี
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; gap: 10px; flex-wrap: wrap;">
+          <div style="font-size: 12px; color: #1e40af; line-height: 1.4; flex: 1; min-width: 200px;">
+            👑 <strong>เฉพาะผู้ดูแลระบบ (ADMIN)</strong> สามารถดูรหัส PIN, แก้ไข, เพิ่ม หรือลบบัญชีสมาชิกได้
           </div>
-          <button type="button" class="btn btn-outline btn-xs" id="btnAdminToggleAllPins" onclick="toggleAdminAllPins()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #93c5fd; color: #1e40af; font-weight: 600;">
-            👁️ แสดงรหัสทั้งหมด
-          </button>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button type="button" class="btn btn-outline btn-xs" id="btnAdminAddNewAcc" onclick="openAdminAddAccountModal()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #86efac; color: #166534; font-weight: 700;">
+              ➕ เพิ่มบัญชีใหม่
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" id="btnAdminToggleAllPins" onclick="toggleAdminAllPins()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #93c5fd; color: #1e40af; font-weight: 600;">
+              👁️ แสดงรหัสทั้งหมด
+            </button>
+          </div>
         </div>
 
         <div id="adminTeamPinsList" class="admin-team-pins-list">
           <!-- Dynamically populated by renderAdminTeamPinsModal() -->
         </div>
 
+        <!-- Section: Deleted Accounts (Trash / Restore) -->
+        <div id="adminDeletedAccountsSection" class="admin-deleted-section" style="display: none;">
+          <div class="admin-deleted-header">
+            <span>🗑️ บัญชีที่ถูกลบชั่วคราว (<span id="adminDeletedAccountsCount">0</span> บัญชี)</span>
+            <span style="font-size: 10px; color: #e11d48; font-weight: normal;">*ข้อมูลเดิมยังคงอยู่ สามารถกดกู้คืนได้ตลอดเวลา</span>
+          </div>
+          <div id="adminDeletedAccountsList" class="admin-deleted-list">
+            <!-- Dynamically populated by renderAdminTeamPinsModal() -->
+          </div>
+        </div>
+
         <div style="margin-top: 14px; font-size: 11px; color: #64748b; line-height: 1.5; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-          💡 <strong>คำแนะนำ:</strong> แอดมินสามารถกดปุ่ม <strong>"✏️ แก้ไข"</strong> เพื่อเปลี่ยนชื่อหรือรหัส PIN ของบัญชีใดก็ได้ หรือกด <strong>"↺ รีเซ็ต"</strong> เพื่อคืนค่าเริ่มต้นตามรหัสพนักงาน
+          💡 <strong>คำแนะนำ:</strong> แอดมินสามารถกด <strong>"✏️ แก้ไข"</strong> เพื่อเปลี่ยนชื่อหรือ PIN, กด <strong>"🗑️ ลบ"</strong> เพื่อลบบัญชีสมาชิกคนอื่น (ประวัติงานเดิมยังคงอยู่ครบ), หรือกด <strong>"↺ กู้คืน"</strong> หากต้องการนำบัญชีที่ลบกลับคืนมา
         </div>
       </div>
       <div class="modal-footer" style="display: flex; justify-content: flex-end;">
@@ -1093,9 +1109,91 @@
 
         <div id="adminEditAccountErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
       </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <div>
+          <button type="button" id="btnAdminEditDeleteThisAcc" class="admin-btn-delete" style="display: none;" onclick="triggerDeleteFromEditModal()">
+            🗑️ ลบบัญชีนี้ (DELETE)
+          </button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminEditAccountModal()">ยกเลิก (CANCEL)</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminEditAccount()">💾 บันทึกข้อมูล (SAVE)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Add New Account (ADMIN ONLY) -->
+  <div id="adminAddAccountModal" class="modal-overlay" style="z-index: 10050;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>➕</span> เพิ่มบัญชีผู้ใช้งานใหม่ (ADD MEMBER)
+        </h3>
+        <button class="modal-close" onclick="closeAdminAddAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <!-- Avatar selection -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+            เลือกไอคอนประจำตัว (AVATAR)
+          </label>
+          <div id="adminAddAvatarSelector" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="avatar-opt-btn active" data-avatar="👨‍💻" onclick="selectAdminAddAvatar('👨‍💻')">👨‍💻</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👨‍🔧" onclick="selectAdminAddAvatar('👨‍🔧')">👨‍🔧</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👨‍💼" onclick="selectAdminAddAvatar('👨‍💼')">👨‍💼</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👩‍💻" onclick="selectAdminAddAvatar('👩‍💻')">👩‍💻</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👩‍🔧" onclick="selectAdminAddAvatar('👩‍🔧')">👩‍🔧</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="🧑‍🏭" onclick="selectAdminAddAvatar('🧑‍🏭')">🧑‍🏭</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👤" onclick="selectAdminAddAvatar('👤')">👤</button>
+          </div>
+          <input type="hidden" id="adminAddAccAvatar" value="👨‍💻" />
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccName" style="font-weight: 700; color: #1e293b;">
+            ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="adminAddAccName" class="form-control" placeholder="เช่น SOMCHAI T." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อที่จะแสดงในรายการผู้รับผิดชอบงาน
+          </div>
+        </div>
+
+        <!-- Employee ID & Company -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminAddAccEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminAddAccEmpId" class="form-control" placeholder="เช่น 20528" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminAddAccCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminAddAccCompany" class="form-control" value="ORBRAY" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccPin" style="font-weight: 700; color: #1e293b;">
+            รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="adminAddAccPin" class="form-control" maxlength="8" placeholder="เช่น 20528" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px;" autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับผู้อื่น)
+          </div>
+        </div>
+
+        <div id="adminAddAccountErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
       <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
-        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminEditAccountModal()">ยกเลิก (CANCEL)</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminEditAccount()">💾 บันทึกข้อมูล (SAVE)</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminAddAccountModal()">ยกเลิก (CANCEL)</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminAddAccount()">➕ บันทึกสร้างบัญชี (CREATE)</button>
       </div>
     </div>
   </div>
