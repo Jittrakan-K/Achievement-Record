@@ -3093,7 +3093,7 @@ textarea.form-control {
     color: #64748b;
   }
 
-  /* 4. KPI Stats Grid (Clean 2x2 Grid) */
+  /* 4. KPI Stats Grid (Balanced 2-Column Grid with 5th Card Full-Width) */
   .stats-grid {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
@@ -3103,6 +3103,12 @@ textarea.form-control {
     padding: 10px 12px;
     gap: 10px;
     border-radius: 12px;
+    position: relative;
+  }
+
+  /* 5th stat card (CANCEL) spans across both columns neatly */
+  .stats-grid .stat-card:last-child {
+    grid-column: 1 / -1;
   }
 
   .stat-icon {
@@ -3118,6 +3124,14 @@ textarea.form-control {
 
   .stat-label {
     font-size: 10.5px;
+    padding-right: 0 !important;
+  }
+
+  .stat-trend-pill {
+    top: 8px !important;
+    right: 8px !important;
+    font-size: 8.5px !important;
+    padding: 1px 5px !important;
   }
 
   .stat-subtext {
@@ -3170,8 +3184,8 @@ textarea.form-control {
   }
 
   .chart-wrapper {
-    height: 190px !important;
-    min-height: 190px;
+    height: 240px !important;
+    min-height: 240px !important;
   }
 
   .status-summary-pills {
@@ -3503,26 +3517,68 @@ textarea.form-control {
 
   /* 10. Timeline View on Mobile */
   .timeline-container {
-    padding: 10px 0;
+    padding: 10px 2px 10px 0;
+    overflow-x: hidden;
   }
 
   .timeline-container::before {
-    left: 16px;
+    left: 14px;
   }
 
   .timeline-item {
-    padding-left: 36px;
+    padding-left: 28px;
+    margin-bottom: 14px;
   }
 
   .timeline-marker {
-    left: 8px;
-    width: 18px;
-    height: 18px;
+    left: 6px;
+    width: 16px;
+    height: 16px;
   }
 
   .timeline-card {
-    padding: 12px;
-    border-radius: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .timeline-card .card-header-meta {
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-start;
+  }
+
+  .timeline-card .card-header-meta > div {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .badge-code {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .timeline-card-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .timeline-card-footer .card-actions {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+
+  .timeline-card-footer .card-actions .btn {
+    flex: 1 !important;
+    max-width: 90px !important;
   }
 
   /* 11. Modals (Mobile Bottom-Sheet UX) */
@@ -4039,6 +4095,98 @@ textarea.form-control {
   /* 12. Floating Action Button (FAB) Hidden on mobile when top bar has + */
   .mobile-fab-add {
     display: none !important;
+  }
+
+  /* 13. Floating Murata Scroll-to-Top Button (Lift above iOS bottom nav) */
+  .murata-floating-scroll-top {
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 16px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(230, 0, 18, 0.4) !important;
+    z-index: 90 !important;
+  }
+
+  /* 14. Hide redundant Keyword Search Section on mobile (iOS header search is active) */
+  .murata-keyword-search-section {
+    display: none !important;
+  }
+
+  /* 15. Murata Hero Showcase Banner on Mobile */
+  .murata-hero-section {
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .murata-hero-card {
+    padding: 16px 14px !important;
+    border-radius: 12px !important;
+    gap: 12px !important;
+  }
+
+  .murata-hero-badge {
+    font-size: 10px !important;
+    padding: 2px 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .murata-hero-title {
+    font-size: 18px !important;
+    line-height: 1.25 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .murata-hero-desc {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .murata-hero-checklist {
+    margin-bottom: 14px !important;
+    gap: 6px !important;
+  }
+
+  .murata-hero-checklist li {
+    font-size: 11.5px !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+    align-items: flex-start !important;
+  }
+
+  .murata-hero-checklist .chk-box {
+    margin-top: 2px;
+  }
+
+  .murata-hero-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .murata-hero-actions .btn-murata-red,
+  .murata-hero-actions .btn-murata-outline {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 14px !important;
+    font-size: 12.5px !important;
+    box-sizing: border-box !important;
+  }
+
+  .murata-carousel-bar {
+    margin-top: 6px !important;
+    padding: 0 4px !important;
+  }
+
+  .murata-progress-track {
+    width: 70px !important;
+  }
+
+  .pin-input-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 

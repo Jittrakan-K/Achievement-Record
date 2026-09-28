@@ -1083,14 +1083,22 @@
           </div>
         </div>
 
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="adminEditAccDepartment" list="departmentOptionsList" class="form-control" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
         <!-- PIN Input -->
         <div style="margin-bottom: 14px;">
           <label class="form-label" for="adminEditAccPin" style="font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
             <span>รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span></span>
           </label>
-          <div style="position: relative; display: flex; align-items: center;">
-            <input type="text" id="adminEditAccPin" class="form-control" maxlength="8" placeholder="เช่น 20524" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 38px;" autocomplete="off" />
-            <button type="button" class="btn-icon-admin-pin" onclick="toggleAdminEditPinVisibility()" style="position: absolute; right: 8px; font-size: 15px;" title="สลับแสดง/ซ่อนรหัส PIN">
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <input type="text" id="adminEditAccPin" class="form-control" maxlength="8" placeholder="เช่น 20524" style="width: 100%; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 42px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleAdminEditPinVisibility()" style="position: absolute; right: 8px; font-size: 16px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="สลับแสดง/ซ่อนรหัส PIN">
               <span id="adminEditPinEye">👁️</span>
             </button>
           </div>
@@ -1178,6 +1186,14 @@
           </div>
         </div>
 
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="adminAddAccDepartment" list="departmentOptionsList" class="form-control" value="PRODUCTION TECHNOLOGY" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
         <!-- PIN Input -->
         <div style="margin-bottom: 14px;">
           <label class="form-label" for="adminAddAccPin" style="font-weight: 700; color: #1e293b;">
@@ -1197,6 +1213,20 @@
       </div>
     </div>
   </div>
+
+  <!-- Shared Department Options Datalist -->
+  <datalist id="departmentOptionsList">
+    <option value="PRODUCTION TECHNOLOGY"></option>
+    <option value="ENGINEERING"></option>
+    <option value="PRODUCTION"></option>
+    <option value="QUALITY ASSURANCE (QA)"></option>
+    <option value="QUALITY CONTROL (QC)"></option>
+    <option value="MAINTENANCE"></option>
+    <option value="TOOL & DIE"></option>
+    <option value="R&D"></option>
+    <option value="PLANNING"></option>
+    <option value="FACILITY & UTILITY"></option>
+  </datalist>
 
   <!-- Modal: User Profile (Edit Own Profile: Name, Employee ID, Company, PIN) -->
   <div id="userProfileModal" class="modal-overlay" style="z-index: 10040;">
@@ -1248,14 +1278,22 @@
           </div>
         </div>
 
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfileDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="userProfileDepartment" list="departmentOptionsList" class="form-control" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
         <!-- PIN Input -->
         <div style="margin-bottom: 14px;">
           <label class="form-label" for="userProfilePin" style="font-weight: 700; color: #1e293b;">
             รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span>
           </label>
-          <div style="position: relative; display: flex; align-items: center;">
-            <input type="text" id="userProfilePin" class="form-control" maxlength="8" placeholder="รหัส PIN สำหรับเข้าสู่ระบบ" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 38px;" autocomplete="off" />
-            <button type="button" class="btn-icon-admin-pin" onclick="toggleProfilePinVisibility()" style="position: absolute; right: 8px; font-size: 15px;" title="สลับแสดง/ซ่อนรหัส PIN">
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <input type="password" id="userProfilePin" class="form-control" maxlength="8" placeholder="รหัส PIN สำหรับเข้าสู่ระบบ" style="width: 100%; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 42px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleProfilePinVisibility()" style="position: absolute; right: 8px; font-size: 16px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="สลับแสดง/ซ่อนรหัส PIN">
               <span id="userProfilePinEye">👁️</span>
             </button>
           </div>

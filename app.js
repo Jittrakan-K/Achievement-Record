@@ -1933,11 +1933,11 @@ const STORAGE_KEY_DELETED_ACCOUNTS = 'orbray_team_deleted_accounts_v1';
 
 // --- Production Technology Team Accounts & Initial PINs ---
 const DEFAULT_TEAM_ACCOUNTS = [
-  { id: 'usr_20523', empId: '20523', pin: '20523', name: 'JITTRAKAN K.', company: 'ORBRAY', role: 'ADMIN', avatar: '👑' },
-  { id: 'usr_20524', empId: '20524', pin: '20524', name: 'SUTTHIPONG M.', company: 'ORBRAY', role: 'MEMBER', avatar: '👨‍💼' },
-  { id: 'usr_20525', empId: '20525', pin: '20525', name: 'TANIN P.', company: 'ORBRAY', role: 'MEMBER', avatar: '👨‍💻' },
-  { id: 'usr_20526', empId: '20526', pin: '20526', name: 'KITTISAK P.', company: 'ORBRAY', role: 'MEMBER', avatar: '👷' },
-  { id: 'usr_20527', empId: '20527', pin: '20527', name: 'NARUEBODEE C.', company: 'ORBRAY', role: 'MEMBER', avatar: '🧑‍🔧' }
+  { id: 'usr_20523', empId: '20523', pin: '20523', name: 'JITTRAKAN K.', company: 'ORBRAY', department: 'PRODUCTION TECHNOLOGY', role: 'ADMIN', avatar: '👑' },
+  { id: 'usr_20524', empId: '20524', pin: '20524', name: 'SUTTHIPONG M.', company: 'ORBRAY', department: 'PRODUCTION TECHNOLOGY', role: 'MEMBER', avatar: '👨‍💼' },
+  { id: 'usr_20525', empId: '20525', pin: '20525', name: 'TANIN P.', company: 'ORBRAY', department: 'PRODUCTION TECHNOLOGY', role: 'MEMBER', avatar: '👨‍💻' },
+  { id: 'usr_20526', empId: '20526', pin: '20526', name: 'KITTISAK P.', company: 'ORBRAY', department: 'PRODUCTION TECHNOLOGY', role: 'MEMBER', avatar: '👷' },
+  { id: 'usr_20527', empId: '20527', pin: '20527', name: 'NARUEBODEE C.', company: 'ORBRAY', department: 'PRODUCTION TECHNOLOGY', role: 'MEMBER', avatar: '🧑‍🔧' }
 ];
 
 let currentUser = null;
@@ -3070,6 +3070,27 @@ function initApp() {
     renderAll();
     initFirebaseFromStorage();
     initMurataComponents();
+
+    // Mobile initial tab state
+    if (window.innerWidth <= 768) {
+      switchMobileNavTab('tasks');
+    }
+
+    // Responsive resize handler to restore desktop layout when screen widens
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        const viewContainer = document.getElementById('viewContainer');
+        const statsSection = document.querySelector('.stats-grid');
+        const analyticsSection = document.querySelector('.analytics-section');
+        const rankingSection = document.getElementById('requesterRankingSection');
+        const heroSection = document.querySelector('.murata-hero-section');
+        if (viewContainer) viewContainer.style.display = '';
+        if (statsSection) statsSection.style.display = '';
+        if (analyticsSection) analyticsSection.style.display = '';
+        if (rankingSection) rankingSection.style.display = '';
+        if (heroSection) heroSection.style.display = '';
+      }
+    });
 
     // Support deep-linking to modal via URL hash (e.g. #new or #edit=achv_xxx)
     if (window.location.hash.startsWith('#new')) {
@@ -4268,6 +4289,7 @@ function getTeamAccounts() {
       const name = custom.name || acc.name;
       const empId = custom.empId || acc.empId || acc.id.replace('usr_', '');
       const company = custom.company || acc.company || 'ORBRAY';
+      const department = custom.department || acc.department || 'PRODUCTION TECHNOLOGY';
       const role = custom.role || acc.role || 'MEMBER';
       const avatar = custom.avatar || acc.avatar || '👤';
       return {
@@ -4276,6 +4298,7 @@ function getTeamAccounts() {
         pin,
         empId,
         company,
+        department,
         role,
         avatar
       };
@@ -4292,6 +4315,7 @@ function getTeamAccounts() {
           pin: c.pin || customPins[accId] || '',
           empId: c.empId || accId.replace('usr_', ''),
           company: c.company || 'ORBRAY',
+          department: c.department || 'PRODUCTION TECHNOLOGY',
           role: c.role || 'MEMBER',
           avatar: c.avatar || '👤',
           isCustomAdded: true
@@ -4324,6 +4348,7 @@ function getAllTeamAccountsWithDeleted() {
     const name = custom.name || acc.name;
     const empId = custom.empId || acc.empId || acc.id.replace('usr_', '');
     const company = custom.company || acc.company || 'ORBRAY';
+    const department = custom.department || acc.department || 'PRODUCTION TECHNOLOGY';
     const role = custom.role || acc.role || 'MEMBER';
     const avatar = custom.avatar || acc.avatar || '👤';
     const isDeleted = deletedIds.includes(acc.id);
@@ -4333,6 +4358,7 @@ function getAllTeamAccountsWithDeleted() {
       pin,
       empId,
       company,
+      department,
       role,
       avatar,
       isDeleted
@@ -4349,6 +4375,7 @@ function getAllTeamAccountsWithDeleted() {
           pin: c.pin || customPins[accId] || '',
           empId: c.empId || accId.replace('usr_', ''),
           company: c.company || 'ORBRAY',
+          department: c.department || 'PRODUCTION TECHNOLOGY',
           role: c.role || 'MEMBER',
           avatar: c.avatar || '👤',
           isCustomAdded: true,
@@ -4782,7 +4809,8 @@ function renderAdminTeamPinsModal() {
     const isCustomName = Boolean(customAccounts[acc.id] && customAccounts[acc.id].name && customAccounts[acc.id].name !== defaultAcc.name);
     const isCustomEmpId = Boolean(customAccounts[acc.id] && customAccounts[acc.id].empId && customAccounts[acc.id].empId !== defaultAcc.empId);
     const isCustomCompany = Boolean(customAccounts[acc.id] && customAccounts[acc.id].company && customAccounts[acc.id].company !== defaultAcc.company);
-    const isCustom = isCustomPin || isCustomName || isCustomEmpId || isCustomCompany;
+    const isCustomDepartment = Boolean(customAccounts[acc.id] && customAccounts[acc.id].department && customAccounts[acc.id].department !== defaultAcc.department);
+    const isCustom = isCustomPin || isCustomName || isCustomEmpId || isCustomCompany || isCustomDepartment;
     const isCurrentUser = currentUser && currentUser.id === acc.id;
     const initialMasked = !adminAllPinsVisible;
     const displayPin = initialMasked ? '•••••' : escapeHtml(acc.pin);
@@ -4807,6 +4835,8 @@ function renderAdminTeamPinsModal() {
               <span>รหัสพนักงาน: <strong class="badge-empid-tag">${escapeHtml(acc.empId || acc.id.replace('usr_', ''))}</strong></span>
               <span>&bull;</span>
               <span>สังกัด: <span class="badge-company-tag">🏢 ${escapeHtml(acc.company || 'ORBRAY')}</span></span>
+              <span>&bull;</span>
+              <span>แผนก: <span class="badge-company-tag" style="background: #eef2ff; color: #3730a3; border-color: #c7d2fe;">🏷️ ${escapeHtml(acc.department || 'PRODUCTION TECHNOLOGY')}</span></span>
               <span>&bull;</span>
               <span>สถานะ: <span class="badge-pin-status ${isCustom ? 'custom' : 'default'}">${statusText}</span></span>
             </div>
@@ -4942,6 +4972,7 @@ function openAdminEditAccountModal(accId) {
   const nameInput = document.getElementById('adminEditAccName');
   const empInput = document.getElementById('adminEditAccEmpId');
   const compInput = document.getElementById('adminEditAccCompany');
+  const deptInput = document.getElementById('adminEditAccDepartment');
   const pinInput = document.getElementById('adminEditAccPin');
   const errEl = document.getElementById('adminEditAccountErrorMessage');
   const taskCheck = document.getElementById('adminEditUpdateExistingTasks');
@@ -4957,6 +4988,7 @@ function openAdminEditAccountModal(accId) {
   if (nameInput) nameInput.value = acc.name;
   if (empInput) empInput.value = acc.empId || acc.id.replace('usr_', '');
   if (compInput) compInput.value = acc.company || 'ORBRAY';
+  if (deptInput) deptInput.value = acc.department || 'PRODUCTION TECHNOLOGY';
   if (pinInput) {
     pinInput.value = acc.pin;
     pinInput.type = 'text';
@@ -5015,6 +5047,7 @@ async function saveAdminEditAccount() {
   const newName = (document.getElementById('adminEditAccName')?.value || '').trim();
   const newEmpId = (document.getElementById('adminEditAccEmpId')?.value || '').trim();
   const newCompany = (document.getElementById('adminEditAccCompany')?.value || '').trim();
+  const newDepartment = (document.getElementById('adminEditAccDepartment')?.value || '').trim() || 'PRODUCTION TECHNOLOGY';
   const newPin = (document.getElementById('adminEditAccPin')?.value || '').trim();
   const updateExistingTasks = Boolean(document.getElementById('adminEditUpdateExistingTasks')?.checked);
   const errEl = document.getElementById('adminEditAccountErrorMessage');
@@ -5071,6 +5104,7 @@ async function saveAdminEditAccount() {
     name: newName,
     empId: newEmpId,
     company: newCompany,
+    department: newDepartment,
     pin: newPin
   };
   localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
@@ -5089,6 +5123,7 @@ async function saveAdminEditAccount() {
     currentUser.name = newName;
     currentUser.empId = newEmpId;
     currentUser.company = newCompany;
+    currentUser.department = newDepartment;
     currentUser.pin = newPin;
     localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
     updateAuthHeaderUI();
@@ -5279,12 +5314,14 @@ function openAdminAddAccountModal() {
   const nameInput = document.getElementById('adminAddAccName');
   const empIdInput = document.getElementById('adminAddAccEmpId');
   const compInput = document.getElementById('adminAddAccCompany');
+  const deptInput = document.getElementById('adminAddAccDepartment');
   const pinInput = document.getElementById('adminAddAccPin');
   const errEl = document.getElementById('adminAddAccountErrorMessage');
 
   if (nameInput) nameInput.value = '';
   if (empIdInput) empIdInput.value = '';
   if (compInput) compInput.value = 'ORBRAY';
+  if (deptInput) deptInput.value = 'PRODUCTION TECHNOLOGY';
   if (pinInput) pinInput.value = '';
   if (errEl) errEl.textContent = '';
 
@@ -5323,6 +5360,7 @@ async function saveAdminAddAccount() {
   const name = (document.getElementById('adminAddAccName')?.value || '').trim();
   const empId = (document.getElementById('adminAddAccEmpId')?.value || '').trim();
   const company = (document.getElementById('adminAddAccCompany')?.value || '').trim();
+  const department = (document.getElementById('adminAddAccDepartment')?.value || '').trim() || 'PRODUCTION TECHNOLOGY';
   const pin = (document.getElementById('adminAddAccPin')?.value || '').trim();
   const avatar = document.getElementById('adminAddAccAvatar')?.value || '👨‍💻';
   const errEl = document.getElementById('adminAddAccountErrorMessage');
@@ -5378,6 +5416,7 @@ async function saveAdminAddAccount() {
     name: name.toUpperCase(),
     empId: empId,
     company: company.toUpperCase(),
+    department: department.toUpperCase(),
     pin: pin,
     role: 'MEMBER',
     avatar: avatar
@@ -5422,6 +5461,7 @@ function openUserProfileModal() {
   const nameInput = document.getElementById('userProfileName');
   const empIdInput = document.getElementById('userProfileEmpId');
   const companyInput = document.getElementById('userProfileCompany');
+  const deptInput = document.getElementById('userProfileDepartment');
   const pinInput = document.getElementById('userProfilePin');
   const errEl = document.getElementById('userProfileErrorMessage');
   const taskCheck = document.getElementById('userProfileUpdateExistingTasks');
@@ -5435,6 +5475,7 @@ function openUserProfileModal() {
   if (nameInput) nameInput.value = currentUser.name;
   if (empIdInput) empIdInput.value = currentUser.empId || currentUser.id.replace('usr_', '');
   if (companyInput) companyInput.value = currentUser.company || 'ORBRAY';
+  if (deptInput) deptInput.value = currentUser.department || 'PRODUCTION TECHNOLOGY';
   if (pinInput) {
     pinInput.value = currentUser.pin;
     pinInput.type = 'password';
@@ -5476,6 +5517,7 @@ async function saveUserProfile() {
   const newName = (document.getElementById('userProfileName')?.value || '').trim();
   const newEmpId = (document.getElementById('userProfileEmpId')?.value || '').trim();
   const newCompany = (document.getElementById('userProfileCompany')?.value || '').trim();
+  const newDepartment = (document.getElementById('userProfileDepartment')?.value || '').trim() || 'PRODUCTION TECHNOLOGY';
   const newPin = (document.getElementById('userProfilePin')?.value || '').trim();
   const updateExistingTasks = Boolean(document.getElementById('userProfileUpdateExistingTasks')?.checked);
   const errEl = document.getElementById('userProfileErrorMessage');
@@ -5520,6 +5562,7 @@ async function saveUserProfile() {
     name: newName,
     empId: newEmpId,
     company: newCompany,
+    department: newDepartment,
     pin: newPin
   };
   localStorage.setItem(STORAGE_KEY_CUSTOM_ACCOUNTS, JSON.stringify(customAccounts));
@@ -5536,6 +5579,7 @@ async function saveUserProfile() {
   currentUser.name = newName;
   currentUser.empId = newEmpId;
   currentUser.company = newCompany;
+  currentUser.department = newDepartment;
   currentUser.pin = newPin;
   localStorage.setItem(STORAGE_KEY_AUTH_USER, JSON.stringify(currentUser));
   updateAuthHeaderUI();
@@ -6116,14 +6160,14 @@ function renderCharts() {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'right',
+            position: window.innerWidth <= 768 ? 'bottom' : 'right',
             labels: {
-              boxWidth: 12,
-              boxHeight: 12,
-              padding: 12,
+              boxWidth: window.innerWidth <= 768 ? 10 : 12,
+              boxHeight: window.innerWidth <= 768 ? 10 : 12,
+              padding: window.innerWidth <= 768 ? 8 : 12,
               color: '#1e293b',
               font: {
-                size: 12.5,
+                size: window.innerWidth <= 768 ? 11 : 12.5,
                 weight: '500',
                 family: "'Sarabun', 'Inter', sans-serif"
               }
@@ -6177,7 +6221,10 @@ function renderCharts() {
     if (activePill) activePill.classList.add('active');
   }
 
-  const statusLabels = ['DONE (สำเร็จแล้ว)', 'IN PROGRESS (กำลังทำ)', 'WAIT (รอดำเนินการ)', 'CANCEL (ยกเลิก)'];
+  const isMobile = window.innerWidth <= 768;
+  const statusLabels = isMobile
+    ? ['DONE', 'IN PROG', 'WAIT', 'CANCEL']
+    : ['DONE (สำเร็จแล้ว)', 'IN PROGRESS (กำลังทำ)', 'WAIT (รอดำเนินการ)', 'CANCEL (ยกเลิก)'];
   const statusCounts = [doneCount, inProgCount, waitCount, cancelCount];
 
   const ctxTrend = document.getElementById('trendChart');
@@ -6219,12 +6266,14 @@ function renderCharts() {
           x: {
             ticks: {
               color: '#1e293b',
+              maxRotation: 0,
+              minRotation: 0,
               font: {
-                size: 12.5,
-                weight: '500',
-                family: "'Sarabun', 'Inter', sans-serif"
+                size: isMobile ? 11 : 12.5,
+                weight: '600',
+                family: "'Inter', 'Sarabun', sans-serif"
               },
-              padding: 8
+              padding: 6
             },
             grid: {
               display: false
@@ -6842,49 +6891,48 @@ function switchMobileNavTab(tabName) {
     btn.classList.toggle('active', btn.getAttribute('data-mobile-tab') === tabName);
   });
 
-  const cardsContainer = document.getElementById('cardsContainer');
-  const tableContainer = document.getElementById('tableContainer');
-  const timelineContainer = document.getElementById('timelineContainer');
+  const viewContainer = document.getElementById('viewContainer');
   const statsSection = document.querySelector('.stats-grid');
   const analyticsSection = document.querySelector('.analytics-section');
   const rankingSection = document.getElementById('requesterRankingSection');
+  const heroSection = document.querySelector('.murata-hero-section');
   const navTitle = document.getElementById('mobileNavTitle');
   const headerTitle = document.getElementById('mobileHeaderTitle');
 
   if (tabName === 'tasks') {
     currentView = 'cards';
-    if (cardsContainer) cardsContainer.style.display = 'block';
-    if (tableContainer) tableContainer.style.display = 'none';
-    if (timelineContainer) timelineContainer.style.display = 'none';
+    if (viewContainer) viewContainer.style.display = 'block';
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
+    if (heroSection) heroSection.style.display = 'block';
     if (navTitle) navTitle.textContent = 'Documents';
     if (headerTitle) headerTitle.textContent = 'ACHIEVEMENT RECORD';
     renderContent();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (tabName === 'timeline') {
     currentView = 'timeline';
-    if (cardsContainer) cardsContainer.style.display = 'none';
-    if (tableContainer) tableContainer.style.display = 'none';
-    if (timelineContainer) timelineContainer.style.display = 'block';
+    if (viewContainer) viewContainer.style.display = 'block';
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
+    if (heroSection) heroSection.style.display = 'none';
     if (navTitle) navTitle.textContent = 'Timeline';
     if (headerTitle) headerTitle.textContent = 'ACTIVITY TIMELINE';
     renderContent();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (tabName === 'analytics') {
-    if (cardsContainer) cardsContainer.style.display = 'none';
-    if (tableContainer) tableContainer.style.display = 'none';
-    if (timelineContainer) timelineContainer.style.display = 'none';
+    if (viewContainer) viewContainer.style.display = 'none';
     if (statsSection) statsSection.style.display = 'grid';
     if (analyticsSection) analyticsSection.style.display = 'block';
     if (rankingSection) rankingSection.style.display = 'block';
+    if (heroSection) heroSection.style.display = 'none';
     if (navTitle) navTitle.textContent = 'Analytics';
     if (headerTitle) headerTitle.textContent = 'REAL-TIME ANALYTICS';
     renderStats();
     renderCharts();
     renderRequesterRanking();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -6948,7 +6996,7 @@ function renderTimelineView(container, items) {
               <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
                 ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
               </span>
-              <div style="display: flex; gap: 6px; align-items: center;">
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 ${item.code ? `<span class="badge-code">REQ: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
                 ${statusHtml}
               </div>
@@ -6963,8 +7011,8 @@ function renderTimelineView(container, items) {
               </div>
             ` : ''}
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--text-muted);">
-              <span>🗓️ DATE: ${dateDisplay} | REQ BY: ${escapeHtml(uppercaseEnglish(item.requestName || '-'))}${item.assignee ? ` | ASSIGN: 😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : ''}</span>
+            <div class="timeline-card-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+              <span style="line-height: 1.4;">🗓️ DATE: ${dateDisplay} | REQ BY: ${escapeHtml(uppercaseEnglish(item.requestName || '-'))}${item.assignee ? ` | ASSIGN: 😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : ''}</span>
               <div class="card-actions">
                 <button class="btn btn-outline btn-sm" onclick="openAchievementModal('${item.id}')">แก้ไข</button>
                 <button class="btn btn-outline btn-sm text-danger" onclick="deleteAchievement('${item.id}')">ลบ</button>
@@ -9568,6 +9616,19 @@ function initMurataComponents() {
 }
 
 function scrollToSearchAndControls() {
+  if (window.innerWidth <= 768) {
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
+    if (mobileSearchInput) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        mobileSearchInput.focus();
+        mobileSearchInput.classList.add('search-highlight-pulse');
+        setTimeout(() => mobileSearchInput.classList.remove('search-highlight-pulse'), 1500);
+      }, 300);
+    }
+    return;
+  }
+
   const controls = document.getElementById('controlsBar') || document.querySelector('.controls-bar');
   const searchInput = document.getElementById('searchInput');
   const header = document.querySelector('.app-header');
