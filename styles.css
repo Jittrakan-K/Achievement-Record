@@ -2880,25 +2880,35 @@ textarea.form-control {
    Engineered for touch usability, modern aesthetic, and thumb ergonomics
    ========================================================================== */
 @media screen and (max-width: 768px) {
+  /* 0. Hide Desktop System Strip on Mobile */
+  .system-top-strip,
+  .orbray-top-strip {
+    display: none !important;
+  }
+
   /* 1. Global Page Layout */
   html, body {
     overflow-x: hidden;
     width: 100%;
+    background-color: #f8fafc;
     -webkit-text-size-adjust: 100%;
   }
 
   .container {
-    padding: 10px 12px;
+    padding: 8px 12px;
     max-width: 100%;
   }
 
-  /* 2. App Header & Mobile iOS Header Bar */
+  /* 2. App Header & Mobile App Header Bar */
   .app-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #ffffff;
-    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   }
 
   .header-inner {
@@ -2908,107 +2918,155 @@ textarea.form-control {
   .mobile-app-header-container {
     display: flex !important;
     flex-direction: column;
-    padding: 6px 14px 10px;
-    gap: 6px;
-    background: #ffffff;
+    padding: 8px 12px 10px;
+    gap: 8px;
+    background: transparent;
   }
 
+  /* Row 1: Brand & Top Actions */
   .mobile-top-nav {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
-    height: 36px;
+    height: auto;
+    gap: 8px;
   }
 
-  .mobile-nav-left {
-    display: inline-flex;
+  .mobile-brand-box {
+    display: flex;
     align-items: center;
-    gap: 3px;
-    color: #2563eb;
-    font-size: 15px;
-    font-weight: 600;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .mobile-back-chevron {
-    font-size: 22px;
-    font-weight: 300;
-    line-height: 1;
-    margin-top: -2px;
+  .mobile-brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #E60012 0%, #B91C1C 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(230, 0, 18, 0.3);
   }
 
-  .mobile-back-text {
-    font-size: 15px;
-    font-weight: 600;
+  .mobile-brand-titles {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
-  .mobile-nav-title {
+  .mobile-brand-main {
     font-size: 15px;
-    font-weight: 700;
-    color: #0f2e6b;
-    text-align: center;
-    flex: 1;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0 8px;
-    text-transform: uppercase;
+  }
+
+  .mobile-brand-main .brand-red {
+    color: #E60012;
+  }
+
+  .mobile-brand-sub {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 1px;
+  }
+
+  .status-online-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #16a34a;
+    font-weight: 700;
+  }
+
+  .status-online-dot::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #22c55e;
   }
 
   .mobile-nav-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
-  .mobile-nav-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 3px;
-    display: flex;
+  .mobile-header-btn {
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .mobile-nav-btn:active {
-    opacity: 0.7;
-    transform: scale(0.95);
+  .mobile-header-btn:active {
+    transform: scale(0.96);
+    background: #e2e8f0;
   }
 
-  .mobile-large-header {
-    display: flex !important;
-    flex-direction: column;
-    padding: 2px 0 2px;
+  .mobile-header-btn.btn-primary-add {
+    background: #E60012;
+    color: #ffffff;
+    border-color: #E60012;
+    box-shadow: 0 2px 6px rgba(230, 0, 18, 0.35);
+    padding: 0 11px;
   }
 
-  .mobile-large-title {
-    font-size: 19px;
-    font-weight: 800;
-    color: #0f2e6b;
-    line-height: 1.25;
-    text-transform: uppercase;
-    letter-spacing: -0.3px;
-    word-break: break-word;
+  .mobile-header-btn.btn-primary-add:active {
+    background: #c40010;
   }
 
-  .mobile-large-subtitle {
-    font-size: 11px;
-    font-weight: 600;
-    color: #64748b;
-    margin-top: 1px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+  .mobile-header-btn.btn-auth {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    font-size: 14px;
+    width: 34px;
+    padding: 0;
   }
 
+  .mobile-header-btn.btn-icon-only {
+    width: 34px;
+    padding: 0;
+  }
+
+  /* Row 2: Search & Sort Bar */
   .mobile-search-sort-bar {
     display: flex !important;
     align-items: center;
     gap: 8px;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   .mobile-search-box {
@@ -3031,11 +3089,11 @@ textarea.form-control {
     width: 100%;
     height: 38px;
     padding: 0 30px 0 32px;
-    background: #f4f8fd;
-    border: 1px solid #cfe2fe;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
-    font-size: 15px;
-    color: #0f2e6b;
+    font-size: 13.5px;
+    color: #0f172a;
     outline: none;
     transition: background 0.15s, border-color 0.15s;
     font-family: inherit;
@@ -3043,8 +3101,8 @@ textarea.form-control {
 
   .mobile-search-input:focus {
     background: #ffffff;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    border-color: #E60012;
+    box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.12);
   }
 
   .mobile-search-clear {
@@ -3052,7 +3110,7 @@ textarea.form-control {
     right: 9px;
     top: 50%;
     transform: translateY(-50%);
-    background: #cbd5e1;
+    background: #94a3b8;
     border: none;
     border-radius: 50%;
     width: 18px;
@@ -3068,14 +3126,14 @@ textarea.form-control {
   .mobile-sort-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     height: 38px;
-    padding: 0 12px;
-    background: #f8fafc;
+    padding: 0 10px;
+    background: #f1f5f9;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     color: #334155;
     cursor: pointer;
     white-space: nowrap;
@@ -3088,10 +3146,77 @@ textarea.form-control {
     background: #e2e8f0;
   }
 
-  .mobile-sort-arrow {
-    font-size: 10px;
-    color: #64748b;
+  /* Row 3: Horizontal Scrollable Status Quick Filter Tabs */
+  .mobile-quick-filter-scroll {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    margin-top: 1px;
   }
+
+  .mobile-quick-filter-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 9999px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-filter-pill:active {
+    transform: scale(0.96);
+  }
+
+  .mobile-filter-pill.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+  }
+
+  .mobile-filter-pill.active .pill-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  .mobile-filter-pill .pill-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .mobile-filter-pill .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .pill-dot.dot-inprog { background-color: #0284c7; }
+  .pill-dot.dot-wait { background-color: #e11d48; }
+  .pill-dot.dot-done { background-color: #10b981; }
+  .pill-dot.dot-cancel { background-color: #64748b; }
 
   /* 4. KPI Stats Grid (Balanced 2-Column Grid with 5th Card Full-Width) */
   .stats-grid {
@@ -3688,77 +3813,69 @@ textarea.form-control {
   /* 8. iOS Native Style Task Card (Clean List & Accordion) */
   .cards-grid {
     grid-template-columns: 1fr !important;
-    gap: 10px !important;
+    gap: 12px !important;
+    padding-top: 4px;
   }
 
   .ios-task-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    margin-bottom: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+    margin-bottom: 6px;
     overflow: hidden;
-    transition: box-shadow 0.15s ease, transform 0.1s ease;
+    transition: all 0.15s ease;
   }
 
   .ios-task-card:active {
-    background-color: #fcfcfc;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   }
 
-  .ios-card-main {
+  /* Card Header Bar (Category Badge + Status + More Button) */
+  .ios-card-header-bar {
     display: flex;
     align-items: center;
-    padding: 12px 14px;
-    gap: 12px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    justify-content: space-between;
+    padding: 10px 14px 6px;
+    border-bottom: 1px solid #f8fafc;
+    gap: 8px;
   }
 
-  .ios-card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: flex;
+  .ios-card-cat-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    font-size: 18px;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
     font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .ios-card-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .ios-card-title {
-    font-size: 14.5px;
-    font-weight: 700;
-    color: #0f172a;
-    line-height: 1.3;
-    white-space: nowrap;
+    letter-spacing: 0.2px;
+    max-width: 60%;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  .ios-card-date {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 500;
+  .ios-card-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ios-card-header-right .status-pill {
+    font-size: 10.5px;
+    padding: 2.5px 8px;
   }
 
   .ios-card-more-btn {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
-    border-radius: 50%;
+    border-radius: 6px;
     color: #94a3b8;
-    font-size: 19px;
+    font-size: 16px;
     letter-spacing: 1px;
     cursor: pointer;
     display: flex;
@@ -3773,7 +3890,117 @@ textarea.form-control {
     color: #1e293b;
   }
 
-  /* Accordion Expansion (Right Phone Mockup) */
+  /* Main Card Body */
+  .ios-card-body {
+    padding: 6px 14px 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ios-card-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+
+  .ios-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .ios-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #475569;
+    white-space: nowrap;
+  }
+
+  .ios-chip.chip-code {
+    background: #eff6ff;
+    color: #1e40af;
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  .ios-chip.chip-req {
+    background: #fdf4ff;
+    color: #86198f;
+  }
+
+  .ios-chip.chip-assignee {
+    background: #f0fdf4;
+    color: #166534;
+  }
+
+  /* Quick File Attachment Badges */
+  .ios-card-file-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+
+  .ios-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+  }
+
+  .ios-file-chip:active {
+    transform: scale(0.95);
+  }
+
+  .ios-file-chip.chip-pdf {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+
+  .ios-file-chip.chip-folder {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+  }
+
+  .ios-file-chip.chip-draw {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+  }
+
+  .ios-card-expand-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+    padding-top: 6px;
+    margin-top: 4px;
+    border-top: 1px dashed #f1f5f9;
+  }
+
+  /* Accordion Expansion */
   .ios-card-accordion {
     display: none;
     padding: 4px 14px 14px;
@@ -4114,74 +4341,10 @@ textarea.form-control {
     display: none !important;
   }
 
-  /* 15. Murata Hero Showcase Banner on Mobile */
-  .murata-hero-section {
-    margin-top: 8px !important;
-    margin-bottom: 12px !important;
-  }
-
-  .murata-hero-card {
-    padding: 16px 14px !important;
-    border-radius: 12px !important;
-    gap: 12px !important;
-  }
-
-  .murata-hero-badge {
-    font-size: 10px !important;
-    padding: 2px 8px !important;
-    margin-bottom: 6px !important;
-  }
-
-  .murata-hero-title {
-    font-size: 18px !important;
-    line-height: 1.25 !important;
-    margin-bottom: 6px !important;
-  }
-
-  .murata-hero-desc {
-    font-size: 12px !important;
-    line-height: 1.4 !important;
-    margin-bottom: 10px !important;
-  }
-
-  .murata-hero-checklist {
-    margin-bottom: 14px !important;
-    gap: 6px !important;
-  }
-
-  .murata-hero-checklist li {
-    font-size: 11.5px !important;
-    white-space: normal !important;
-    line-height: 1.35 !important;
-    align-items: flex-start !important;
-  }
-
-  .murata-hero-checklist .chk-box {
-    margin-top: 2px;
-  }
-
-  .murata-hero-actions {
-    flex-direction: column !important;
-    width: 100% !important;
-    gap: 8px !important;
-  }
-
-  .murata-hero-actions .btn-murata-red,
-  .murata-hero-actions .btn-murata-outline {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 10px 14px !important;
-    font-size: 12.5px !important;
-    box-sizing: border-box !important;
-  }
-
+  /* 15. Hide Murata Hero Showcase Banner and Carousel on Mobile */
+  .murata-hero-section,
   .murata-carousel-bar {
-    margin-top: 6px !important;
-    padding: 0 4px !important;
-  }
-
-  .murata-progress-track {
-    width: 70px !important;
+    display: none !important;
   }
 
   .pin-input-wrapper {

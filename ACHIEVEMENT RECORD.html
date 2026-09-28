@@ -21,8 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=20260914_pin">
+  <link rel="stylesheet" href="styles.css?v=20260928_mobile_ui">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -56,41 +55,68 @@
   <header class="app-header">
     <!-- Mobile Native iOS App Header Bar (Visible on <= 768px) -->
     <div class="mobile-app-header-container">
+      <!-- Row 1: Brand Identity & Actions -->
       <div class="mobile-top-nav">
-        <div class="mobile-nav-left" onclick="switchMobileNavTab('tasks')">
-          <span class="mobile-back-chevron">‹</span>
-          <span class="mobile-back-text">TASKS</span>
+        <div class="mobile-brand-box" onclick="switchMobileNavTab('tasks')">
+          <div class="mobile-brand-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 3v18M3 9h18"/>
+            </svg>
+          </div>
+          <div class="mobile-brand-titles">
+            <div class="mobile-brand-main" id="mobileHeaderTitle">ACHIEVEMENT <span class="brand-red">RECORD</span></div>
+            <div class="mobile-brand-sub">
+              <span id="mobileNavTitle" style="display:none;">TASKS</span>
+              <span><strong id="mobileRecordCount">0</strong> งาน</span>
+              <span>•</span>
+              <span id="mobileStatusInfo" class="status-online-dot">ONLINE</span>
+            </div>
+          </div>
         </div>
-        <div class="mobile-nav-title" id="mobileNavTitle">DOCUMENTS</div>
         <div class="mobile-nav-actions">
-          <button type="button" class="mobile-nav-btn" id="mobileAuthBtn" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วย PIN" style="font-size: 15px; padding: 0 4px;">
+          <button type="button" class="mobile-header-btn btn-auth" id="mobileAuthBtn" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วยรหัส PIN">
             <span id="mobileAuthIcon">🔑</span>
           </button>
-          <button type="button" class="mobile-nav-btn mobile-nav-btn-add" onclick="openAchievementModal()" title="เพิ่มงานใหม่">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#2563eb"/><path d="M12 7v10M7 12h10" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <button type="button" class="mobile-header-btn btn-primary-add" onclick="openAchievementModal()" title="เพิ่มงานใหม่ (ADD TASK)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span>เพิ่มงาน</span>
           </button>
-          <button type="button" class="mobile-nav-btn mobile-nav-btn-more" onclick="openMobileToolsSheet()" title="เมนูเพิ่มเติม">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#2563eb"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          <button type="button" class="mobile-header-btn btn-icon-only" onclick="openMobileToolsSheet()" title="เมนูเครื่องมือ">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
         </div>
       </div>
 
-      <div class="mobile-large-header">
-        <h1 class="mobile-large-title" id="mobileHeaderTitle">ACHIEVEMENT RECORD</h1>
-        <div class="mobile-large-subtitle">
-          <span id="mobileRecordCount">0</span> RECORDS • <span id="mobileStatusInfo">ONLINE</span>
-        </div>
-      </div>
-
+      <!-- Row 2: Search & Sort Bar -->
       <div class="mobile-search-sort-bar">
         <div class="mobile-search-box">
           <span class="mobile-search-icon">🔍</span>
-          <input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="ENTER TEXT FOR SEARCH" oninput="handleMobileSearch(this.value)">
+          <input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="ค้นหาชื่องาน, Request No., ผู้ขอ..." oninput="handleMobileSearch(this.value)">
           <button type="button" class="mobile-search-clear" id="mobileSearchClear" onclick="clearMobileSearch()" style="display: none;">✕</button>
         </div>
         <button type="button" class="mobile-sort-btn" onclick="openMobileSortSheet()">
-          <span id="mobileSortLabel">SORT BY</span>
-          <span class="mobile-sort-arrow">▾</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+          <span id="mobileSortLabel">เรียงลำดับ</span>
+        </button>
+      </div>
+
+      <!-- Row 3: Horizontal Scrollable Status Quick Filter Tabs -->
+      <div class="mobile-quick-filter-scroll">
+        <button type="button" class="mobile-filter-pill active" data-status-filter="all" onclick="setMobileStatusFilter('all')">
+          ทั้งหมด <span class="pill-badge" id="mobileFilterAllCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-inprog" data-status-filter="in_progress" onclick="setMobileStatusFilter('in_progress')">
+          <span class="pill-dot dot-inprog"></span> กำลังทำ <span class="pill-badge" id="mobileFilterInProgCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-wait" data-status-filter="wait" onclick="setMobileStatusFilter('wait')">
+          <span class="pill-dot dot-wait"></span> รอของ/อนุมัติ <span class="pill-badge" id="mobileFilterWaitCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-done" data-status-filter="done" onclick="setMobileStatusFilter('done')">
+          <span class="pill-dot dot-done"></span> เสร็จสิ้น <span class="pill-badge" id="mobileFilterDoneCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-cancel" data-status-filter="cancel" onclick="setMobileStatusFilter('cancel')">
+          <span class="pill-dot dot-cancel"></span> ยกเลิก <span class="pill-badge" id="mobileFilterCancelCount">0</span>
         </button>
       </div>
     </div>

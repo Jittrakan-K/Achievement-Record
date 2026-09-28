@@ -6047,6 +6047,13 @@ function renderStats() {
   setElText('statWaitCount', wait);
   setElText('statCancelCount', cancel);
 
+  // Mobile quick filter pill badges
+  setElText('mobileFilterAllCount', total);
+  setElText('mobileFilterDoneCount', done);
+  setElText('mobileFilterInProgCount', inProgress);
+  setElText('mobileFilterWaitCount', wait);
+  setElText('mobileFilterCancelCount', cancel);
+
   // Hero Showcase Banner status counters
   setElText('bannerTotalCount', total);
   setElText('bannerDoneCount', done);
@@ -6682,22 +6689,60 @@ function renderCardsView(container, items) {
   items.forEach(item => {
     const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#2563eb' };
     const statusHtml = getStatusPillHtml(item.status);
-    const dateStr = item.requestDate ? `REQ: ${item.requestDate}` : (item.completionDate ? `DATE: ${item.completionDate}` : 'NO DATE');
+    const dateStr = item.requestDate ? `REQ: ${item.requestDate}` : (item.completionDate ? `DATE: ${item.completionDate}` : '');
 
     html += `
       <div class="ios-task-card" id="ios-card-${item.id}">
-        <div class="ios-card-main" onclick="toggleCardAccordion('${item.id}', event)">
-          <div class="ios-card-icon" style="background-color: ${cat.color}18; color: ${cat.color};">
-            ${cat.icon || '📄'}
+        <!-- Top bar: Category Badge + Status Pill + More Action Button -->
+        <div class="ios-card-header-bar">
+          <div class="ios-card-cat-badge" style="background-color: ${cat.color}15; color: ${cat.color}; border: 1px solid ${cat.color}35;">
+            <span class="cat-icon">${cat.icon || '📁'}</span>
+            <span class="cat-name">${escapeHtml(uppercaseEnglish(cat.name))}</span>
           </div>
-          <div class="ios-card-info">
-            <div class="ios-card-title">${escapeHtml(uppercaseEnglish(item.title))}</div>
-            <div class="ios-card-date">${dateStr}${item.code ? ` • ${escapeHtml(uppercaseEnglish(item.code))}` : ''}</div>
+          <div class="ios-card-header-right">
+            ${statusHtml}
+            <button type="button" class="ios-card-more-btn" onclick="openMobileActionSheet('${item.id}', event)" title="เมนูเพิ่มเติม">
+              •••
+            </button>
           </div>
-          <button type="button" class="ios-card-more-btn" onclick="openMobileActionSheet('${item.id}', event)" title="เมนูเพิ่มเติม">
-            •••
-          </button>
         </div>
+
+        <!-- Main Card Body: Title, Code, Date, Requester, Assignee, Files -->
+        <div class="ios-card-body" onclick="toggleCardAccordion('${item.id}', event)">
+          <div class="ios-card-title">${escapeHtml(uppercaseEnglish(item.title))}</div>
+          
+          <div class="ios-card-chips">
+            ${item.code ? `<span class="ios-chip chip-code"><span class="chip-label">NO:</span> ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
+            ${dateStr ? `<span class="ios-chip chip-date">📅 ${dateStr}</span>` : ''}
+            ${item.requestName ? `<span class="ios-chip chip-req">👤 ผู้ขอ: ${escapeHtml(uppercaseEnglish(item.requestName))}</span>` : ''}
+            ${item.assignee ? `<span class="ios-chip chip-assignee">🛠️ ผู้ทำ: ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : ''}
+          </div>
+
+          ${(item.pdfAttachment || item.workFolder || item.imageData) ? `
+          <div class="ios-card-file-chips" onclick="event.stopPropagation()">
+            ${item.pdfAttachment ? `
+              <button type="button" class="ios-file-chip chip-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู Job Request PDF">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                PDF
+              </button>` : ''}
+            ${item.workFolder ? `
+              <button type="button" class="ios-file-chip chip-folder" onclick="openWorkFolderModal('${item.id}')" title="เปิดดูข้อมูลโฟลเดอร์ผลงาน">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                ZIP
+              </button>` : ''}
+            ${item.imageData ? `
+              <button type="button" class="ios-file-chip chip-draw" onclick="openDrawingAttachment('${item.id}')" title="เปิดดูแบบ DRAWING / รูปภาพ">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                ${isDrawingPdf(item.imageData) ? 'DRAWING' : 'IMAGE'}
+              </button>` : ''}
+          </div>` : ''}
+
+          <div class="ios-card-expand-bar">
+            <span>แตะเพื่อดูรายละเอียดงาน</span>
+            <span class="accordion-arrow" id="chevron-${item.id}">▾</span>
+          </div>
+        </div>
+
         <div class="ios-card-accordion" id="accordion-${item.id}">
           <div class="ios-accordion-content">
             <div class="ios-row">
@@ -6777,7 +6822,7 @@ function renderCardsView(container, items) {
             <!-- Quick Actions -->
             <div class="ios-accordion-actions">
               <button type="button" class="btn btn-outline btn-sm" onclick="viewAchievementDetail('${item.id}')">
-                👁️ ดูรายละเอียด
+                👁️ ดูรายละเอียดเต็ม
               </button>
               <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementModal('${item.id}')">
                 ✏️ แก้ไขงาน
@@ -6794,12 +6839,16 @@ function renderCardsView(container, items) {
 
 // --- iOS Mobile Native Interaction Handlers ---
 function toggleCardAccordion(id, event) {
-  if (event && event.target.closest('.ios-card-more-btn')) {
+  if (event && event.target.closest('.ios-card-more-btn, .ios-card-file-chips, .btn')) {
     return;
   }
   const acc = document.getElementById('accordion-' + id);
+  const chevron = document.getElementById('chevron-' + id);
   if (!acc) return;
-  acc.classList.toggle('expanded');
+  const isExpanded = acc.classList.toggle('expanded');
+  if (chevron) {
+    chevron.textContent = isExpanded ? '▴' : '▾';
+  }
 }
 
 let currentActionSheetTaskId = null;
@@ -6854,23 +6903,39 @@ function closeMobileSortSheet(event) {
   if (sheet) sheet.classList.remove('active');
 }
 
+function setMobileStatusFilter(status) {
+  currentStatusFilter = status;
+  const statusSelect = document.getElementById('statusFilter');
+  if (statusSelect) statusSelect.value = status;
+
+  document.querySelectorAll('.mobile-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.getAttribute('data-status-filter') === status);
+  });
+
+  const sortLabel = document.getElementById('mobileSortLabel');
+  if (sortLabel) {
+    if (status === 'all') sortLabel.textContent = 'เรียงลำดับ';
+    else if (status === 'in_progress') sortLabel.textContent = 'กำลังทำ';
+    else if (status === 'wait') sortLabel.textContent = 'รอของ/อนุมัติ';
+    else if (status === 'done') sortLabel.textContent = 'เสร็จสิ้น';
+    else if (status === 'cancel') sortLabel.textContent = 'ยกเลิก';
+    else sortLabel.textContent = status.toUpperCase();
+  }
+
+  renderContent();
+}
+
 function applyMobileSort(type) {
   closeMobileSortSheet();
   const sortLabel = document.getElementById('mobileSortLabel');
   if (type === 'all') {
-    currentStatusFilter = 'all';
-    if (sortLabel) sortLabel.textContent = 'Sort by';
-  } else if (type === 'done' || type === 'in_progress' || type === 'wait') {
-    currentStatusFilter = type;
-    if (sortLabel) sortLabel.textContent = type.toUpperCase();
+    setMobileStatusFilter('all');
+  } else if (type === 'done' || type === 'in_progress' || type === 'wait' || type === 'cancel') {
+    setMobileStatusFilter(type);
   } else if (type === 'newest') {
-    if (sortLabel) sortLabel.textContent = 'Newest';
+    if (sortLabel) sortLabel.textContent = 'ล่าสุด';
   } else if (type === 'oldest') {
-    if (sortLabel) sortLabel.textContent = 'Oldest';
-  }
-  const statusSelect = document.getElementById('statusFilter');
-  if (statusSelect && (type === 'all' || type === 'done' || type === 'in_progress' || type === 'wait')) {
-    statusSelect.value = currentStatusFilter;
+    if (sortLabel) sortLabel.textContent = 'เก่าสุด';
   }
   renderContent();
 }
@@ -6905,9 +6970,9 @@ function switchMobileNavTab(tabName) {
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
-    if (heroSection) heroSection.style.display = 'block';
-    if (navTitle) navTitle.textContent = 'Documents';
-    if (headerTitle) headerTitle.textContent = 'ACHIEVEMENT RECORD';
+    if (heroSection) heroSection.style.display = window.innerWidth <= 768 ? 'none' : 'block';
+    if (navTitle) navTitle.textContent = 'TASKS';
+    if (headerTitle) headerTitle.innerHTML = 'ACHIEVEMENT <span class="brand-red">RECORD</span>';
     renderContent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (tabName === 'timeline') {
@@ -6917,8 +6982,8 @@ function switchMobileNavTab(tabName) {
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
     if (heroSection) heroSection.style.display = 'none';
-    if (navTitle) navTitle.textContent = 'Timeline';
-    if (headerTitle) headerTitle.textContent = 'ACTIVITY TIMELINE';
+    if (navTitle) navTitle.textContent = 'TIMELINE';
+    if (headerTitle) headerTitle.innerHTML = 'ACTIVITY <span class="brand-red">TIMELINE</span>';
     renderContent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (tabName === 'analytics') {
@@ -6927,8 +6992,8 @@ function switchMobileNavTab(tabName) {
     if (analyticsSection) analyticsSection.style.display = 'block';
     if (rankingSection) rankingSection.style.display = 'block';
     if (heroSection) heroSection.style.display = 'none';
-    if (navTitle) navTitle.textContent = 'Analytics';
-    if (headerTitle) headerTitle.textContent = 'REAL-TIME ANALYTICS';
+    if (navTitle) navTitle.textContent = 'ANALYTICS';
+    if (headerTitle) headerTitle.innerHTML = 'REAL-TIME <span class="brand-red">ANALYTICS</span>';
     renderStats();
     renderCharts();
     renderRequesterRanking();
