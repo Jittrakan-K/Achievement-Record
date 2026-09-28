@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260928_mobile_ui">
+  <link rel="stylesheet" href="styles.css?v=20260928_v3">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -291,56 +291,61 @@
       </div>
     </section>
 
-    <!-- KPI Summary Grid (Achievement Record) -->
-    <section class="stats-grid">
-      <div class="stat-card" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="คลิกเพื่อดูงานทั้งหมด">
+    <!-- Top Stats Row (5 Compact Cards) -->
+    <section class="stats-grid" id="statsGrid">
+      <div class="stat-card stat-card-total" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="คลิกเพื่อดูงานทั้งหมด">
         <div class="stat-icon stat-blue">📊</div>
         <div class="stat-info">
-          <span class="stat-label">งานทั้งหมด (TOTAL TASKS)</span>
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">TOTAL</span>
+            <span class="stat-sub-label">ทั้งหมด</span>
+          </div>
           <span class="stat-value" id="statTotalCount">0</span>
-          <span class="stat-subtext">รายการงานฝ่ายเทคโนโลยี</span>
         </div>
-        <div class="stat-trend-pill trend-blue">RECORDED</div>
       </div>
 
-      <div class="stat-card" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่สำเร็จแล้ว">
+      <div class="stat-card stat-card-done" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่สำเร็จแล้ว">
         <div class="stat-icon stat-green">✅</div>
         <div class="stat-info">
-          <span class="stat-label">DONE (สำเร็จแล้ว)</span>
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">DONE</span>
+            <span class="stat-sub-label">สำเร็จแล้ว</span>
+          </div>
           <span class="stat-value" id="statCompletedCount">0</span>
-          <span class="stat-subtext">ส่งมอบและพร้อมใช้งาน</span>
         </div>
-        <div class="stat-trend-pill trend-green">DELIVERED</div>
       </div>
 
-      <div class="stat-card" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่กำลังทำ">
+      <div class="stat-card stat-card-inprog" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่กำลังทำ">
         <div class="stat-icon stat-sky">🛠️</div>
         <div class="stat-info">
-          <span class="stat-label">IN PROGRESS (กำลังดำเนินการ)</span>
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">IN PROGRESS</span>
+            <span class="stat-sub-label">กำลังทำ</span>
+          </div>
           <span class="stat-value" id="statInProgressCount">0</span>
-          <span class="stat-subtext">ออกแบบ / สร้าง / WIRING</span>
         </div>
-        <div class="stat-trend-pill trend-sky">ACTIVE</div>
       </div>
 
-      <div class="stat-card" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่รอดำเนินการ">
+      <div class="stat-card stat-card-wait" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่รอดำเนินการ">
         <div class="stat-icon stat-rose">🔴</div>
         <div class="stat-info">
-          <span class="stat-label">WAIT (รอดำเนินการ)</span>
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">WAIT</span>
+            <span class="stat-sub-label">รอดำเนินการ</span>
+          </div>
           <span class="stat-value" id="statWaitCount">0</span>
-          <span class="stat-subtext">รออนุมัติ PR / รอของ</span>
         </div>
-        <div class="stat-trend-pill trend-rose">PENDING</div>
       </div>
 
-      <div class="stat-card" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่ยกเลิก">
+      <div class="stat-card stat-card-cancel" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่ยกเลิก">
         <div class="stat-icon stat-slate">🚫</div>
         <div class="stat-info">
-          <span class="stat-label">CANCEL (ยกเลิก)</span>
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">CANCEL</span>
+            <span class="stat-sub-label">ยกเลิก</span>
+          </div>
           <span class="stat-value" id="statCancelCount">0</span>
-          <span class="stat-subtext">งานที่ถูกยกเลิก</span>
         </div>
-        <div class="stat-trend-pill trend-slate">CANCELLED</div>
       </div>
     </section>
 
@@ -1356,7 +1361,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260914_pin"></script>
+  <script src="app.js?v=20260928_v3"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">

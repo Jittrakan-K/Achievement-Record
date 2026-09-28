@@ -6089,7 +6089,7 @@ function renderCharts() {
     catColors.push(c.color || '#3b82f6');
   });
 
-  // Doughnut Chart Plugin (Center Total Count + Pure White Slice Percentage Labels without black border)
+  // Doughnut Chart Plugin (Clean Total Count Only, NO % numbers in the circle)
   const doughnutCenterTextPlugin = {
     id: 'doughnutCenterText',
     beforeDraw(chart) {
@@ -6103,48 +6103,17 @@ function renderCharts() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Total count
-      ctx.font = "600 24px 'Inter', 'Sarabun', sans-serif";
+      // Always show Total count in center - clean & permanent (NO % numbers in or on the circle)
+      ctx.font = "800 26px 'Inter', sans-serif";
       ctx.fillStyle = '#0f172a';
-      ctx.fillText(`${total}`, centerX, centerY - 8);
+      ctx.fillText(`${total}`, centerX, centerY - 9);
 
       // Label below number
-      ctx.font = "500 12px 'Sarabun', sans-serif";
+      ctx.font = "600 11.5px 'Sarabun', sans-serif";
       ctx.fillStyle = '#64748b';
       ctx.fillText("งานทั้งหมด", centerX, centerY + 14);
 
       ctx.restore();
-    },
-    afterDatasetsDraw(chart) {
-      const { ctx } = chart;
-      const dataset = chart.data.datasets[0];
-      const meta = chart.getDatasetMeta(0);
-      const total = dataset.data.reduce((a, b) => a + (Number(b) || 0), 0);
-      if (!meta || !meta.data || total === 0) return;
-
-      meta.data.forEach((element, index) => {
-        const val = dataset.data[index] || 0;
-        if (val === 0) return;
-        const pct = (val / total) * 100;
-        // Draw percentage inside slice if slice is wide enough (>= 6%)
-        if (pct >= 6) {
-          const { startAngle, endAngle, innerRadius, outerRadius, x, y } = element;
-          const angle = (startAngle + endAngle) / 2;
-          const r = (innerRadius + outerRadius) / 2;
-          const posX = x + Math.cos(angle) * r;
-          const posY = y + Math.sin(angle) * r;
-
-          const pctText = pct % 1 === 0 ? `${pct}%` : `${pct.toFixed(1)}%`;
-
-          ctx.save();
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.font = "600 12.5px 'Inter', 'Sarabun', sans-serif";
-          ctx.fillStyle = '#ffffff';
-          ctx.fillText(pctText, posX, posY);
-          ctx.restore();
-        }
-      });
     }
   };
 
@@ -6159,7 +6128,8 @@ function renderCharts() {
           data: catData,
           backgroundColor: catColors,
           borderWidth: 2,
-          borderColor: '#ffffff'
+          borderColor: '#ffffff',
+          hoverOffset: 4
         }]
       },
       options: {
@@ -6171,12 +6141,33 @@ function renderCharts() {
             labels: {
               boxWidth: window.innerWidth <= 768 ? 10 : 12,
               boxHeight: window.innerWidth <= 768 ? 10 : 12,
-              padding: window.innerWidth <= 768 ? 8 : 12,
-              color: '#1e293b',
+              padding: window.innerWidth <= 768 ? 8 : 10,
+              color: '#334155',
               font: {
-                size: window.innerWidth <= 768 ? 11 : 12.5,
-                weight: '500',
-                family: "'Sarabun', 'Inter', sans-serif"
+                size: window.innerWidth <= 768 ? 10.5 : 12,
+                weight: '600',
+                family: "'Inter', 'Sarabun', sans-serif"
+              },
+              generateLabels(chart) {
+                const data = chart.data;
+                if (data.labels.length && data.datasets.length) {
+                  const dataset = data.datasets[0];
+                  const total = dataset.data.reduce((a, b) => a + (Number(b) || 0), 0);
+                  return data.labels.map((label, i) => {
+                    const val = Number(dataset.data[i]) || 0;
+                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
+                    const fillStyle = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[i] : dataset.backgroundColor;
+                    return {
+                      text: `${label}: ${val} งาน (${pct}%)`,
+                      fillStyle: fillStyle,
+                      strokeStyle: '#ffffff',
+                      lineWidth: 1,
+                      hidden: chart.getDataVisibility ? !chart.getDataVisibility(i) : false,
+                      index: i
+                    };
+                  });
+                }
+                return [];
               }
             }
           },
@@ -6199,7 +6190,7 @@ function renderCharts() {
             }
           }
         },
-        cutout: '60%'
+        cutout: '66%'
       },
       plugins: [doughnutCenterTextPlugin]
     });
