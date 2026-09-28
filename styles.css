@@ -275,6 +275,7 @@ body {
 .mobile-large-header,
 .mobile-search-sort-bar,
 .mobile-bottom-nav,
+.mobile-dime-fab,
 .ios-action-sheet-overlay {
   display: none !important;
 }
@@ -2888,15 +2889,19 @@ textarea.form-control {
 
   /* 1. Global Page Layout */
   html, body {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     width: 100%;
+    max-width: 100vw;
     background-color: #f8fafc;
     -webkit-text-size-adjust: 100%;
+    box-sizing: border-box;
   }
 
   .container {
-    padding: 8px 12px;
+    padding: 8px 14px 100px;
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* 2. App Header & Mobile App Header Bar */
@@ -3014,51 +3019,57 @@ textarea.form-control {
   }
 
   .mobile-header-btn {
-    height: 34px;
-    padding: 0 10px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    padding: 0;
+    border-radius: 10px;
     border: 1px solid #e2e8f0;
-    background: #f8fafc;
+    background: #ffffff;
     color: #334155;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
   }
 
   .mobile-header-btn:active {
-    transform: scale(0.96);
-    background: #e2e8f0;
+    transform: scale(0.94);
+    background: #f1f5f9;
   }
 
+  .mobile-header-btn.btn-primary-add-circle,
   .mobile-header-btn.btn-primary-add {
-    background: #E60012;
+    background: linear-gradient(135deg, #E60012 0%, #B91C1C 100%);
     color: #ffffff;
     border-color: #E60012;
-    box-shadow: 0 2px 6px rgba(230, 0, 18, 0.35);
-    padding: 0 11px;
+    box-shadow: 0 2px 8px rgba(230, 0, 18, 0.35);
+    width: 36px;
+    height: 36px;
+    padding: 0;
   }
 
+  .mobile-header-btn.btn-primary-add-circle:active,
   .mobile-header-btn.btn-primary-add:active {
-    background: #c40010;
+    background: #b91c1c;
+    transform: scale(0.94);
   }
 
   .mobile-header-btn.btn-auth {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    font-size: 14px;
-    width: 34px;
-    padding: 0;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    font-size: 15px;
   }
 
   .mobile-header-btn.btn-icon-only {
-    width: 34px;
-    padding: 0;
+    background: #f8fafc;
+    border-color: #e2e8f0;
   }
 
   /* Row 2: Search & Sort Bar */
@@ -3815,21 +3826,25 @@ textarea.form-control {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
     padding-top: 4px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .ios-task-card {
     background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-    margin-bottom: 6px;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035), 0 1px 2px rgba(0, 0, 0, 0.02);
+    margin-bottom: 8px;
     overflow: hidden;
-    transition: all 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .ios-task-card:active {
-    border-color: #cbd5e1;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: scale(0.99);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   /* Card Header Bar (Category Badge + Status + More Button) */
@@ -3837,21 +3852,30 @@ textarea.form-control {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 14px 6px;
+    padding: 11px 14px 9px;
     border-bottom: 1px solid #f8fafc;
     gap: 8px;
+    min-width: 0;
   }
 
   .ios-card-cat-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 3px 8px;
-    border-radius: 6px;
+    padding: 3.5px 9px;
+    border-radius: 8px;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.2px;
-    max-width: 60%;
+    min-width: 0;
+    max-width: 58%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+  }
+
+  .ios-card-cat-badge .cat-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3860,96 +3884,126 @@ textarea.form-control {
   .ios-card-header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .ios-card-header-right .status-pill {
     font-size: 10.5px;
-    padding: 2.5px 8px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 9999px;
   }
 
   .ios-card-more-btn {
     width: 28px;
     height: 28px;
     border: none;
-    background: transparent;
-    border-radius: 6px;
-    color: #94a3b8;
-    font-size: 16px;
-    letter-spacing: 1px;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: #64748b;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, color 0.15s ease;
   }
 
   .ios-card-more-btn:active {
-    background: #f1f5f9;
-    color: #1e293b;
+    background: #e2e8f0;
+    color: #0f172a;
   }
 
   /* Main Card Body */
   .ios-card-body {
-    padding: 6px 14px 10px;
+    padding: 10px 14px 12px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
   }
 
   .ios-card-title {
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 700;
     color: #0f172a;
     line-height: 1.35;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     word-break: break-word;
+    letter-spacing: -0.2px;
   }
 
-  .ios-card-chips {
+  /* Webull 2-Column Key-Value Data Grid */
+  .webull-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+  }
+
+  .data-grid-col {
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 6px;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
   }
 
-  .ios-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 2px 7px;
-    border-radius: 5px;
-    font-size: 11px;
+  .data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5px;
+    min-width: 0;
+  }
+
+  .data-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .data-val {
+    font-size: 12px;
     font-weight: 600;
-    background: #f1f5f9;
-    color: #475569;
+    color: #1e293b;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
   }
 
-  .ios-chip.chip-code {
-    background: #eff6ff;
-    color: #1e40af;
-    font-family: monospace;
+  .data-val.code-val {
+    color: #2563eb;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", monospace;
     font-weight: 700;
   }
 
-  .ios-chip.chip-req {
-    background: #fdf4ff;
-    color: #86198f;
+  .data-val.assignee-val {
+    color: #0f766e;
+    font-weight: 700;
   }
 
-  .ios-chip.chip-assignee {
-    background: #f0fdf4;
-    color: #166534;
+  /* Card Footer: Files + Expand Bar */
+  .ios-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 4px;
+    gap: 8px;
   }
 
-  /* Quick File Attachment Badges */
   .ios-card-file-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    gap: 5px;
+    align-items: center;
   }
 
   .ios-file-chip {
@@ -3958,12 +4012,12 @@ textarea.form-control {
     gap: 4px;
     padding: 3px 8px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     cursor: pointer;
     border: 1px solid transparent;
     -webkit-tap-highlight-color: transparent;
-    transition: all 0.15s ease;
+    transition: transform 0.12s ease;
   }
 
   .ios-file-chip:active {
@@ -3989,15 +4043,17 @@ textarea.form-control {
   }
 
   .ios-card-expand-bar {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 4px;
     font-size: 11px;
     color: #94a3b8;
     font-weight: 600;
-    padding-top: 6px;
-    margin-top: 4px;
-    border-top: 1px dashed #f1f5f9;
+    flex-shrink: 0;
+  }
+
+  .ios-card-expand-bar .accordion-arrow {
+    transition: transform 0.2s ease;
   }
 
   /* Accordion Expansion */
@@ -4220,6 +4276,35 @@ textarea.form-control {
     font-weight: 700;
     color: #0f172a;
     height: 50px;
+  }
+
+  /* 9.5 Dime iOS Floating Action Button (FAB) */
+  .mobile-dime-fab {
+    display: inline-flex !important;
+    position: fixed;
+    right: 16px;
+    bottom: calc(68px + env(safe-area-inset-bottom, 10px));
+    height: 48px;
+    padding: 0 18px 0 14px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #E60012 0%, #B91C1C 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 24px rgba(230, 0, 18, 0.42), 0 2px 6px rgba(0, 0, 0, 0.08);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    z-index: 98;
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-dime-fab:active {
+    transform: scale(0.93);
+    box-shadow: 0 4px 12px rgba(230, 0, 18, 0.35);
   }
 
   /* 10. Fixed iOS Bottom Navigation Bar */
