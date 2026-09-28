@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 chcp 65001 > nul
 title ACHIEVEMENT RECORD - FIREBASE DEPLOY
 color 0B
@@ -9,22 +9,21 @@ echo ================================================================
 echo.
 
 :: 1. Setup Node.js and Firebase PATH automatically
-set "NODE_PATH=%LOCALAPPDATA%\Programs\node"
-set "PATH=%NODE_PATH%;%APPDATA%\npm;%PATH%"
+set "PATH=%APPDATA%\npm;%ProgramFiles%\nodejs;%PATH%"
 
 echo [1/3] ตรวจสอบสถานะการเชื่อมต่อบัญชี Google Firebase...
 echo ----------------------------------------------------------------
-call "%NODE_PATH%\firebase.cmd" login
+call firebase.cmd login
 
 echo.
 echo [2/3] กำลังนำไฟล์ขึ้นเซิร์ฟเวอร์ Google Firebase Hosting...
 echo ----------------------------------------------------------------
-call "%NODE_PATH%\firebase.cmd" deploy --only hosting
+call firebase.cmd deploy --only hosting
 
 if %errorlevel% neq 0 (
     echo.
     echo [!] เกิดข้อผิดพลาดในการ Deploy
-    echo [i] หากต้องการเลือกโปรเจกต์ใหม่ ให้พิมพ์คำสั่ง: "%NODE_PATH%\firebase.cmd" use --add
+    echo [i] หากต้องการเลือกโปรเจกต์ใหม่ ให้พิมพ์คำสั่ง: firebase.cmd use --add
     echo.
     pause
     exit /b
