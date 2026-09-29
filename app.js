@@ -6992,10 +6992,10 @@ function switchMobileNavTab(tabName) {
     if (analyticsSection) analyticsSection.style.display = 'block';
     if (rankingSection) rankingSection.style.display = 'block';
     if (heroSection) heroSection.style.display = 'none';
-    if (searchRow) searchRow.style.display = 'none';
+    if (searchRow) searchRow.style.display = 'flex';
     if (filterRow) filterRow.style.display = 'none';
     if (navTitle) navTitle.textContent = 'DASHBOARD';
-    if (headerTitle) headerTitle.innerHTML = 'REAL-TIME <span class="brand-red">DASHBOARD</span>';
+    if (headerTitle) headerTitle.innerHTML = 'DASHBOARD';
     renderStats();
     renderCharts();
     renderRequesterRanking();
@@ -7006,7 +7006,7 @@ function switchMobileNavTab(tabName) {
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
-    if (heroSection) heroSection.style.display = window.innerWidth <= 768 ? 'none' : 'block';
+    if (heroSection) heroSection.style.display = 'none';
     if (searchRow) searchRow.style.display = 'flex';
     if (filterRow) filterRow.style.display = 'flex';
     if (navTitle) navTitle.textContent = 'TASKS';
@@ -7035,7 +7035,13 @@ function handleMobileSearch(val) {
   if (clearBtn) clearBtn.style.display = currentSearch ? 'flex' : 'none';
   const desktopSearch = document.getElementById('searchInput');
   if (desktopSearch) desktopSearch.value = currentSearch;
-  renderContent();
+
+  const activeTab = document.querySelector('.mobile-tab-item.active')?.getAttribute('data-mobile-tab');
+  if (activeTab === 'dashboard' && currentSearch.length > 0) {
+    switchMobileNavTab('tasks');
+  } else {
+    renderContent();
+  }
 }
 
 function clearMobileSearch() {
