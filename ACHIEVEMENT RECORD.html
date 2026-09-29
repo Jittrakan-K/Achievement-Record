@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260929_v6">
+  <link rel="stylesheet" href="styles.css?v=20260929_v7">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -248,11 +248,6 @@
           </div>
         </div>
 
-        <!-- Prominent Primary CTA Button (Good UX Principle: Prominent CTA) -->
-        <button id="btnAddAchievement" class="btn btn-prominent-cta" title="เพิ่มงานใหม่ (ADD TASK)">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          <span>เพิ่มงานใหม่ (ADD TASK)</span>
-        </button>
       </div>
     </div>
   </header>
@@ -275,7 +270,7 @@
             <span class="hero-feat-pill">☁️ Multi-Device Cloud Sync</span>
           </div>
           <div class="murata-hero-actions">
-            <button type="button" class="btn-murata-red btn-hero-cta" onclick="openAchievementModal()">
+            <button type="button" id="btnAddAchievement" class="btn-murata-red btn-hero-cta" onclick="openAchievementModal()">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
               <span>เพิ่มงานใหม่ (ADD TASK)</span>
             </button>
@@ -1369,7 +1364,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260929_v6"></script>
+  <script src="app.js?v=20260929_v7"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
