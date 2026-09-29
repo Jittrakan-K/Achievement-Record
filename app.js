@@ -3071,9 +3071,9 @@ function initApp() {
     initFirebaseFromStorage();
     initMurataComponents();
 
-    // Mobile initial tab state
+    // Mobile initial tab state (Dashboard is now first tab)
     if (window.innerWidth <= 768) {
-      switchMobileNavTab('tasks');
+      switchMobileNavTab('dashboard');
     }
 
     // Responsive resize handler to restore desktop layout when screen widens
@@ -6329,9 +6329,13 @@ function filterByStatusPill(status) {
 
   renderContent();
   renderCharts();
-  const controlsBar = document.querySelector('.controls-bar');
-  if (controlsBar) {
-    controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (window.innerWidth <= 768) {
+    switchMobileNavTab('tasks');
+  } else {
+    const controlsBar = document.querySelector('.controls-bar');
+    if (controlsBar) {
+      controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }
 
@@ -6409,9 +6413,13 @@ function filterByRequester(name) {
   renderContent();
   renderRequesterRanking();
 
-  const controlsBar = document.querySelector('.controls-bar');
-  if (controlsBar) {
-    controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (window.innerWidth <= 768) {
+    switchMobileNavTab('tasks');
+  } else {
+    const controlsBar = document.querySelector('.controls-bar');
+    if (controlsBar) {
+      controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }
 
@@ -6960,8 +6968,12 @@ function closeMobileToolsSheet(event) {
 }
 
 function switchMobileNavTab(tabName) {
+  const normalizedTab = (tabName === 'analytics' || tabName === 'dashboard') ? 'dashboard' : tabName;
+
   document.querySelectorAll('.mobile-tab-item').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-mobile-tab') === tabName);
+    const bTab = btn.getAttribute('data-mobile-tab');
+    const isMatch = (bTab === normalizedTab) || (normalizedTab === 'dashboard' && bTab === 'analytics');
+    btn.classList.toggle('active', isMatch);
   });
 
   const viewContainer = document.getElementById('viewContainer');
@@ -6971,40 +6983,48 @@ function switchMobileNavTab(tabName) {
   const heroSection = document.querySelector('.murata-hero-section');
   const navTitle = document.getElementById('mobileNavTitle');
   const headerTitle = document.getElementById('mobileHeaderTitle');
+  const searchRow = document.querySelector('.mobile-search-sort-bar');
+  const filterRow = document.querySelector('.mobile-quick-filter-scroll');
 
-  if (tabName === 'tasks') {
+  if (normalizedTab === 'dashboard') {
+    if (viewContainer) viewContainer.style.display = 'none';
+    if (statsSection) statsSection.style.display = 'grid';
+    if (analyticsSection) analyticsSection.style.display = 'block';
+    if (rankingSection) rankingSection.style.display = 'block';
+    if (heroSection) heroSection.style.display = 'none';
+    if (searchRow) searchRow.style.display = 'none';
+    if (filterRow) filterRow.style.display = 'none';
+    if (navTitle) navTitle.textContent = 'DASHBOARD';
+    if (headerTitle) headerTitle.innerHTML = 'REAL-TIME <span class="brand-red">DASHBOARD</span>';
+    renderStats();
+    renderCharts();
+    renderRequesterRanking();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (normalizedTab === 'tasks') {
     currentView = 'cards';
     if (viewContainer) viewContainer.style.display = 'block';
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
     if (heroSection) heroSection.style.display = window.innerWidth <= 768 ? 'none' : 'block';
+    if (searchRow) searchRow.style.display = 'flex';
+    if (filterRow) filterRow.style.display = 'flex';
     if (navTitle) navTitle.textContent = 'TASKS';
     if (headerTitle) headerTitle.innerHTML = 'ACHIEVEMENT <span class="brand-red">RECORD</span>';
     renderContent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else if (tabName === 'timeline') {
+  } else if (normalizedTab === 'timeline') {
     currentView = 'timeline';
     if (viewContainer) viewContainer.style.display = 'block';
     if (statsSection) statsSection.style.display = 'none';
     if (analyticsSection) analyticsSection.style.display = 'none';
     if (rankingSection) rankingSection.style.display = 'none';
     if (heroSection) heroSection.style.display = 'none';
+    if (searchRow) searchRow.style.display = 'flex';
+    if (filterRow) filterRow.style.display = 'none';
     if (navTitle) navTitle.textContent = 'TIMELINE';
     if (headerTitle) headerTitle.innerHTML = 'ACTIVITY <span class="brand-red">TIMELINE</span>';
     renderContent();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else if (tabName === 'analytics') {
-    if (viewContainer) viewContainer.style.display = 'none';
-    if (statsSection) statsSection.style.display = 'grid';
-    if (analyticsSection) analyticsSection.style.display = 'block';
-    if (rankingSection) rankingSection.style.display = 'block';
-    if (heroSection) heroSection.style.display = 'none';
-    if (navTitle) navTitle.textContent = 'ANALYTICS';
-    if (headerTitle) headerTitle.innerHTML = 'REAL-TIME <span class="brand-red">ANALYTICS</span>';
-    renderStats();
-    renderCharts();
-    renderRequesterRanking();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

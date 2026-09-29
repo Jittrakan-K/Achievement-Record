@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260928_v3">
+  <link rel="stylesheet" href="styles.css?v=20260929_v4">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -353,8 +353,8 @@
     <section class="analytics-section">
       <div class="section-header">
         <h2 class="section-title">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          สถิติและภาพรวมงาน (ACHIEVEMENT RECORD REAL-TIME ANALYTICS)
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          สถิติและแดชบอร์ดภาพรวมงาน (REAL-TIME DASHBOARD)
         </h2>
         <div class="section-header-actions">
           <button type="button" id="btnToggleRequesterRanking" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleRequesterRanking()" title="สลับการแสดงผลอันดับผู้ร้องขอ (REQUEST NAME)">
@@ -366,7 +366,7 @@
       <div class="analytics-content">
         <div class="chart-box">
           <div class="chart-title">
-            <span>สัดส่วนงานตามประเภท (JIG, ACC, PR, IMP, SPECIAL PROJECT)</span>
+            <span>สัดส่วนงานตามประเภท (CATEGORIES)</span>
           </div>
           <div class="chart-wrapper">
             <canvas id="categoryChart"></canvas>
@@ -375,7 +375,7 @@
 
         <div class="chart-box">
           <div class="chart-title">
-            <span>สถานะงานปัจจุบัน (DONE VS IN PROGRESS VS WAIT VS CANCEL)</span>
+            <span>สถานะงานปัจจุบัน (WORK STATUS)</span>
           </div>
           <!-- Status Summary Header Pills -->
           <div class="status-summary-pills" id="statusSummaryPills">
@@ -1361,7 +1361,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260928_v3"></script>
+  <script src="app.js?v=20260929_v4"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
@@ -1455,11 +1455,11 @@
 
   <!-- iOS Fixed Bottom Navigation Bar -->
   <nav class="mobile-bottom-nav">
-    <button type="button" class="mobile-tab-item active" data-mobile-tab="tasks" onclick="switchMobileNavTab('tasks')">
+    <button type="button" class="mobile-tab-item active" data-mobile-tab="dashboard" onclick="switchMobileNavTab('dashboard')">
       <div class="mobile-tab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
-      <div class="mobile-tab-label">TASKS</div>
+      <div class="mobile-tab-label">DASHBOARD</div>
     </button>
     <button type="button" class="mobile-tab-item" data-mobile-tab="timeline" onclick="switchMobileNavTab('timeline')">
       <div class="mobile-tab-icon">
@@ -1467,11 +1467,11 @@
       </div>
       <div class="mobile-tab-label">TIMELINE</div>
     </button>
-    <button type="button" class="mobile-tab-item" data-mobile-tab="analytics" onclick="switchMobileNavTab('analytics')">
+    <button type="button" class="mobile-tab-item" data-mobile-tab="tasks" onclick="switchMobileNavTab('tasks')">
       <div class="mobile-tab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
-      <div class="mobile-tab-label">ANALYTICS</div>
+      <div class="mobile-tab-label">TASKS</div>
     </button>
     <button type="button" class="mobile-tab-item" data-mobile-tab="tools" onclick="openMobileToolsSheet()">
       <div class="mobile-tab-icon">
