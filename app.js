@@ -4493,7 +4493,63 @@ function updateAuthHeaderUI() {
   }
 }
 
+function toggleHeaderToolsDropdown(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  const menu = document.getElementById('headerToolsDropdown');
+  const authDropdown = document.getElementById('authUserDropdown');
+  if (authDropdown) authDropdown.classList.remove('active');
+
+  if (menu) {
+    menu.classList.toggle('show');
+  }
+}
+
+function closeHeaderToolsDropdown() {
+  const menu = document.getElementById('headerToolsDropdown');
+  if (menu) menu.classList.remove('show');
+}
+
+function desktopNavigateTo(dest) {
+  document.querySelectorAll('.desktop-nav-link').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(`deskNav${dest.charAt(0).toUpperCase() + dest.slice(1)}`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (dest === 'dashboard') {
+    const stats = document.getElementById('statsGrid') || document.querySelector('.analytics-section');
+    if (stats) {
+      stats.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else if (dest === 'tasks') {
+    if (currentView === 'timeline') {
+      currentView = 'table';
+      document.querySelectorAll('.view-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('data-view') === 'table');
+      });
+      localStorage.setItem('orbray_view_preference', 'table');
+      renderContent();
+    }
+    const target = document.getElementById('controlsBar') || document.getElementById('viewContainer');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } else if (dest === 'timeline') {
+    currentView = 'timeline';
+    document.querySelectorAll('.view-tab').forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-view') === 'timeline');
+    });
+    localStorage.setItem('orbray_view_preference', 'timeline');
+    renderContent();
+    const target = document.getElementById('controlsBar') || document.getElementById('viewContainer');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
 function handleAuthHeaderClick() {
+  closeHeaderToolsDropdown();
   const dropdown = document.getElementById('authUserDropdown');
   if (currentUser) {
     if (dropdown) dropdown.classList.toggle('active');
@@ -5893,16 +5949,33 @@ function setupEventListeners() {
     });
   }
 
-  // Outside click to close Auth User Dropdown
+  // Outside click to close Auth User Dropdown and Tools Dropdown
   document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('authUserDropdown');
+    const authDropdown = document.getElementById('authUserDropdown');
     const authBtn = document.getElementById('btnHeaderAuth');
-    if (dropdown && dropdown.classList.contains('active')) {
-      if (!dropdown.contains(e.target) && (!authBtn || !authBtn.contains(e.target))) {
-        dropdown.classList.remove('active');
+    if (authDropdown && authDropdown.classList.contains('active')) {
+      if (!authDropdown.contains(e.target) && (!authBtn || !authBtn.contains(e.target))) {
+        authDropdown.classList.remove('active');
+      }
+    }
+
+    const toolsDropdown = document.getElementById('headerToolsDropdown');
+    const toolsBtn = document.getElementById('btnHeaderTools');
+    if (toolsDropdown && toolsDropdown.classList.contains('show')) {
+      if (!toolsDropdown.contains(e.target) && (!toolsBtn || !toolsBtn.contains(e.target))) {
+        toolsDropdown.classList.remove('show');
       }
     }
   });
+
+  const toolsDropdownMenu = document.getElementById('headerToolsDropdown');
+  if (toolsDropdownMenu) {
+    toolsDropdownMenu.addEventListener('click', (e) => {
+      if (e.target.closest('.tools-menu-item')) {
+        toolsDropdownMenu.classList.remove('show');
+      }
+    });
+  }
 }
 
 // --- Populate Category Dropdowns ---
