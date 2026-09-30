@@ -3349,6 +3349,7 @@ textarea.form-control {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 2px;
+    padding-right: 14px;
     margin-top: 1px;
   }
 
@@ -3422,14 +3423,15 @@ textarea.form-control {
   }
 
   .stat-card {
-    padding: 10px 10px;
-    gap: 8px;
+    padding: 12px 8px;
+    gap: 6px;
     border-radius: 14px;
     position: relative;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -3447,6 +3449,7 @@ textarea.form-control {
   .stat-card.stat-card-total {
     grid-column: 1 / -1;
     padding: 12px 16px;
+    flex-direction: row;
     justify-content: center;
     gap: 14px;
   }
@@ -3548,15 +3551,18 @@ textarea.form-control {
   }
 
   .section-title {
-    font-size: 13.5px;
+    font-size: 11px;
     font-weight: 800;
     color: #0f172a;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 6px;
+    gap: 4px;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .section-header-actions {

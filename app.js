@@ -6186,22 +6186,27 @@ function renderCharts() {
       const { ctx } = chart;
       ctx.save();
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+      ctx.textBaseline = 'alphabetic';
 
       const isMobile = window.innerWidth <= 768;
       // Proportional font sizing dynamically calculated from actual innerRadius
       const numSize = isMobile ? Math.min(23, Math.max(17, Math.round(innerRadius * 0.44))) : 26;
       const labelSize = isMobile ? Math.min(10.5, Math.max(8.5, Math.round(innerRadius * 0.20))) : 11.5;
 
-      // Always show Total count in center - clean & permanent (NO % numbers in or on the circle)
+      // Total combined block height = numSize + gap + labelSize
+      const gap = Math.round(innerRadius * 0.08);
+      const blockHeight = numSize + gap + labelSize;
+      const blockTop = centerY - blockHeight / 2;
+
+      // Draw number (baseline at top of block + numSize)
       ctx.font = `800 ${numSize}px 'Inter', sans-serif`;
       ctx.fillStyle = '#0f172a';
-      ctx.fillText(`${total}`, centerX, centerY - Math.round(numSize * 0.36));
+      ctx.fillText(`${total}`, centerX, blockTop + numSize);
 
-      // Label below number: "งานทั้งหมด" - guaranteed to be in the dead-center of the ring
+      // Draw label (baseline below number)
       ctx.font = `600 ${labelSize}px 'Sarabun', sans-serif`;
       ctx.fillStyle = '#64748b';
-      ctx.fillText("งานทั้งหมด", centerX, centerY + Math.round(labelSize * 1.05));
+      ctx.fillText("งานทั้งหมด", centerX, blockTop + numSize + gap + labelSize);
 
       ctx.restore();
     }
