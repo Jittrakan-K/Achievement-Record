@@ -48,6 +48,7 @@
 - 📦 **PR / PURCHASING**
 - 💡 **IMPROVEMENT / KAIZEN**
 - 🚀 **SPECIAL PROJECT**
+- 🔒 **PRIVATE PROJECT**
 - ⚙️ **CMMS / SUPPORT**
 *(สามารถกดปุ่ม "หมวดหมู่ (CATEGORIES)" เพื่อ เพิ่ม, แก้ไขชื่อ, หรือลบหมวดหมู่ได้อิสระ)*
 

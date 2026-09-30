@@ -15,7 +15,8 @@ const DEFAULT_CATEGORIES = [
   { id: 'cat_acc', name: 'ACCESSORIES', icon: '🔩', color: '#059669' },
   { id: 'cat_pr', name: 'PR / PURCHASING', icon: '📦', color: '#ea580c' },
   { id: 'cat_imp', name: 'IMPROVEMENT / KAIZEN', icon: '💡', color: '#7c3aed' },
-  { id: 'cat_prj', name: 'SPECIAL PROJECT', icon: '🚀', color: '#0284c7' }
+  { id: 'cat_prj', name: 'SPECIAL PROJECT', icon: '🚀', color: '#0284c7' },
+  { id: 'cat_pvt', name: 'PRIVATE PROJECT', icon: '🔒', color: '#e11d48' }
 ];
 
 // --- Sample Data Matching Orbray Production Technology ---
@@ -3159,9 +3160,16 @@ function loadData() {
           if (c.name !== 'IMPROVEMENT / KAIZEN') { c.name = 'IMPROVEMENT / KAIZEN'; updated = true; }
         } else if (c.id === 'cat_prj' || c.name.includes('โปรเจกต์พิเศษ')) {
           if (c.name !== 'SPECIAL PROJECT') { c.name = 'SPECIAL PROJECT'; updated = true; }
+        } else if (c.id === 'cat_pvt' || c.name.includes('PRIVATE')) {
+          if (c.name !== 'PRIVATE PROJECT') { c.name = 'PRIVATE PROJECT'; updated = true; }
         }
         c.name = uppercaseEnglish(c.name);
       });
+      // Ensure PRIVATE PROJECT category exists in saved categories
+      if (!categories.some(c => c.id === 'cat_pvt' || c.name.toUpperCase().includes('PRIVATE'))) {
+        categories.push({ id: 'cat_pvt', name: 'PRIVATE PROJECT', icon: '🔒', color: '#e11d48' });
+        updated = true;
+      }
       if (updated) {
         saveCategories();
       }
@@ -8479,6 +8487,11 @@ function inferJobRequestCategory(data) {
     return 'cat_imp';
   }
 
+  // PRIVATE PROJECT
+  if (code.includes('PVT') || title.includes('PRIVATE') || desc.includes('PRIVATE') || quot.includes('PRIVATE')) {
+    return 'cat_pvt';
+  }
+
   // Default to Special Project
   return 'cat_prj';
 }
@@ -9635,7 +9648,7 @@ const MURATA_HERO_SLIDES = [
     title: "Kaizen Hub <span>/ Smart Engineering</span>",
     desc: "ยกระดับกระบวนการผลิต พัฒนาระบบอัตโนมัติ (Automation & Jig/Fixture) และบันทึกคำร้องขออย่างเป็นระบบ",
     checklist: [
-      "■ ติดตามสถานะงานตามประเภท : DESIGN JIG & FIXTURE, ACCESSORIES, PR / PURCHASING, IMPROVEMENT / KAIZEN, SPECIAL PROJECT",
+      "■ ติดตามสถานะงานตามประเภท : DESIGN JIG & FIXTURE, ACCESSORIES, PR / PURCHASING, IMPROVEMENT / KAIZEN, SPECIAL PROJECT, PRIVATE PROJECT",
       "■ ตรวจสอบการจัดซื้อ อนุมัติงบประมาณ PR/PO และงวดงานพร้อมประเมินผล",
       "■ จัดอันดับคำร้องขอและสรุปแนวโน้มงานด้วยสถิติเชิงลึก"
     ]
