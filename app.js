@@ -6187,29 +6187,39 @@ function renderCharts() {
       ctx.save();
 
       const isMobile = window.innerWidth <= 768;
-      // Proportional font sizing dynamically calculated from actual innerRadius (rounded integers for Safari font parser)
-      const numSize = Math.round(isMobile ? Math.min(24, Math.max(18, innerRadius * 0.44)) : 26);
-      const labelSize = Math.round(isMobile ? Math.min(11, Math.max(9, innerRadius * 0.20)) : 12);
-      const gap = Math.max(3, Math.round(innerRadius * 0.08));
 
-      // Total combined block height with middle baseline for pixel-perfect vertical centering
-      const totalBlockHeight = numSize + gap + labelSize;
-      const numY = centerY - (totalBlockHeight / 2) + (numSize / 2);
-      const labelY = centerY + (totalBlockHeight / 2) - (labelSize / 2);
+      if (isMobile) {
+        // On Mobile: Clean, elegant single total count centered perfectly in donut hole without 'งานทั้งหมด'
+        const numSize = Math.round(Math.min(28, Math.max(20, innerRadius * 0.52)));
+        ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(`${total}`, centerX, centerY);
+      } else {
+        // On Desktop: Number + "งานทั้งหมด" label
+        const numSize = 26;
+        const labelSize = 12;
+        const gap = Math.max(3, Math.round(innerRadius * 0.08));
 
-      // 1. Draw Total Number (Must set textAlign and textBaseline AFTER setting font for iOS Safari WebKit)
-      ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#0f172a';
-      ctx.fillText(`${total}`, centerX, numY);
+        const totalBlockHeight = numSize + gap + labelSize;
+        const numY = centerY - (totalBlockHeight / 2) + (numSize / 2);
+        const labelY = centerY + (totalBlockHeight / 2) - (labelSize / 2);
 
-      // 2. Draw Thai Label "งานทั้งหมด" (Must set textAlign and textBaseline AFTER setting font for iOS Safari WebKit)
-      ctx.font = `600 ${labelSize}px 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#64748b';
-      ctx.fillText("งานทั้งหมด", centerX, labelY);
+        // 1. Draw Total Number
+        ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(`${total}`, centerX, numY);
+
+        // 2. Draw Thai Label "งานทั้งหมด"
+        ctx.font = `600 ${labelSize}px 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText("งานทั้งหมด", centerX, labelY);
+      }
 
       ctx.restore();
     }
