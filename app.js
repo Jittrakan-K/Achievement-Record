@@ -6114,7 +6114,7 @@ function renderStats() {
   const total = achievements.length;
   const done = achievements.filter(a => a.status === 'done').length;
   const inProgress = achievements.filter(a => a.status === 'in_progress').length;
-  const wait = achievements.filter(a => a.status === 'wait').length;
+  const wait = achievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
   const cancel = achievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
 
   const setElText = (id, val) => {
@@ -6170,29 +6170,38 @@ function renderCharts() {
     catColors.push(c.color || '#3b82f6');
   });
 
-  // Doughnut Chart Plugin (Clean Total Count Only, NO % numbers in the circle)
+  // Doughnut Chart Plugin (Clean Total Count Only, Perfectly Centered to Arc Coordinates)
   const doughnutCenterTextPlugin = {
     id: 'doughnutCenterText',
-    beforeDraw(chart) {
-      const { ctx, chartArea } = chart;
-      if (!chartArea) return;
-      const centerX = (chartArea.left + chartArea.right) / 2;
-      const centerY = (chartArea.top + chartArea.bottom) / 2;
+    afterDatasetsDraw(chart) {
+      const meta = chart.getDatasetMeta(0);
+      if (!meta || !meta.data || !meta.data.length || !meta.data[0]) return;
+
+      const firstArc = meta.data[0];
+      const centerX = firstArc.x;
+      const centerY = firstArc.y;
+      const innerRadius = firstArc.innerRadius || 45;
       const total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
 
+      const { ctx } = chart;
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Always show Total count in center - clean & permanent (NO % numbers in or on the circle)
-      ctx.font = "800 26px 'Inter', sans-serif";
-      ctx.fillStyle = '#0f172a';
-      ctx.fillText(`${total}`, centerX, centerY - 9);
+      const isMobile = window.innerWidth <= 768;
+      // Proportional font sizing dynamically calculated from actual innerRadius
+      const numSize = isMobile ? Math.min(23, Math.max(17, Math.round(innerRadius * 0.44))) : 26;
+      const labelSize = isMobile ? Math.min(10.5, Math.max(8.5, Math.round(innerRadius * 0.20))) : 11.5;
 
-      // Label below number
-      ctx.font = "600 11.5px 'Sarabun', sans-serif";
+      // Always show Total count in center - clean & permanent (NO % numbers in or on the circle)
+      ctx.font = `800 ${numSize}px 'Inter', sans-serif`;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText(`${total}`, centerX, centerY - Math.round(numSize * 0.36));
+
+      // Label below number: "งานทั้งหมด" - guaranteed to be in the dead-center of the ring
+      ctx.font = `600 ${labelSize}px 'Sarabun', sans-serif`;
       ctx.fillStyle = '#64748b';
-      ctx.fillText("งานทั้งหมด", centerX, centerY + 14);
+      ctx.fillText("งานทั้งหมด", centerX, centerY + Math.round(labelSize * 1.05));
 
       ctx.restore();
     }
@@ -6271,7 +6280,7 @@ function renderCharts() {
             }
           }
         },
-        cutout: '66%'
+        cutout: window.innerWidth <= 768 ? '69%' : '66%'
       },
       plugins: [doughnutCenterTextPlugin]
     });
@@ -6279,7 +6288,7 @@ function renderCharts() {
 
   const doneCount = achievements.filter(a => a.status === 'done').length;
   const inProgCount = achievements.filter(a => a.status === 'in_progress').length;
-  const waitCount = achievements.filter(a => a.status === 'wait').length;
+  const waitCount = achievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
   const cancelCount = achievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
 
   // Update Status Summary Pills in Chart Header
@@ -6302,8 +6311,8 @@ function renderCharts() {
 
   const isMobile = window.innerWidth <= 768;
   const statusLabels = isMobile
-    ? ['DONE', 'IN PROG', 'WAIT', 'CANCEL']
-    : ['DONE (สำเร็จแล้ว)', 'IN PROGRESS (กำลังทำ)', 'WAIT (รอดำเนินการ)', 'CANCEL (ยกเลิก)'];
+    ? ['DONE', 'IN PROG', 'PENDING', 'CANCEL']
+    : ['DONE (สำเร็จแล้ว)', 'IN PROGRESS (กำลังทำ)', 'PENDING (รอดำเนินการ)', 'CANCEL (ยกเลิก)'];
   const statusCounts = [doneCount, inProgCount, waitCount, cancelCount];
 
   const ctxTrend = document.getElementById('trendChart');
@@ -6396,7 +6405,8 @@ function filterByStatusPill(status) {
       all: 'งานทั้งหมด (ALL)',
       done: 'DONE (สำเร็จแล้ว)',
       in_progress: 'IN PROGRESS (กำลังทำ)',
-      wait: 'WAIT (รอดำเนินการ)',
+      wait: 'PENDING (รอดำเนินการ)',
+      pending: 'PENDING (รอดำเนินการ)',
       cancel: 'CANCEL (ยกเลิก)'
     };
     showToast(`กรองเฉพาะสถานะ: ${statusTitles[status] || status.toUpperCase()}`);
@@ -6619,7 +6629,7 @@ function renderRequesterRanking() {
             <span class="ranking-pct-val">${pct}%</span>
           </div>
         </div>
-        <div class="ranking-progress-bar" title="DONE: ${r.done}, IN PROGRESS: ${r.in_progress}, WAIT: ${r.wait}, CANCEL: ${r.cancel}">
+        <div class="ranking-progress-bar" title="DONE: ${r.done}, IN PROGRESS: ${r.in_progress}, PENDING: ${r.wait}, CANCEL: ${r.cancel}">
           <div class="r-bar-seg r-bar-done" style="width: ${donePct}%"></div>
           <div class="r-bar-seg r-bar-in-progress" style="width: ${inProgPct}%"></div>
           <div class="r-bar-seg r-bar-wait" style="width: ${waitPct}%"></div>
@@ -6628,7 +6638,7 @@ function renderRequesterRanking() {
         <div class="ranking-status-row">
           <span class="r-stat"><span class="r-dot r-dot-done"></span>DONE <b>${r.done}</b></span>
           <span class="r-stat"><span class="r-dot r-dot-in-progress"></span>PROG <b>${r.in_progress}</b></span>
-          <span class="r-stat"><span class="r-dot r-dot-wait"></span>WAIT <b>${r.wait}</b></span>
+          <span class="r-stat"><span class="r-dot r-dot-wait"></span>PENDING <b>${r.wait}</b></span>
           ${r.cancel > 0 ? `<span class="r-stat"><span class="r-dot r-dot-cancel"></span>CANCEL <b>${r.cancel}</b></span>` : ''}
         </div>
       </div>
@@ -6666,6 +6676,8 @@ function getFilteredAchievements() {
     if (currentStatusFilter !== 'all') {
       if (currentStatusFilter === 'cancel' || currentStatusFilter === 'cancle') {
         if (item.status !== 'cancel' && item.status !== 'cancle') return false;
+      } else if (currentStatusFilter === 'wait' || currentStatusFilter === 'pending') {
+        if (item.status !== 'wait' && item.status !== 'pending') return false;
       } else if (item.status !== currentStatusFilter) {
         return false;
       }
@@ -6700,7 +6712,7 @@ function getFilteredAchievements() {
 
     return true;
   }).sort((a, b) => {
-    const orderMap = { wait: 1, in_progress: 2, done: 3, cancel: 4, cancle: 4 };
+    const orderMap = { wait: 1, pending: 1, in_progress: 2, done: 3, cancel: 4, cancle: 4 };
     const orderA = orderMap[a.status] || 5;
     const orderB = orderMap[b.status] || 5;
     if (orderA !== orderB) {
@@ -7013,7 +7025,7 @@ function setMobileStatusFilter(status) {
   if (sortLabel) {
     if (status === 'all') sortLabel.textContent = 'เรียงลำดับ';
     else if (status === 'in_progress') sortLabel.textContent = 'กำลังทำ';
-    else if (status === 'wait') sortLabel.textContent = 'รอของ/อนุมัติ';
+    else if (status === 'wait' || status === 'pending') sortLabel.textContent = 'รอของ/อนุมัติ';
     else if (status === 'done') sortLabel.textContent = 'เสร็จสิ้น';
     else if (status === 'cancel') sortLabel.textContent = 'ยกเลิก';
     else sortLabel.textContent = status.toUpperCase();
@@ -7027,7 +7039,7 @@ function applyMobileSort(type) {
   const sortLabel = document.getElementById('mobileSortLabel');
   if (type === 'all') {
     setMobileStatusFilter('all');
-  } else if (type === 'done' || type === 'in_progress' || type === 'wait' || type === 'cancel') {
+  } else if (type === 'done' || type === 'in_progress' || type === 'wait' || type === 'pending' || type === 'cancel') {
     setMobileStatusFilter(type);
   } else if (type === 'newest') {
     if (sortLabel) sortLabel.textContent = 'ล่าสุด';
@@ -7587,6 +7599,7 @@ function openAchievementModal(id = null) {
     setSelectValueWithFallback(document.getElementById('achvAssignee'), item.assignee || '');
     let st = item.status || 'in_progress';
     if (st === 'cancle') st = 'cancel';
+    if (st === 'pending') st = 'wait';
     document.getElementById('achvStatus').value = st;
     document.getElementById('achvCompletionDate').value = item.completionDate || '';
     document.getElementById('achvDescription').value = uppercaseEnglish(item.description || '');
@@ -8513,7 +8526,7 @@ function lookupJobRequestData(queryCode) {
     'PRODUCTION TECHNOLOGY', 'PRODUCTION', 'TECHNOLOGY',
     'FERRULE', 'MOTOR', 'QUALITY', 'QC', 'QA', 'MEDICAL',
     'OFFICE', 'FACILITIES', 'FACILITY', 'OTHER', 'ASSEMBLY',
-    'TESTING', 'MACHINING', 'GENERAL', 'WAIT', 'DONE', 'CANCEL', 'CANCLE'
+    'TESTING', 'MACHINING', 'GENERAL', 'WAIT', 'PENDING', 'DONE', 'CANCEL', 'CANCLE'
   ];
   if (IGNORED_LOOKUP_WORDS.includes(cleanCode)) {
     return null;
@@ -9532,7 +9545,7 @@ function exportDataAsCsv() {
     const cat = categories.find(c => c.id === a.categoryId) || { name: 'ทั่วไป' };
     return [
       uppercaseEnglish(a.title),
-      a.status === 'done' ? 'DONE' : (a.status === 'in_progress' ? 'IN PROGRESS' : (a.status === 'cancel' || a.status === 'cancle' ? 'CANCEL' : 'WAIT')),
+      a.status === 'done' ? 'DONE' : (a.status === 'in_progress' ? 'IN PROGRESS' : (a.status === 'cancel' || a.status === 'cancle' ? 'CANCEL' : 'PENDING')),
       uppercaseEnglish(a.assignee || ''),
       uppercaseEnglish(a.code || ''),
       uppercaseEnglish(a.quotation || ''),
@@ -9580,7 +9593,8 @@ function getStatusPillHtml(status) {
     case 'in_progress':
       return `<span class="status-pill status-in_progress"><span class="status-dot-sm"></span>IN PROGRESS</span>`;
     case 'wait':
-      return `<span class="status-pill status-wait"><span class="status-dot-sm"></span>WAIT</span>`;
+    case 'pending':
+      return `<span class="status-pill status-wait"><span class="status-dot-sm"></span>PENDING</span>`;
     case 'cancel':
     case 'cancle':
       return `<span class="status-pill status-cancel"><span class="status-dot-sm"></span>CANCEL</span>`;
