@@ -1210,11 +1210,7 @@
 
     // Fast Reload Iframe
     function reloadPreview() {
-      try {
-        iframe.contentWindow.location.reload();
-      } catch (e) {
-        iframe.src = 'index.html?t=' + Date.now();
-      }
+      iframe.src = 'index.html?t=' + Date.now();
       showToast('รีโหลดหน้าจอเว็บล่าสุดเรียบร้อย', '⚡');
     }
 

@@ -6170,7 +6170,7 @@ function renderCharts() {
     catColors.push(c.color || '#3b82f6');
   });
 
-  // Doughnut Chart Plugin (Clean Total Count Only, Perfectly Centered to Arc Coordinates)
+  // Doughnut Chart Plugin (Clean Total Count Only, Perfectly Centered to Arc Coordinates across all Browsers & iOS Safari)
   const doughnutCenterTextPlugin = {
     id: 'doughnutCenterText',
     afterDatasetsDraw(chart) {
@@ -6178,35 +6178,38 @@ function renderCharts() {
       if (!meta || !meta.data || !meta.data.length || !meta.data[0]) return;
 
       const firstArc = meta.data[0];
-      const centerX = firstArc.x;
-      const centerY = firstArc.y;
-      const innerRadius = firstArc.innerRadius || 45;
+      const centerX = (firstArc && typeof firstArc.x === 'number') ? firstArc.x : (chart.chartArea ? (chart.chartArea.left + chart.chartArea.right) / 2 : chart.width / 2);
+      const centerY = (firstArc && typeof firstArc.y === 'number') ? firstArc.y : (chart.chartArea ? (chart.chartArea.top + chart.chartArea.bottom) / 2 : chart.height / 2);
+      const innerRadius = (firstArc && firstArc.innerRadius) ? firstArc.innerRadius : 45;
       const total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
 
       const { ctx } = chart;
       ctx.save();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'alphabetic';
 
       const isMobile = window.innerWidth <= 768;
-      // Proportional font sizing dynamically calculated from actual innerRadius
-      const numSize = isMobile ? Math.min(23, Math.max(17, Math.round(innerRadius * 0.44))) : 26;
-      const labelSize = isMobile ? Math.min(10.5, Math.max(8.5, Math.round(innerRadius * 0.20))) : 11.5;
+      // Proportional font sizing dynamically calculated from actual innerRadius (rounded integers for Safari font parser)
+      const numSize = Math.round(isMobile ? Math.min(24, Math.max(18, innerRadius * 0.44)) : 26);
+      const labelSize = Math.round(isMobile ? Math.min(11, Math.max(9, innerRadius * 0.20)) : 12);
+      const gap = Math.max(3, Math.round(innerRadius * 0.08));
 
-      // Total combined block height = numSize + gap + labelSize
-      const gap = Math.round(innerRadius * 0.08);
-      const blockHeight = numSize + gap + labelSize;
-      const blockTop = centerY - blockHeight / 2;
+      // Total combined block height with middle baseline for pixel-perfect vertical centering
+      const totalBlockHeight = numSize + gap + labelSize;
+      const numY = centerY - (totalBlockHeight / 2) + (numSize / 2);
+      const labelY = centerY + (totalBlockHeight / 2) - (labelSize / 2);
 
-      // Draw number (baseline at top of block + numSize)
-      ctx.font = `800 ${numSize}px 'Inter', sans-serif`;
+      // 1. Draw Total Number (Must set textAlign and textBaseline AFTER setting font for iOS Safari WebKit)
+      ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillStyle = '#0f172a';
-      ctx.fillText(`${total}`, centerX, blockTop + numSize);
+      ctx.fillText(`${total}`, centerX, numY);
 
-      // Draw label (baseline below number)
-      ctx.font = `600 ${labelSize}px 'Sarabun', sans-serif`;
+      // 2. Draw Thai Label "งานทั้งหมด" (Must set textAlign and textBaseline AFTER setting font for iOS Safari WebKit)
+      ctx.font = `600 ${labelSize}px 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillStyle = '#64748b';
-      ctx.fillText("งานทั้งหมด", centerX, blockTop + numSize + gap + labelSize);
+      ctx.fillText("งานทั้งหมด", centerX, labelY);
 
       ctx.restore();
     }
@@ -6289,6 +6292,12 @@ function renderCharts() {
       },
       plugins: [doughnutCenterTextPlugin]
     });
+
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (categoryChartInstance) categoryChartInstance.render();
+      }).catch(() => {});
+    }
   }
 
   const doneCount = achievements.filter(a => a.status === 'done').length;
