@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260930_v4">
+  <link rel="stylesheet" href="styles.css?v=20260930_v8">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -47,6 +47,10 @@
       <div class="system-top-strip-right">
         <span class="status-indicator-dot"></span>
         <span class="system-top-status-text">SYSTEM ONLINE • REAL-TIME RECORD</span>
+        <button type="button" class="system-top-sim-btn" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
+          <span>📱</span>
+          <span>จำลองมือถือ (SIMULATOR)</span>
+        </button>
       </div>
     </div>
   </div>
@@ -74,7 +78,7 @@
             <span id="mobileNavTitle" style="display:none;">DASHBOARD</span>
             <span>ORBRAY</span>
             <span class="dot-sep">•</span>
-            <span>PROD TECH</span>
+            <span>JITTRAKAN K.</span>
             <span class="dot-sep">•</span>
             <span class="status-online-dot" id="mobileStatusInfo">ONLINE</span>
           </div>
@@ -113,19 +117,19 @@
       <!-- Row 3: Horizontal Scrollable Status Quick Filter Tabs -->
       <div class="mobile-quick-filter-scroll">
         <button type="button" class="mobile-filter-pill active" data-status-filter="all" onclick="setMobileStatusFilter('all')">
-          ทั้งหมด <span class="pill-badge" id="mobileFilterAllCount">0</span>
+          ALL <span class="pill-badge" id="mobileFilterAllCount">0</span>
         </button>
         <button type="button" class="mobile-filter-pill pill-inprog" data-status-filter="in_progress" onclick="setMobileStatusFilter('in_progress')">
-          <span class="pill-dot dot-inprog"></span> กำลังทำ <span class="pill-badge" id="mobileFilterInProgCount">0</span>
+          <span class="pill-dot dot-inprog"></span> IN PROGRESS <span class="pill-badge" id="mobileFilterInProgCount">0</span>
         </button>
         <button type="button" class="mobile-filter-pill pill-wait" data-status-filter="wait" onclick="setMobileStatusFilter('wait')">
-          <span class="pill-dot dot-wait"></span> รอของ/อนุมัติ <span class="pill-badge" id="mobileFilterWaitCount">0</span>
+          <span class="pill-dot dot-wait"></span> PENDING <span class="pill-badge" id="mobileFilterWaitCount">0</span>
         </button>
         <button type="button" class="mobile-filter-pill pill-done" data-status-filter="done" onclick="setMobileStatusFilter('done')">
-          <span class="pill-dot dot-done"></span> เสร็จสิ้น <span class="pill-badge" id="mobileFilterDoneCount">0</span>
+          <span class="pill-dot dot-done"></span> DONE <span class="pill-badge" id="mobileFilterDoneCount">0</span>
         </button>
         <button type="button" class="mobile-filter-pill pill-cancel" data-status-filter="cancel" onclick="setMobileStatusFilter('cancel')">
-          <span class="pill-dot dot-cancel"></span> ยกเลิก <span class="pill-badge" id="mobileFilterCancelCount">0</span>
+          <span class="pill-dot dot-cancel"></span> CANCEL <span class="pill-badge" id="mobileFilterCancelCount">0</span>
         </button>
       </div>
     </div>
@@ -141,9 +145,9 @@
         <div>
           <h1 class="brand-title">
             <span style="color: #E60012; font-weight: 900; letter-spacing: -0.5px;">ACHIEVEMENT</span> RECORD
-            <span class="brand-badge">PROD TECH</span>
+            <span class="brand-badge">JITTRAKAN K.</span>
           </h1>
-          <p class="brand-subtitle">ORBRAY (THAILAND) • PRODUCTION TECHNOLOGY SYSTEM</p>
+          <p class="brand-subtitle">DOCUMENT SYSTEM VERSION 1.0.0</p>
         </div>
       </div>
 
@@ -206,6 +210,14 @@
               <div class="menu-text">
                 <span class="menu-title">พิมพ์รายงาน / PDF</span>
                 <span class="menu-sub">จัดพิมพ์สรุปผลงานหรือบันทึกเป็นเอกสาร PDF</span>
+              </div>
+            </button>
+            <div class="tools-menu-divider"></div>
+            <button type="button" class="tools-menu-item" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
+              <span class="menu-icon">📱</span>
+              <div class="menu-text">
+                <span class="menu-title" style="color: #0284c7;">จำลองจอมือถือ (MOBILE SIMULATOR)</span>
+                <span class="menu-sub">พรีวิวและทดสอบจอ iOS (iPhone) และ Android ทันที</span>
               </div>
             </button>
             <div class="tools-menu-divider"></div>
@@ -298,56 +310,51 @@
 
     <!-- Top Stats Row (5 Compact Cards) -->
     <section class="stats-grid" id="statsGrid">
-      <div class="stat-card stat-card-total" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="คลิกเพื่อดูงานทั้งหมด">
+      <div class="stat-card stat-card-total" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="VIEW ALL TASKS">
         <div class="stat-icon stat-blue">📊</div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">TOTAL</span>
-            <span class="stat-sub-label">ทั้งหมด</span>
           </div>
           <span class="stat-value" id="statTotalCount">0</span>
         </div>
       </div>
 
-      <div class="stat-card stat-card-done" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่สำเร็จแล้ว">
+      <div class="stat-card stat-card-done" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="FILTER DONE TASKS">
         <div class="stat-icon stat-green">✅</div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">DONE</span>
-            <span class="stat-sub-label">สำเร็จแล้ว</span>
           </div>
           <span class="stat-value" id="statCompletedCount">0</span>
         </div>
       </div>
 
-      <div class="stat-card stat-card-inprog" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่กำลังทำ">
+      <div class="stat-card stat-card-inprog" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="FILTER IN PROGRESS TASKS">
         <div class="stat-icon stat-sky">🛠️</div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">IN PROGRESS</span>
-            <span class="stat-sub-label">กำลังทำ</span>
           </div>
           <span class="stat-value" id="statInProgressCount">0</span>
         </div>
       </div>
 
-      <div class="stat-card stat-card-wait" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่รอดำเนินการ">
+      <div class="stat-card stat-card-wait" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="FILTER PENDING TASKS">
         <div class="stat-icon stat-rose">🔴</div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">PENDING</span>
-            <span class="stat-sub-label">รอดำเนินการ</span>
           </div>
           <span class="stat-value" id="statWaitCount">0</span>
         </div>
       </div>
 
-      <div class="stat-card stat-card-cancel" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="คลิกเพื่อกรองงานที่ยกเลิก">
+      <div class="stat-card stat-card-cancel" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="FILTER CANCELLED TASKS">
         <div class="stat-icon stat-slate">🚫</div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">CANCEL</span>
-            <span class="stat-sub-label">ยกเลิก</span>
           </div>
           <span class="stat-value" id="statCancelCount">0</span>
         </div>
@@ -1366,7 +1373,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20260930_v4"></script>
+  <script src="app.js?v=20260930_v8"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
@@ -1398,12 +1405,12 @@
         <span class="ios-action-header-title">SORT &amp; FILTER BY</span>
       </div>
       <div class="ios-action-group ios-action-scrollable">
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('newest')">📅 ล่าสุด (NEWEST)</button>
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('oldest')">📆 เก่าสุด (OLDEST)</button>
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('done')">✅ DONE (สำเร็จแล้ว)</button>
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('in_progress')">⏳ IN PROGRESS (กำลังดำเนินการ)</button>
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('wait')">⏱️ PENDING (รอดำเนินการ)</button>
-        <button type="button" class="ios-action-btn" onclick="applyMobileSort('all')">⚡ แสดงทั้งหมด (ALL)</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('newest')">📅 NEWEST</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('oldest')">📆 OLDEST</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('done')">✅ DONE</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('in_progress')">⏳ IN PROGRESS</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('wait')">⏱️ PENDING</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('all')">⚡ ALL</button>
       </div>
       <div class="ios-action-group ios-action-cancel-group">
         <button type="button" class="ios-action-btn ios-action-btn-cancel" onclick="closeMobileSortSheet()">CANCEL</button>

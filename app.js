@@ -7028,11 +7028,11 @@ function setMobileStatusFilter(status) {
 
   const sortLabel = document.getElementById('mobileSortLabel');
   if (sortLabel) {
-    if (status === 'all') sortLabel.textContent = 'เรียงลำดับ';
-    else if (status === 'in_progress') sortLabel.textContent = 'กำลังทำ';
-    else if (status === 'wait' || status === 'pending') sortLabel.textContent = 'รอของ/อนุมัติ';
-    else if (status === 'done') sortLabel.textContent = 'เสร็จสิ้น';
-    else if (status === 'cancel') sortLabel.textContent = 'ยกเลิก';
+    if (status === 'all') sortLabel.textContent = 'SORT';
+    else if (status === 'in_progress') sortLabel.textContent = 'IN PROGRESS';
+    else if (status === 'wait' || status === 'pending') sortLabel.textContent = 'PENDING';
+    else if (status === 'done') sortLabel.textContent = 'DONE';
+    else if (status === 'cancel') sortLabel.textContent = 'CANCEL';
     else sortLabel.textContent = status.toUpperCase();
   }
 
@@ -7047,9 +7047,9 @@ function applyMobileSort(type) {
   } else if (type === 'done' || type === 'in_progress' || type === 'wait' || type === 'pending' || type === 'cancel') {
     setMobileStatusFilter(type);
   } else if (type === 'newest') {
-    if (sortLabel) sortLabel.textContent = 'ล่าสุด';
+    if (sortLabel) sortLabel.textContent = 'NEWEST';
   } else if (type === 'oldest') {
-    if (sortLabel) sortLabel.textContent = 'เก่าสุด';
+    if (sortLabel) sortLabel.textContent = 'OLDEST';
   }
   renderContent();
 }

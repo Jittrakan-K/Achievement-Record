@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📱 Mobile Device Simulator — iOS (iPhone 11–16) & Android (Orbray)</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-studio: #0b0f17;
+      --bg-toolbar: rgba(18, 24, 38, 0.94);
+      --border-toolbar: rgba(255, 255, 255, 0.12);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-ios: #007aff;
+      --accent-android: #3ddc84;
+      --accent-orbray: #E60012;
+      --font-ui: 'Inter', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+      --device-scale: 0.90;
+      --titanium-edge: #384252;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--bg-studio);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.16), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(230, 0, 18, 0.08), transparent 40%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* --- Top Control Toolbar --- */
+    .simulator-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 18px;
+      background: var(--bg-toolbar);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-toolbar);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .toolbar-left, .toolbar-center, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .brand-logo-orbray {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--accent-orbray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* OS Toggle Segmented Control */
+    .os-segmented-control {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .os-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .os-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .os-tab-btn.active[data-os="ios"] {
+      background: #007aff;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+    }
+
+    .os-tab-btn.active[data-os="android"] {
+      background: #0d904f;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(13, 144, 79, 0.4);
+    }
+
+    /* Device Dropdown */
+    .toolbar-select-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .toolbar-select {
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 7px 28px 7px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      transition: all 0.15s ease;
+      max-width: 250px;
+    }
+
+    .toolbar-select optgroup {
+      background: #111827;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .toolbar-select option {
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: 500;
+    }
+
+    .toolbar-select:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .toolbar-select-icon {
+      position: absolute;
+      right: 10px;
+      pointer-events: none;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Standard Toolbar Buttons */
+    .tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .tool-btn:active {
+      transform: scale(0.96);
+    }
+
+    .tool-btn.active {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #fff;
+    }
+
+    .tool-btn-primary {
+      background: var(--accent-orbray);
+      border-color: #ff3344;
+      color: #fff;
+    }
+
+    .tool-btn-primary:hover {
+      background: #ff1a2e;
+      box-shadow: 0 0 12px rgba(230, 0, 18, 0.4);
+    }
+
+    /* Dimension & Scale pill */
+    .status-pill {
+      font-size: 11px;
+      font-family: monospace;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Quick Generation Pill Bar (Under Toolbar) */
+    .gen-quick-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 18px;
+      background: rgba(15, 23, 42, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .gen-quick-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .gen-tag-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+
+    .gen-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .gen-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .gen-btn.active {
+      background: #0284c7;
+      color: #fff;
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    /* --- Simulator Stage Area --- */
+    .simulator-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 20px 60px;
+      overflow-y: auto;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    /* Scaling Container */
+    .device-scale-wrapper {
+      transform: scale(var(--device-scale));
+      transform-origin: top center;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    /* --- Physical Phone Chassis Design --- */
+    .phone-chassis {
+      position: relative;
+      background: #11141a;
+      border-radius: 54px;
+      padding: 12px;
+      box-shadow: 
+        0 0 0 4px var(--titanium-edge),
+        0 0 0 7px #090c12,
+        0 25px 60px -10px rgba(0, 0, 0, 0.75),
+        0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    /* Bezel Off Mode (Frameless) */
+    .phone-chassis.frameless {
+      border-radius: 12px !important;
+      padding: 0 !important;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .phone-chassis.frameless .phone-status-bar,
+    .phone-chassis.frameless .dynamic-island-container,
+    .phone-chassis.frameless .classic-notch-container,
+    .phone-chassis.frameless .compact-notch-container,
+    .phone-chassis.frameless .punch-hole-camera,
+    .phone-chassis.frameless .ios-home-indicator-bar,
+    .phone-chassis.frameless .android-nav-bar,
+    .phone-chassis.frameless .iphone-se-top-bar,
+    .phone-chassis.frameless .iphone-se-bottom-bar {
+      display: none !important;
+    }
+
+    /* Phone Screen Window */
+    .phone-screen {
+      position: relative;
+      width: 393px;
+      height: 852px;
+      background: #ffffff;
+      border-radius: 44px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.25s ease, height 0.25s ease, border-radius 0.25s ease;
+    }
+
+    .phone-chassis.frameless .phone-screen {
+      border-radius: 12px !important;
+    }
+
+    /* --- iOS Status Bar --- */
+    .ios-status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0f172a;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .ios-status-time {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .ios-status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Dynamic Island (iPhone 14 Pro, 15, 16) */
+    .dynamic-island-container {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 122px;
+      height: 33px;
+      background: #000000;
+      border-radius: 20px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dynamic-island-container:hover {
+      width: 138px;
+    }
+
+    .dynamic-island-camera {
+      width: 10px;
+      height: 10px;
+      background: #111b27;
+      border: 2px solid #0d1219;
+      border-radius: 50%;
+    }
+
+    .dynamic-island-sensor {
+      width: 10px;
+      height: 10px;
+      background: #06090e;
+      border-radius: 50%;
+    }
+
+    /* Classic Apple Notch (iPhone 11, 11 Pro, 11 Pro Max, 12, 12 Pro) */
+    .classic-notch-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 210px;
+      height: 30px;
+      background: #000000;
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      pointer-events: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Compact Apple Notch (iPhone 13, 13 mini, 13 Pro, 14, 14 Plus) */
+    .compact-notch-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 30px;
+      background: #000000;
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      pointer-events: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .notch-speaker-slit {
+      width: 48px;
+      height: 4px;
+      background: #1e293b;
+      border-radius: 3px;
+    }
+
+    .notch-camera-dot {
+      width: 10px;
+      height: 10px;
+      background: #111b27;
+      border: 1.5px solid #0d1219;
+      border-radius: 50%;
+    }
+
+    /* iOS Bottom Home Bar */
+    .ios-home-indicator-bar {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 138px;
+      height: 5px;
+      background: #0f172a;
+      border-radius: 10px;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.85;
+      transition: opacity 0.2s ease;
+    }
+
+    /* iPhone SE Forehead and Chin */
+    .iphone-se-top-bar {
+      height: 60px;
+      background: #11141a;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .iphone-se-bottom-bar {
+      height: 70px;
+      background: #11141a;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .iphone-se-home-ring {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #334155;
+      border-radius: 50%;
+      background: #090c12;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    /* --- Android Specific Styling --- */
+    .os-android .phone-chassis {
+      border-radius: 36px;
+      box-shadow: 
+        0 0 0 3px #334155,
+        0 0 0 6px #0f172a,
+        0 25px 65px -10px rgba(0, 0, 0, 0.8);
+    }
+
+    .punch-hole-camera {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: #000;
+      border: 1.5px solid #1e293b;
+      border-radius: 50%;
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+    }
+
+    .android-status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 36px;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .android-status-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .android-status-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .android-nav-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 24px;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .android-gesture-pill {
+      width: 72px;
+      height: 4px;
+      background: #334155;
+      border-radius: 6px;
+    }
+
+    /* Main Iframe */
+    .phone-viewport-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+      flex: 1;
+      display: block;
+    }
+
+    /* Floating Shortcuts Bar */
+    .shortcuts-bar {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      padding: 6px 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      font-size: 11.5px;
+      color: #94a3b8;
+    }
+
+    .shortcut-tag {
+      color: #fff;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 4px;
+      font-family: monospace;
+    }
+
+    /* Toast Notification */
+    .simulator-toast {
+      position: fixed;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .simulator-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .brand-subtitle, .shortcuts-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="os-ios">
+
+  <!-- Top Toolbar -->
+  <header class="simulator-toolbar">
+    <div class="toolbar-left">
+      <div class="brand-badge">
+        <div class="brand-logo-orbray">O</div>
+        <div class="brand-title">
+          <span>DEVICE SIMULATOR</span>
+          <span class="brand-subtitle">iOS 11–16 & Android Live Preview</span>
+        </div>
+      </div>
+
+      <!-- OS Switcher -->
+      <div class="os-segmented-control">
+        <button type="button" class="os-tab-btn active" data-os="ios" onclick="switchOS('ios')">
+          <span>🍎 Apple iOS</span>
+        </button>
+        <button type="button" class="os-tab-btn" data-os="android" onclick="switchOS('android')">
+          <span>🤖 Android</span>
+        </button>
+      </div>
+
+      <!-- Model Dropdown (With iPhone 11 to 16 Series) -->
+      <div class="toolbar-select-wrapper">
+        <select id="deviceSelector" class="toolbar-select" onchange="changeDevice(this.value)">
+          <!-- iPhone 16 -->
+          <optgroup label="🍎 iPhone 16 Series (Latest 2024–2026)">
+            <option value="iphone16pro" selected>iPhone 16 Pro (393 × 852)</option>
+            <option value="iphone16promax">iPhone 16 Pro Max (440 × 956)</option>
+            <option value="iphone16plus">iPhone 16 Plus (430 × 932)</option>
+            <option value="iphone16">iPhone 16 (393 × 852)</option>
+          </optgroup>
+
+          <!-- iPhone 15 -->
+          <optgroup label="🍎 iPhone 15 Series">
+            <option value="iphone15pro">iPhone 15 Pro (393 × 852)</option>
+            <option value="iphone15promax">iPhone 15 Pro Max (430 × 932)</option>
+            <option value="iphone15">iPhone 15 (393 × 852)</option>
+            <option value="iphone15plus">iPhone 15 Plus (430 × 932)</option>
+          </optgroup>
+
+          <!-- iPhone 14 -->
+          <optgroup label="🍎 iPhone 14 Series">
+            <option value="iphone14pro">iPhone 14 Pro (393 × 852)</option>
+            <option value="iphone14promax">iPhone 14 Pro Max (430 × 932)</option>
+            <option value="iphone14">iPhone 14 (390 × 844)</option>
+            <option value="iphone14plus">iPhone 14 Plus (428 × 926)</option>
+          </optgroup>
+
+          <!-- iPhone 13 -->
+          <optgroup label="🍎 iPhone 13 Series">
+            <option value="iphone13pro">iPhone 13 Pro (390 × 844)</option>
+            <option value="iphone13promax">iPhone 13 Pro Max (428 × 926)</option>
+            <option value="iphone13">iPhone 13 (390 × 844)</option>
+            <option value="iphone13mini">iPhone 13 mini (375 × 812)</option>
+          </optgroup>
+
+          <!-- iPhone 12 -->
+          <optgroup label="🍎 iPhone 12 Series">
+            <option value="iphone12pro">iPhone 12 Pro (390 × 844)</option>
+            <option value="iphone12promax">iPhone 12 Pro Max (428 × 926)</option>
+            <option value="iphone12">iPhone 12 (390 × 844)</option>
+            <option value="iphone12mini">iPhone 12 mini (375 × 812)</option>
+          </optgroup>
+
+          <!-- iPhone 11 -->
+          <optgroup label="🍎 iPhone 11 Series">
+            <option value="iphone11">iPhone 11 (414 × 896)</option>
+            <option value="iphone11pro">iPhone 11 Pro (375 × 812)</option>
+            <option value="iphone11promax">iPhone 11 Pro Max (414 × 896)</option>
+          </optgroup>
+
+          <!-- iPhone SE & iPads -->
+          <optgroup label="🍎 iPhone SE & iPad Tablets">
+            <option value="iphonese">iPhone SE (3rd / 2nd Gen) (375 × 667)</option>
+            <option value="ipadmini">iPad Mini / Air (768 × 1024)</option>
+            <option value="ipadpro11">iPad Pro 11" (834 × 1194)</option>
+          </optgroup>
+
+          <!-- Android Devices -->
+          <optgroup label="🤖 Android Devices">
+            <option value="galaxy24ultra">Samsung Galaxy S24 Ultra (412 × 915)</option>
+            <option value="galaxy24">Samsung Galaxy S24 (360 × 780)</option>
+            <option value="pixel9pro">Google Pixel 9 Pro (412 × 915)</option>
+            <option value="pixel9">Google Pixel 9 / 8 (412 × 892)</option>
+            <option value="compactandroid">Compact Android (360 × 640)</option>
+          </optgroup>
+        </select>
+        <span class="toolbar-select-icon">▼</span>
+      </div>
+
+      <!-- Dimension Badge -->
+      <span id="dimensionPill" class="status-pill">393 × 852 px</span>
+    </div>
+
+    <!-- Center Quick Actions -->
+    <div class="toolbar-center">
+      <!-- Fast Reload Button -->
+      <button type="button" class="tool-btn tool-btn-primary" onclick="reloadPreview()" title="รีเฟรชหน้าเว็บทันที (กดปุ่ม R บนคีย์บอร์ด)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        <span>รีเฟรช (RELOAD)</span>
+      </button>
+
+      <!-- Rotate Orientation Button -->
+      <button type="button" id="rotateBtn" class="tool-btn" onclick="toggleOrientation()" title="สลับแนวตั้ง / แนวนอน (กดปุ่ม P บนคีย์บอร์ด)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+        <span id="orientationLabel">แนวตั้ง (Portrait)</span>
+      </button>
+
+      <!-- Toggle Bezel Frame -->
+      <button type="button" id="bezelBtn" class="tool-btn active" onclick="toggleBezel()" title="เปิด/ปิด กรอบตัวเครื่อง (กดปุ่ม B บนคีย์บอร์ด)">
+        <span>📱 กรอบเครื่อง: เปิด</span>
+      </button>
+    </div>
+
+    <!-- Right Controls: Zoom & Direct Open -->
+    <div class="toolbar-right">
+      <div class="toolbar-select-wrapper">
+        <select id="scaleSelector" class="toolbar-select" onchange="changeScale(this.value)">
+          <option value="fit" selected>🔍 พอดีจอ (Auto Fit)</option>
+          <option value="1.0">100% (ขนาดจริง)</option>
+          <option value="0.9">90%</option>
+          <option value="0.8">80%</option>
+          <option value="0.7">70%</option>
+          <option value="0.5">50%</option>
+        </select>
+        <span class="toolbar-select-icon">▼</span>
+      </div>
+
+      <a href="index.html" target="_blank" class="tool-btn" title="เปิดหน้าเว็บ index.html แยกต่างหากในแท็บใหม่">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+        <span>เปิดแท็บใหม่</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Quick Model Generation Bar -->
+  <nav class="gen-quick-bar">
+    <span class="gen-tag-title">เลือกรุ่นด่วน:</span>
+    <button type="button" class="gen-btn active" onclick="quickSelectDevice('iphone16pro')">iPhone 16 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone16promax')">iPhone 16 Pro Max</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone15pro')">iPhone 15 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone14pro')">iPhone 14 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone14')">iPhone 14</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone13pro')">iPhone 13 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone12pro')">iPhone 12 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11')">iPhone 11 (6.1")</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11pro')">iPhone 11 Pro</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11promax')">iPhone 11 Pro Max</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphonese')">iPhone SE</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('galaxy24')">Galaxy S24</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('pixel9')">Pixel 9</button>
+    <button type="button" class="gen-btn" onclick="quickSelectDevice('ipadmini')">iPad Mini</button>
+  </nav>
+
+  <!-- Simulator Main Stage Area -->
+  <main class="simulator-stage" id="simulatorStage">
+    <div class="device-scale-wrapper" id="scaleWrapper">
+      
+      <!-- Physical Phone Chassis Container -->
+      <div class="phone-chassis" id="phoneChassis">
+
+        <!-- iPhone SE Forehead Bar -->
+        <div class="iphone-se-top-bar" id="iphoneSeTop">
+          <div class="notch-speaker-slit" style="width: 55px; height: 5px;"></div>
+          <div class="notch-camera-dot"></div>
+        </div>
+
+        <div class="phone-screen" id="phoneScreen">
+          
+          <!-- === iOS Status Elements === -->
+          <div class="ios-status-bar" id="iosStatusBar">
+            <span class="ios-status-time" id="liveClock">09:41</span>
+            <div class="ios-status-icons">
+              <!-- Cell Signal -->
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="7" width="2.5" height="4" rx="0.5"/><rect x="4" y="5" width="2.5" height="6" rx="0.5"/><rect x="8" y="2.5" width="2.5" height="8.5" rx="0.5"/><rect x="12" y="0" width="2.5" height="11" rx="0.5"/></svg>
+              <!-- 5G Badge -->
+              <span id="networkBadge" style="font-size: 10px; font-weight: 800; margin-left: 2px;">5G</span>
+              <!-- Battery -->
+              <svg width="22" height="11" viewBox="0 0 22 11" fill="currentColor" style="margin-left: 4px;"><rect x="0" y="0" width="19" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="2" width="13" height="7" rx="1.5"/><path d="M20.5 4v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Dynamic Island (iPhone 14 Pro, 15, 16) -->
+          <div class="dynamic-island-container" id="dynamicIsland" title="iPhone Dynamic Island (คลิกเพื่อทดสอบ Animation)" onclick="pulseIsland()">
+            <div class="dynamic-island-sensor"></div>
+            <div class="dynamic-island-camera"></div>
+          </div>
+
+          <!-- Classic Apple Notch (iPhone 11 Series & 12 Series) -->
+          <div class="classic-notch-container" id="classicNotch" title="Apple Classic Notch (iPhone 11 / 12)">
+            <div class="notch-speaker-slit"></div>
+            <div class="notch-camera-dot"></div>
+          </div>
+
+          <!-- Compact Apple Notch (iPhone 13 Series & iPhone 14) -->
+          <div class="compact-notch-container" id="compactNotch" title="Apple Compact Notch (iPhone 13 / 14)">
+            <div class="notch-speaker-slit"></div>
+            <div class="notch-camera-dot"></div>
+          </div>
+
+          <!-- === Android Status Elements === -->
+          <div class="android-status-bar" id="androidStatusBar">
+            <div class="android-status-left">
+              <span id="androidClock" style="font-weight: 700;">09:41</span>
+              <!-- Notification Icon -->
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            </div>
+            <div class="android-status-right">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+              <span>LTE</span>
+              <span>85%</span>
+              <svg width="11" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+          </div>
+
+          <!-- Android Punch Hole Camera -->
+          <div class="punch-hole-camera" id="punchHole"></div>
+
+          <!-- Embedded Local Webpage (index.html) -->
+          <iframe id="previewIframe" class="phone-viewport-iframe" src="index.html"></iframe>
+
+          <!-- Bottom Navigation Affordances -->
+          <div class="ios-home-indicator-bar" id="iosHomeBar"></div>
+          <div class="android-nav-bar" id="androidNavBar">
+            <div class="android-gesture-pill"></div>
+          </div>
+
+        </div>
+
+        <!-- iPhone SE Chin Bar -->
+        <div class="iphone-se-bottom-bar" id="iphoneSeBottom">
+          <div class="iphone-se-home-ring"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Quick Shortcut Floating Pill -->
+  <footer class="shortcuts-bar">
+    <div><span class="shortcut-tag">R</span> รีเฟรชโค้ดล่าสุด</div>
+    <div><span class="shortcut-tag">P</span> พลิกหน้าจอ (Rotate)</div>
+    <div><span class="shortcut-tag">B</span> เปิด/ปิด กรอบเครื่อง</div>
+    <div><span class="shortcut-tag">F</span> ปรับขนาดพอดีจอ</div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="simulator-toast">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">รีเฟรชหน้าจอสำเร็จ</span>
+  </div>
+
+  <script>
+    // --- Complete Device Profiles (iPhone 11 through 16 + Android) ---
+    const DEVICES = {
+      // iPhone 16 Series
+      iphone16promax: { name: 'iPhone 16 Pro Max', os: 'ios', w: 440, h: 956, radius: 52, cutType: 'island', network: '5G' },
+      iphone16pro: { name: 'iPhone 16 Pro', os: 'ios', w: 393, h: 852, radius: 48, cutType: 'island', network: '5G' },
+      iphone16plus: { name: 'iPhone 16 Plus', os: 'ios', w: 430, h: 932, radius: 48, cutType: 'island', network: '5G' },
+      iphone16: { name: 'iPhone 16', os: 'ios', w: 393, h: 852, radius: 46, cutType: 'island', network: '5G' },
+
+      // iPhone 15 Series
+      iphone15promax: { name: 'iPhone 15 Pro Max', os: 'ios', w: 430, h: 932, radius: 50, cutType: 'island', network: '5G' },
+      iphone15pro: { name: 'iPhone 15 Pro', os: 'ios', w: 393, h: 852, radius: 46, cutType: 'island', network: '5G' },
+      iphone15plus: { name: 'iPhone 15 Plus', os: 'ios', w: 430, h: 932, radius: 48, cutType: 'island', network: '5G' },
+      iphone15: { name: 'iPhone 15', os: 'ios', w: 393, h: 852, radius: 44, cutType: 'island', network: '5G' },
+
+      // iPhone 14 Series
+      iphone14promax: { name: 'iPhone 14 Pro Max', os: 'ios', w: 430, h: 932, radius: 48, cutType: 'island', network: '5G' },
+      iphone14pro: { name: 'iPhone 14 Pro', os: 'ios', w: 393, h: 852, radius: 44, cutType: 'island', network: '5G' },
+      iphone14plus: { name: 'iPhone 14 Plus', os: 'ios', w: 428, h: 926, radius: 44, cutType: 'compact-notch', network: '5G' },
+      iphone14: { name: 'iPhone 14', os: 'ios', w: 390, h: 844, radius: 42, cutType: 'compact-notch', network: '5G' },
+
+      // iPhone 13 Series
+      iphone13promax: { name: 'iPhone 13 Pro Max', os: 'ios', w: 428, h: 926, radius: 44, cutType: 'compact-notch', network: '5G' },
+      iphone13pro: { name: 'iPhone 13 Pro', os: 'ios', w: 390, h: 844, radius: 42, cutType: 'compact-notch', network: '5G' },
+      iphone13: { name: 'iPhone 13', os: 'ios', w: 390, h: 844, radius: 42, cutType: 'compact-notch', network: '5G' },
+      iphone13mini: { name: 'iPhone 13 mini', os: 'ios', w: 375, h: 812, radius: 40, cutType: 'compact-notch', network: '5G' },
+
+      // iPhone 12 Series
+      iphone12promax: { name: 'iPhone 12 Pro Max', os: 'ios', w: 428, h: 926, radius: 44, cutType: 'notch', network: '5G' },
+      iphone12pro: { name: 'iPhone 12 Pro', os: 'ios', w: 390, h: 844, radius: 42, cutType: 'notch', network: '5G' },
+      iphone12: { name: 'iPhone 12', os: 'ios', w: 390, h: 844, radius: 42, cutType: 'notch', network: '5G' },
+      iphone12mini: { name: 'iPhone 12 mini', os: 'ios', w: 375, h: 812, radius: 40, cutType: 'notch', network: '5G' },
+
+      // iPhone 11 Series
+      iphone11promax: { name: 'iPhone 11 Pro Max', os: 'ios', w: 414, h: 896, radius: 40, cutType: 'notch', network: '4G LTE' },
+      iphone11pro: { name: 'iPhone 11 Pro', os: 'ios', w: 375, h: 812, radius: 38, cutType: 'notch', network: '4G LTE' },
+      iphone11: { name: 'iPhone 11', os: 'ios', w: 414, h: 896, radius: 38, cutType: 'notch', network: '4G LTE' },
+
+      // iPhone SE & iPads
+      iphonese: { name: 'iPhone SE (3rd / 2nd Gen)', os: 'ios', w: 375, h: 667, radius: 18, cutType: 'home-button', network: '5G' },
+      ipadmini: { name: 'iPad Mini / Air', os: 'ios', w: 768, h: 1024, radius: 24, cutType: 'none', network: 'Wi-Fi' },
+      ipadpro11: { name: 'iPad Pro 11"', os: 'ios', w: 834, h: 1194, radius: 26, cutType: 'none', network: '5G' },
+
+      // Android Flagships
+      galaxy24ultra: { name: 'Samsung Galaxy S24 Ultra', os: 'android', w: 412, h: 915, radius: 20, cutType: 'punch', network: '5G' },
+      galaxy24: { name: 'Samsung Galaxy S24', os: 'android', w: 360, h: 780, radius: 26, cutType: 'punch', network: '5G' },
+      pixel9pro: { name: 'Google Pixel 9 Pro', os: 'android', w: 412, h: 915, radius: 32, cutType: 'punch', network: '5G' },
+      pixel9: { name: 'Google Pixel 9 / 8', os: 'android', w: 412, h: 892, radius: 30, cutType: 'punch', network: '5G' },
+      compactandroid: { name: 'Compact Android', os: 'android', w: 360, h: 640, radius: 16, cutType: 'none', network: 'LTE' }
+    };
+
+    let currentDeviceKey = 'iphone16pro';
+    let currentOS = 'ios';
+    let isLandscape = false;
+    let isBezelVisible = true;
+    let currentScaleSetting = 'fit';
+
+    // DOM Elements
+    const body = document.body;
+    const chassis = document.getElementById('phoneChassis');
+    const screenEl = document.getElementById('phoneScreen');
+    const iframe = document.getElementById('previewIframe');
+    const scaleWrapper = document.getElementById('scaleWrapper');
+    const stage = document.getElementById('simulatorStage');
+    const dimensionPill = document.getElementById('dimensionPill');
+    const deviceSelector = document.getElementById('deviceSelector');
+    const scaleSelector = document.getElementById('scaleSelector');
+    const orientationLabel = document.getElementById('orientationLabel');
+    const bezelBtn = document.getElementById('bezelBtn');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    const toastIcon = document.getElementById('toastIcon');
+
+    // Cutouts & Bars
+    const iosStatusBar = document.getElementById('iosStatusBar');
+    const iosHomeBar = document.getElementById('iosHomeBar');
+    const dynamicIsland = document.getElementById('dynamicIsland');
+    const classicNotch = document.getElementById('classicNotch');
+    const compactNotch = document.getElementById('compactNotch');
+    const iphoneSeTop = document.getElementById('iphoneSeTop');
+    const iphoneSeBottom = document.getElementById('iphoneSeBottom');
+    const networkBadge = document.getElementById('networkBadge');
+
+    const androidStatusBar = document.getElementById('androidStatusBar');
+    const androidNavBar = document.getElementById('androidNavBar');
+    const punchHole = document.getElementById('punchHole');
+    const liveClock = document.getElementById('liveClock');
+    const androidClock = document.getElementById('androidClock');
+
+    // Live Clock (Real-time updates)
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${mins}`;
+      if (liveClock) liveClock.textContent = timeStr;
+      if (androidClock) androidClock.textContent = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Show Toast
+    function showToast(msg, icon = '✨') {
+      toastMsg.textContent = msg;
+      toastIcon.textContent = icon;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    // Switch OS (iOS vs Android)
+    function switchOS(os) {
+      currentOS = os;
+      document.querySelectorAll('.os-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-os') === os);
+      });
+
+      if (os === 'ios') {
+        body.classList.remove('os-android');
+        body.classList.add('os-ios');
+        if (DEVICES[currentDeviceKey].os !== 'ios') {
+          currentDeviceKey = 'iphone16pro';
+          deviceSelector.value = 'iphone16pro';
+        }
+      } else {
+        body.classList.remove('os-ios');
+        body.classList.add('os-android');
+        if (DEVICES[currentDeviceKey].os !== 'android') {
+          currentDeviceKey = 'galaxy24';
+          deviceSelector.value = 'galaxy24';
+        }
+      }
+
+      updateQuickBarActive();
+      applyDeviceSpecs();
+      showToast(`สลับเป็นโหมด ${os === 'ios' ? 'Apple iOS' : 'Google Android'}`, os === 'ios' ? '🍎' : '🤖');
+    }
+
+    // Quick Select Device from Pill Bar
+    function quickSelectDevice(key) {
+      if (!DEVICES[key]) return;
+      deviceSelector.value = key;
+      changeDevice(key);
+    }
+
+    // Change Device Dropdown
+    function changeDevice(key) {
+      if (!DEVICES[key]) return;
+      currentDeviceKey = key;
+      const dev = DEVICES[key];
+      
+      // Auto-sync OS tab
+      if (dev.os !== currentOS) {
+        currentOS = dev.os;
+        document.querySelectorAll('.os-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-os') === currentOS);
+        });
+        body.classList.toggle('os-ios', currentOS === 'ios');
+        body.classList.toggle('os-android', currentOS === 'android');
+      }
+
+      updateQuickBarActive();
+      applyDeviceSpecs();
+      showToast(`เลือกรุ่น: ${dev.name}`, dev.os === 'ios' ? '🍎' : '🤖');
+    }
+
+    // Update Quick Bar active button highlight
+    function updateQuickBarActive() {
+      document.querySelectorAll('.gen-btn').forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        btn.classList.toggle('active', onclickAttr.includes(`'${currentDeviceKey}'`));
+      });
+    }
+
+    // Apply Dimensions & Cutout Hardware Chrome
+    function applyDeviceSpecs() {
+      const dev = DEVICES[currentDeviceKey];
+      let width = isLandscape ? dev.h : dev.w;
+      let height = isLandscape ? dev.w : dev.h;
+
+      screenEl.style.width = width + 'px';
+      screenEl.style.height = height + 'px';
+      screenEl.style.borderRadius = isBezelVisible ? (dev.radius + 'px') : '12px';
+
+      dimensionPill.textContent = `${width} × ${height} px (${dev.name})`;
+      if (networkBadge) networkBadge.textContent = dev.network || '5G';
+
+      const isApple = dev.os === 'ios';
+
+      // Hide all notch/island cutouts first
+      dynamicIsland.style.display = 'none';
+      classicNotch.style.display = 'none';
+      compactNotch.style.display = 'none';
+      punchHole.style.display = 'none';
+      iphoneSeTop.style.display = 'none';
+      iphoneSeBottom.style.display = 'none';
+
+      if (isApple) {
+        iosStatusBar.style.display = (isBezelVisible && !isLandscape) ? 'flex' : 'none';
+        iosHomeBar.style.display = (isBezelVisible && dev.cutType !== 'home-button') ? 'block' : 'none';
+
+        androidStatusBar.style.display = 'none';
+        androidNavBar.style.display = 'none';
+
+        if (isBezelVisible && !isLandscape) {
+          if (dev.cutType === 'island') {
+            dynamicIsland.style.display = 'flex';
+          } else if (dev.cutType === 'notch') {
+            classicNotch.style.display = 'flex';
+          } else if (dev.cutType === 'compact-notch') {
+            compactNotch.style.display = 'flex';
+          } else if (dev.cutType === 'home-button') {
+            iphoneSeTop.style.display = 'flex';
+            iphoneSeBottom.style.display = 'flex';
+          }
+        }
+      } else {
+        // Android
+        iosStatusBar.style.display = 'none';
+        iosHomeBar.style.display = 'none';
+
+        androidStatusBar.style.display = (isBezelVisible && !isLandscape) ? 'flex' : 'none';
+        androidNavBar.style.display = isBezelVisible ? 'flex' : 'none';
+
+        if (isBezelVisible && !isLandscape && dev.cutType === 'punch') {
+          punchHole.style.display = 'block';
+        }
+      }
+
+      calculateScale();
+    }
+
+    // Toggle Orientation (Portrait / Landscape)
+    function toggleOrientation() {
+      isLandscape = !isLandscape;
+      orientationLabel.textContent = isLandscape ? 'แนวนอน (Landscape)' : 'แนวตั้ง (Portrait)';
+      document.getElementById('rotateBtn').classList.toggle('active', isLandscape);
+      applyDeviceSpecs();
+      showToast(`เปลี่ยนเป็น ${isLandscape ? 'แนวนอน (Landscape)' : 'แนวตั้ง (Portrait)'}`, '🔄');
+    }
+
+    // Toggle Bezel
+    function toggleBezel() {
+      isBezelVisible = !isBezelVisible;
+      chassis.classList.toggle('frameless', !isBezelVisible);
+      bezelBtn.classList.toggle('active', isBezelVisible);
+      bezelBtn.innerHTML = `<span>📱 กรอบเครื่อง: ${isBezelVisible ? 'เปิด' : 'ปิด'}</span>`;
+      applyDeviceSpecs();
+      showToast(`กรอบตัวเครื่อง: ${isBezelVisible ? 'เปิดใช้งาน' : 'ปิด (ไร้ขอบ)'}`, '📱');
+    }
+
+    // Dynamic Island Click Pulse
+    function pulseIsland() {
+      dynamicIsland.style.transform = 'translateX(-50%) scale(1.15)';
+      setTimeout(() => {
+        dynamicIsland.style.transform = 'translateX(-50%) scale(1)';
+      }, 250);
+      showToast('Dynamic Island Activated ✨', '🏝️');
+    }
+
+    // Fast Reload Iframe
+    function reloadPreview() {
+      try {
+        iframe.contentWindow.location.reload();
+      } catch (e) {
+        iframe.src = 'index.html?t=' + Date.now();
+      }
+      showToast('รีโหลดหน้าจอเว็บล่าสุดเรียบร้อย', '⚡');
+    }
+
+    // Change Scale
+    function changeScale(val) {
+      currentScaleSetting = val;
+      calculateScale();
+    }
+
+    // Auto-Fit Calculation
+    function calculateScale() {
+      if (currentScaleSetting !== 'fit') {
+        scaleWrapper.style.setProperty('--device-scale', currentScaleSetting);
+        return;
+      }
+
+      const availableHeight = stage.clientHeight - 90;
+      const dev = DEVICES[currentDeviceKey];
+      const targetHeight = isLandscape ? dev.w : dev.h;
+      const totalBoxHeight = isBezelVisible ? (targetHeight + (dev.cutType === 'home-button' ? 140 : 24)) : targetHeight;
+
+      if (availableHeight > 0 && totalBoxHeight > 0) {
+        let fit = availableHeight / totalBoxHeight;
+        fit = Math.min(1.0, Math.max(0.40, Math.floor(fit * 100) / 100));
+        scaleWrapper.style.setProperty('--device-scale', fit);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (currentScaleSetting === 'fit') {
+        calculateScale();
+      }
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === 'r') {
+        e.preventDefault();
+        reloadPreview();
+      } else if (key === 'p') {
+        e.preventDefault();
+        toggleOrientation();
+      } else if (key === 'b') {
+        e.preventDefault();
+        toggleBezel();
+      } else if (key === 'f') {
+        e.preventDefault();
+        scaleSelector.value = 'fit';
+        changeScale('fit');
+        showToast('ปรับขนาดพอดีหน้าจอ (Auto Fit)', '🔍');
+      }
+    });
+
+    // Initial setup
+    applyDeviceSpecs();
+  </script>
+</body>
+</html>

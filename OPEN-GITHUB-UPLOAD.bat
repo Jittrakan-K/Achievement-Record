@@ -12,11 +12,12 @@ echo.
 echo 1. Browser has opened GitHub upload page.
 echo 2. File Explorer has opened the folder.
 echo.
-echo Drag and drop these 4 files into GitHub upload box:
+echo Drag and drop these files into GitHub upload box:
 echo   - index.html
 echo   - app.js
 echo   - styles.css
 echo   - ACHIEVEMENT RECORD.html
+echo   - mobile-preview.html (Optional - Mobile Simulator)
 echo.
 echo Then click "Commit changes" button at the bottom.
 echo ================================================================
