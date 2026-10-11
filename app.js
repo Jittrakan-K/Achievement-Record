@@ -6428,6 +6428,13 @@ function resetAllFilters() {
   const allTimeBtn = document.querySelector('[data-time-filter="all"]');
   if (allTimeBtn) allTimeBtn.classList.add('active');
 
+  // Reset Excel Full Table Filters
+  currentSectionFilter = 'all';
+  currentJobTypeFilter = 'all';
+  currentSubJobTypeFilter = 'all';
+  currentPriorityFilter = 'all';
+  currentSubStatusFilter = 'all';
+
   document.querySelectorAll('.status-summary-pill').forEach(p => p.classList.remove('active'));
 
   renderContent();
@@ -6442,7 +6449,12 @@ function updateResetFilterButtonVisibility() {
     currentCategoryFilter !== 'all' ||
     currentStatusFilter !== 'all' ||
     currentAssigneeFilter !== 'all' ||
-    currentTimeFilter !== 'all'
+    currentTimeFilter !== 'all' ||
+    currentSectionFilter !== 'all' ||
+    currentJobTypeFilter !== 'all' ||
+    currentSubJobTypeFilter !== 'all' ||
+    currentPriorityFilter !== 'all' ||
+    currentSubStatusFilter !== 'all'
   );
   btnReset.style.display = isAnyFilterActive ? 'inline-flex' : 'none';
 }
@@ -7010,10 +7022,601 @@ function renderRequesterRanking() {
   container.innerHTML = html;
 }
 
+// --- Production Technology Excel Master Tracking Map & Helpers ---
+let currentSectionFilter = 'all';
+let currentJobTypeFilter = 'all';
+let currentSubJobTypeFilter = 'all';
+let currentPriorityFilter = 'all';
+let currentSubStatusFilter = 'all';
+
+const SUB_STATUS_ACHIEVEMENT_MAP = {
+  '00 Not Start': 0,
+  '01 Req. Analysis': 0.1,
+  '02 Concept Design': 0.2,
+  '03 User Approval 1': 0.3,
+  '04 Detailed Drawing': 0.4,
+  '05 Quote Request': 0.5,
+  '06 User Approval 2': 0.6,
+  '07 Supp. Proc.': 0.7,
+  '08 P.Techno. Proc.': 0.8,
+  '09 Verification': 0.9,
+  '10 Finished': 1,
+  'Pending': 0,
+  'Cancel': 1
+};
+
+const JOB_TYPE_LABELS = {
+  'D': '01 DESIGN',
+  'R': '02 REPAIR',
+  'M': '03 MODIFY',
+  'I': '04 INCREASE',
+  'A': '05 ASSY/INSTALL',
+  'S': '06 SIMULATION',
+  'T': 'TRAINING',
+  'AC': 'ACTIVITY',
+  'Q': 'QUOTE'
+};
+
+const MONTH_SHORT_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// [regMonth, section, jobType, subJobType, priority, designTeam, toolingTeam, supportBy, subStatus, achievement, actionDate, finishPlanDate, finishedMonth]
+const EXCEL_MASTER_MAP = {
+  "3022026": ["Feb","S1","I-A","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-02-03","2026-02-03","Feb"],
+  "5042026": ["Apr","S1","A","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-04-05","2026-04-05","Apr"],
+  "7052026": ["May","S1","-","02 Outsource","Medium","Sutthipong","-","Naruebodee","10 Finished",1,"2026-05-07","2026-05-07","May"],
+  "10202026": ["Feb","S1","R-D","01 In-house","Super High","Sutthipong","-","-","10 Finished",1,"2026-02-10","2026-02-10","Feb"],
+  "11062026": ["Jun","S1","D-I","01 In-house","High","All","Tanin","Jittrakan","10 Finished",1,"2026-06-10","2026-06-11","Jun"],
+  "12072026": ["Jul","S1","A","01 In-house","Medium","-","All","-","10 Finished",1,"2026-07-12","2026-07-12","Jul"],
+  "14082026": ["Aug","S1","D-A","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-08-14","2026-08-30","Aug"],
+  "15062026": ["Jun","S1","A","01 In-house","High","All","All","-","10 Finished",1,"2026-06-15","2026-06-15","Jun"],
+  "18012026": ["Jan","S1","I","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-18","2026-01-18","Jan"],
+  "19012026": ["Jan","S1","A","01 In-house","High","Sutthipong","Tanin","Wilawan","10 Finished",1,"2026-01-20","2026-01-20","Jan"],
+  "19082026": ["Aug","S2","A","01 In-house","High","All","All","-","10 Finished",1,"2026-08-19","2026-08-19","Aug"],
+  "20022026": ["Feb","S2","R-A","01 In-house","High","-","Kittisak","-","10 Finished",1,"2026-02-20","2026-02-20","Feb"],
+  "23062026": ["Jan","S1","A","01 In-house","High","Sutthipong","Tanin","Wilawan","10 Finished",1,"2026-01-20","2026-01-20","Jan"],
+  "24042026": ["Apr","S2","T","01 In-house","High","Jittrakan","-","Naruebodee","10 Finished",1,"2026-04-24","2026-04-24","Apr"],
+  "25082026": ["Aug","S2","D","01 In-house","High","All","All","-","10 Finished",1,"2026-08-25","2026-08-25","Aug"],
+  "26052026": ["May","S2","D","01 In-house","High","Jittrakan","-","Sutthipong","10 Finished",1,"2026-05-26","2026-05-26","May"],
+  "26062026": ["Jun","S2","T","02 Outsource","Medium","Jittrakan","-","Naruebodee","10 Finished",1,"2026-06-26","2026-06-26","Jun"],
+  "27062026": ["Jun","S2","A","01 In-house","High","All","All","-","10 Finished",1,"2026-06-27","2026-06-27","Jun"],
+  "28062026": ["Jun","S2","A","01 In-house","High","All","All","-","10 Finished",1,"2026-06-28","2026-06-28","Jun"],
+  "PT-25-119": ["2025","S0","D-I-A","All","Medium","Wilawan","-","Tanin","10 Finished",1,"2026-01-28","2026-01-28","Jan"],
+  "PT-25-172": ["2025","S0","D-I-A","All","High","All","Kittisak","Sutthipong","10 Finished",1,"2026-08-27","2026-08-31","Aug"],
+  "PT-25-187": ["2025","S0","D-A","02 Outsource","Medium","Jittrakan","-","Naruebodee","10 Finished",1,"2026-09-09","2026-09-30","Sep"],
+  "PT-25-189": ["2025","S0","D-A","All","Low","Naruebodee","-","Sutthipong","Cancel",1,"2026-04-20","2026-04-27","Apr"],
+  "PT-25-196": ["2025","S0","D-I-A","All","Low","-","All","-","10 Finished",1,"2026-03-20","2026-03-20","Mar"],
+  "PT-25-211": ["2025","S0","D-A","01 In-house","Low","-","All","-","Cancel",1,"2026-03-16","2026-03-20","Mar"],
+  "PT-25-216": ["2025","S0","D-A","01 In-house","Low","-","All","-","10 Finished",1,"2026-02-25","2026-02-25","Feb"],
+  "PT-25-221": ["2025","S0","D-A","All","High","Sutthipong","Tanin","-","10 Finished",1,"2026-01-08","2026-01-08","Jan"],
+  "PT-25-224": ["2025","S0","D-I-A","02 Outsource","Low","Sutthipong","Tanin","-","10 Finished",1,"2026-02-12","2026-02-12","Feb"],
+  "PT-25-241": ["2025","S0","D-A","All","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-02-05","2026-02-05","Feb"],
+  "PT-25-251": ["2025","S0","I-A","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-02-12","2026-02-12","Feb"],
+  "PT-25-253": ["2025","S0","I","01 In-house","Medium","Wilawan","-","-","10 Finished",1,"2026-01-13","2026-01-13","Jan"],
+  "PT-25-256": ["2025","S0","I","02 Outsource","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-01-26","2026-01-26","Jan"],
+  "PT-25-257": ["2025","S0","D-A","01 In-house","Low","Sutthipong","Tanin","-","10 Finished",1,"2026-01-06","2026-01-06","Jan"],
+  "PT-25-258": ["2025","S0","D-A","All","Low","Wilawan","Kittisak","Sutthipong","10 Finished",1,"2026-03-23","2026-03-23","Mar"],
+  "PT-25-259": ["2025","S0","D-A","01 In-house","Low","-","All","-","10 Finished",1,"2026-03-11","2026-03-20","Mar"],
+  "PT-25-262": ["2025","S0","I-A","02 Outsource","Low","Wilawan","Tanin","-","10 Finished",1,"2026-01-06","2026-01-06","Jan"],
+  "PT-25-263": ["2025","S0","D-I-A","02 Outsource","High","Wilawan","-","Sutthipong","10 Finished",1,"2026-01-06","2026-01-06","Jan"],
+  "PT-25-265": ["2025","S0","R","01 In-house","Low","-","Tanin","-","10 Finished",1,"2026-01-06","2026-01-06","Jan"],
+  "WI-PT-017": ["2025","S0","R","-","Super High","Sutthipong","-","-","10 Finished",1,"2026-01-09","2026-01-09","Jan"],
+  "SP25-PRJ001": ["2025","S0","D-A","01 In-house","High","Sutthipong","Tanin","-","02 Concept Design",0.2,"2026-08-07","2026-11-15",""],
+  "SP25-PRJ002": ["2025","S0","D-A","01 In-house","High","Jittrakan","-","Sutthipong","02 Concept Design",0.2,"2026-04-18","2026-11-30",""],
+  "SP25-PRJ003": ["2025","S0","D-A","01 In-house","Super High","All","-","-","08 P.Techno. Proc.",0.8,"2026-08-05","2026-12-20",""],
+  "IMP25-002": ["2025","S0","D-A","All","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-01-06","",""],
+  "IMP25-004": ["2025","S0","D-A","All","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-01-21","",""],
+  "IMP25-006": ["2025","S0","D-A","All","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-01-06","",""],
+  "IMP25-009": ["2025","S0","D-A","01 In-house","Medium","Sutthipong","Tanin","-","08 P.Techno. Proc.",0.8,"2026-01-06","",""],
+  "IMP25-010": ["2025","S0","D-A","01 In-house","Medium","Wilawan","Tanin","Sutthipong","10 Finished",1,"2026-02-10","2026-02-10","Feb"],
+  "IMP25-011": ["2025","S0","D-A","All","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-01-06","",""],
+  "IMP25-012": ["2025","S0","D-A","All","Medium","Sutthipong","-","-","04 Detailed Drawing",0.4,"2026-01-27","",""],
+  "IMP25-013": ["2025","S0","D-A","01 In-house","Medium","Sutthipong","-","-","Cancel",1,"2026-06-04","2026-06-10","Jun"],
+  "3D PRT-JAN": ["Jan","S1","D","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-02-01","2026-02-01","Feb"],
+  "FR-J26-001": ["Jan","S1","R-A","01 In-house","Low","-","All","-","10 Finished",1,"2026-03-07","2026-03-07","Mar"],
+  "FR-J26-002": ["Jan","S1","R","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-01-14","2026-01-14","Jan"],
+  "FR-J26-003": ["Jan","S1","R","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-01-13","2026-01-13","Jan"],
+  "FR-J26-004": ["Jan","S1","R","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-01-21","2026-01-21","Jan"],
+  "FR-J26-005": ["Jan","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-19","2026-01-19","Jan"],
+  "FR-J26-006": ["Jan","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-21","2026-01-21","Jan"],
+  "FR-J26-007": ["Jan","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-28","2026-01-28","Jan"],
+  "FR-J26-008": ["Jan","S2","D-I-A","01 In-house","Low","Wilawan","Kittisak","-","10 Finished",1,"2026-02-23","2026-02-23","Feb"],
+  "FR-J26-009": ["Jan","S2","D-I-A","01 In-house","Medium","Naruebodee","Kittisak","Sutthipong","10 Finished",1,"2026-05-25","2026-05-30","May"],
+  "FR-J26-010": ["Jan","S2","I","01 In-house","Low","Sutthipong","Kittisak","-","10 Finished",1,"2026-02-17","2026-02-17","Feb"],
+  "GM-J26-001": ["Jan","S1","D-I-A","01 In-house","Low","Wilawan","Tanin","-","10 Finished",1,"2026-01-26","2026-01-26","Jan"],
+  "GM-J26-002": ["Jan","S1","I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-01-19","2026-01-19","Jan"],
+  "GM-J26-003": ["Jan","S2","D-I","02 Outsource","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-03-16","2026-03-16","Mar"],
+  "GM-J26-004": ["Jan","S2","R","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-01-28","2026-01-28","Jan"],
+  "GM-J26-005": ["Jan","S2","I","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-02-16","2026-02-16","Feb"],
+  "GM-J26-006": ["Jan","S2","I","01 In-house","Low","Naruebodee","-","Sutthipong","10 Finished",1,"2026-04-01","2026-04-10","Apr"],
+  "GM-J26-007": ["Jan","S2","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-01-28","2026-01-28","Jan"],
+  "GM-J26-008": ["Jan","S2","I","01 In-house","Super High","Sutthipong","Tanin","-","10 Finished",1,"2026-02-02","2026-02-02","Feb"],
+  "GM-J26-009": ["Jan","S2","I","01 In-house","Low","Sutthipong","-","-","10 Finished",1,"2026-01-30","2026-01-30","Jan"],
+  "GM-J26-010": ["Jan","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-20","2026-01-20","Jan"],
+  "MN26-PRJ001": ["Jan","S1","D","01 In-house","Super High","Sutthipong","-","-","10 Finished",1,"2026-01-15","2026-01-15","Jan"],
+  "OPT-J26-001": ["Jan","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-01-19","2026-01-19","Jan"],
+  "3D PRT-FEB": ["Feb","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-03-01","2026-03-01","Mar"],
+  "ECR-523": ["Feb","S2","D-A","01 In-house","Medium","Jittrakan","-","-","Cancel",1,"2026-03-10","2026-03-10","Mar"],
+  "FR-J26-011": ["Feb","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-09","2026-02-09","Feb"],
+  "FR-J26-012": ["Feb","S1","I","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-03-05","2026-03-06","Mar"],
+  "FR-J26-013": ["Feb","S1","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-02-12","2026-02-12","Feb"],
+  "FR-J26-014": ["Feb","S1","I","02 Outsource","High","Sutthipong","-","-","10 Finished",1,"2026-03-25","2026-03-26","Mar"],
+  "FR-J26-015": ["Feb","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-19","2026-02-19","Feb"],
+  "FR-J26-016": ["Feb","S2","I-A","02 Outsource","High","Sutthipong","-","-","10 Finished",1,"2026-04-01","2026-04-01","Apr"],
+  "FR-J26-017": ["Feb","S2","M","01 In-house","High","Sutthipong","All","Jittrakan","10 Finished",1,"2026-03-04","2026-03-04","Mar"],
+  "FR-J26-018": ["Feb","S2","D-I-A","01 In-house","Low","Jittrakan","Kittisak","-","10 Finished",1,"2026-05-11","2026-05-15","Mar"],
+  "FR-J26-019": ["Feb","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-26","2026-02-26","Feb"],
+  "GM-J26-011": ["Feb","S1","I-R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-06","2026-02-06","Feb"],
+  "GM-J26-012": ["Feb","S1","D-A","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-05","2026-02-05","Feb"],
+  "GM-J26-013": ["Feb","S1","D-A","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-02-05","2026-02-05","Feb"],
+  "GM-J26-014": ["Feb","S1","M","01 In-house","Low","Sutthipong","-","Jittrakan","10 Finished",1,"2026-04-27","2026-04-27","Apr"],
+  "GM-J26-015": ["Feb","S1","I","01 In-house","Low","Jittrakan","-","-","10 Finished",1,"2026-03-09","2026-03-09","Mar"],
+  "GM-J26-016": ["Feb","S1","A","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-02-11","2026-02-11","Feb"],
+  "GM-J26-017": ["Feb","S1","M","01 In-house","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-02-17","2026-02-17","Feb"],
+  "GM-J26-018": ["Feb","S2","I-A","02 Outsource","High","Sutthipong","Kittisak","-","10 Finished",1,"2026-03-05","2026-03-05","Mar"],
+  "GM-J26-019": ["Feb","S2","M-I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-02-19","2026-02-19","Feb"],
+  "GM-J26-020": ["Feb","S2","D-M-I","01 In-house","Low","Jittrakan","-","-","10 Finished",1,"2026-04-21","2026-04-10","Apr"],
+  "GM-J26-021": ["Feb","S2","I-A","02 Outsource","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-03-19","2026-03-20","Mar"],
+  "GM-J26-022": ["Feb","S2","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-21","2026-02-21","Feb"],
+  "GM-J26-023": ["Feb","S2","I-A","01 In-house","Low","Jittrakan","Kittisak","-","10 Finished",1,"2026-03-04","2026-03-04","Mar"],
+  "GM-J26-024": ["Feb","S2","D-A","All","Low","Jittrakan","-","Sutthipong","02 Concept Design",0.2,"2026-02-24","2026-12-30",""],
+  "GM-M26-011": ["Feb","S2","I-A","All","Medium","Sutthipong","-","-","Cancel",1,"2026-03-23","2026-03-31","Mar"],
+  "OPT-J26-002": ["Feb","S1","I-A","02 Outsource","High","Jittrakan","All","-","10 Finished",1,"2026-03-23","2026-03-23","Mar"],
+  "OPT-J26-003": ["Feb","S2","D-I","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-03-23","2026-03-27","Mar"],
+  "OPT-J26-004": ["Feb","S2","R","01 In-house","Medium","-","Tanin","Naruebodee","10 Finished",1,"2026-02-21","2026-02-21","Feb"],
+  "OPT-J26-005": ["Feb","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-02-21","2026-02-21","Feb"],
+  "OTH-J26-001": ["Feb","S2","D-I","All","Medium","Jittrakan","Kittisak","-","10 Finished",1,"2026-03-18","2026-03-18","Mar"],
+  "T24022026": ["Feb","S2","T","01 In-house","Low","Sutthipong","Kittisak","Jittrakan","10 Finished",1,"2026-02-24","2026-02-24","Feb"],
+  "T17020206": ["Feb","S2","T","01 In-house","Low","Sutthipong","Kittisak","Jittrakan","10 Finished",1,"2026-02-17","2026-02-17","Feb"],
+  "3D PRT-MAR": ["Mar","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-04-01","2026-04-01","Apr"],
+  "FR-J26-020": ["Mar","S1","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-03-04","2026-03-04","Mar"],
+  "FR-J26-021": ["Mar","S1","M","01 In-house","High","-","All","-","10 Finished",1,"2026-03-21","2026-03-23","Mar"],
+  "FR-J26-022": ["Mar","S1","I","All","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-04-10","2026-04-10","Apr"],
+  "FR-J26-023": ["Mar","S1","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-03-09","2026-03-09","Mar"],
+  "FR-J26-024": ["Mar","S1","D-I","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-04-28","2026-04-27","Apr"],
+  "FR-J26-025": ["Mar","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-03-27","2026-03-27","Mar"],
+  "FR-J26-026": ["Mar","S2","D-A","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-04-01","2026-04-20","Apr"],
+  "GM-J26-025": ["Mar","S1","D-I-A","01 In-house","Low","-","Tanin","-","10 Finished",1,"2026-03-05","2026-03-09","Mar"],
+  "GM-J26-026": ["Mar","S1","D-A","All","High","Naruebodee","-","-","10 Finished",1,"2026-05-13","2026-05-30","May"],
+  "GM-J26-027": ["Mar","S1","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-03-09","2026-03-09","Mar"],
+  "GM-J26-028": ["Mar","S1","D-I-A","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-04-10","2026-04-27","Apr"],
+  "GM-J26-029": ["Mar","S1","I-A","01 In-house","Low","-","Kittisak","-","10 Finished",1,"2026-03-18","2026-03-18","Mar"],
+  "GM-J26-030": ["Mar","S1","I","02 Outsource","Medium","Jittrakan","-","-","Cancel",1,"2026-03-26","2026-04-06","Mar"],
+  "GM-J26-031": ["Mar","S2","I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-03-18","2026-03-12","Mar"],
+  "GM-J26-032": ["Mar","S2","M","01 In-house","High","Naruebodee","-","Sutthipong","10 Finished",1,"2026-04-23","2026-04-27","Apr"],
+  "GM-J26-033": ["Mar","S2","I","01 In-house","Low","Jittrakan","-","-","10 Finished",1,"2026-03-17","2026-03-20","Mar"],
+  "GM-J26-034": ["Mar","S2","D-I","02 Outsource","High","Sutthipong","-","-","10 Finished",1,"2026-04-27","2026-04-10","Apr"],
+  "GM-J26-035": ["Mar","S2","D-I-A","01 In-house","Medium","Jittrakan","Tanin","-","10 Finished",1,"2026-04-01","2026-04-03","Apr"],
+  "GM-J26-036": ["Mar","S2","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-04-07","2026-04-10","Apr"],
+  "GM-J26-037": ["Mar","S2","I","01 In-house","Low","-","Kittisak","-","10 Finished",1,"2026-03-26","2026-03-31","Mar"],
+  "GM-J26-038": ["Mar","S2","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-04-01","2026-04-03","Apr"],
+  "GM-J26-039": ["Mar","S2","M","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-03-26","2026-03-26","Mar"],
+  "GM-J26-040": ["Mar","S2","M","01 In-house","Medium","Naruebodee","Kittisak","-","10 Finished",1,"2026-04-01","2026-04-03","Apr"],
+  "LT26-MT01-1": ["Mar","S2","A","01 In-house","High","-","Kittisak","-","10 Finished",1,"2026-03-30","2026-03-30","Mar"],
+  "OPT-J26-006": ["Mar","S1","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-03-25","2026-04-10","Mar"],
+  "OPT-J26-007": ["Mar","S2","D-I","01 In-house","Low","Naruebodee","-","-","Cancel",1,"2026-04-18","2026-04-20","Apr"],
+  "OPT-J26-008": ["Mar","S2","I","02 Outsource","High","Jittrakan","-","-","Cancel",1,"2026-04-18","2026-04-20","Apr"],
+  "OPT-J26-009": ["Mar","S2","D-A","01 In-house","High","Naruebodee","Kittisak","-","10 Finished",1,"2026-03-28","2026-04-08","Mar"],
+  "OTH-J26-002": ["Mar","S2","I-A","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-03-16","2026-03-17","Mar"],
+  "OTH-J26-003": ["Mar","S2","I","01 In-house","Medium","-","Kittisak","-","10 Finished",1,"2026-03-25","2026-03-27","Mar"],
+  "OTH-J26-004": ["Mar","S2","I-A","01 In-house","High","-","Kittisak","-","10 Finished",1,"2026-03-25","2026-03-25","Mar"],
+  "MR.ARAYA": ["Apr","S1","I","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-06-05","2026-06-15","Jun"],
+  "3D-PRT-APR": ["Apr","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-05-05","2026-05-30","May"],
+  "FR-M26": ["Apr","S1","I","02 Outsource","Super High","Sutthipong","-","-","10 Finished",1,"2026-05-05","2026-05-30","May"],
+  "FR-J26-027": ["Apr","S1","M","01 In-house","Low","-","Tanin","-","10 Finished",1,"2026-04-07","2026-04-07","Apr"],
+  "FR-J26-028": ["Apr","S1","I-M","All","Low","Jittrakan","-","-","10 Finished",1,"2026-06-05","2026-06-30","Jun"],
+  "GM-J26-041": ["Apr","S1","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-04-10","2026-04-10","Apr"],
+  "GM-J26-042": ["Apr","S1","D-A","01 In-house","Medium","All","-","Kittisak","10 Finished",1,"2026-04-21","2026-04-27","Apr"],
+  "GM-J26-043": ["Apr","S1","M","01 In-house","Low","-","All","-","10 Finished",1,"2026-04-23","2026-04-27","Apr"],
+  "GM-J26-044": ["Apr","S1","R","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-04-10","2026-04-10","Apr"],
+  "GM-J26-045": ["Apr","S1","D-M","All","Medium","Naruebodee","Tanin","-","10 Finished",1,"2026-05-07","2026-05-30","May"],
+  "GM-J26-046": ["Apr","S1","D","01 In-house","Medium","Jittrakan","Tanin","-","10 Finished",1,"2026-07-24","2026-07-30","Jul"],
+  "IMP26-001": ["Apr","S1","D-A","All","High","All","-","-","Cancel",1,"2026-08-05","2026-08-30","Aug"],
+  "IMP26-002": ["Apr","S1","D-A","01 In-house","High","Jittrakan","Tanin","Sutthipong","10 Finished",1,"2026-08-05","2026-08-30","Aug"],
+  "LT26-FER001-07": ["Apr","S1","A","01 In-house","High","All","All","-","10 Finished",1,"2026-04-03","2026-04-03","Apr"],
+  "OPT-J26-010": ["Apr","S1","D","02 Outsource","High","Sutthipong","-","-","10 Finished",1,"2026-05-06","2026-05-30","May"],
+  "OPT-J26-011": ["Apr","S1","M","01 In-house","Low","-","All","-","10 Finished",1,"2026-04-22","2026-04-24","Apr"],
+  "OTH-J26-005": ["Apr","S1","M-A","01 In-house","Low","Jittrakan","-","-","Cancel",1,"2026-05-09","2026-05-30","May"],
+  "PT26-3DRS-0": ["Apr","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-05-06","2026-05-30","May"],
+  "SP26-PRJ001": ["Apr","S2","D-A","01 In-house","Medium","All","All","Jittrakan","08 P.Techno. Proc.",0.8,"2026-07-27","2026-09-30",""],
+  "OTH-J26-006": ["Apr","S2","R-A","01 In-house","Medium","All","-","-","10 Finished",1,"2026-07-12","2026-07-12","Jul"],
+  "OPT-J26-012": ["Apr","S2","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-04-20","2026-04-20","Apr"],
+  "LT26-FER001-6-07": ["Apr","S2","A","01 In-house","Super High","All","All","-","10 Finished",1,"2026-04-26","2026-04-26","Apr"],
+  "FR-J26-029": ["Apr","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-04-22","2026-04-30","Apr"],
+  "FR-J26-030": ["Apr","S2","A","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-05-07","2026-06-01","May"],
+  "FR-J26-031": ["Apr","S2","I-A","01 In-house","Medium","Naruebodee","All","-","10 Finished",1,"2026-05-14","2026-05-30","May"],
+  "FR-J26-032": ["Apr","S2","I","01 In-house","Medium","Jittrakan","Tanin","-","10 Finished",1,"2026-06-02","2026-06-10","Jun"],
+  "FR-J26-033": ["Apr","S2","I-A","01 In-house","Medium","Jittrakan","Kittisak","-","10 Finished",1,"2026-07-12","2026-07-12","Jul"],
+  "FR-J26-034": ["Apr","S2","I","02 Outsource","Medium","Naruebodee","-","-","10 Finished",1,"2026-06-02","2026-06-15","Jun"],
+  "FR-J26-035": ["Apr","S2","I-A","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-06-15","2026-06-30","Jun"],
+  "FR-J26-036": ["May","S1","D-I","01 In-house","Medium","Sutthipong","All","-","10 Finished",1,"2026-05-13","2026-05-30","May"],
+  "FR-J26-037": ["May","S1","D-I","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-06-02","2026-06-15","Jun"],
+  "GM-J26-047": ["May","S1","D-I","01 In-house","Medium","Jittrakan","Tanin","-","10 Finished",1,"2026-06-02","2026-06-15","Jun"],
+  "FR-J26-038": ["May","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-05-06","2026-05-08","May"],
+  "IMP26-003": ["May","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-09-08","2026-09-15","Sep"],
+  "LT25-FIB001-5": ["May","S1","D","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-05-06","2026-05-08","May"],
+  "LT25-FIB002-0": ["May","S1","D","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-05-06","2026-05-08","May"],
+  "PT26-3DRS-5": ["May","S1","D","01 In-house","Low","Sutthipong","-","-","10 Finished",1,"2026-06-03","2026-05-29","Jun"],
+  "IMP26-004": ["May","S1","D","02 Outsource","Low","All","-","-","Cancel",1,"2026-07-20","2026-07-30","Jul"],
+  "OPT-J26-013": ["May","S1","D","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-05-09","2026-05-09","May"],
+  "PTN006A001-0": ["May","S1","D-A","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-05-14","2026-05-30","May"],
+  "PTN007A001-0": ["May","S1","D-A","01 In-house","Medium","Jittrakan","Kittisak","Sutthipong","Pending",0,"2026-06-10","2026-12-30",""],
+  "GM-J26-048": ["May","S1","I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-05-26","2026-05-30","May"],
+  "FR-J26-039": ["May","S1","D-I","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-06-04","2026-06-15","Jun"],
+  "FR-J26-040": ["May","S1","I","02 Outsource","Medium","Jittrakan","-","-","10 Finished",1,"2026-06-04","2026-06-15","Jun"],
+  "IMP26-005": ["May","S1","D","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-09-07","2026-09-30","Sep"],
+  "FR-J26-041": ["May","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-05-14","2026-05-14","May"],
+  "OPT-J26-014": ["May","S1","R","01 In-house","High","-","Tanin","Tanin","10 Finished",1,"2026-05-15","2026-05-15","May"],
+  "LT25-FIB002-3": ["May","S2","A","01 In-house","High","All","All","-","10 Finished",1,"2026-05-16","2026-05-16","May"],
+  "OTH-J26-007": ["May","S2","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-05-18","2026-05-20","May"],
+  "GM-J26-049": ["May","S2","D-A","01 In-house","Medium","-","All","-","10 Finished",1,"2026-05-25","2026-06-10","May"],
+  "GM-J26-050": ["May","S2","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-05-18","2026-05-20","May"],
+  "FR-J26-042": ["May","S2","D-A","01 In-house","High","Jittrakan","All","-","10 Finished",1,"2026-05-25","2026-05-30","May"],
+  "FR-J26-043": ["May","S2","M-A","01 In-house","Low","Jittrakan","Tanin","-","10 Finished",1,"2026-06-02","2026-06-15","Jun"],
+  "GM-J26-051": ["May","S2","M-A","01 In-house","High","All","Tanin","-","10 Finished",1,"2026-05-18","2026-05-18","May"],
+  "GM-J26-052": ["May","S2","D","01 In-house","Medium","Naruebodee","Kittisak","-","10 Finished",1,"2026-06-10","2026-06-15","Jun"],
+  "GM-J26-053": ["May","S2","D-A","01 In-house","High","Sutthipong","All","Naruebodee","10 Finished",1,"2026-05-21","2026-05-30","May"],
+  "SP26-PRJ002": ["May","S2","D","01 In-house","Super High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-07-25","2026-07-25","Jul"],
+  "GM-J26-054": ["May","S2","D","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-08-01","2026-08-01","Aug"],
+  "GM-J26-055": ["May","S2","D","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-07-01","2026-06-15","Jul"],
+  "FR-J26-044": ["May","S2","D-A","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-06-24","2026-06-15","Jun"],
+  "FR-J26-045": ["May","S2","I-A","All","Medium","-","All","-","10 Finished",1,"2026-07-18","2026-07-20","Jul"],
+  "GM-J26-056": ["May","S2","D-A","01 In-house","Medium","Jittrakan","All","-","10 Finished",1,"2026-06-02","2026-06-15","Jun"],
+  "GM-J26-057": ["May","S2","I","All","High","Jittrakan","-","-","10 Finished",1,"2026-07-15","2026-07-30","Jul"],
+  "GM-J26-058": ["May","S2","D","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-05-25","2026-05-25","May"],
+  "FR-J26-046": ["Jun","S1","I-A","All","Medium","All","-","Sutthipong","10 Finished",1,"2026-09-11","2026-09-15",""],
+  "FR-J26-047": ["Jun","S1","D-A","01 In-house","Medium","Jittrakan","-","Naruebodee","10 Finished",1,"2026-08-04","2026-08-30","Aug"],
+  "FR-J26-048": ["Jun","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-06-03","2026-06-03","Jun"],
+  "GM-J26-059": ["Jun","S1","D-I-A","01 In-house","Medium","All","-","Naruebodee","10 Finished",1,"2026-07-16","2026-07-20","Jul"],
+  "GM-J26-060": ["Jun","S1","D-I-A","01 In-house","Medium","Jittrakan","Kittisak","Sutthipong","10 Finished",1,"2026-08-20","2026-09-15","Sep"],
+  "GM-J26-061": ["Jun","S1","I","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-07-09","2026-07-30","Jul"],
+  "GM-J26-062": ["Jun","S1","D-I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-06-10","2026-06-30","Jun"],
+  "FR-J26-049": ["Jun","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-06-03","2026-06-03","Jun"],
+  "FR-J26-050": ["Jun","S1","D-A","01 In-house","Medium","Naruebodee","Tanin","-","10 Finished",1,"2026-06-17","2026-06-30","Jun"],
+  "PT26-3DRS-6": ["Jun","S1","D","01 In-house","Low","Sutthipong","-","-","10 Finished",1,"2026-07-01","2026-06-30","Jul"],
+  "GM-J26-063": ["Jun","S1","D-A","01 In-house","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-08-11","2026-08-15","Aug"],
+  "GM-J26-064": ["Jun","S1","M","01 In-house","Medium","-","All","-","10 Finished",1,"2026-07-06","2026-07-10","Jul"],
+  "OPT-J26-015": ["Jun","S1","I-A","All","Low","Sutthipong","Kittisak","-","10 Finished",1,"2026-07-16","2026-07-15","Jul"],
+  "GM-J26-065": ["Jun","S1","D-I","02 Outsource","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-06-10","2026-06-30","Jun"],
+  "FR-J26-051": ["Jun","S1","D-I-A","01 In-house","Low","Sutthipong","Kittisak","-","10 Finished",1,"2026-09-04","2026-09-15","Sep"],
+  "GM-J26-066": ["Jun","S1","D","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-06-10","2026-06-10","Jun"],
+  "FR-J26-052": ["Jun","S1","D-M","01 In-house","Medium","-","Tanin","Sutthipong","10 Finished",1,"2026-08-20","2026-08-30","Aug"],
+  "FR-J26-053": ["Jun","S1","D","02 Outsource","Medium","Jittrakan","-","-","10 Finished",1,"2026-08-07","2026-08-15","Aug"],
+  "GM-J26-067": ["Jun","S1","R","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-07-16","2026-07-30","Jul"],
+  "FR-J26-054": ["Jun","S1","D-A","01 In-house","Medium","Naruebodee","Kittisak","-","10 Finished",1,"2026-07-08","2026-07-30","Jul"],
+  "FR-J26-055": ["Jun","S1","D-A","02 Outsource","Medium","Sutthipong","-","-","Pending",0,"2026-07-24","2026-09-15",""],
+  "FR-J26-056": ["Jun","S1","D-I","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-08-09","2026-09-15","Sep"],
+  "FR-J26-057": ["Jun","S2","R","01 In-house","Medium","Naruebodee","-","-","Cancel",1,"2026-06-24","2026-06-30","Jun"],
+  "FR-J26-058": ["Jun","S2","I-A","01 In-house","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-07-16","2026-07-15","Jul"],
+  "FR-J26-059": ["Jun","S2","A","01 In-house","Medium","All","-","-","10 Finished",1,"2026-06-19","2026-06-30","Jun"],
+  "OPT-J26-016": ["Jun","S2","I-A","01 In-house","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-07-16","2026-07-15","Jul"],
+  "OTH-J26-008": ["Jun","S2","I-A","01 In-house","Medium","All","All","-","06 User Approval 2",0.6,"2026-08-05","2026-09-30",""],
+  "FR-J26-060": ["Jun","S2","D-A","01 In-house","Medium","Sutthipong","All","-","08 P.Techno. Proc.",0.8,"2026-09-07","2026-09-20",""],
+  "FR-J26-061": ["Jun","S2","R","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-06-12","2026-06-12","Jun"],
+  "FR-J26-062": ["Jun","S2","Q","02 Outsource","Medium","Sutthipong","-","-","10 Finished",1,"2026-06-22","2026-06-30","Jun"],
+  "GM-J26-069": ["Jun","S2","D-I-A","01 In-house","Medium","Jittrakan","Kittisak","-","10 Finished",1,"2026-07-25","2026-07-20","Jul"],
+  "GM-J26-070": ["Jun","S2","D-A","01 In-house","Medium","All","-","-","10 Finished",1,"2026-07-06","2026-07-20","Jul"],
+  "OTH-J26-009": ["Jun","S2","R","01 In-house","Medium","Naruebodee","-","Jittrakan","10 Finished",1,"2026-07-09","2026-07-20","Jul"],
+  "MD-J26-001": ["Jun","S2","D-A","01 In-house","Medium","Jittrakan","Kittisak","-","10 Finished",1,"2026-08-22","2026-08-30","Aug"],
+  "FR-J26-063": ["Jun","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-06-22","2026-06-22","Jun"],
+  "GM-J26-071": ["Jun","S2","D-A","01 In-house","Medium","All","-","Naruebodee","10 Finished",1,"2026-09-05","2026-09-30","Sep"],
+  "GM-J26-072": ["Jun","S2","D","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-06-24","2026-06-24","Jun"],
+  "OTH-J26-010": ["Jun","S2","M","01 In-house","Medium","Naruebodee","-","-","07 Supp. Proc.",0.7,"2026-08-05","2026-10-15",""],
+  "GM-J26-073": ["Jun","S2","I","02 Outsource","High","Sutthipong","Kittisak","-","10 Finished",1,"2026-07-09","2026-07-15","Jul"],
+  "GM-J26-074": ["Jun","S2","M-I","01 In-house","Low","Jittrakan","-","-","10 Finished",1,"2026-07-15","2026-07-15","Jul"],
+  "GM-J26-075": ["Jun","S2","D-I","01 In-house","Low","Naruebodee","Tanin","-","10 Finished",1,"2026-07-23","2026-07-30","Jul"],
+  "FR-J26-064": ["Jun","S2","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-07-07","2026-07-10","Jul"],
+  "GM-J26-076": ["Jun","S2","D","02 Outsource","High","Naruebodee","-","-","10 Finished",1,"2026-08-13","2026-08-30","Aug"],
+  "LT26-FER001-07A": ["Jun","S2","D","01 In-house","High","Jittrakan","-","-","10 Finished",1,"2026-06-30","2026-06-30","Jun"],
+  "GM-J26-077": ["Jul","S1","M","01 In-house","High","Jittrakan","Kittisak","-","10 Finished",1,"2026-07-04","2026-07-04","Jul"],
+  "OTH-J26-011": ["Jul","S1","D","01 In-house","Medium","Jittrakan","-","-","04 Detailed Drawing",0.4,"2026-09-01","2026-10-15",""],
+  "GM-M26-052": ["Jul","S1","D-A","01 In-house","Medium","All","All","-","08 P.Techno. Proc.",0.8,"2026-08-15","2026-09-30",""],
+  "GM-J26-078": ["Jul","S1","D-A","01 In-house","Medium","All","All","-","10 Finished",1,"2026-07-08","2026-07-12","Jul"],
+  "GM-J26-079": ["Jul","S1","D","01 In-house","High","-","Tanin","Sutthipong","10 Finished",1,"2026-07-02","2026-07-02","Jul"],
+  "GM-J26-080": ["Jul","S1","D-A","01 In-house","High","Jittrakan","Kittisak","-","10 Finished",1,"2026-08-16","2026-08-20","Aug"],
+  "OPT-J26-017": ["Jul","S1","D-I","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-07-07","2026-07-07","Jul"],
+  "SP26-PRJ003": ["Jul","S1","D-A","All","High","Naruebodee","-","Sutthipong","09 Verification",0.9,"2026-09-04","2026-09-30",""],
+  "FR-J26-065": ["Jul","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-07-10","2026-07-10","Jul"],
+  "OPT-J26-018": ["Jul","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-07-10","2026-07-10","Jul"],
+  "GM-J26-081": ["Jul","S1","D","01 In-house","High","Naruebodee","Tanin","-","10 Finished",1,"2026-07-10","2026-07-10","Jul"],
+  "GM-J26-082": ["Jul","S1","D","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-07-10","2026-07-10","Jul"],
+  "GM-J26-083": ["Jul","S1","D","01 In-house","Medium","Naruebodee","Kittisak","-","Pending",0,"2026-08-20","2026-09-20",""],
+  "GM-J26-084": ["Jul","S1","D-A","01 In-house","Medium","Jittrakan","All","Sutthipong","10 Finished",1,"2026-08-08","2026-08-15","Aug"],
+  "GM-J26-085": ["Jul","S1","D-A","01 In-house","High","Naruebodee","-","-","10 Finished",1,"2026-08-03","2026-08-10","Aug"],
+  "GM-J26-086": ["Jul","S1","D-A","01 In-house","Medium","All","All","Jittrakan","10 Finished",1,"2026-07-18","2026-07-20","Jul"],
+  "GM-J26-087": ["Jul","S1","D","01 In-house","Medium","Naruebodee","-","-","Pending",0,"2026-08-19","2026-09-30",""],
+  "FR-J26-066": ["Jul","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-07-17","2026-07-17","Jul"],
+  "FR-J26-070": ["Jul","S2","D","01 In-house","High","Sutthipong","-","-","10 Finished",1,"2026-07-28","2026-07-30","Jul"],
+  "OPT-J26-019": ["Jul","S2","M","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-07-21","2026-07-21","Jul"],
+  "OPT-J26-020": ["Jul","S2","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-07-23","2026-07-30","Jul"],
+  "GM-J26-088": ["Jul","S2","D","All","Medium","Sutthipong","-","-","10 Finished",1,"2026-08-07","2026-08-15","Aug"],
+  "GM-J26-089": ["Jul","S2","D","01 In-house","Medium","Naruebodee","-","-","10 Finished",1,"2026-08-14","2026-09-15","Aug"],
+  "GM-J26-090": ["Jul","S2","D","01 In-house","High","Naruebodee","-","Sutthipong","10 Finished",1,"2026-07-21","2026-07-21","Jul"],
+  "GM-J26-091": ["Jul","S2","M","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-07-23","2026-07-30","Jul"],
+  "FR-J26-067": ["Jul","S2","D-A","01 In-house","Low","Naruebodee","All","-","07 Supp. Proc.",0.7,"2026-08-20","2026-09-26",""],
+  "OPT-J26-021": ["Jul","S2","A","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-08-25","2026-09-15","Aug"],
+  "GM-J26-092": ["Jul","S2","D-I","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-07-23","2026-07-25","Jul"],
+  "GM-J26-093": ["Jul","S2","I-A","All","Medium","Naruebodee","All","-","10 Finished",1,"2026-08-24","2026-09-30","Aug"],
+  "FR-J26-068": ["Jul","S2","I","02 Outsource","Medium","Jittrakan","-","-","10 Finished",1,"2026-08-06","2026-08-15","Aug"],
+  "FR-J26-069": ["Jul","S2","I","All","Medium","Naruebodee","Kittisak","-","10 Finished",1,"2026-08-06","2026-08-15","Aug"],
+  "GM-J26-094": ["Jul","S2","I-A","02 Outsource","Medium","Naruebodee","Tanin","-","10 Finished",1,"2026-08-10","2026-08-15","Aug"],
+  "T17072026": ["Jul","S2","T","02 Outsource","Low","Jittrakan","-","Naruebodee","10 Finished",1,"2026-07-17","2026-07-17","Jul"],
+  "OPT-J26-022": ["Jul","S2","R","01 In-house","High","-","All","-","10 Finished",1,"2026-07-30","2026-07-30","Jul"],
+  "LT26-FER001-08": ["Aug","S1","D","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-08-01","2026-08-01","Aug"],
+  "GM-J26-095": ["Aug","S1","D-I-A","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-09-09","2026-09-15","Sep"],
+  "GM-J26-096": ["Aug","S1","D-I-A","All","Medium","Sutthipong","Tanin","-","07 Supp. Proc.",0.7,"2026-08-10","2026-09-15",""],
+  "WI-PT-013": ["Aug","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-08-05","2026-08-15","Aug"],
+  "WI-MOT-JIG-065": ["Aug","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-08-05","2026-08-15","Aug"],
+  "QR-PT-050-A": ["Aug","S1","D","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-08-13","2026-08-15","Aug"],
+  "AUDIT 28082026": ["Aug","S1","D","01 In-house","High","All","All","-","10 Finished",1,"2026-08-28","2026-08-28","Aug"],
+  "FR-J26-071": ["Aug","S1","D","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-08-05","2026-08-05","Aug"],
+  "5S. 08082026": ["Aug","S1","AC","01 In-house","High","All","All","-","08 P.Techno. Proc.",0.8,"2026-08-30","2026-08-30",""],
+  "FR-J26-072": ["Aug","S1","D-I-A","01 In-house","Medium","Sutthipong","Kittisak","-","10 Finished",1,"2026-09-04","2026-09-15",""],
+  "GM-J26-097": ["Aug","S1","D-A","01 In-house","Medium","Naruebodee","Tanin","-","10 Finished",1,"2026-08-24","2026-09-20","Aug"],
+  "GM-J26-098": ["Aug","S1","D-I","01 In-house","Medium","Naruebodee","Tanin","Sutthipong","05 Quote Request",0.5,"2026-09-04","2026-09-30",""],
+  "FR-J26-073": ["Aug","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-08-11","2026-08-15","Aug"],
+  "SP26-PRJ004": ["Aug","S1","D","01 In-house","High","All","-","-","02 Concept Design",0.2,"2026-07-11","2026-09-30",""],
+  "GM-J26-099": ["Aug","S1","D","01 In-house","Medium","All","All","-","10 Finished",1,"2026-08-14","2026-08-30","Aug"],
+  "GM-J26-100": ["Aug","S1","D-M","01 In-house","Medium","Naruebodee","Tanin","-","08 P.Techno. Proc.",0.8,"2026-09-04","2026-09-30",""],
+  "FR-J26-074": ["Aug","S1","D-A","01 In-house","Medium","Jittrakan","-","-","10 Finished",1,"2026-08-26","2026-09-30","Aug"],
+  "GM-J26-101": ["Aug","S2","D-A","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-08-18","2026-08-20","Aug"],
+  "GM-J26-102": ["Aug","S2","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-08-18","2026-08-20","Aug"],
+  "GM-J26-103": ["Aug","S2","D","01 In-house","Medium","Sutthipong","Tanin","-","10 Finished",1,"2026-08-19","2026-08-20","Aug"],
+  "OPT-J26-023": ["Aug","S2","D-I","01 In-house","Medium","Sutthipong","Tanin","-","07 Supp. Proc.",0.7,"2026-09-02","2026-09-30",""],
+  "GM-M26-081": ["Aug","S2","D","01 In-house","Medium","-","Kittisak","-","10 Finished",1,"2026-08-20","2026-08-30","Aug"],
+  "FR-J26-075": ["Aug","S2","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-09-01","2026-09-08","Sep"],
+  "GM-J26-104": ["Aug","S2","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-08-26","2026-09-15","Aug"],
+  "FR-J26-076": ["Aug","S2","I","02 Outsource","Medium","Jittrakan","-","-","06 User Approval 2",0.6,"2026-09-02","2026-09-30",""],
+  "FR-J26-077": ["Aug","S2","D-A","01 In-house","Medium","Sutthipong","All","-","10 Finished",1,"2026-09-03","2026-09-15","Sep"],
+  "FR-J26-078": ["Aug","S2","D","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-08-29","2026-09-07","Sep"],
+  "GM-J26-105": ["Sep","S1","D","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "FR-J26-079": ["Sep","S1","D","01 In-house","Medium","Jittrakan","Kittisak","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "FR-J26-080": ["Sep","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "GM-J26-106": ["Sep","S1","R","01 In-house","High","-","-","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "GM-J26-107": ["Sep","S1","M","01 In-house","Medium","-","Tanin","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "GM-J26-108": ["Sep","S1","M","01 In-house","Medium","Sutthipong","-","-","10 Finished",1,"2026-09-01","2026-09-01","Sep"],
+  "GM-J26-109": ["Sep","S1","A","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-09-05","2026-09-05","Sep"],
+  "FR-J26-081": ["Sep","S1","R","01 In-house","High","-","Tanin","-","10 Finished",1,"2026-09-08","2026-09-08","Sep"],
+  "FR-J26-082": ["Sep","S1","D-A","01 In-house","Medium","Sutthipong","Kittisak","-","02 Concept Design",0.2,"2026-09-08","2026-10-15",""],
+  "GM-J26-110": ["Sep","S1","R","01 In-house","Medium","Jittrakan","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""],
+  "GM-J26-111": ["Sep","S1","A","01 In-house","Medium","Naruebodee","-","-","04 Detailed Drawing",0.4,"2026-09-09","2026-10-30",""],
+  "GM-J26-112": ["Sep","S1","M","01 In-house","Medium","Jittrakan","-","-","05 Quote Request",0.5,"2026-09-09","2026-10-30",""],
+  "GM-J26-113": ["Sep","S1","D","02 Outsource","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""],
+  "GM-J26-114": ["Sep","S1","D-I","All","Medium","Jittrakan","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""],
+  "GM-J26-115": ["Sep","S1","I","02 Outsource","Medium","Naruebodee","-","-","05 Quote Request",0.5,"2026-09-09","2026-10-30",""],
+  "GM-J26-116": ["Sep","S1","D","01 In-house","High","Sutthipong","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""],
+  "FR-J26-083": ["Sep","S1","D","02 Outsource","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""],
+  "FR-J26-084": ["Sep","S1","D","01 In-house","Medium","Sutthipong","-","-","02 Concept Design",0.2,"2026-09-09","2026-10-30",""]
+};
+
+function getTaskExcelTracking(item) {
+  if (!item) return {};
+  const rawCode = (item.code || '').trim().toUpperCase();
+  let excelRow = rawCode ? EXCEL_MASTER_MAP[rawCode] : null;
+  if (!excelRow && rawCode) {
+    // Try partial match if code contains spaces or suffixes
+    for (const k of Object.keys(EXCEL_MASTER_MAP)) {
+      if (rawCode.includes(k) || k.includes(rawCode)) {
+        excelRow = EXCEL_MASTER_MAP[k];
+        break;
+      }
+    }
+  }
+  if (!excelRow && item.title) {
+    const upperTitle = item.title.toUpperCase();
+    for (const k of Object.keys(EXCEL_MASTER_MAP)) {
+      if (k.length >= 6 && upperTitle.includes(k)) {
+        excelRow = EXCEL_MASTER_MAP[k];
+        break;
+      }
+    }
+  }
+
+  // Derive fallback date info
+  const reqDateObj = item.requestDate ? new Date(item.requestDate) : null;
+  const validReqDate = reqDateObj && !isNaN(reqDateObj.getTime()) ? reqDateObj : null;
+  const compDateObj = item.completionDate ? new Date(item.completionDate) : null;
+  const validCompDate = compDateObj && !isNaN(compDateObj.getTime()) ? compDateObj : null;
+
+  let regMonth = item.regMonth || (excelRow && excelRow[0]) || '';
+  if (!regMonth && validReqDate) {
+    regMonth = validReqDate.getFullYear() <= 2025 ? '2025' : MONTH_SHORT_NAMES[validReqDate.getMonth()];
+  }
+
+  let section = item.section || (excelRow && excelRow[1]) || '';
+  if (!section) {
+    if (regMonth === '2025' || rawCode.includes('-25-') || rawCode.startsWith('SP25') || rawCode.startsWith('IMP25')) {
+      section = 'S0';
+    } else if (validReqDate) {
+      section = validReqDate.getDate() <= 15 ? 'S1' : 'S2';
+    }
+  }
+
+  let jobType = item.jobType || (excelRow && excelRow[2] && excelRow[2] !== '-' ? excelRow[2] : '') || '';
+  if (!jobType) {
+    if (item.categoryId === 'cat_improve') jobType = 'M';
+    else if (item.categoryId === 'cat_project') jobType = 'D-A';
+    else if (item.categoryId === 'cat_report') jobType = 'A';
+    else jobType = 'D';
+  }
+
+  let subJobType = item.subJobType || (excelRow && excelRow[3] && excelRow[3] !== '-' ? excelRow[3] : '') || '';
+  if (!subJobType) {
+    subJobType = (item.quotation && item.quotation.trim() && item.quotation.trim() !== '-') ? '02 Outsource' : '01 In-house';
+  }
+
+  let priority = item.priority || (excelRow && excelRow[4] && excelRow[4] !== '-' ? excelRow[4] : '') || 'Medium';
+
+  // Team & Support breakdown (Tooling 1-2, Design Support 1-2, Maintenance Support 1-5)
+  const normalizeToolingName = (val) => {
+    if (!val || val === '-') return '';
+    const u = String(val).trim().toUpperCase();
+    if (u.includes('KITTISAK')) return 'KITTISAK P.';
+    if (u.includes('TANIN')) return 'TANIN P.';
+    return '';
+  };
+  const normalizeDesignSupportName = (val) => {
+    if (!val || val === '-') return '';
+    const u = String(val).trim().toUpperCase();
+    if (u.includes('SUTTHIPONG')) return 'SUTTHIPONG M.';
+    if (u.includes('NARUEBODEE')) return 'NARUEBODEE C.';
+    return '';
+  };
+  const normalizeMaintSupportName = (val) => {
+    if (!val || val === '-') return '';
+    const u = String(val).trim().toUpperCase();
+    if (u.includes('NANTHAPONG')) return 'NANTHAPONG S.';
+    if (u.includes('NAWAPON')) return 'NAWAPON M.';
+    if (u.includes('SARAWUT')) return 'SARAWUT I.';
+    if (u.includes('SUTTHINAN')) return 'SUTTHINAN K.';
+    if (u.includes('VORAVIT')) return 'VORAVIT C.';
+    return '';
+  };
+
+  let toolingTeam1 = item.toolingTeam1 !== undefined ? normalizeToolingName(item.toolingTeam1) : '';
+  let toolingTeam2 = item.toolingTeam2 !== undefined ? normalizeToolingName(item.toolingTeam2) : '';
+  if (item.toolingTeam1 === undefined && item.toolingTeam2 === undefined) {
+    const rawTool = item.toolingTeam !== undefined ? item.toolingTeam : ((excelRow && excelRow[6] && excelRow[6] !== '-') ? excelRow[6] : '');
+    const upperTool = String(rawTool || '').trim().toUpperCase();
+    if (upperTool === 'ALL') {
+      toolingTeam1 = 'KITTISAK P.';
+      toolingTeam2 = 'TANIN P.';
+    } else if (rawTool) {
+      const parts = String(rawTool).split(',').map(s => normalizeToolingName(s)).filter(Boolean);
+      toolingTeam1 = parts[0] || '';
+      toolingTeam2 = parts[1] || '';
+    }
+  }
+
+  let designSupport1 = item.designSupport1 !== undefined ? normalizeDesignSupportName(item.designSupport1) : '';
+  let designSupport2 = item.designSupport2 !== undefined ? normalizeDesignSupportName(item.designSupport2) : '';
+  if (item.designSupport1 === undefined && item.designSupport2 === undefined) {
+    const rawSup = item.supportBy !== undefined ? item.supportBy : ((excelRow && excelRow[7] && excelRow[7] !== '-') ? excelRow[7] : '');
+    const upperSup = String(rawSup || '').trim().toUpperCase();
+    if (upperSup === 'ALL') {
+      designSupport1 = 'SUTTHIPONG M.';
+      designSupport2 = 'NARUEBODEE C.';
+    } else if (rawSup) {
+      const parts = String(rawSup).split(',').map(s => normalizeDesignSupportName(s)).filter(Boolean);
+      designSupport1 = parts[0] || '';
+      designSupport2 = parts[1] || '';
+    }
+  }
+
+  const maintenanceSupport1 = normalizeMaintSupportName(item.maintenanceSupport1);
+  const maintenanceSupport2 = normalizeMaintSupportName(item.maintenanceSupport2);
+  const maintenanceSupport3 = normalizeMaintSupportName(item.maintenanceSupport3);
+  const maintenanceSupport4 = normalizeMaintSupportName(item.maintenanceSupport4);
+  const maintenanceSupport5 = normalizeMaintSupportName(item.maintenanceSupport5);
+
+  const toolingList = Array.from(new Set([toolingTeam1, toolingTeam2].filter(Boolean)));
+  const designSupportList = Array.from(new Set([designSupport1, designSupport2].filter(Boolean)));
+  const maintenanceSupportList = Array.from(new Set([
+    maintenanceSupport1,
+    maintenanceSupport2,
+    maintenanceSupport3,
+    maintenanceSupport4,
+    maintenanceSupport5
+  ].filter(Boolean)));
+  const allSupportList = Array.from(new Set([...designSupportList, ...maintenanceSupportList]));
+
+  const toolingTeam = toolingList.length > 0 ? toolingList.join(', ') : '-';
+  const designSupport = designSupportList.length > 0 ? designSupportList.join(', ') : '-';
+  const maintenanceSupport = maintenanceSupportList.length > 0 ? maintenanceSupportList.join(', ') : '-';
+  const supportBy = allSupportList.length > 0 ? allSupportList.join(', ') : '-';
+  const designTeam = '-';
+
+  // Sub Status & Achievement (Two-way consistent with item.status)
+  let subStatus = item.subStatus || (excelRow && excelRow[8]) || '';
+  const st = item.status || 'in_progress';
+  if (st === 'done') {
+    subStatus = '10 Finished';
+  } else if (st === 'cancel' || st === 'cancle') {
+    subStatus = 'Cancel';
+  } else if (st === 'wait' || st === 'pending') {
+    if (subStatus !== '00 Not Start' && subStatus !== 'Pending') {
+      subStatus = 'Pending';
+    }
+  } else {
+    // in_progress
+    if (!subStatus || subStatus === '10 Finished' || subStatus === 'Cancel' || subStatus === 'Pending') {
+      subStatus = (excelRow && excelRow[8] && excelRow[8] !== '10 Finished' && excelRow[8] !== 'Cancel') ? excelRow[8] : '02 Concept Design';
+    }
+  }
+
+  const achievement = SUB_STATUS_ACHIEVEMENT_MAP[subStatus] !== undefined
+    ? SUB_STATUS_ACHIEVEMENT_MAP[subStatus]
+    : (typeof item.achievement === 'number' ? item.achievement : (st === 'done' ? 1 : 0.2));
+
+  const actionDate = item.actionDate || (excelRow && excelRow[10]) || item.requestDate || '';
+  const finishPlanDate = item.finishPlanDate || (excelRow && excelRow[11]) || item.completionDate || '';
+
+  let finishedMonth = item.finishedMonth || (excelRow && excelRow[12]) || '';
+  if (st === 'done' || subStatus === '10 Finished') {
+    if (!finishedMonth) {
+      if (validCompDate) {
+        finishedMonth = MONTH_SHORT_NAMES[validCompDate.getMonth()];
+      } else if (finishPlanDate) {
+        const fpObj = new Date(finishPlanDate);
+        if (!isNaN(fpObj.getTime())) finishedMonth = MONTH_SHORT_NAMES[fpObj.getMonth()];
+      } else if (validReqDate) {
+        finishedMonth = MONTH_SHORT_NAMES[validReqDate.getMonth()];
+      }
+    }
+  } else if (st !== 'cancel' && st !== 'cancle') {
+    finishedMonth = '';
+  }
+
+  return {
+    regMonth: regMonth || '-',
+    section: section || '-',
+    jobType: jobType || '-',
+    subJobType: subJobType || '01 In-house',
+    priority: priority || 'Medium',
+    designTeam: designTeam,
+    toolingTeam1,
+    toolingTeam2,
+    toolingTeam: toolingTeam,
+    designSupport1,
+    designSupport2,
+    designSupport,
+    maintenanceSupport1,
+    maintenanceSupport2,
+    maintenanceSupport3,
+    maintenanceSupport4,
+    maintenanceSupport5,
+    maintenanceSupport,
+    supportBy: supportBy,
+    subStatus: subStatus,
+    achievement: achievement,
+    achievementPct: Math.round(achievement * 100),
+    actionDate: actionDate,
+    finishPlanDate: finishPlanDate,
+    finishedMonth: finishedMonth
+  };
+}
+
+function getJobTypeTitle(jobTypeCode) {
+  if (!jobTypeCode || jobTypeCode === '-') return '-';
+  const parts = String(jobTypeCode).split('-').map(p => p.trim().toUpperCase());
+  const mapped = parts.map(p => JOB_TYPE_LABELS[p] || p);
+  return mapped.join(' + ');
+}
+
+function setExcelFilter(filterType, value) {
+  if (filterType === 'section') currentSectionFilter = value;
+  else if (filterType === 'jobType') currentJobTypeFilter = value;
+  else if (filterType === 'subJobType') currentSubJobTypeFilter = value;
+  else if (filterType === 'priority') currentPriorityFilter = value;
+  else if (filterType === 'subStatus') currentSubStatusFilter = value;
+  renderContent();
+}
+
 // --- Filtering Logic ---
 function getFilteredAchievements() {
   return achievements.filter(item => {
-    // Search Query (Matches title, request number, quotation, requestName, assignee, department, factory, process, desc, note)
+    const xl = getTaskExcelTracking(item);
+
+    // Search Query (Matches title, request number, quotation, requestName, assignee, department, factory, process, desc, note, and Excel fields)
     if (currentSearch) {
       const titleMatch = (item.title || '').toLowerCase().includes(currentSearch);
       const codeMatch = (item.code || '').toLowerCase().includes(currentSearch);
@@ -7028,7 +7631,12 @@ function getFilteredAchievements() {
       const folderName = getFolderName(item.workFolder).toLowerCase();
       const folderPath = getFolderPath(item.workFolder).toLowerCase();
       const folderMatch = folderName.includes(currentSearch) || folderPath.includes(currentSearch);
-      if (!titleMatch && !codeMatch && !quotMatch && !reqNameMatch && !assigneeMatch && !deptMatch && !facMatch && !procMatch && !descMatch && !noteMatch && !folderMatch) return false;
+      const xlTeamMatch = (xl.designTeam || '').toLowerCase().includes(currentSearch) ||
+                          (xl.toolingTeam || '').toLowerCase().includes(currentSearch) ||
+                          (xl.supportBy || '').toLowerCase().includes(currentSearch) ||
+                          (xl.subStatus || '').toLowerCase().includes(currentSearch) ||
+                          (xl.jobType || '').toLowerCase().includes(currentSearch);
+      if (!titleMatch && !codeMatch && !quotMatch && !reqNameMatch && !assigneeMatch && !deptMatch && !facMatch && !procMatch && !descMatch && !noteMatch && !folderMatch && !xlTeamMatch) return false;
     }
 
     if (currentCategoryFilter !== 'all' && item.categoryId !== currentCategoryFilter) {
@@ -7046,9 +7654,34 @@ function getFilteredAchievements() {
     }
 
     if (currentAssigneeFilter !== 'all') {
-      if ((item.assignee || '').trim().toUpperCase() !== currentAssigneeFilter.toUpperCase()) {
+      const targetAss = currentAssigneeFilter.toUpperCase();
+      const mainMatch = (item.assignee || '').trim().toUpperCase() === targetAss;
+      const teamMatch = (xl.designTeam || '').toUpperCase().includes(targetAss.split(' ')[0]) ||
+                        (xl.toolingTeam || '').toUpperCase().includes(targetAss.split(' ')[0]) ||
+                        (xl.supportBy || '').toUpperCase().includes(targetAss.split(' ')[0]);
+      if (!mainMatch && !teamMatch) {
         return false;
       }
+    }
+
+    // Excel Specific Filters
+    if (currentSectionFilter !== 'all') {
+      if ((xl.section || '').toUpperCase() !== currentSectionFilter.toUpperCase()) return false;
+    }
+    if (currentJobTypeFilter !== 'all') {
+      const parts = (xl.jobType || '').toUpperCase().split('-');
+      if (xl.jobType.toUpperCase() !== currentJobTypeFilter.toUpperCase() && !parts.includes(currentJobTypeFilter.toUpperCase())) {
+        return false;
+      }
+    }
+    if (currentSubJobTypeFilter !== 'all') {
+      if ((xl.subJobType || '').toLowerCase() !== currentSubJobTypeFilter.toLowerCase()) return false;
+    }
+    if (currentPriorityFilter !== 'all') {
+      if ((xl.priority || '').toLowerCase() !== currentPriorityFilter.toLowerCase()) return false;
+    }
+    if (currentSubStatusFilter !== 'all') {
+      if ((xl.subStatus || '').toLowerCase() !== currentSubStatusFilter.toLowerCase()) return false;
     }
 
     if (currentTimeFilter !== 'all') {
@@ -7594,45 +8227,237 @@ function setTableMode(mode) {
 function scrollTable(direction) {
   const container = document.getElementById('tableScrollContainer');
   if (!container) return;
-  const scrollAmount = direction === 'left' ? -380 : 380;
-  container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  if (direction === 'start') {
+    container.scrollTo({ left: 0, behavior: 'smooth' });
+  } else if (direction === 'end') {
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+  } else {
+    const scrollAmount = direction === 'left' ? -450 : 450;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  }
+}
+
+function initFullTableHorizontalScrollHelpers() {
+  const tableContainer = document.getElementById('tableScrollContainer');
+  const topScrollWrap = document.getElementById('topScrollTrackWrap');
+  const topScrollDummy = document.getElementById('topScrollDummy');
+  if (!tableContainer) return;
+
+  const tableEl = tableContainer.querySelector('.table-full');
+  if (!tableEl) return;
+
+  // 1. Sync Top Horizontal Scrollbar with Table Container
+  if (topScrollWrap && topScrollDummy) {
+    const updateDummyWidth = () => {
+      topScrollDummy.style.width = tableEl.scrollWidth + 'px';
+    };
+    updateDummyWidth();
+    setTimeout(updateDummyWidth, 60);
+
+    let isSyncingFromTop = false;
+    let isSyncingFromBottom = false;
+
+    topScrollWrap.addEventListener('scroll', () => {
+      if (isSyncingFromBottom) return;
+      isSyncingFromTop = true;
+      tableContainer.scrollLeft = topScrollWrap.scrollLeft;
+      requestAnimationFrame(() => { isSyncingFromTop = false; });
+    });
+
+    tableContainer.addEventListener('scroll', () => {
+      if (isSyncingFromTop) return;
+      isSyncingFromBottom = true;
+      topScrollWrap.scrollLeft = tableContainer.scrollLeft;
+      requestAnimationFrame(() => { isSyncingFromBottom = false; });
+    });
+  }
+
+  // 2. Click-and-Drag (Grab & Pan) Horizontal Scrolling on Full Table
+  tableContainer.classList.add('grab-scroll-enabled');
+  let isDown = false;
+  let startX = 0;
+  let scrollLeftStart = 0;
+  let hasDragged = false;
+
+  tableContainer.addEventListener('mousedown', (e) => {
+    // Do not hijack clicks on interactive elements
+    if (e.target.closest('button, a, select, input, .badge-assignee, .sub-status-pill, .badge-priority, .badge-sub-job, .badge-section')) {
+      return;
+    }
+    isDown = true;
+    hasDragged = false;
+    startX = e.pageX - tableContainer.offsetLeft;
+    scrollLeftStart = tableContainer.scrollLeft;
+  });
+
+  tableContainer.addEventListener('mouseleave', () => {
+    isDown = false;
+    tableContainer.classList.remove('is-grabbing');
+  });
+
+  tableContainer.addEventListener('mouseup', () => {
+    isDown = false;
+    setTimeout(() => {
+      tableContainer.classList.remove('is-grabbing');
+    }, 20);
+  });
+
+  tableContainer.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    const x = e.pageX - tableContainer.offsetLeft;
+    const walk = (x - startX) * 1.35;
+    if (Math.abs(walk) > 6) {
+      hasDragged = true;
+      tableContainer.classList.add('is-grabbing');
+      e.preventDefault();
+      tableContainer.scrollLeft = scrollLeftStart - walk;
+    }
+  });
 }
 
 // 3. Table View (Dual Mode: Fit Screen / Full Columns)
 function renderTableView(container, items) {
   const isCompact = tableMode === 'compact';
 
+  // Calculate Excel Achievement Summary across current filtered items
+  let totalAchvScore = 0;
+  let countDone = 0;
+  let countInProg = 0;
+  let countWait = 0;
+  let countCancel = 0;
+
+  items.forEach(it => {
+    const xl = getTaskExcelTracking(it);
+    totalAchvScore += (typeof xl.achievement === 'number' ? xl.achievement : 0);
+    if (it.status === 'done') countDone++;
+    else if (it.status === 'in_progress') countInProg++;
+    else if (it.status === 'cancel' || it.status === 'cancle') countCancel++;
+    else countWait++;
+  });
+  const avgAchvPct = items.length > 0 ? ((totalAchvScore / items.length) * 100).toFixed(1) : '0.0';
+  const hasExcelFilter = currentSectionFilter !== 'all' || currentJobTypeFilter !== 'all' || currentSubJobTypeFilter !== 'all' || currentPriorityFilter !== 'all' || currentSubStatusFilter !== 'all';
+
   let html = `
-    <!-- Table Toolbar: Display Mode & Scroll Helpers -->
-    <div class="table-toolbar">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span style="font-size: 12px; font-weight: 700; color: var(--secondary);">รูปแบบการแสดงผล:</span>
-        <div class="mode-pills">
-          <button class="mode-pill ${isCompact ? 'active' : ''}" onclick="setTableMode('compact')" title="พอดีหน้าจอ: รวมข้อมูลสำคัญ ไม่ต้องเลื่อนซ้ายขวา">
-            📱 พอดีจอ (FIT SCREEN)
-          </button>
-          <button class="mode-pill ${!isCompact ? 'active' : ''}" onclick="setTableMode('full')" title="ตารางเต็ม: แสดงแยก 13 คอลัมน์ ตรึงหัวตารางและชื่อผลงาน">
-            📊 ตารางเต็ม (FULL COLUMNS)
-          </button>
+    <!-- Sticky Header Zone: Toolbar + Top Horizontal Scrollbar -->
+    <div class="${!isCompact ? 'table-sticky-header-zone' : ''}">
+      <div class="table-toolbar" style="flex-direction: column; align-items: stretch; gap: 10px; ${!isCompact ? 'border-bottom: none;' : ''}">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--secondary);">รูปแบบการแสดงผล:</span>
+            <div class="mode-pills">
+              <button class="mode-pill ${isCompact ? 'active' : ''}" onclick="setTableMode('compact')" title="พอดีหน้าจอ: รวมข้อมูลสำคัญ ไม่ต้องเลื่อนซ้ายขวา">
+                📱 พอดีจอ (FIT SCREEN)
+              </button>
+              <button class="mode-pill ${!isCompact ? 'active' : ''}" onclick="setTableMode('full')" title="ตารางเต็ม: แสดงครบทุกฟังก์ชันตามไฟล์ Excel Master พร้อมตรึงหัวตาราง">
+                📊 ตารางเต็ม (FULL COLUMNS)
+              </button>
+            </div>
+          </div>
+
+          ${!isCompact ? `
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                <span>📈 ACHIEVEMENT SCORE:</span>
+                <span style="color: #047857; font-size: 12.5px;">${totalAchvScore.toFixed(1)} / ${items.length} (${avgAchvPct}%)</span>
+              </div>
+              <div class="scroll-actions">
+                <button class="btn-scroll" onclick="scrollTable('start')" title="ไปซ้ายสุดของตาราง" style="padding: 4px 7px;">⏮</button>
+                <button class="btn-scroll" onclick="scrollTable('left')" title="เลื่อนไปทางซ้าย">◀ เลื่อนซ้าย</button>
+                <button class="btn-scroll" onclick="scrollTable('right')" title="เลื่อนไปทางขวา">เลื่อนขวา ▶</button>
+                <button class="btn-scroll" onclick="scrollTable('end')" title="ไปขวาสุดของตาราง" style="padding: 4px 7px;">⏭</button>
+              </div>
+            </div>
+          ` : `
+            <div style="font-size: 11.5px; color: #059669; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              พอดีหน้าจอ — รวมข้อมูลสำคัญ ไม่ต้องเลื่อนซ้ายขวา
+            </div>
+          `}
         </div>
+
+        ${!isCompact ? `
+          <!-- Excel Engineering Quick Filters Bar -->
+          <div class="excel-toolbar-filters" style="padding-top: 8px; border-top: 1px dashed #cbd5e1; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="font-size: 11px; font-weight: 800; color: #1e3a8a; display: inline-flex; align-items: center; gap: 4px; margin-right: 4px;">
+                🗂️ ตัวกรอง EXCEL:
+              </span>
+              <select class="excel-filter-select ${currentSectionFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('section', this.value)" title="กรองตามช่วงเวลาลงทะเบียน (Section S0/S1/S2)">
+                <option value="all" ${currentSectionFilter === 'all' ? 'selected' : ''}>⏱️ SECTION: ทั้งหมด</option>
+                <option value="S0" ${currentSectionFilter === 'S0' ? 'selected' : ''}>S0 (งานค้างปี 2025)</option>
+                <option value="S1" ${currentSectionFilter === 'S1' ? 'selected' : ''}>S1 (วันที่ 1 - 15)</option>
+                <option value="S2" ${currentSectionFilter === 'S2' ? 'selected' : ''}>S2 (วันที่ 16 - 31)</option>
+              </select>
+
+              <select class="excel-filter-select ${currentJobTypeFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('jobType', this.value)" title="กรองตามประเภทงานวิศวกรรม (Job Type)">
+                <option value="all" ${currentJobTypeFilter === 'all' ? 'selected' : ''}>🛠️ JOB TYPE: ทั้งหมด</option>
+                <option value="D" ${currentJobTypeFilter === 'D' ? 'selected' : ''}>D : 01 Design</option>
+                <option value="R" ${currentJobTypeFilter === 'R' ? 'selected' : ''}>R : 02 Repair</option>
+                <option value="M" ${currentJobTypeFilter === 'M' ? 'selected' : ''}>M : 03 Modify</option>
+                <option value="I" ${currentJobTypeFilter === 'I' ? 'selected' : ''}>I : 04 Increase</option>
+                <option value="A" ${currentJobTypeFilter === 'A' ? 'selected' : ''}>A : 05 Assy / Install</option>
+                <option value="S" ${currentJobTypeFilter === 'S' ? 'selected' : ''}>S : 06 Simulation</option>
+                <option value="T" ${currentJobTypeFilter === 'T' ? 'selected' : ''}>T : Training</option>
+                <option value="AC" ${currentJobTypeFilter === 'AC' ? 'selected' : ''}>AC : Activity / 5S</option>
+                <option value="Q" ${currentJobTypeFilter === 'Q' ? 'selected' : ''}>Q : Quote</option>
+              </select>
+
+              <select class="excel-filter-select ${currentSubJobTypeFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('subJobType', this.value)" title="กรองตามรูปแบบการผลิต (In-house / Outsource)">
+                <option value="all" ${currentSubJobTypeFilter === 'all' ? 'selected' : ''}>🏭 SUB JOB: ทั้งหมด</option>
+                <option value="01 In-house" ${currentSubJobTypeFilter === '01 In-house' ? 'selected' : ''}>01 In-house (ทำเอง)</option>
+                <option value="02 Outsource" ${currentSubJobTypeFilter === '02 Outsource' ? 'selected' : ''}>02 Outsource (จ้างผลิต)</option>
+                <option value="All" ${currentSubJobTypeFilter === 'All' ? 'selected' : ''}>All (In-house + Outsource)</option>
+              </select>
+
+              <select class="excel-filter-select ${currentPriorityFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('priority', this.value)" title="กรองตามระดับความเร่งด่วน (Priority / Job Level)">
+                <option value="all" ${currentPriorityFilter === 'all' ? 'selected' : ''}>🔥 PRIORITY: ทั้งหมด</option>
+                <option value="Super High" ${currentPriorityFilter === 'Super High' ? 'selected' : ''}>🔥 Super High</option>
+                <option value="High" ${currentPriorityFilter === 'High' ? 'selected' : ''}>⚡ High</option>
+                <option value="Medium" ${currentPriorityFilter === 'Medium' ? 'selected' : ''}>🔹 Medium</option>
+                <option value="Low" ${currentPriorityFilter === 'Low' ? 'selected' : ''}>🌱 Low</option>
+              </select>
+
+              <select class="excel-filter-select ${currentSubStatusFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('subStatus', this.value)" title="กรองตามขั้นตอนย่อย 10 ขั้นตอน (Sub Status & Achievement)">
+                <option value="all" ${currentSubStatusFilter === 'all' ? 'selected' : ''}>📊 SUB STATUS: ทั้งหมด</option>
+                <option value="00 Not Start" ${currentSubStatusFilter === '00 Not Start' ? 'selected' : ''}>00 Not Start (0%)</option>
+                <option value="01 Req. Analysis" ${currentSubStatusFilter === '01 Req. Analysis' ? 'selected' : ''}>01 Req. Analysis (10%)</option>
+                <option value="02 Concept Design" ${currentSubStatusFilter === '02 Concept Design' ? 'selected' : ''}>02 Concept Design (20%)</option>
+                <option value="03 User Approval 1" ${currentSubStatusFilter === '03 User Approval 1' ? 'selected' : ''}>03 User Approval 1 (30%)</option>
+                <option value="04 Detailed Drawing" ${currentSubStatusFilter === '04 Detailed Drawing' ? 'selected' : ''}>04 Detailed Drawing (40%)</option>
+                <option value="05 Quote Request" ${currentSubStatusFilter === '05 Quote Request' ? 'selected' : ''}>05 Quote Request (50%)</option>
+                <option value="06 User Approval 2" ${currentSubStatusFilter === '06 User Approval 2' ? 'selected' : ''}>06 User Approval 2 (60%)</option>
+                <option value="07 Supp. Proc." ${currentSubStatusFilter === '07 Supp. Proc.' ? 'selected' : ''}>07 Supp. Proc. (70%)</option>
+                <option value="08 P.Techno. Proc." ${currentSubStatusFilter === '08 P.Techno. Proc.' ? 'selected' : ''}>08 P.Techno. Proc. (80%)</option>
+                <option value="09 Verification" ${currentSubStatusFilter === '09 Verification' ? 'selected' : ''}>09 Verification (90%)</option>
+                <option value="10 Finished" ${currentSubStatusFilter === '10 Finished' ? 'selected' : ''}>10 Finished (100%)</option>
+                <option value="Pending" ${currentSubStatusFilter === 'Pending' ? 'selected' : ''}>Pending (0%)</option>
+                <option value="Cancel" ${currentSubStatusFilter === 'Cancel' ? 'selected' : ''}>Cancel (100%)</option>
+              </select>
+
+              ${hasExcelFilter ? `
+                <button type="button" class="btn btn-outline btn-sm" onclick="resetAllFilters()" style="padding: 3px 8px; font-size: 11px; color: #dc2626; border-color: #fca5a5; background: #fef2f2;">
+                  ✕ ล้างตัวกรอง
+                </button>
+              ` : ''}
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">
+              แสดง <b>${items.length}</b> รายการ | DONE: <b style="color:#15803d;">${countDone}</b> • IN PROG: <b style="color:#1d4ed8;">${countInProg}</b> • PENDING: <b style="color:#b45309;">${countWait}</b>${countCancel > 0 ? ` • CANCEL: <b style="color:#b91c1c;">${countCancel}</b>` : ''}
+            </div>
+          </div>
+        ` : ''}
       </div>
 
       ${!isCompact ? `
-        <div class="scroll-actions">
-          <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">เลื่อนตาราง:</span>
-          <button class="btn-scroll" onclick="scrollTable('left')" title="เลื่อนไปทางซ้าย">
-            ◀ เลื่อนซ้าย (LEFT)
-          </button>
-          <button class="btn-scroll" onclick="scrollTable('right')" title="เลื่อนไปทางขวา">
-            เลื่อนขวา (RIGHT) ▶
-          </button>
+        <!-- Synced Top Horizontal Scrollbar Bar (No need to scroll to bottom of table!) -->
+        <div class="table-top-scrollbar-bar">
+          <span style="font-size: 10.5px; font-weight: 800; color: #1d4ed8; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+            ↔️ แถบเลื่อนซ้าย-ขวา (หรือคลิกค้างบนตารางแล้วลากเมาส์):
+          </span>
+          <div class="top-scroll-track-wrap" id="topScrollTrackWrap" title="ลากแถบสีน้ำเงินเพื่อเลื่อนตารางซ้าย-ขวาได้ทันที">
+            <div class="top-scroll-dummy" id="topScrollDummy"></div>
+          </div>
         </div>
-      ` : `
-        <div style="font-size: 11.5px; color: #059669; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          พอดีหน้าจอ — รวมข้อมูลสำคัญ ไม่ต้องเลื่อนซ้ายขวา
-        </div>
-      `}
+      ` : ''}
     </div>
 
     <div class="table-container" id="tableScrollContainer">
@@ -7765,24 +8590,23 @@ function renderTableView(container, items) {
       </table>
     `;
   } else {
-    // --- FULL MODE: 13 Columns with Sticky # and Task Name + Horizontal Scroll ---
+    // --- FULL MODE: 12 Balanced & Top-Aligned Engineering Columns ---
     html += `
       <table class="data-table table-full">
         <thead>
           <tr>
-            <th class="sticky-col-no" style="white-space: nowrap; text-align: center;">#</th>
-            <th class="sticky-col-task">TASK NAME</th>
-            <th class="col-status" style="min-width: 125px; text-align: center; white-space: nowrap;">STATUS</th>
-            <th style="min-width: 90px;">ASSIGN</th>
-            <th style="min-width: 140px;">REQUEST NUMBER</th>
-            <th style="min-width: 130px;">QUOTATION</th>
-            <th style="min-width: 150px;">REQUEST NAME</th>
-            <th style="min-width: 190px;">FACTORY / DEPT / PROCESS</th>
-            <th style="min-width: 200px;">DETAIL</th>
-            <th style="min-width: 170px;">NOTE</th>
-            <th style="min-width: 130px;">ATTACHMENTS</th>
-            <th style="min-width: 110px; white-space: nowrap;">DATE</th>
-            <th style="width: 80px; text-align: right;">จัดการ</th>
+            <th class="sticky-col-no" style="width: 44px; min-width: 44px; text-align: center; white-space: nowrap;">#</th>
+            <th class="sticky-col-task" style="min-width: 225px; max-width: 255px;">TASK NAME & CATEGORY</th>
+            <th class="col-status" style="min-width: 150px; white-space: nowrap;">STATUS & ACHIEVEMENT</th>
+            <th style="min-width: 155px;">TEAM & ASSIGN</th>
+            <th style="min-width: 145px;">JOB TYPE & PRIORITY</th>
+            <th style="min-width: 165px;">REQUEST & QUOTATION</th>
+            <th style="min-width: 165px;">FACTORY / DEPT / PROCESS</th>
+            <th style="min-width: 140px; white-space: nowrap;">TIMELINE (ACT / PLAN)</th>
+            <th style="min-width: 190px; max-width: 225px;">DETAIL</th>
+            <th style="min-width: 155px; max-width: 195px;">NOTE</th>
+            <th style="min-width: 120px;">ATTACHMENTS</th>
+            <th style="width: 78px; min-width: 78px; text-align: center;">จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -7791,52 +8615,190 @@ function renderTableView(container, items) {
     items.forEach((item, index) => {
       const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#64748b' };
       const statusHtml = getStatusPillHtml(item.status);
-      const dateDisplay = item.completionDate || item.requestDate || '-';
+      const xl = getTaskExcelTracking(item);
+
+      // Section badge class
+      const secUpper = (xl.section || '').toUpperCase();
+      const secClass = secUpper === 'S0' ? 'sec-s0' : (secUpper === 'S1' ? 'sec-s1' : (secUpper === 'S2' ? 'sec-s2' : ''));
+
+      // Priority badge class & icon
+      const priLower = (xl.priority || 'Medium').toLowerCase();
+      let priClass = 'pri-medium';
+      let priIcon = '🔹';
+      if (priLower.includes('super')) { priClass = 'pri-super-high'; priIcon = '🔥'; }
+      else if (priLower.includes('high')) { priClass = 'pri-high'; priIcon = '⚡'; }
+      else if (priLower.includes('low')) { priClass = 'pri-low'; priIcon = '🌱'; }
+
+      // Sub Job Type class
+      const subJobLower = (xl.subJobType || '').toLowerCase();
+      const subJobClass = subJobLower.includes('outsource') ? 'sub-outsource' : (subJobLower === 'all' ? 'sub-all' : 'sub-inhouse');
+
+      // Progress bar fill class
+      let fillClass = 'fill-mid';
+      if (item.status === 'cancel' || item.status === 'cancle' || xl.subStatus === 'Cancel') fillClass = 'fill-cancel';
+      else if (xl.achievement >= 1) fillClass = 'fill-done';
+      else if (xl.achievement <= 0.2) fillClass = 'fill-low';
+
+      const jobTypeFullTitle = getJobTypeTitle(xl.jobType);
 
       html += `
         <tr class="${item.status === 'done' ? 'row-status-done' : ''}">
-          <td class="sticky-col-no" style="color: var(--text-light); font-weight: 600; white-space: nowrap; text-align: center;">${index + 1}</td>
+          <!-- 1. # -->
+          <td class="sticky-col-no" style="color: var(--text-light); font-weight: 700; white-space: nowrap; text-align: center;">${index + 1}</td>
+
+          <!-- 2. TASK NAME & CATEGORY -->
           <td class="sticky-col-task">
-            <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: center; gap: 6px;" onclick="viewAchievementDetail('${item.id}')">
-              <span>📄</span>
-              <span>${escapeHtml(uppercaseEnglish(item.title))}</span>
+            <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px; line-height: 1.35;" onclick="viewAchievementDetail('${item.id}')">
+              <span style="flex-shrink: 0;">📄</span>
+              <span style="word-break: break-word;">${escapeHtml(uppercaseEnglish(item.title))}</span>
             </div>
-            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600;">
+            <div style="font-size: 10.5px; color: ${cat.color}; margin-top: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: ${cat.color}12; padding: 1.5px 7px; border-radius: 4px; border: 1px solid ${cat.color}30;">
               ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
             </div>
           </td>
-          <td class="col-status" style="text-align: center;">${statusHtml}</td>
-          <td>
-            ${item.assignee ? `<span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะงานของ: ${escapeHtml(uppercaseEnglish(item.assignee))}">😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
+
+          <!-- 3. STATUS & ACHIEVEMENT (0.0 - 1.0) -->
+          <td class="col-status">
+            <div class="status-achv-stack">
+              ${statusHtml}
+              <span class="sub-status-pill" onclick="setExcelFilter('subStatus', '${escapeHtml(xl.subStatus)}')" style="cursor: pointer;" title="Sub Status (ขั้นตอนย่อยตามไฟล์ Excel): คลิกเพื่อกรอง">
+                ${escapeHtml(uppercaseEnglish(xl.subStatus))}
+              </span>
+              <div class="achv-progress-wrap" title="Achievement Score: ${xl.achievement} (${xl.achievementPct}%)">
+                <div class="achv-progress-bar">
+                  <div class="achv-progress-fill ${fillClass}" style="width: ${xl.achievementPct}%;"></div>
+                </div>
+                <span class="achv-score-text">${xl.achievementPct}% (${xl.achievement})</span>
+              </div>
+            </div>
           </td>
+
+          <!-- 4. TEAM & ASSIGN (TOOLING / DESIGN SUPPORT / MAINTENANCE SUPPORT) -->
           <td>
-            ${item.code ? `<span class="badge-code">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
+            <div class="team-role-stack">
+              ${item.assignee ? `
+                <span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="cursor: pointer;" title="ผู้รับผิดชอบหลัก (คลิกเพื่อกรอง): ${escapeHtml(uppercaseEnglish(item.assignee))}">
+                  😎 ${escapeHtml(uppercaseEnglish(item.assignee))}
+                </span>
+              ` : ''}
+              ${xl.toolingTeam && xl.toolingTeam !== '-' ? `
+                <div class="team-role-item" title="Tooling Team (ทีมแมชชีน/สร้าง)">
+                  <span class="team-role-label role-tooling">TOOL</span>
+                  <span class="team-role-name">${escapeHtml(uppercaseEnglish(xl.toolingTeam))}</span>
+                </div>
+              ` : ''}
+              ${xl.designSupport && xl.designSupport !== '-' ? `
+                <div class="team-role-item" title="Design Support (ผู้สนับสนุน)">
+                  <span class="team-role-label role-support">DSN SUP</span>
+                  <span class="team-role-name">${escapeHtml(uppercaseEnglish(xl.designSupport))}</span>
+                </div>
+              ` : ''}
+              ${xl.maintenanceSupport && xl.maintenanceSupport !== '-' ? `
+                <div class="team-role-item" title="Maintenance Support (ผู้สนับสนุน)">
+                  <span class="team-role-label role-support">MTN SUP</span>
+                  <span class="team-role-name">${escapeHtml(uppercaseEnglish(xl.maintenanceSupport))}</span>
+                </div>
+              ` : ''}
+              ${(!item.assignee && (!xl.toolingTeam || xl.toolingTeam === '-') && (!xl.supportBy || xl.supportBy === '-')) ? '<span style="color:#cbd5e1;">-</span>' : ''}
+            </div>
           </td>
+
+          <!-- 5. JOB TYPE & PRIORITY -->
           <td>
-            ${item.quotation ? `<span class="badge-quotation">${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
+            <div class="job-meta-stack">
+              <span class="badge-priority ${priClass}" onclick="setExcelFilter('priority', '${escapeHtml(xl.priority)}')" style="cursor: pointer;" title="ระดับความสำคัญ (Job Level / Priority): คลิกเพื่อกรอง">
+                ${priIcon} ${escapeHtml(uppercaseEnglish(xl.priority))}
+              </span>
+              <div style="display: flex; gap: 4px; flex-wrap: nowrap; align-items: center;">
+                <span class="badge-job-type" title="Job Type: ${escapeHtml(jobTypeFullTitle)}">
+                  🛠️ ${escapeHtml(uppercaseEnglish(xl.jobType))}
+                </span>
+                <span class="badge-sub-job ${subJobClass}" onclick="setExcelFilter('subJobType', '${escapeHtml(xl.subJobType)}')" style="cursor: pointer;" title="Sub Job Type (In-house / Outsource): คลิกเพื่อกรอง">
+                  ${escapeHtml(uppercaseEnglish(xl.subJobType))}
+                </span>
+              </div>
+              <div style="font-size: 9.5px; color: #64748b; font-weight: 700; line-height: 1.2;">
+                ${escapeHtml(jobTypeFullTitle)}
+              </div>
+            </div>
           </td>
+
+          <!-- 6. REQUEST, QUOTATION & REG. SECTION -->
           <td>
-            <span style="font-weight: 600; font-size: 12px; color: #334155;">
-              ${escapeHtml(uppercaseEnglish(item.requestName || '-'))}
-            </span>
-            ${item.requestDate ? `<div style="font-size: 10.5px; color: var(--text-muted);">${item.requestDate}</div>` : ''}
+            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
+                ${item.code ? `<span class="badge-code" title="Request No.">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
+                ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" title="Quotation No.">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
+              </div>
+              <div class="reg-sec-inline">
+                <span class="badge-reg-month ${xl.regMonth === '2025' ? 'reg-2025' : ''}" title="Register Month (เดือนที่ลงทะเบียน)">🗓️ ${escapeHtml(uppercaseEnglish(xl.regMonth))}</span>
+                ${xl.section && xl.section !== '-' ? `
+                  <span class="badge-section ${secClass}" onclick="setExcelFilter('section', '${escapeHtml(xl.section)}')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะ Section ${escapeHtml(xl.section)}">${escapeHtml(uppercaseEnglish(xl.section))}</span>
+                ` : ''}
+                ${item.requestDate ? `<span style="font-size: 10px; color: var(--text-muted); font-weight: 600;">${item.requestDate}</span>` : ''}
+              </div>
+              <div style="font-weight: 700; font-size: 11px; color: #334155;">
+                👤 ${escapeHtml(uppercaseEnglish(item.requestName || '-'))}
+              </div>
+            </div>
           </td>
+
+          <!-- 7. FACTORY / DEPT / PROCESS -->
           <td>
-            <div style="display: flex; flex-direction: column; gap: 3px; font-size: 11px;">
+            <div class="dept-badge-stack">
               ${item.factory ? `<span class="badge-dept">🏢 ${escapeHtml(uppercaseEnglish(item.factory))}</span>` : ''}
               ${item.department ? `<span class="badge-dept">👥 ${escapeHtml(uppercaseEnglish(item.department))}</span>` : ''}
               ${item.process ? `<span class="badge-dept">⚙️ ${escapeHtml(uppercaseEnglish(item.process))}</span>` : ''}
               ${(!item.factory && !item.department && !item.process) ? '<span style="color:#cbd5e1;">-</span>' : ''}
             </div>
           </td>
-          <td style="max-width: 220px; font-size: 12px; color: var(--secondary);">
-            ${escapeHtml(uppercaseEnglish(item.description || '-'))}
-          </td>
-          <td style="max-width: 180px; font-size: 12px; color: #475569; font-style: italic;">
-            ${escapeHtml(uppercaseEnglish(item.note || '-'))}
-          </td>
+
+          <!-- 8. TIMELINE (ACTION / PLAN / FINISHED) -->
           <td>
-            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <div class="date-plan-stack">
+              ${xl.actionDate ? `
+                <div class="date-plan-row" title="Action Date (วันเริ่มดำเนินการ)">
+                  <span class="date-plan-tag tag-act">ACT</span>
+                  <span>${escapeHtml(xl.actionDate)}</span>
+                </div>
+              ` : ''}
+              ${xl.finishPlanDate ? `
+                <div class="date-plan-row" title="SS. Finish Plan Date (แผนกำหนดเสร็จ)">
+                  <span class="date-plan-tag tag-plan">PLAN</span>
+                  <span>${escapeHtml(xl.finishPlanDate)}</span>
+                </div>
+              ` : ''}
+              ${item.completionDate ? `
+                <div class="date-plan-row" title="Actual Completion Date (วันที่เสร็จจริง)">
+                  <span class="date-plan-tag tag-fin">DONE</span>
+                  <span style="color: #047857; font-weight: 700;">${escapeHtml(item.completionDate)}</span>
+                </div>
+              ` : ''}
+              ${xl.finishedMonth ? `
+                <span class="badge-fin-month" title="Finished Month (เดือนที่ปิดงานสำเร็จ)">✓ FIN: ${escapeHtml(uppercaseEnglish(xl.finishedMonth))}</span>
+              ` : (!xl.actionDate && !xl.finishPlanDate && !item.completionDate ? '<span style="color:#cbd5e1;">-</span>' : '')}
+            </div>
+          </td>
+
+          <!-- 9. DETAIL -->
+          <td style="max-width: 225px; font-size: 11.5px; color: var(--secondary); line-height: 1.4;">
+            <div style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;" title="${escapeHtml(uppercaseEnglish(item.description || '-'))}">
+              ${escapeHtml(uppercaseEnglish(item.description || '-'))}
+            </div>
+          </td>
+
+          <!-- 10. NOTE -->
+          <td style="max-width: 195px; font-size: 11.5px;">
+            ${item.note && item.note !== '-' ? `
+              <div style="background: #fefce8; border-left: 3px solid #eab308; padding: 4px 7px; border-radius: 4px; color: #854d0e; font-weight: 600; line-height: 1.35; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;" title="${escapeHtml(uppercaseEnglish(item.note))}">
+                📌 ${escapeHtml(uppercaseEnglish(item.note))}
+              </div>
+            ` : '<span style="color:#cbd5e1;">-</span>'}
+          </td>
+
+          <!-- 11. ATTACHMENTS -->
+          <td>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-start;">
               ${item.pdfAttachment ? `
                 <div class="table-badge-group">
                   <button class="badge-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู JOB REQUEST PDF">📄 PDF</button>
@@ -7852,7 +8814,7 @@ function renderTableView(container, items) {
               ${item.imageData ? (
                 isDrawingPdf(item.imageData) ? `
                   <div class="table-badge-group">
-                    <button class="badge-pdf" onclick="openDrawingAttachment('${item.id}')" title="เปิดดู DRAWING (PDF)" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📄 DRAWING (PDF)</button>
+                    <button class="badge-pdf" onclick="openDrawingAttachment('${item.id}')" title="เปิดดู DRAWING (PDF)" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📄 DWG</button>
                     <button class="badge-pdf badge-dl" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลด DRAWING (PDF)" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0; border-left: none; font-weight: bold;">⬇️</button>
                   </div>
                 ` : `
@@ -7865,9 +8827,10 @@ function renderTableView(container, items) {
               ${(!item.pdfAttachment && !item.workFolder && !item.imageData) ? '<span style="color:#cbd5e1;">-</span>' : ''}
             </div>
           </td>
-          <td style="white-space: nowrap; color: var(--text-muted); font-size: 12px;">${dateDisplay}</td>
-          <td style="text-align: right;">
-            <div class="card-actions" style="justify-content: flex-end;">
+
+          <!-- 12. จัดการ -->
+          <td style="text-align: center;">
+            <div class="card-actions" style="justify-content: center;">
               <button class="btn btn-outline btn-sm btn-icon" onclick="openAchievementModal('${item.id}')" title="แก้ไข">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
@@ -7882,6 +8845,27 @@ function renderTableView(container, items) {
 
     html += `
         </tbody>
+        <tfoot>
+          <tr>
+            <td class="sticky-col-no" style="text-align: center;">Σ</td>
+            <td class="sticky-col-task">
+              รวมทั้งหมด ${items.length} งาน (TOTAL RECORDS)
+            </td>
+            <td style="background: #ecfdf5; color: #047857; border-left: 1px solid #a7f3d0; border-right: 1px solid #a7f3d0;">
+              <div>ACHIEVEMENT: ${totalAchvScore.toFixed(1)} / ${items.length}</div>
+              <div style="font-size: 12.5px; font-weight: 800; color: #065f46;">AVG: ${avgAchvPct}%</div>
+            </td>
+            <td colspan="4" style="color: #475569;">
+              DONE: <span style="color:#15803d;">${countDone}</span> &nbsp;|&nbsp;
+              IN PROGRESS: <span style="color:#1d4ed8;">${countInProg}</span> &nbsp;|&nbsp;
+              PENDING: <span style="color:#b45309;">${countWait}</span> &nbsp;|&nbsp;
+              CANCEL: <span style="color:#b91c1c;">${countCancel}</span>
+            </td>
+            <td colspan="5" style="text-align: right; color: #64748b; font-size: 11px;">
+              PRODUCTION TECHNOLOGY — ACHIEVEMENT TRACKER SUMMARY
+            </td>
+          </tr>
+        </tfoot>
       </table>
     `;
   }
@@ -7890,6 +8874,10 @@ function renderTableView(container, items) {
     </div>
   `;
   container.innerHTML = html;
+
+  if (!isCompact) {
+    initFullTableHorizontalScrollHelpers();
+  }
 }
 
 
@@ -7902,6 +8890,66 @@ function resetAssigneeDropdown() {
     <option value="">-- เลือกผู้รับผิดชอบ (SELECT ASSIGNEE) --</option>
     ${optionsHtml}
   `;
+}
+
+function updateModalAchievementBadge(subStatusVal) {
+  const badge = document.getElementById('achvAchievementBadge');
+  if (!badge) return;
+  const score = SUB_STATUS_ACHIEVEMENT_MAP[subStatusVal] !== undefined ? SUB_STATUS_ACHIEVEMENT_MAP[subStatusVal] : 1;
+  const pct = Math.round(score * 100);
+  badge.textContent = `ACHV: ${score.toFixed(1)} (${pct}%)`;
+  if (subStatusVal === 'Cancel') {
+    badge.style.background = '#fef2f2';
+    badge.style.color = '#b91c1c';
+    badge.style.borderColor = '#fecaca';
+  } else if (score >= 1) {
+    badge.style.background = '#ecfdf5';
+    badge.style.color = '#047857';
+    badge.style.borderColor = '#a7f3d0';
+  } else if (score === 0) {
+    badge.style.background = '#fffbeb';
+    badge.style.color = '#b45309';
+    badge.style.borderColor = '#fde68a';
+  } else {
+    badge.style.background = '#eff6ff';
+    badge.style.color = '#1d4ed8';
+    badge.style.borderColor = '#bfdbfe';
+  }
+}
+
+function handleModalStatusChange(statusVal) {
+  const subStatusEl = document.getElementById('achvSubStatus');
+  if (!subStatusEl) return;
+  if (statusVal === 'done') {
+    subStatusEl.value = '10 Finished';
+  } else if (statusVal === 'cancel') {
+    subStatusEl.value = 'Cancel';
+  } else if (statusVal === 'wait') {
+    if (subStatusEl.value !== '00 Not Start' && subStatusEl.value !== 'Pending') {
+      subStatusEl.value = 'Pending';
+    }
+  } else if (statusVal === 'in_progress') {
+    if (subStatusEl.value === '10 Finished' || subStatusEl.value === 'Cancel' || subStatusEl.value === 'Pending' || subStatusEl.value === '00 Not Start') {
+      subStatusEl.value = '02 Concept Design';
+    }
+  }
+  updateModalAchievementBadge(subStatusEl.value);
+}
+
+function handleModalSubStatusChange(subStatusVal) {
+  const statusEl = document.getElementById('achvStatus');
+  if (statusEl) {
+    if (subStatusVal === '10 Finished') {
+      statusEl.value = 'done';
+    } else if (subStatusVal === 'Cancel') {
+      statusEl.value = 'cancel';
+    } else if (subStatusVal === 'Pending' || subStatusVal === '00 Not Start') {
+      statusEl.value = 'wait';
+    } else {
+      statusEl.value = 'in_progress';
+    }
+  }
+  updateModalAchievementBadge(subStatusVal);
 }
 
 // --- Achievement Modal (Add / Edit) ---
@@ -7948,6 +8996,8 @@ function openAchievementModal(id = null) {
       modalTitle.textContent = 'แก้ไขข้อมูลงาน (EDIT TASK / ACHIEVEMENT)';
     }
 
+    const xl = getTaskExcelTracking(item);
+
     document.getElementById('achvId').value = item.id;
     document.getElementById('achvTitle').value = uppercaseEnglish(item.title);
     document.getElementById('achvCategory').value = item.categoryId;
@@ -7966,6 +9016,48 @@ function openAchievementModal(id = null) {
     document.getElementById('achvCompletionDate').value = item.completionDate || '';
     document.getElementById('achvDescription').value = uppercaseEnglish(item.description || '');
     document.getElementById('achvNote').value = uppercaseEnglish(item.note || '');
+
+    // Populate Excel Engineering Tracking Fields
+    if (document.getElementById('achvSubStatus')) {
+      setSelectValueWithFallback(document.getElementById('achvSubStatus'), xl.subStatus || '10 Finished');
+      updateModalAchievementBadge(document.getElementById('achvSubStatus').value);
+    }
+    if (document.getElementById('achvJobType')) {
+      setSelectValueWithFallback(document.getElementById('achvJobType'), xl.jobType && xl.jobType !== '-' ? xl.jobType : 'D');
+    }
+    if (document.getElementById('achvSubJobType')) {
+      setSelectValueWithFallback(document.getElementById('achvSubJobType'), xl.subJobType || '01 In-house');
+    }
+    if (document.getElementById('achvPriority')) {
+      setSelectValueWithFallback(document.getElementById('achvPriority'), xl.priority || 'Medium');
+    }
+    if (document.getElementById('achvToolingTeam1')) {
+      document.getElementById('achvToolingTeam1').value = xl.toolingTeam1 || '';
+    }
+    if (document.getElementById('achvToolingTeam2')) {
+      document.getElementById('achvToolingTeam2').value = xl.toolingTeam2 || '';
+    }
+    if (document.getElementById('achvDesignSupport1')) {
+      document.getElementById('achvDesignSupport1').value = xl.designSupport1 || '';
+    }
+    if (document.getElementById('achvDesignSupport2')) {
+      document.getElementById('achvDesignSupport2').value = xl.designSupport2 || '';
+    }
+    if (document.getElementById('achvMaintenanceSupport1')) {
+      document.getElementById('achvMaintenanceSupport1').value = xl.maintenanceSupport1 || '';
+    }
+    if (document.getElementById('achvMaintenanceSupport2')) {
+      document.getElementById('achvMaintenanceSupport2').value = xl.maintenanceSupport2 || '';
+    }
+    if (document.getElementById('achvMaintenanceSupport3')) {
+      document.getElementById('achvMaintenanceSupport3').value = xl.maintenanceSupport3 || '';
+    }
+    if (document.getElementById('achvMaintenanceSupport4')) {
+      document.getElementById('achvMaintenanceSupport4').value = xl.maintenanceSupport4 || '';
+    }
+    if (document.getElementById('achvMaintenanceSupport5')) {
+      document.getElementById('achvMaintenanceSupport5').value = xl.maintenanceSupport5 || '';
+    }
 
     if (item.workFolder && typeof item.workFolder === 'object') {
       currentModalFolder = { ...item.workFolder };
@@ -8034,6 +9126,25 @@ function openAchievementModal(id = null) {
     }
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('achvRequestDate').value = today;
+
+    // Default Excel fields for new task
+    if (document.getElementById('achvSubStatus')) {
+      document.getElementById('achvSubStatus').value = '02 Concept Design';
+      updateModalAchievementBadge('02 Concept Design');
+    }
+    if (document.getElementById('achvJobType')) document.getElementById('achvJobType').value = 'D';
+    if (document.getElementById('achvSubJobType')) document.getElementById('achvSubJobType').value = '01 In-house';
+    if (document.getElementById('achvPriority')) document.getElementById('achvPriority').value = 'Medium';
+    if (document.getElementById('achvToolingTeam1')) document.getElementById('achvToolingTeam1').value = '';
+    if (document.getElementById('achvToolingTeam2')) document.getElementById('achvToolingTeam2').value = '';
+    if (document.getElementById('achvDesignSupport1')) document.getElementById('achvDesignSupport1').value = '';
+    if (document.getElementById('achvDesignSupport2')) document.getElementById('achvDesignSupport2').value = '';
+    if (document.getElementById('achvMaintenanceSupport1')) document.getElementById('achvMaintenanceSupport1').value = '';
+    if (document.getElementById('achvMaintenanceSupport2')) document.getElementById('achvMaintenanceSupport2').value = '';
+    if (document.getElementById('achvMaintenanceSupport3')) document.getElementById('achvMaintenanceSupport3').value = '';
+    if (document.getElementById('achvMaintenanceSupport4')) document.getElementById('achvMaintenanceSupport4').value = '';
+    if (document.getElementById('achvMaintenanceSupport5')) document.getElementById('achvMaintenanceSupport5').value = '';
+
     currentModalFolder = null;
     updateFolderPreview();
     currentModalPdf = null;
@@ -8080,6 +9191,44 @@ function handleSaveAchievement(e) {
   const completionDate = document.getElementById('achvCompletionDate').value;
   const description = uppercaseEnglish(document.getElementById('achvDescription').value.trim());
   const note = uppercaseEnglish(document.getElementById('achvNote').value.trim());
+
+  // Read Excel Engineering Tracking fields
+  const subStatus = document.getElementById('achvSubStatus') ? document.getElementById('achvSubStatus').value : (status === 'done' ? '10 Finished' : '02 Concept Design');
+  const achievement = SUB_STATUS_ACHIEVEMENT_MAP[subStatus] !== undefined ? SUB_STATUS_ACHIEVEMENT_MAP[subStatus] : (status === 'done' ? 1 : 0.2);
+  const jobType = document.getElementById('achvJobType') ? document.getElementById('achvJobType').value : 'D';
+  const subJobType = document.getElementById('achvSubJobType') ? document.getElementById('achvSubJobType').value : '01 In-house';
+  const priority = document.getElementById('achvPriority') ? document.getElementById('achvPriority').value : 'Medium';
+
+  const toolingTeam1 = document.getElementById('achvToolingTeam1') ? document.getElementById('achvToolingTeam1').value.trim() : '';
+  const toolingTeam2 = document.getElementById('achvToolingTeam2') ? document.getElementById('achvToolingTeam2').value.trim() : '';
+  const designSupport1 = document.getElementById('achvDesignSupport1') ? document.getElementById('achvDesignSupport1').value.trim() : '';
+  const designSupport2 = document.getElementById('achvDesignSupport2') ? document.getElementById('achvDesignSupport2').value.trim() : '';
+  const maintenanceSupport1 = document.getElementById('achvMaintenanceSupport1') ? document.getElementById('achvMaintenanceSupport1').value.trim() : '';
+  const maintenanceSupport2 = document.getElementById('achvMaintenanceSupport2') ? document.getElementById('achvMaintenanceSupport2').value.trim() : '';
+  const maintenanceSupport3 = document.getElementById('achvMaintenanceSupport3') ? document.getElementById('achvMaintenanceSupport3').value.trim() : '';
+  const maintenanceSupport4 = document.getElementById('achvMaintenanceSupport4') ? document.getElementById('achvMaintenanceSupport4').value.trim() : '';
+  const maintenanceSupport5 = document.getElementById('achvMaintenanceSupport5') ? document.getElementById('achvMaintenanceSupport5').value.trim() : '';
+
+  const designTeam = '';
+  const toolingTeam = Array.from(new Set([toolingTeam1, toolingTeam2].filter(Boolean))).join(', ');
+  const designSupport = Array.from(new Set([designSupport1, designSupport2].filter(Boolean))).join(', ');
+  const maintenanceSupport = Array.from(new Set([
+    maintenanceSupport1,
+    maintenanceSupport2,
+    maintenanceSupport3,
+    maintenanceSupport4,
+    maintenanceSupport5
+  ].filter(Boolean))).join(', ');
+  const supportBy = Array.from(new Set([
+    designSupport1,
+    designSupport2,
+    maintenanceSupport1,
+    maintenanceSupport2,
+    maintenanceSupport3,
+    maintenanceSupport4,
+    maintenanceSupport5
+  ].filter(Boolean))).join(', ');
+
   if (!title) {
     alert('กรุณากรอกชื่อ TASK NAME');
     return;
@@ -8128,6 +9277,25 @@ function handleSaveAchievement(e) {
         completionDate,
         description,
         note,
+        subStatus,
+        achievement,
+        jobType,
+        subJobType,
+        priority,
+        designTeam,
+        toolingTeam1,
+        toolingTeam2,
+        toolingTeam,
+        designSupport1,
+        designSupport2,
+        designSupport,
+        maintenanceSupport1,
+        maintenanceSupport2,
+        maintenanceSupport3,
+        maintenanceSupport4,
+        maintenanceSupport5,
+        maintenanceSupport,
+        supportBy,
         workFolder: finalWorkFolder,
         pdfAttachment: finalPdfAttachment,
         imageData: currentModalImageData,
@@ -8158,6 +9326,25 @@ function handleSaveAchievement(e) {
       completionDate,
       description,
       note,
+      subStatus,
+      achievement,
+      jobType,
+      subJobType,
+      priority,
+      designTeam,
+      toolingTeam1,
+      toolingTeam2,
+      toolingTeam,
+      designSupport1,
+      designSupport2,
+      designSupport,
+      maintenanceSupport1,
+      maintenanceSupport2,
+      maintenanceSupport3,
+      maintenanceSupport4,
+      maintenanceSupport5,
+      maintenanceSupport,
+      supportBy,
       workFolder: finalWorkFolder,
       pdfAttachment: finalPdfAttachment,
       imageData: currentModalImageData,
@@ -8219,6 +9406,7 @@ function viewAchievementDetail(id) {
   if (!item) return;
 
   const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#64748b' };
+  const xl = getTaskExcelTracking(item);
   const modal = document.getElementById('detailModal');
   const titleEl = document.getElementById('detailTitle');
   const bodyEl = document.getElementById('detailBody');
@@ -8232,13 +9420,14 @@ function viewAchievementDetail(id) {
         ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
       </span>
       ${statusHtml}
+      <span class="sub-status-pill" style="font-size: 11px; padding: 3px 8px;">📊 ${escapeHtml(uppercaseEnglish(xl.subStatus))} (${xl.achievementPct}%)</span>
       ${item.code ? `<span class="badge-code">REQUEST NO: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
       ${item.quotation ? `<span class="badge-quotation">QUOTATION: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
       ${item.assignee ? `<span class="badge-assignee">ASSIGN: 😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : ''}
     </div>
 
-    <!-- Request Metadata Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 12.5px;">
+    <!-- Request & Excel Engineering Metadata Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 12.5px;">
       <div>
         <span style="color: var(--text-muted); font-size: 11px;">REQUEST NAME:</span>
         <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.requestName || '-'))}</div>
@@ -8260,8 +9449,32 @@ function viewAchievementDetail(id) {
         <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.process || '-'))}</div>
       </div>
       <div>
+        <span style="color: var(--text-muted); font-size: 11px;">JOB TYPE / SUB JOB:</span>
+        <div style="font-weight: 700; color: #1e40af;">${escapeHtml(uppercaseEnglish(xl.jobType))} (${escapeHtml(getJobTypeTitle(xl.jobType))}) • ${escapeHtml(uppercaseEnglish(xl.subJobType))}</div>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 11px;">PRIORITY (JOB LEVEL):</span>
+        <div style="font-weight: 700; color: #b91c1c;">${escapeHtml(uppercaseEnglish(xl.priority))}</div>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 11px;">TOOLING TEAM (1-2):</span>
+        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.toolingTeam))}</div>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 11px;">DESIGN SUPPORT (1-2):</span>
+        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.designSupport))}</div>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 11px;">MANTENANCE SUPPORT (1-5):</span>
+        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.maintenanceSupport))}</div>
+      </div>
+      <div>
         <span style="color: var(--text-muted); font-size: 11px;">DATE COMPLETED:</span>
-        <div style="font-weight: 700;">${item.completionDate || '-'}</div>
+        <div style="font-weight: 700; color: #047857;">${item.completionDate || '-'}${xl.finishedMonth ? ` (${escapeHtml(uppercaseEnglish(xl.finishedMonth))})` : ''}</div>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); font-size: 11px;">ACHIEVEMENT SCORE:</span>
+        <div style="font-weight: 800; color: #059669;">${xl.achievement} (${xl.achievementPct}%)</div>
       </div>
     </div>
 
@@ -9899,26 +11112,48 @@ function handleImportJson(e) {
 
 function exportDataAsCsv() {
   const headers = [
-    'TASK NAME', 'STATUS', 'ASSIGN', 'REQUEST NUMBER', 'QUOTATION', 'REQUEST NAME',
-    'REQUEST DATE', 'FACTORY', 'DEPARTMENT', 'PROCESS', 'DETAIL', 'NOTE', 'DATE', 'WORK FOLDER', 'CATEGORY'
+    'TASK NAME', 'REQUEST NUMBER', 'QUOTATION', 'REQUEST NAME', 'REQUEST DATE',
+    'DEPARTMENT', 'FACTORY', 'PROCESS', 'JOB TYPE', 'SUB JOB TYPE', 'PRIORITY',
+    'TOOLING TEAM 1', 'TOOLING TEAM 2',
+    'DESIGN SUPPORT 1', 'DESIGN SUPPORT 2',
+    'MANTENANCE SUPPORT 1', 'MANTENANCE SUPPORT 2', 'MANTENANCE SUPPORT 3', 'MANTENANCE SUPPORT 4', 'MANTENANCE SUPPORT 5',
+    'ASSIGN',
+    'STATUS', 'SUB STATUS', 'ACHIEVEMENT',
+    'DETAIL', 'NOTE', 'DATE COMPLETED', 'FINISHED MONTH', 'WORK FOLDER', 'CATEGORY'
   ];
 
   const rows = achievements.map(a => {
     const cat = categories.find(c => c.id === a.categoryId) || { name: 'ทั่วไป' };
+    const xl = getTaskExcelTracking(a);
     return [
       uppercaseEnglish(a.title),
-      a.status === 'done' ? 'DONE' : (a.status === 'in_progress' ? 'IN PROGRESS' : (a.status === 'cancel' || a.status === 'cancle' ? 'CANCEL' : 'PENDING')),
-      uppercaseEnglish(a.assignee || ''),
       uppercaseEnglish(a.code || ''),
       uppercaseEnglish(a.quotation || ''),
       uppercaseEnglish(a.requestName || ''),
       a.requestDate || '',
-      uppercaseEnglish(a.factory || ''),
       uppercaseEnglish(a.department || ''),
+      uppercaseEnglish(a.factory || ''),
       uppercaseEnglish(a.process || ''),
+      xl.jobType || '',
+      xl.subJobType || '',
+      xl.priority || '',
+      xl.toolingTeam1 || '',
+      xl.toolingTeam2 || '',
+      xl.designSupport1 || '',
+      xl.designSupport2 || '',
+      xl.maintenanceSupport1 || '',
+      xl.maintenanceSupport2 || '',
+      xl.maintenanceSupport3 || '',
+      xl.maintenanceSupport4 || '',
+      xl.maintenanceSupport5 || '',
+      uppercaseEnglish(a.assignee || ''),
+      a.status === 'done' ? 'DONE' : (a.status === 'in_progress' ? 'IN PROGRESS' : (a.status === 'cancel' || a.status === 'cancle' ? 'CANCEL' : 'PENDING')),
+      xl.subStatus || '',
+      xl.achievement !== undefined ? String(xl.achievement) : '',
       (uppercaseEnglish(a.description || '')).replace(/"/g, '""'),
       (uppercaseEnglish(a.note || '')).replace(/"/g, '""'),
       a.completionDate || a.requestDate || '',
+      xl.finishedMonth || '',
       getFolderPath(a.workFolder).replace(/"/g, '""'),
       uppercaseEnglish(cat.name)
     ];

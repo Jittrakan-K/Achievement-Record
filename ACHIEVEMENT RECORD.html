@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261011_v1">
+  <link rel="stylesheet" href="styles.css?v=20261011_v3">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -558,8 +558,8 @@
             <input type="text" id="achvTitle" class="form-control" placeholder="เช่น (PR) MAKITA 766004-9 HP457 หรือ JIG-QC003 CLAMP STAND" required>
           </div>
 
-          <!-- 2. Category & Status -->
-          <div class="form-grid">
+          <!-- 2. Category, Status & Sub-Status (Excel 10-Step Progress) -->
+          <div class="form-grid-3">
             <div class="form-group">
               <label class="form-label" for="achvCategory">หมวดหมู่งาน (CATEGORY) <span style="color: red;">*</span></label>
               <select id="achvCategory" class="form-control" required>
@@ -568,12 +568,34 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="achvStatus">STATUS (สถานะงาน)</label>
-              <select id="achvStatus" class="form-control">
+              <label class="form-label" for="achvStatus">STATUS (สถานะหลัก)</label>
+              <select id="achvStatus" class="form-control" onchange="handleModalStatusChange(this.value)">
                 <option value="in_progress">IN PROGRESS (กำลังดำเนินการ)</option>
                 <option value="wait">PENDING (รอดำเนินการ)</option>
                 <option value="done">DONE (สำเร็จแล้ว / ส่งมอบ)</option>
                 <option value="cancel">CANCEL (ยกเลิก)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvSubStatus">
+                <span>SUB STATUS (ขั้นตอนย่อย)</span>
+                <small id="achvAchievementBadge" class="achv-label-badge">ACHV: 0.2 (20%)</small>
+              </label>
+              <select id="achvSubStatus" class="form-control" onchange="handleModalSubStatusChange(this.value)">
+                <option value="00 Not Start">00 NOT START (0%)</option>
+                <option value="01 Req. Analysis">01 REQ. ANALYSIS (10%)</option>
+                <option value="02 Concept Design">02 CONCEPT DESIGN (20%)</option>
+                <option value="03 User Approval 1">03 USER APPROVAL 1 (30%)</option>
+                <option value="04 Detailed Drawing">04 DETAILED DRAWING (40%)</option>
+                <option value="05 Quote Request">05 QUOTE REQUEST (50%)</option>
+                <option value="06 User Approval 2">06 USER APPROVAL 2 (60%)</option>
+                <option value="07 Supp. Proc.">07 SUPP. PROC. (70%)</option>
+                <option value="08 P.Techno. Proc.">08 P.TECHNO. PROC. (80%)</option>
+                <option value="09 Verification">09 VERIFICATION (90%)</option>
+                <option value="10 Finished">10 FINISHED (100%)</option>
+                <option value="Pending">PENDING (0%)</option>
+                <option value="Cancel">CANCEL (100%)</option>
               </select>
             </div>
           </div>
@@ -622,13 +644,15 @@
               <label class="form-label" for="achvDepartment">DEPARTMENT (แผนกที่ร้องขอ)</label>
               <select id="achvDepartment" class="form-control">
                 <option value="">-- เลือกแผนก (SELECT DEPARTMENT) --</option>
-                <option value="FERRULE PRODUCTION">FERRULE PRODUCTION</option>
-                <option value="OPICAL PRODUCTION">OPICAL PRODUCTION</option>
-                <option value="FIBER PRODUCTION">FIBER PRODUCTION</option>
+                <option value="FERRULE PRODUCTION">01 FERRULE PRODUCTION</option>
+                <option value="OPICAL PRODUCTION">02 OPTICAL PRODUCTION</option>
+                <option value="FIBER PRODUCTION">02 FIBER PRODUCTION</option>
+                <option value="MEDICAL PRODUCTION">03 MEDICAL PRODUCTION</option>
+                <option value="MOTOR PRODUCTION">04 MOTOR PRODUCTION</option>
+                <option value="INDIRECT">05 INDIRECT</option>
+                <option value="PRODUCTION TECHNOLOGY">06 PRO. TECHNOLOGY</option>
+                <option value="SPECIAL">07 SPECIAL</option>
                 <option value="QUALITY">QUALITY</option>
-                <option value="MEDICAL PRODUCTION">MEDICAL PRODUCTION</option>
-                <option value="MOTOR PRODUCTION">MOTOR PRODUCTION</option>
-                <option value="PRODUCTION TECHNOLOGY">PRODUCTION TECHNOLOGY</option>
                 <option value="OFFICE">OFFICE</option>
                 <option value="FACILITIES">FACILITIES</option>
                 <option value="OTHER">OTHER</option>
@@ -644,7 +668,7 @@
           <!-- 6. Assign & Completion Date -->
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="achvAssignee">ASSIGN (ผู้รับผิดชอบ)</label>
+              <label class="form-label" for="achvAssignee">ASSIGN (เจ้าของงานหลัก)</label>
               <select id="achvAssignee" class="form-control">
                 <option value="">-- เลือกผู้รับผิดชอบ (SELECT ASSIGNEE) --</option>
                 <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
@@ -656,8 +680,174 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="achvCompletionDate">DATE (วันที่บันทึก / วันที่สำเร็จ)</label>
+              <label class="form-label" for="achvCompletionDate">DATE COMPLETED (วันที่บันทึก / วันที่สำเร็จ)</label>
               <input type="date" id="achvCompletionDate" class="form-control">
+            </div>
+          </div>
+
+          <!-- 6.5 Excel Engineering Classification & Team Breakdown -->
+          <div class="form-section-divider" style="margin-top: 8px; margin-bottom: 12px;">
+            📊 ข้อมูลตารางวิศวกรรม (EXCEL TRACKING: JOB TYPE / PRIORITY / TEAM &amp; SUPPORT)
+          </div>
+
+          <!-- Row 1: Job Type, Sub Job Type, Priority (3 Equal Columns) -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="achvJobType">JOB TYPE (ประเภทงาน)</label>
+              <select id="achvJobType" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="D">D (01 DESIGN - ออกแบบ)</option>
+                <option value="R">R (02 REPAIR - ซ่อมแซม)</option>
+                <option value="M">M (03 MODIFY - ดัดแปลง/แก้ไข)</option>
+                <option value="I">I (04 INCREASE - สร้างเพิ่ม/สั่งซื้อ)</option>
+                <option value="A">A (05 ASSY/INSTALL - ประกอบ/ติดตั้ง)</option>
+                <option value="S">S (06 SIMULATION - จำลอง)</option>
+                <option value="D-A">D-A (DESIGN + ASSY/INSTALL)</option>
+                <option value="D-I">D-I (DESIGN + INCREASE)</option>
+                <option value="D-I-A">D-I-A (DESIGN + INC + ASSY)</option>
+                <option value="I-A">I-A (INCREASE + ASSY/INSTALL)</option>
+                <option value="R-A">R-A (REPAIR + ASSY/INSTALL)</option>
+                <option value="M-I">M-I (MODIFY + INCREASE)</option>
+                <option value="M-A">M-A (MODIFY + ASSY/INSTALL)</option>
+                <option value="D-M">D-M (DESIGN + MODIFY)</option>
+                <option value="D-M-I">D-M-I (DESIGN + MODIFY + INC)</option>
+                <option value="I-R">I-R (INCREASE + REPAIR)</option>
+                <option value="R-D">R-D (REPAIR + DESIGN)</option>
+                <option value="I-M">I-M (INCREASE + MODIFY)</option>
+                <option value="T">T (TRAINING - ฝึกอบรม)</option>
+                <option value="AC">AC (ACTIVITY - กิจกรรม 5ส.)</option>
+                <option value="Q">Q (QUOTATION - เสนอราคา)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvSubJobType">SUB JOB TYPE (รูปแบบ)</label>
+              <select id="achvSubJobType" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="01 In-house">01 IN-HOUSE (ทำเองภายใน)</option>
+                <option value="02 Outsource">02 OUTSOURCE (สั่งทำภายนอก)</option>
+                <option value="All">ALL (IN-HOUSE + OUTSOURCE)</option>
+                <option value="-">- (ไม่ระบุ)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvPriority">PRIORITY / JOB LV. (ความสำคัญ)</label>
+              <select id="achvPriority" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="Super High">🔥 SUPER HIGH (ด่วนพิเศษ)</option>
+                <option value="High">⚡ HIGH (สูง)</option>
+                <option value="Medium">🔹 MEDIUM (ปานกลาง)</option>
+                <option value="Low">🟢 LOW (ทั่วไป)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Tooling Team 1 & Tooling Team 2 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvToolingTeam1">TOOLING TEAM 1 (ทีมแมชชีน/สร้าง)</label>
+              <select id="achvToolingTeam1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="KITTISAK P.">KITTISAK P.</option>
+                <option value="TANIN P.">TANIN P.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvToolingTeam2">TOOLING TEAM 2 (ทีมแมชชีน/สร้าง)</label>
+              <select id="achvToolingTeam2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="KITTISAK P.">KITTISAK P.</option>
+                <option value="TANIN P.">TANIN P.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 3: Design Support 1 & Design Support 2 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvDesignSupport1">DESIGN SUPPORT 1 (ผู้สนับสนุน)</label>
+              <select id="achvDesignSupport1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
+                <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvDesignSupport2">DESIGN SUPPORT 2 (ผู้สนับสนุน)</label>
+              <select id="achvDesignSupport2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
+                <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4: Maintenance Support 1 to 3 (3 Equal Columns) -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport1">MANTENANCE SUPPORT 1 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport2">MANTENANCE SUPPORT 2 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport3">MANTENANCE SUPPORT 3 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport3" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 5: Maintenance Support 4 to 5 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport4">MANTENANCE SUPPORT 4 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport4" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport5">MANTENANCE SUPPORT 5 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport5" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
             </div>
           </div>
 
@@ -675,7 +865,7 @@
 
           <!-- 9. Attachments & Deliverables Section -->
           <div class="form-section-divider">
-            📎 เอกสารแนบและผลงาน (ATTACHMENTS & DELIVERABLES)
+            📎 เอกสารแนบและผลงาน (ATTACHMENTS &amp; DELIVERABLES)
           </div>
 
           <!-- 9.1 PDF Job Request Attachment -->
@@ -1375,7 +1565,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20261011_v1"></script>
+  <script src="app.js?v=20261011_v3"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
