@@ -1704,6 +1704,18 @@ body {
   background-color: #fbfcfe;
 }
 
+/* Light-Gray Background for Completed (DONE) Tasks */
+.data-table tbody tr.row-status-done,
+.data-table tbody tr.row-status-done td {
+  background-color: #f1f5f9 !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+.data-table tbody tr.row-status-done:hover,
+.data-table tbody tr.row-status-done:hover td {
+  background-color: #e2e8f0 !important;
+}
+
 /* Full Table Mode (13 Columns with Horizontal Scroll & Sticky Columns) */
 .data-table.table-full {
   min-width: 1750px;
@@ -1738,6 +1750,16 @@ body {
 }
 .table-full tr:hover .sticky-col-task {
   background: #fbfcfe;
+}
+
+.table-full tbody tr.row-status-done .sticky-col-no,
+.table-full tbody tr.row-status-done .sticky-col-task {
+  background-color: #f1f5f9 !important;
+}
+
+.table-full tbody tr.row-status-done:hover .sticky-col-no,
+.table-full tbody tr.row-status-done:hover .sticky-col-task {
+  background-color: #e2e8f0 !important;
 }
 
 .table-full th.sticky-col-no {
@@ -2365,6 +2387,27 @@ body {
 .timeline-card:hover {
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
   border-color: #93c5fd;
+}
+
+/* Light-Gray Background for Completed (DONE) Cards & Timeline Items */
+.ios-task-card.card-status-done,
+.timeline-card.card-status-done {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.ios-task-card.card-status-done .ios-card-header-bar {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+.ios-task-card.card-status-done .webull-data-grid {
+  background-color: #e8eef5 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.ios-task-card.card-status-done .ios-card-accordion {
+  background-color: #f8fafc !important;
+  border-top-color: #e2e8f0 !important;
 }
 
 /* Empty State */

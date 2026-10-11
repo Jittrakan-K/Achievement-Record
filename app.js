@@ -1986,13 +1986,106 @@ function openOrbrayDB() {
   });
 }
 
+function mergeSingleItemAttachments(incomingItem, existingItem) {
+  if (!incomingItem || !existingItem) return incomingItem;
+  const merged = { ...incomingItem };
+
+  // 1. Preserve PDF attachment data if stripped in incoming
+  if (merged.pdfAttachment && typeof merged.pdfAttachment === 'object' && !merged.pdfAttachment.data) {
+    if (existingItem.pdfAttachment && existingItem.pdfAttachment.data) {
+      merged.pdfAttachment = {
+        ...merged.pdfAttachment,
+        data: existingItem.pdfAttachment.data
+      };
+    }
+  }
+
+  // 2. Preserve Image / Drawing data if stripped in incoming
+  if (merged.imageData && typeof merged.imageData === 'object' && !merged.imageData.data) {
+    const existingImgData = typeof existingItem.imageData === 'string'
+      ? existingItem.imageData
+      : (existingItem.imageData && existingItem.imageData.data ? existingItem.imageData.data : '');
+    if (existingImgData) {
+      merged.imageData = {
+        ...merged.imageData,
+        data: existingImgData
+      };
+    }
+  }
+
+  // 3. Preserve WorkFolder file data / zipData if stripped in incoming
+  if (merged.workFolder && typeof merged.workFolder === 'object' && existingItem.workFolder && typeof existingItem.workFolder === 'object') {
+    const wf = { ...merged.workFolder };
+    const exWf = existingItem.workFolder;
+
+    if (!wf.zipData && exWf.zipData) {
+      wf.zipData = exWf.zipData;
+    }
+
+    if (Array.isArray(wf.files) && Array.isArray(exWf.files) && exWf.files.some(ef => !!ef.data)) {
+      if (wf.files.length === 0) {
+        wf.files = exWf.files;
+      } else {
+        wf.files = wf.files.map((f, idx) => {
+          if (f && f.data) return f;
+          const matchByIndex = exWf.files[idx];
+          if (matchByIndex && matchByIndex.data && (matchByIndex.name === f.name || matchByIndex.relPath === f.relPath)) {
+            return { ...f, data: matchByIndex.data };
+          }
+          const matchByPath = exWf.files.find(ef => ef && ef.data && ((ef.relPath && ef.relPath === f.relPath) || (ef.name && ef.name === f.name)));
+          if (matchByPath) {
+            return { ...f, data: matchByPath.data };
+          }
+          return f;
+        });
+      }
+    }
+    merged.workFolder = wf;
+  }
+
+  return merged;
+}
+
+function mergePreservingLocalAttachments(incomingList, existingList) {
+  if (!Array.isArray(incomingList)) return incomingList;
+  if (!Array.isArray(existingList) || existingList.length === 0) return incomingList;
+
+  const existingMap = new Map();
+  existingList.forEach(item => {
+    if (item && item.id) existingMap.set(item.id, item);
+  });
+
+  return incomingList.map(item => {
+    if (!item || !item.id) return item;
+    const existing = existingMap.get(item.id);
+    if (!existing) return item;
+    return mergeSingleItemAttachments(item, existing);
+  });
+}
+
 async function saveAchievementsToIndexedDB(data) {
   try {
     const db = await openOrbrayDB();
-    if (!db) return;
+    if (!db || !Array.isArray(data)) return;
+
+    // Read existing IndexedDB data first so stripped metadata from localStorage/Firestore never erases local base64 payloads
+    const existingData = await new Promise((resolve) => {
+      try {
+        const readTx = db.transaction([IDB_STORE_ACHIEVEMENTS], 'readonly');
+        const readStore = readTx.objectStore(IDB_STORE_ACHIEVEMENTS);
+        const req = readStore.get('achievements');
+        req.onsuccess = () => resolve(req.result && Array.isArray(req.result.value) ? req.result.value : null);
+        req.onerror = () => resolve(null);
+      } catch (e) {
+        resolve(null);
+      }
+    });
+
+    const safeData = existingData ? mergePreservingLocalAttachments(data, existingData) : data;
+
     const tx = db.transaction([IDB_STORE_ACHIEVEMENTS], 'readwrite');
     const store = tx.objectStore(IDB_STORE_ACHIEVEMENTS);
-    store.put({ key: 'achievements', value: data, updatedAt: Date.now() });
+    store.put({ key: 'achievements', value: safeData, updatedAt: Date.now() });
   } catch (err) {
     console.warn('Failed to save to IndexedDB:', err);
   }
@@ -2398,25 +2491,65 @@ function downloadBase64File(fileData, filename, defaultMime = 'application/octet
   }
 }
 
+function hasLocalFolderFileData(folder) {
+  if (!folder || typeof folder === 'string') return false;
+  if (folder.zipData) return true;
+  if (Array.isArray(folder.files) && folder.files.some(f => !!f.data)) return true;
+  return false;
+}
+
 function hasFolderDownloadableData(folder) {
   if (!folder) return false;
   if (typeof folder === 'string') return false;
   if (folder.zipData) return true;
   if (folder.hasCloudFiles) return true;
   if (Array.isArray(folder.files) && folder.files.some(f => !!f.data)) return true;
+  if (Array.isArray(folder.files) && folder.files.length > 0) return true;
   return false;
+}
+
+function isFirestorePermissionError(err) {
+  if (!err) return false;
+  if (err.isPermissionDenied) return true;
+  const code = String(err.code || '').toLowerCase();
+  const msg = String(err.message || '').toLowerCase();
+  return code.includes('permission-denied') || code.includes('permission_denied') || msg.includes('missing or insufficient permissions') || msg.includes('permission-denied');
+}
+
+function alertFirestorePermissionHelp() {
+  const rulesUrl = 'https://console.firebase.google.com/project/orbray-techno-achievements/firestore/rules';
+  const msg = [
+    '⚠️ ไม่สามารถดึงไฟล์จากคลาวด์ได้ เนื่องจากสิทธิ์ Firebase Firestore หมดอายุ (ครบกำหนด 30 วันของ Test Mode เมื่อวันที่ 10 ต.ค. 2026)',
+    '',
+    '📌 ข้อมูลและโฟลเดอร์บนคลาวด์ของคุณไม่ได้หายไปไหน! ยังอยู่ครบในฐานข้อมูล Firebase',
+    '',
+    '✅ วิธีปลดล็อกให้โฟลเดอร์ทั้งหมดกลับมาดาวน์โหลดได้ทันที (ใช้เวลา 30 วินาที):',
+    '1. เปิดลิงก์ตั้งค่า Firebase Rules:',
+    `   ${rulesUrl}`,
+    '2. แก้บรรทัด allow read, write ในหน้า Rules ให้เป็น:',
+    '   allow read, write: if true;',
+    '3. กดปุ่ม Publish (เผยแพร่) ด้านบน แล้วรีเฟรชหน้าเว็บนี้ โฟลเดอร์ทั้งหมดจะกลับมาใช้งานได้ทันทีครับ!'
+  ].join('\n');
+  alert(msg);
 }
 
 const FIRESTORE_CHUNK_SIZE = 600000; // 600 KB safe chunk for Firestore 1MB document limit
 
 async function uploadFolderFilesToFirestore(db, achvId, files) {
-  if (!db || !achvId || !Array.isArray(files) || files.length === 0) return;
+  if (!db || !achvId || !Array.isArray(files) || files.length === 0) return false;
   try {
     const colRef = db.collection('achievements').doc(achvId).collection('folderFiles');
+    const filesWithData = files.filter(f => f && f.data);
+    if (filesWithData.length === 0) return false;
+
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
-      const data = f.data || '';
+      const data = (f && f.data) ? f.data : '';
       if (!data) continue;
+
+      if (files.length > 1) {
+        showToast(`☁️ กำลังอัปโหลดไฟล์โฟลเดอร์ขึ้นคลาวด์ (${i + 1}/${files.length}): ${f.name || ''}`);
+      }
 
       if (data.length <= FIRESTORE_CHUNK_SIZE) {
         await colRef.doc(`file_${i}`).set({
@@ -2444,39 +2577,136 @@ async function uploadFolderFilesToFirestore(db, achvId, files) {
           uploadedAt: new Date().toISOString()
         });
 
-        for (let c = 0; c < totalChunks; c++) {
-          const chunkStr = data.substring(c * FIRESTORE_CHUNK_SIZE, (c + 1) * FIRESTORE_CHUNK_SIZE);
-          await colRef.doc(`file_${i}_chunk_${c}`).set({
-            fileIndex: i,
-            chunkIndex: c,
-            data: chunkStr
-          });
+        // Upload chunks in parallel batches of 5 for 5x faster speed on large folders
+        const BATCH_SIZE = 5;
+        for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+          const batchPromises = [];
+          for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+            const chunkStr = data.substring(b * FIRESTORE_CHUNK_SIZE, (b + 1) * FIRESTORE_CHUNK_SIZE);
+            batchPromises.push(
+              colRef.doc(`file_${i}_chunk_${b}`).set({
+                fileIndex: i,
+                chunkIndex: b,
+                data: chunkStr
+              })
+            );
+          }
+          await Promise.all(batchPromises);
         }
       }
     }
+    return true;
   } catch (err) {
     console.warn('Failed to upload folder files to Firestore:', err);
+    if (isFirestorePermissionError(err)) {
+      err.isPermissionDenied = true;
+    }
+    return false;
   }
+}
+
+async function downloadSingleFileFromFirestore(db, achvId, fileIndex, fileMeta) {
+  if (!db || !achvId || fileIndex === undefined || fileIndex === null) return null;
+  const colRef = db.collection('achievements').doc(achvId).collection('folderFiles');
+  const metaSnap = await colRef.doc(`file_${fileIndex}`).get();
+  if (!metaSnap.exists) return null;
+
+  const metaDoc = metaSnap.data();
+  let fullData = '';
+
+  if (!metaDoc.isChunked) {
+    fullData = metaDoc.data || '';
+  } else {
+    const totalChunks = metaDoc.totalChunks || 0;
+    const chunkResults = new Array(totalChunks).fill('');
+    const BATCH_SIZE = 8;
+    for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+      const promises = [];
+      for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+        promises.push(
+          colRef.doc(`file_${fileIndex}_chunk_${b}`).get().then(snap => {
+            if (snap.exists && snap.data() && snap.data().data) {
+              chunkResults[b] = snap.data().data;
+            }
+          })
+        );
+      }
+      await Promise.all(promises);
+    }
+    fullData = chunkResults.join('');
+  }
+
+  if (!fullData) return null;
+
+  return {
+    name: metaDoc.name || (fileMeta ? fileMeta.name : `FILE_${fileIndex}`),
+    relPath: metaDoc.relPath || (fileMeta ? fileMeta.relPath : ''),
+    size: metaDoc.size || (fileMeta ? fileMeta.size : ''),
+    sizeBytes: metaDoc.sizeBytes || (fileMeta ? fileMeta.sizeBytes : 0),
+    type: metaDoc.type || (fileMeta ? fileMeta.type : ''),
+    data: fullData
+  };
 }
 
 async function downloadFolderFilesFromFirestore(db, achvId, filesMeta) {
   if (!db || !achvId) return null;
   try {
     const colRef = db.collection('achievements').doc(achvId).collection('folderFiles');
+    const knownCount = Array.isArray(filesMeta) && filesMeta.length > 0 ? filesMeta.length : 0;
+
+    // Strategy 1: Fetch each file by ID and its chunks in parallel batches (prevents WebChannel payload overflow on large 80MB+ folders)
+    if (knownCount > 0) {
+      const files = [];
+      let anyLoaded = false;
+
+      for (let i = 0; i < knownCount; i++) {
+        if (knownCount > 2) {
+          showToast(`☁️ กำลังดาวน์โหลดไฟล์จากคลาวด์ (${i + 1}/${knownCount})...`);
+        }
+        const existingMeta = filesMeta[i] || {};
+        if (existingMeta.data) {
+          files.push(existingMeta);
+          anyLoaded = true;
+          continue;
+        }
+        const downloaded = await downloadSingleFileFromFirestore(db, achvId, i, existingMeta);
+        if (downloaded && downloaded.data) {
+          files.push(downloaded);
+          anyLoaded = true;
+        } else {
+          files.push({ ...existingMeta });
+        }
+      }
+
+      if (anyLoaded) {
+        return files;
+      }
+    }
+
+    // Strategy 2: Fallback collection snapshot query if filesMeta count wasn't known or Strategy 1 found no indexed docs
     const snapshot = await colRef.get();
     if (snapshot.empty) return null;
 
     const docsMap = {};
+    let maxFileIndex = -1;
     snapshot.forEach(doc => {
-      docsMap[doc.id] = doc.data();
+      const d = doc.data();
+      docsMap[doc.id] = d;
+      if (typeof d.fileIndex === 'number' && d.fileIndex > maxFileIndex) {
+        maxFileIndex = d.fileIndex;
+      }
     });
 
     const files = [];
-    const count = (filesMeta && filesMeta.length) ? filesMeta.length : 150;
+    const count = Math.max(knownCount, maxFileIndex + 1);
 
     for (let i = 0; i < count; i++) {
       const metaDoc = docsMap[`file_${i}`];
-      if (!metaDoc) break;
+      const fallbackMeta = (filesMeta && filesMeta[i]) ? filesMeta[i] : null;
+      if (!metaDoc) {
+        if (fallbackMeta) files.push({ ...fallbackMeta });
+        continue;
+      }
 
       let fullData = '';
       if (!metaDoc.isChunked) {
@@ -2493,18 +2723,22 @@ async function downloadFolderFilesFromFirestore(db, achvId, filesMeta) {
       }
 
       files.push({
-        name: metaDoc.name || (filesMeta && filesMeta[i] ? filesMeta[i].name : `FILE_${i}`),
-        relPath: metaDoc.relPath || (filesMeta && filesMeta[i] ? filesMeta[i].relPath : ''),
-        size: metaDoc.size || (filesMeta && filesMeta[i] ? filesMeta[i].size : ''),
-        sizeBytes: metaDoc.sizeBytes || 0,
-        type: metaDoc.type || '',
+        name: metaDoc.name || (fallbackMeta ? fallbackMeta.name : `FILE_${i}`),
+        relPath: metaDoc.relPath || (fallbackMeta ? fallbackMeta.relPath : ''),
+        size: metaDoc.size || (fallbackMeta ? fallbackMeta.size : ''),
+        sizeBytes: metaDoc.sizeBytes || (fallbackMeta ? fallbackMeta.sizeBytes : 0),
+        type: metaDoc.type || (fallbackMeta ? fallbackMeta.type : ''),
         data: fullData
       });
     }
 
-    return files;
+    return files.some(f => !!f.data) ? files : null;
   } catch (err) {
     console.error('Error fetching folder files from Firestore:', err);
+    if (isFirestorePermissionError(err)) {
+      err.isPermissionDenied = true;
+      throw err;
+    }
     return null;
   }
 }
@@ -2543,12 +2777,19 @@ async function uploadPdfFileToFirestore(db, achvId, pdfObj) {
         uploadedAt: new Date().toISOString()
       });
 
-      for (let c = 0; c < totalChunks; c++) {
-        const chunkStr = rawData.substring(c * FIRESTORE_CHUNK_SIZE, (c + 1) * FIRESTORE_CHUNK_SIZE);
-        await colRef.doc(`chunk_${c}`).set({
-          chunkIndex: c,
-          data: chunkStr
-        });
+      const BATCH_SIZE = 5;
+      for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+        const batchPromises = [];
+        for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+          const chunkStr = rawData.substring(b * FIRESTORE_CHUNK_SIZE, (b + 1) * FIRESTORE_CHUNK_SIZE);
+          batchPromises.push(
+            colRef.doc(`chunk_${b}`).set({
+              chunkIndex: b,
+              data: chunkStr
+            })
+          );
+        }
+        await Promise.all(batchPromises);
       }
     }
     console.log(`Cloud PDF uploaded for achievement ${achvId} (${name})`);
@@ -2582,15 +2823,23 @@ async function downloadPdfFileFromFirestore(db, achvId) {
     if (!mainMeta.isChunked) {
       fullData = mainMeta.data || '';
     } else {
-      const chunks = [];
       const totalChunks = mainMeta.totalChunks || 1;
-      for (let c = 0; c < totalChunks; c++) {
-        const cSnap = await colRef.doc(`chunk_${c}`).get();
-        if (cSnap.exists && cSnap.data() && cSnap.data().data) {
-          chunks.push(cSnap.data().data);
+      const chunkResults = new Array(totalChunks).fill('');
+      const BATCH_SIZE = 8;
+      for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+        const promises = [];
+        for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+          promises.push(
+            colRef.doc(`chunk_${b}`).get().then(cSnap => {
+              if (cSnap.exists && cSnap.data() && cSnap.data().data) {
+                chunkResults[b] = cSnap.data().data;
+              }
+            })
+          );
         }
+        await Promise.all(promises);
       }
-      fullData = chunks.join('');
+      fullData = chunkResults.join('');
     }
 
     if (!fullData) return null;
@@ -2605,6 +2854,9 @@ async function downloadPdfFileFromFirestore(db, achvId) {
     };
   } catch (err) {
     console.error('Error downloading PDF from Firestore:', err);
+    if (isFirestorePermissionError(err)) {
+      alertFirestorePermissionHelp();
+    }
     return null;
   }
 }
@@ -2637,12 +2889,19 @@ async function uploadImageFileToFirestore(db, achvId, imgObj) {
         uploadedAt: new Date().toISOString()
       });
 
-      for (let c = 0; c < totalChunks; c++) {
-        const chunkStr = rawData.substring(c * FIRESTORE_CHUNK_SIZE, (c + 1) * FIRESTORE_CHUNK_SIZE);
-        await colRef.doc(`chunk_${c}`).set({
-          chunkIndex: c,
-          data: chunkStr
-        });
+      const BATCH_SIZE = 5;
+      for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+        const batchPromises = [];
+        for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+          const chunkStr = rawData.substring(b * FIRESTORE_CHUNK_SIZE, (b + 1) * FIRESTORE_CHUNK_SIZE);
+          batchPromises.push(
+            colRef.doc(`chunk_${b}`).set({
+              chunkIndex: b,
+              data: chunkStr
+            })
+          );
+        }
+        await Promise.all(batchPromises);
       }
     }
     console.log(`Cloud Image uploaded for achievement ${achvId} (${name})`);
@@ -2674,15 +2933,23 @@ async function downloadImageFileFromFirestore(db, achvId) {
     if (!mainMeta.isChunked) {
       fullData = mainMeta.data || '';
     } else {
-      const chunks = [];
       const totalChunks = mainMeta.totalChunks || 1;
-      for (let c = 0; c < totalChunks; c++) {
-        const cSnap = await colRef.doc(`chunk_${c}`).get();
-        if (cSnap.exists && cSnap.data() && cSnap.data().data) {
-          chunks.push(cSnap.data().data);
+      const chunkResults = new Array(totalChunks).fill('');
+      const BATCH_SIZE = 8;
+      for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+        const promises = [];
+        for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+          promises.push(
+            colRef.doc(`chunk_${b}`).get().then(cSnap => {
+              if (cSnap.exists && cSnap.data() && cSnap.data().data) {
+                chunkResults[b] = cSnap.data().data;
+              }
+            })
+          );
         }
+        await Promise.all(promises);
       }
-      fullData = chunks.join('');
+      fullData = chunkResults.join('');
     }
 
     if (!fullData) return null;
@@ -2695,6 +2962,9 @@ async function downloadImageFileFromFirestore(db, achvId) {
     };
   } catch (err) {
     console.error('Error downloading image from Firestore:', err);
+    if (isFirestorePermissionError(err)) {
+      alertFirestorePermissionHelp();
+    }
     return null;
   }
 }
@@ -2705,6 +2975,27 @@ async function downloadFolderObject(folder, achvId) {
     return;
   }
   const folderName = getFolderName(folder) || 'WORK_FOLDER';
+  const targetAchvId = achvId || currentDetailAchvId;
+
+  // 0. If folder does not have local file data in memory, try restoring from local IndexedDB first!
+  if (!hasLocalFolderFileData(folder) && targetAchvId) {
+    try {
+      const idbData = await loadAchievementsFromIndexedDB();
+      if (idbData) {
+        const fullItem = idbData.find(a => a && a.id === targetAchvId);
+        if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
+          folder.zipData = fullItem.workFolder.zipData || folder.zipData;
+          if (Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files.some(f => !!f.data)) {
+            folder.files = fullItem.workFolder.files;
+          }
+          const memItem = achievements.find(a => a.id === targetAchvId);
+          if (memItem) memItem.workFolder = folder;
+        }
+      }
+    } catch (idbErr) {
+      console.warn('IndexedDB restore check before download failed:', idbErr);
+    }
+  }
 
   // 1. If pre-built zipData exists
   if (folder.zipData) {
@@ -2730,7 +3021,7 @@ async function downloadFolderObject(folder, achvId) {
   }
 
   // 3. If files exist on Cloud Firestore (fetch on demand)
-  const targetAchvId = achvId || currentDetailAchvId;
+  let permissionDeniedOccurred = false;
   if (firebaseDb && targetAchvId) {
     showToast('☁️ กำลังดาวน์โหลดไฟล์โฟลเดอร์จากระบบคลาวด์...');
     try {
@@ -2759,7 +3050,15 @@ async function downloadFolderObject(folder, achvId) {
       }
     } catch (cloudErr) {
       console.warn('Cloud folder download error:', cloudErr);
+      if (isFirestorePermissionError(cloudErr)) {
+        permissionDeniedOccurred = true;
+      }
     }
+  }
+
+  if (permissionDeniedOccurred) {
+    alertFirestorePermissionHelp();
+    return;
   }
 
   // 4. Fallback if only PATH exists and no files data was uploaded
@@ -2768,7 +3067,7 @@ async function downloadFolderObject(folder, achvId) {
     alert(`โฟลเดอร์นี้ถูกบันทึกด้วย PATH ในเครื่อง:\n${path}\n\n(ไม่ได้อัปโหลดไฟล์ตัวจริงลงเว็บ จึงไม่สามารถดาวน์โหลดเป็นไฟล์ ZIP ได้)\nระบบได้คัดลอก PATH ให้แล้ว สามารถนำไปเปิดใน Windows File Explorer ได้เลยครับ`);
     copyFolderString(path);
   } else {
-    alert('ไม่พบไฟล์ที่แนบไว้ในโฟลเดอร์นี้');
+    alert('ไม่พบข้อมูลเนื้อหาไฟล์ของโฟลเดอร์นี้บนคลาวด์ (อาจเกิดจากสิทธิ์ Firebase Firestore หมดอายุ หรือปิดหน้าเว็บก่อนอัปโหลดโฟลเดอร์ขนาดใหญ่เสร็จ)\n\nกรุณาตรวจสอบการตั้งค่า Firestore Rules ใน Firebase Console หรือแนบโฟลเดอร์นี้อีกครั้งครับ');
   }
 }
 
@@ -2789,13 +3088,13 @@ async function downloadWorkFolderAttachment(achvId) {
   }
 
   let folder = item.workFolder;
-  if (!hasFolderDownloadableData(folder)) {
+  if (!hasLocalFolderFileData(folder)) {
     // Try restoring full workFolder from IndexedDB
     try {
       const idbData = await loadAchievementsFromIndexedDB();
       if (idbData) {
         const fullItem = idbData.find(a => a.id === achvId);
-        if (fullItem && fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
+        if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
           item.workFolder = fullItem.workFolder;
           folder = fullItem.workFolder;
         }
@@ -2812,26 +3111,66 @@ async function downloadSingleFolderFile(fileIndex) {
   if (!currentDetailFolderData || !currentDetailFolderData.files || !currentDetailFolderData.files[fileIndex]) return;
   let file = currentDetailFolderData.files[fileIndex];
 
+  // 1. Check local IndexedDB first if file.data is missing in memory
+  if (!file.data && currentDetailAchvId) {
+    try {
+      const idbData = await loadAchievementsFromIndexedDB();
+      if (idbData) {
+        const fullItem = idbData.find(a => a && a.id === currentDetailAchvId);
+        if (fullItem && fullItem.workFolder && Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files[fileIndex] && fullItem.workFolder.files[fileIndex].data) {
+          currentDetailFolderData.files = fullItem.workFolder.files;
+          file = fullItem.workFolder.files[fileIndex];
+          const item = achievements.find(a => a.id === currentDetailAchvId);
+          if (item) item.workFolder = currentDetailFolderData;
+        }
+      }
+    } catch (idbErr) {
+      console.warn('Single file IDB check notice:', idbErr);
+    }
+  }
+
+  // 2. Fetch just this single file from Cloud Firestore (fast! No need to download the entire folder)
+  let permissionDeniedOccurred = false;
   if (!file.data && currentDetailAchvId && firebaseDb) {
     showToast(`☁️ กำลังดึงไฟล์ "${file.name}" จากระบบคลาวด์...`);
     try {
-      const cloudFiles = await downloadFolderFilesFromFirestore(firebaseDb, currentDetailAchvId, currentDetailFolderData.files);
-      if (cloudFiles && cloudFiles[fileIndex] && cloudFiles[fileIndex].data) {
-        currentDetailFolderData.files = cloudFiles;
-        file = cloudFiles[fileIndex];
+      const singleCloudFile = await downloadSingleFileFromFirestore(firebaseDb, currentDetailAchvId, fileIndex, file);
+      if (singleCloudFile && singleCloudFile.data) {
+        currentDetailFolderData.files[fileIndex] = singleCloudFile;
+        file = singleCloudFile;
         const item = achievements.find(a => a.id === currentDetailAchvId);
         if (item) {
           item.workFolder = currentDetailFolderData;
           saveAchievementsToIndexedDB(achievements);
         }
+      } else {
+        // Fallback: try full folder download in case doc IDs differed
+        const cloudFiles = await downloadFolderFilesFromFirestore(firebaseDb, currentDetailAchvId, currentDetailFolderData.files);
+        if (cloudFiles && cloudFiles[fileIndex] && cloudFiles[fileIndex].data) {
+          currentDetailFolderData.files = cloudFiles;
+          file = cloudFiles[fileIndex];
+          const item = achievements.find(a => a.id === currentDetailAchvId);
+          if (item) {
+            item.workFolder = currentDetailFolderData;
+            saveAchievementsToIndexedDB(achievements);
+          }
+        }
       }
     } catch (e) {
       console.warn('Single file cloud download notice:', e);
+      if (isFirestorePermissionError(e)) {
+        permissionDeniedOccurred = true;
+      }
     }
   }
 
+  if (permissionDeniedOccurred) {
+    alertFirestorePermissionHelp();
+    return;
+  }
+
   if (!file.data) {
-    alert('ไม่พบข้อมูลเนื้อหาของไฟล์นี้ (อาจเป็นโฟลเดอร์ที่บันทึกเฉพาะ PATH)');
+    alert('ไม่พบข้อมูลเนื้อหาของไฟล์นี้ (อาจเกิดจากสิทธิ์ Firebase Firestore หมดอายุ หรือโฟลเดอร์บันทึกเฉพาะ PATH)');
     return;
   }
   downloadDataUrl(file.data, file.name);
@@ -3276,9 +3615,9 @@ function loadData() {
             a.imageData = fullItem.imageData;
             restoredCount++;
           }
-          if (fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
-            if (!a.workFolder || !hasFolderDownloadableData(a.workFolder)) {
-              a.workFolder = fullItem.workFolder;
+          if (fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
+            if (!a.workFolder || !hasLocalFolderFileData(a.workFolder)) {
+              a.workFolder = mergeSingleItemAttachments({ workFolder: a.workFolder || fullItem.workFolder }, { workFolder: fullItem.workFolder }).workFolder;
               restoredCount++;
             }
           }
@@ -3551,35 +3890,13 @@ async function initFirebase(config, showToasts = false) {
 
       const cloudItems = [];
       snapshot.forEach(doc => {
-        const data = doc.data();
+        let data = doc.data();
         data.id = data.id || doc.id;
 
         // Merge cached local heavy attachments if missing from cloud
         const cachedItem = achievements.find(a => a.id === data.id);
         if (cachedItem) {
-          if ((!data.pdfAttachment || !data.pdfAttachment.data) && (cachedItem.pdfAttachment && cachedItem.pdfAttachment.data)) {
-            data.pdfAttachment = cachedItem.pdfAttachment;
-          }
-          if ((!data.imageData || !data.imageData.data) && (cachedItem.imageData && cachedItem.imageData.data)) {
-            data.imageData = cachedItem.imageData;
-          }
-          // Preserve local workFolder file data so cloud sync does not wipe uploaded contents
-          if (cachedItem.workFolder && Array.isArray(cachedItem.workFolder.files)) {
-            if (data.workFolder && Array.isArray(data.workFolder.files)) {
-              data.workFolder.files = data.workFolder.files.map(cf => {
-                const localMatch = cachedItem.workFolder.files.find(lf => lf.name === cf.name || lf.relPath === cf.relPath);
-                if (localMatch && localMatch.data) {
-                  return { ...cf, data: localMatch.data };
-                }
-                return cf;
-              });
-              if (cachedItem.workFolder.zipData && !data.workFolder.zipData) {
-                data.workFolder.zipData = cachedItem.workFolder.zipData;
-              }
-            } else if (!data.workFolder) {
-              data.workFolder = cachedItem.workFolder;
-            }
-          }
+          data = mergeSingleItemAttachments(data, cachedItem);
         }
 
         cloudItems.push(data);
@@ -3591,6 +3908,15 @@ async function initFirebase(config, showToasts = false) {
         const timeB = b.createdAt ? new Date(b.createdAt).getTime() : (b.requestDate ? new Date(b.requestDate).getTime() : 0);
         return timeB - timeA;
       });
+
+      // Helper to re-hydrate in-memory achievements from IndexedDB if onSnapshot arrived before IDB finished loading
+      const rehydrateFromIDBIfNeeded = () => {
+        loadAchievementsFromIndexedDB().then(idbData => {
+          if (idbData && Array.isArray(idbData) && idbData.length > 0) {
+            achievements = mergePreservingLocalAttachments(achievements, idbData);
+          }
+        }).catch(() => {});
+      };
 
       // When cloud has rich dataset (>= 5 items), keep all devices in 100% real-time sync
       if (cloudItems.length >= 5) {
@@ -3604,8 +3930,9 @@ async function initFirebase(config, showToasts = false) {
           });
         }
 
-        achievements = cloudItems;
+        achievements = mergePreservingLocalAttachments(cloudItems, achievements);
         saveAchievements();
+        rehydrateFromIDBIfNeeded();
         renderAll();
         if (!isInitial) {
           showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
@@ -3622,11 +3949,13 @@ async function initFirebase(config, showToasts = false) {
       achievements.forEach(a => mergedMap.set(a.id, a));
       cloudItems.forEach(c => {
         if (c.title && c.title.trim().toUpperCase() !== 'TEST') {
-          mergedMap.set(c.id, { ...(mergedMap.get(c.id) || {}), ...c });
+          const existing = mergedMap.get(c.id);
+          mergedMap.set(c.id, existing ? mergeSingleItemAttachments({ ...existing, ...c }, existing) : c);
         }
       });
       achievements = Array.from(mergedMap.values());
       saveAchievements();
+      rehydrateFromIDBIfNeeded();
       renderAll();
       if (!isInitial) {
         showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
@@ -3640,7 +3969,7 @@ async function initFirebase(config, showToasts = false) {
       isFirebaseConnected = false;
       let userFriendlyMsg = error.message;
       if (error.code === 'permission-denied') {
-        userFriendlyMsg = 'ติดสิทธิ์การเข้าถึง (Permission Denied) - กรุณาตรวจสอบ Firestore Rules เป็น allow read, write: if true;';
+        userFriendlyMsg = 'ติดสิทธิ์การเข้าถึง (Permission Denied) - กรุณาอัปเดต Firestore Rules ใน Firebase Console เป็น allow read, write: if true;';
       }
       updateCloudStatusUI('error', userFriendlyMsg);
       if (showToasts) {
@@ -3719,12 +4048,14 @@ async function saveAchievementToCloud(item) {
     const itemToSave = cleanFirestoreObject({ ...item });
     delete itemToSave._pendingSync;
 
+    let pendingFolderFilesToUpload = null;
+
     // Handle PDF Attachment upload to subcollection & guard 1MB Firestore limit
     if (itemToSave.pdfAttachment && typeof itemToSave.pdfAttachment === 'object') {
       const pdf = { ...itemToSave.pdfAttachment };
       if (pdf.data) {
         pdf.hasCloudPdf = true;
-        uploadPdfFileToFirestore(firebaseDb, item.id, pdf);
+        uploadPdfFileToFirestore(firebaseDb, item.id, { ...pdf });
       } else if (item.pdfAttachment && item.pdfAttachment.hasCloudPdf) {
         pdf.hasCloudPdf = true;
       }
@@ -3739,7 +4070,7 @@ async function saveAchievementToCloud(item) {
       const img = { ...itemToSave.imageData };
       if (img.data) {
         img.hasCloudImage = true;
-        uploadImageFileToFirestore(firebaseDb, item.id, img);
+        uploadImageFileToFirestore(firebaseDb, item.id, { ...img });
       } else if (item.imageData && item.imageData.hasCloudImage) {
         img.hasCloudImage = true;
       }
@@ -3767,10 +4098,9 @@ async function saveAchievementToCloud(item) {
         hasData = wf.files.some(f => !!f.data);
       }
 
-      // If folder has file data, upload chunked files to Firestore subcollection in background
       if (hasData) {
         wf.hasCloudFiles = true;
-        uploadFolderFilesToFirestore(firebaseDb, item.id, wf.files);
+        pendingFolderFilesToUpload = wf.files.map(f => ({ ...f }));
       } else if (item.workFolder && item.workFolder.hasCloudFiles) {
         wf.hasCloudFiles = true;
       }
@@ -3787,9 +4117,17 @@ async function saveAchievementToCloud(item) {
     }
 
     await docRef.set(itemToSave, { merge: true });
+    if (pendingFolderFilesToUpload) {
+      const uploadedOk = await uploadFolderFilesToFirestore(firebaseDb, item.id, pendingFolderFilesToUpload);
+      if (uploadedOk) {
+        showToast('☁️ อัปโหลดไฟล์ในโฟลเดอร์ขึ้นคลาวด์ครบถ้วนแล้ว!');
+      }
+    }
     console.log('Synced to cloud successfully:', item.id);
   } catch (err) {
     console.error('Failed to sync achievement to cloud:', err);
+    item._pendingSync = true;
+    saveAchievements();
     showToast('บันทึกในเครื่องแล้ว (คลาวด์: ' + (err.message || 'Sync failed') + ')');
   }
 }
@@ -6808,7 +7146,7 @@ function renderCardsView(container, items) {
     const displayDate = item.requestDate || item.completionDate || '';
 
     html += `
-      <div class="ios-task-card" id="ios-card-${item.id}">
+      <div class="ios-task-card ${item.status === 'done' ? 'card-status-done' : ''}" id="ios-card-${item.id}">
         <!-- Top bar: Category Badge + Status Pill + More Action Button -->
         <div class="ios-card-header-bar">
           <div class="ios-card-cat-badge" style="background-color: ${cat.color}15; color: ${cat.color}; border: 1px solid ${cat.color}35;">
@@ -7207,7 +7545,7 @@ function renderTimelineView(container, items) {
       html += `
         <div class="timeline-item">
           <div class="timeline-dot" style="border-color: ${cat.color};"></div>
-          <div class="timeline-card">
+          <div class="timeline-card ${item.status === 'done' ? 'card-status-done' : ''}">
             <div class="card-header-meta">
               <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
                 ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
@@ -7324,7 +7662,7 @@ function renderTableView(container, items) {
       const dateDisplay = item.completionDate || item.requestDate || '-';
 
       html += `
-        <tr>
+        <tr class="${item.status === 'done' ? 'row-status-done' : ''}">
           <td class="col-no" style="text-align: center; color: var(--text-light); font-weight: 600; font-size: 12px; white-space: nowrap;">${index + 1}</td>
           <td>
             <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px; line-height: 1.3;" onclick="viewAchievementDetail('${item.id}')">
@@ -7456,7 +7794,7 @@ function renderTableView(container, items) {
       const dateDisplay = item.completionDate || item.requestDate || '-';
 
       html += `
-        <tr>
+        <tr class="${item.status === 'done' ? 'row-status-done' : ''}">
           <td class="sticky-col-no" style="color: var(--text-light); font-weight: 600; white-space: nowrap; text-align: center;">${index + 1}</td>
           <td class="sticky-col-task">
             <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: center; gap: 6px;" onclick="viewAchievementDetail('${item.id}')">
@@ -7631,11 +7969,11 @@ function openAchievementModal(id = null) {
 
     if (item.workFolder && typeof item.workFolder === 'object') {
       currentModalFolder = { ...item.workFolder };
-      if (!hasFolderDownloadableData(currentModalFolder)) {
+      if (!hasLocalFolderFileData(currentModalFolder)) {
         loadAchievementsFromIndexedDB().then(idbData => {
           if (idbData) {
             const fullItem = idbData.find(a => a.id === item.id);
-            if (fullItem && fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
+            if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
               currentModalFolder = { ...fullItem.workFolder };
               item.workFolder = fullItem.workFolder;
               updateFolderPreview();
@@ -9367,12 +9705,12 @@ async function openWorkFolderModal(achvId) {
   }
   currentDetailAchvId = achvId;
   let folder = item.workFolder;
-  if (!hasFolderDownloadableData(folder)) {
+  if (!hasLocalFolderFileData(folder)) {
     try {
       const idbData = await loadAchievementsFromIndexedDB();
       if (idbData) {
         const fullItem = idbData.find(a => a.id === achvId);
-        if (fullItem && fullItem.workFolder && hasFolderDownloadableData(fullItem.workFolder)) {
+        if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
           item.workFolder = fullItem.workFolder;
           folder = fullItem.workFolder;
         }
