@@ -1411,20 +1411,167 @@ body {
 
 @media (max-width: 768px) {
   .eng-insights-wrapper {
-    padding: 0 12px 14px 12px;
-    gap: 12px;
+    padding: 14px 0 0 0 !important;
+    gap: 14px !important;
   }
+
+  .eng-charts-grid-3,
+  .eng-charts-grid-2 {
+    gap: 14px !important;
+  }
+
+  /* Balanced Mobile Header inside Insights Cards */
+  #engInsightsSection .chart-title {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    text-align: center !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 12px !important;
+  }
+
+  #engInsightsSection .chart-title > span:first-child {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #0f2e6b !important;
+    line-height: 1.35 !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  #engInsightsSection .eng-title-meta {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2.5px 10px !important;
+    border-radius: 999px !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  /* Row 1 Mobile: Centered Doughnut + Full-Width Rows */
   .eng-donut-layout {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
   }
+
   .eng-donut-canvas-box {
-    margin: 0 auto;
+    width: 136px !important;
+    height: 136px !important;
+    margin: 2px auto 4px auto !important;
   }
-  .eng-line-row {
-    grid-template-columns: minmax(130px, 46%) 1fr 98px;
-    gap: 8px;
-    padding: 6px 6px;
+
+  .eng-flat-list.eng-flat-list-compact {
+    gap: 3px !important;
+  }
+
+  .eng-flat-list.eng-flat-list-compact .eng-flat-row {
+    padding: 6px 8px !important;
+    gap: 5px !important;
+  }
+
+  /* Row 2 Mobile: Scrollbar-Free Support Member Rows */
+  #engInsightsSection .eng-table-list {
+    overflow-x: visible !important;
+  }
+
+  #engInsightsSection .eng-support-table,
+  #engInsightsSection .eng-support-table tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  #engInsightsSection .eng-support-table thead {
+    display: none !important;
+  }
+
+  #engInsightsSection .eng-sup-tr {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "name count"
+      "bar bar"
+      "status status" !important;
+    gap: 6px 8px !important;
+    padding: 10px 6px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    align-items: center !important;
+  }
+
+  #engInsightsSection .eng-sup-tr:last-child {
+    border-bottom: none !important;
+  }
+
+  #engInsightsSection .eng-support-table td {
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  #engInsightsSection .sup-td-name {
+    grid-area: name !important;
+    min-width: 0 !important;
+  }
+
+  #engInsightsSection .sup-td-count {
+    grid-area: count !important;
+    text-align: right !important;
+    font-size: 12px !important;
+  }
+
+  #engInsightsSection .sup-td-bar {
+    grid-area: bar !important;
+    width: 100% !important;
+  }
+
+  #engInsightsSection .sup-inline-bar-wrap {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  #engInsightsSection .sup-td-status {
+    grid-area: status !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    padding-top: 2px !important;
+  }
+
+  /* Rows 3 & 4 Mobile: Balanced 2-Line Progress Layout (Full Title + Full-Width Bar) */
+  #engInsightsSection .eng-flat-scroll {
+    max-height: 280px !important;
+    padding-right: 2px !important;
+  }
+
+  #engInsightsSection .eng-line-row {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "left right"
+      "bar bar" !important;
+    gap: 6px 8px !important;
+    padding: 8px 6px !important;
+  }
+
+  #engInsightsSection .eng-line-left {
+    grid-area: left !important;
+    min-width: 0 !important;
+  }
+
+  #engInsightsSection .eng-line-right {
+    grid-area: right !important;
+  }
+
+  #engInsightsSection .eng-line-bar-col {
+    grid-area: bar !important;
+    width: 100% !important;
+  }
+
+  #engInsightsSection .eng-line-track {
+    height: 5px !important;
   }
 }
 

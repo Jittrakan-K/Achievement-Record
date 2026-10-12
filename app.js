@@ -6957,16 +6957,23 @@ function createMiniCenterTextPlugin(labelSubtext) {
       const cx = typeof firstArc.x === 'number' ? firstArc.x : chart.width / 2;
       const cy = typeof firstArc.y === 'number' ? firstArc.y : chart.height / 2;
       const total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
+      const isMobile = window.innerWidth <= 768;
       const { ctx } = chart;
       ctx.save();
-      ctx.font = "800 18px 'Inter', 'Sarabun', sans-serif";
-      ctx.fillStyle = '#0f172a';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`${total}`, cx, cy - 5);
-      ctx.font = "600 10px 'Sarabun', 'Inter', sans-serif";
-      ctx.fillStyle = '#64748b';
-      ctx.fillText(labelSubtext || 'งานทั้งหมด', cx, cy + 10);
+      if (isMobile) {
+        ctx.font = "800 24px 'Inter', 'Sarabun', sans-serif";
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(`${total}`, cx, cy + 1);
+      } else {
+        ctx.font = "800 18px 'Inter', 'Sarabun', sans-serif";
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(`${total}`, cx, cy - 5);
+        ctx.font = "600 10px 'Sarabun', 'Inter', sans-serif";
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(labelSubtext || 'งานทั้งหมด', cx, cy + 10);
+      }
       ctx.restore();
     }
   };
