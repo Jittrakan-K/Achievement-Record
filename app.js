@@ -7128,9 +7128,12 @@ function renderEngineeringInsightsDashboard() {
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${p.color};"></span>
-              <span>${p.label}</span>
+              <span class="eng-flat-name-text">${p.label}</span>
             </span>
-            <span class="eng-flat-val"><b>${p.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+            <span class="eng-flat-val">
+              <span class="eng-flat-count"><b>${p.count}</b> งาน</span>
+              <span class="eng-flat-pct">${pct}%</span>
+            </span>
           </div>
           <div class="eng-flat-track">
             <div class="eng-flat-fill" style="width:${pct}%; background:${p.color};"></div>
@@ -7175,9 +7178,12 @@ function renderEngineeringInsightsDashboard() {
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${sj.color};"></span>
-              <span>${sj.label} <small>${sj.sub}</small></span>
+              <span class="eng-flat-name-text">${sj.label} <small>${sj.sub}</small></span>
             </span>
-            <span class="eng-flat-val"><b>${sj.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+            <span class="eng-flat-val">
+              <span class="eng-flat-count"><b>${sj.count}</b> งาน</span>
+              <span class="eng-flat-pct">${pct}%</span>
+            </span>
           </div>
           <div class="eng-flat-track">
             <div class="eng-flat-fill" style="width:${pct}%; background:${sj.color};"></div>
@@ -7222,6 +7228,7 @@ function renderEngineeringInsightsDashboard() {
 
   const facListEl = document.getElementById('engFactoryList');
   if (facListEl) {
+    facListEl.classList.toggle('eng-flat-list-compact', facItems.length > 4);
     facListEl.innerHTML = facItems.map((f, idx) => {
       const color = f.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : facPalette[idx % facPalette.length];
       const pct = totalTasks > 0 ? ((f.count / totalTasks) * 100).toFixed(1) : '0.0';
@@ -7231,9 +7238,12 @@ function renderEngineeringInsightsDashboard() {
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${color};"></span>
-              <span>${escapeHtml(f.name)}</span>
+              <span class="eng-flat-name-text">${escapeHtml(f.name)}</span>
             </span>
-            <span class="eng-flat-val"><b>${f.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+            <span class="eng-flat-val">
+              <span class="eng-flat-count"><b>${f.count}</b> งาน</span>
+              <span class="eng-flat-pct">${pct}%</span>
+            </span>
           </div>
           <div class="eng-flat-track">
             <div class="eng-flat-fill" style="width:${pct}%; background:${color};"></div>
@@ -7288,14 +7298,13 @@ function renderEngineeringInsightsDashboard() {
       return `
         <tr class="eng-sup-tr ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('${fieldType}', '${escapeHtml(m.name).replace(/'/g, "\\'")}', '${fieldType === 'designSupport' ? 'DESIGN SUPPORT' : 'MANTENANCE SUPPORT'}: ${escapeHtml(m.name)}')" title="คลิกเพื่อกรองงานที่ซัพพอร์ตโดย: ${escapeHtml(m.name)}">
           <td class="sup-td-name">
+            <span class="sup-color-bar" style="background:${accentColor};"></span>
             <span class="sup-member-name">${escapeHtml(m.name)}</span>
           </td>
           <td class="sup-td-status">
-            <span class="sup-mini-stat">DONE <b>${m.done}</b></span>
-            <span class="sup-mini-sep">·</span>
-            <span class="sup-mini-stat">PROG <b>${m.in_progress}</b></span>
-            <span class="sup-mini-sep">·</span>
-            <span class="sup-mini-stat">PEND <b>${m.wait}</b></span>
+            <span class="sup-tag tag-done">DONE ${m.done}</span>
+            <span class="sup-tag tag-prog">PROG ${m.in_progress}</span>
+            <span class="sup-tag tag-pend">WAIT ${m.wait}</span>
           </td>
           <td class="sup-td-count">
             <b>${m.count}</b> งาน <span class="sup-all-pct">(${shareOfAllTasksPct}%)</span>
@@ -7319,7 +7328,7 @@ function renderEngineeringInsightsDashboard() {
             <th>รายชื่อผู้สนับสนุน (MEMBER)</th>
             <th>สถานะงาน</th>
             <th style="text-align:right;">จำนวน (% ทั้งหมด)</th>
-            <th style="text-align:right; width: 150px;">สัดส่วนในทีม (%)</th>
+            <th style="text-align:right; width: 155px;">สัดส่วนในทีม (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -7338,10 +7347,12 @@ function renderEngineeringInsightsDashboard() {
   if (subStatusBadge) subStatusBadge.textContent = `ACHV ${totalAchvScore.toFixed(1)} / ${totalTasks} (${avgAchvPct}%)`;
 
   const subStatusList = Object.values(subStatusMap).sort((a, b) => b.count - a.count || b.weightPct - a.weightPct);
+  const maxSubStatusCount = subStatusList.reduce((max, x) => Math.max(max, x.count), 1);
   const subStatusContainer = document.getElementById('engSubStatusContainer');
   if (subStatusContainer) {
     subStatusContainer.innerHTML = subStatusList.map(stItem => {
       const pct = totalTasks > 0 ? ((stItem.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const barWidth = Math.max(4, Math.round((stItem.count / maxSubStatusCount) * 100));
       const isAct = currentSubStatusFilter === stItem.rawKey;
       let barColor = '#2563eb';
       if (stItem.rawKey === '10 Finished') barColor = '#10b981';
@@ -7352,15 +7363,16 @@ function renderEngineeringInsightsDashboard() {
         <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('subStatus', '${escapeHtml(stItem.rawKey)}', 'SUB STATUS: ${escapeHtml(stItem.label)}')" title="คลิกเพื่อกรองขั้นตอนย่อย: ${escapeHtml(stItem.label)}">
           <div class="eng-line-left">
             <span class="eng-line-title">${escapeHtml(stItem.label)}</span>
-            <span class="eng-line-sub">(${stItem.weightPct}%)</span>
+            <span class="eng-line-sub">${stItem.weightPct}%</span>
           </div>
           <div class="eng-line-bar-col">
             <div class="eng-line-track">
-              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+              <div class="eng-line-fill" style="width:${barWidth}%; background:${barColor};"></div>
             </div>
           </div>
           <div class="eng-line-right">
-            <b>${stItem.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+            <span class="eng-line-count"><b>${stItem.count}</b> งาน</span>
+            <span class="eng-line-pct">${pct}%</span>
           </div>
         </div>
       `;
@@ -7369,6 +7381,7 @@ function renderEngineeringInsightsDashboard() {
 
   // --- PANEL 7: JOB TYPE (ประเภทงานวิศวกรรม) ---
   const jobTypeList = Object.values(jobTypeMap).sort((a, b) => b.count - a.count || a.code.localeCompare(b.code));
+  const maxJobTypeCount = jobTypeList.reduce((max, x) => Math.max(max, x.count), 1);
   const jobTypeBadge = document.getElementById('engJobTypeBadge');
   if (jobTypeBadge) jobTypeBadge.textContent = `${jobTypeList.length} ประเภทงาน`;
 
@@ -7376,20 +7389,21 @@ function renderEngineeringInsightsDashboard() {
   if (jobTypeContainer) {
     jobTypeContainer.innerHTML = jobTypeList.map(jt => {
       const pct = totalTasks > 0 ? ((jt.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const barWidth = Math.max(4, Math.round((jt.count / maxJobTypeCount) * 100));
       const isAct = currentJobTypeFilter === jt.code;
       return `
         <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('jobType', '${escapeHtml(jt.code)}', 'JOB TYPE: ${escapeHtml(jt.label)}')" title="คลิกเพื่อกรองประเภทงาน: ${escapeHtml(jt.label)}">
           <div class="eng-line-left">
-            <span class="eng-code-tag">${escapeHtml(jt.code)}</span>
             <span class="eng-line-title">${escapeHtml(jt.label)}</span>
           </div>
           <div class="eng-line-bar-col">
             <div class="eng-line-track">
-              <div class="eng-line-fill" style="width:${pct}%; background:#2563eb;"></div>
+              <div class="eng-line-fill" style="width:${barWidth}%; background:#2563eb;"></div>
             </div>
           </div>
           <div class="eng-line-right">
-            <b>${jt.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+            <span class="eng-line-count"><b>${jt.count}</b> งาน</span>
+            <span class="eng-line-pct">${pct}%</span>
           </div>
         </div>
       `;
@@ -7402,6 +7416,7 @@ function renderEngineeringInsightsDashboard() {
     if (b.rawKey === '__UNSPECIFIED__') return -1;
     return b.count - a.count || a.name.localeCompare(b.name);
   });
+  const maxDeptCount = deptList.reduce((max, x) => Math.max(max, x.count), 1);
   const deptBadge = document.getElementById('engDeptBadge');
   if (deptBadge) deptBadge.textContent = `${deptList.length} แผนก`;
 
@@ -7409,6 +7424,7 @@ function renderEngineeringInsightsDashboard() {
   if (deptContainer) {
     deptContainer.innerHTML = deptList.map(d => {
       const pct = totalTasks > 0 ? ((d.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const barWidth = Math.max(4, Math.round((d.count / maxDeptCount) * 100));
       const isAct = currentDeptFilter === d.rawKey;
       const barColor = d.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : '#0284c7';
       return `
@@ -7418,11 +7434,12 @@ function renderEngineeringInsightsDashboard() {
           </div>
           <div class="eng-line-bar-col">
             <div class="eng-line-track">
-              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+              <div class="eng-line-fill" style="width:${barWidth}%; background:${barColor};"></div>
             </div>
           </div>
           <div class="eng-line-right">
-            <b>${d.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+            <span class="eng-line-count"><b>${d.count}</b> งาน</span>
+            <span class="eng-line-pct">${pct}%</span>
           </div>
         </div>
       `;
@@ -7435,6 +7452,7 @@ function renderEngineeringInsightsDashboard() {
     if (b.rawKey === '__UNSPECIFIED__') return -1;
     return b.count - a.count || a.name.localeCompare(b.name);
   });
+  const maxProcCount = procList.reduce((max, x) => Math.max(max, x.count), 1);
   const procBadge = document.getElementById('engProcessBadge');
   if (procBadge) procBadge.textContent = `${procList.length} กระบวนการ`;
 
@@ -7442,6 +7460,7 @@ function renderEngineeringInsightsDashboard() {
   if (procContainer) {
     procContainer.innerHTML = procList.map(pr => {
       const pct = totalTasks > 0 ? ((pr.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const barWidth = Math.max(4, Math.round((pr.count / maxProcCount) * 100));
       const isAct = currentProcessFilter === pr.rawKey;
       const barColor = pr.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : '#0f766e';
       return `
@@ -7451,11 +7470,12 @@ function renderEngineeringInsightsDashboard() {
           </div>
           <div class="eng-line-bar-col">
             <div class="eng-line-track">
-              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+              <div class="eng-line-fill" style="width:${barWidth}%; background:${barColor};"></div>
             </div>
           </div>
           <div class="eng-line-right">
-            <b>${pr.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+            <span class="eng-line-count"><b>${pr.count}</b> งาน</span>
+            <span class="eng-line-pct">${pct}%</span>
           </div>
         </div>
       `;
