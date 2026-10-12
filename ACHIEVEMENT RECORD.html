@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261011_v3">
+  <link rel="stylesheet" href="styles.css?v=20261012_v6">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -583,17 +583,17 @@
                 <small id="achvAchievementBadge" class="achv-label-badge">ACHV: 0.2 (20%)</small>
               </label>
               <select id="achvSubStatus" class="form-control" onchange="handleModalSubStatusChange(this.value)">
-                <option value="00 Not Start">00 NOT START (0%)</option>
-                <option value="01 Req. Analysis">01 REQ. ANALYSIS (10%)</option>
-                <option value="02 Concept Design">02 CONCEPT DESIGN (20%)</option>
-                <option value="03 User Approval 1">03 USER APPROVAL 1 (30%)</option>
-                <option value="04 Detailed Drawing">04 DETAILED DRAWING (40%)</option>
-                <option value="05 Quote Request">05 QUOTE REQUEST (50%)</option>
-                <option value="06 User Approval 2">06 USER APPROVAL 2 (60%)</option>
-                <option value="07 Supp. Proc.">07 SUPP. PROC. (70%)</option>
-                <option value="08 P.Techno. Proc.">08 P.TECHNO. PROC. (80%)</option>
-                <option value="09 Verification">09 VERIFICATION (90%)</option>
-                <option value="10 Finished">10 FINISHED (100%)</option>
+                <option value="00 Not Start">NOT START (0%)</option>
+                <option value="01 Req. Analysis">REQ. ANALYSIS (10%)</option>
+                <option value="02 Concept Design">CONCEPT DESIGN (20%)</option>
+                <option value="03 User Approval 1">USER APPROVAL 1 (30%)</option>
+                <option value="04 Detailed Drawing">DETAILED DRAWING (40%)</option>
+                <option value="05 Quote Request">QUOTE REQUEST (50%)</option>
+                <option value="06 User Approval 2">USER APPROVAL 2 (60%)</option>
+                <option value="07 Supp. Proc.">SUPP. PROC. (70%)</option>
+                <option value="08 P.Techno. Proc.">P.TECHNO. PROC. (80%)</option>
+                <option value="09 Verification">VERIFICATION (90%)</option>
+                <option value="10 Finished">FINISHED (100%)</option>
                 <option value="Pending">PENDING (0%)</option>
                 <option value="Cancel">CANCEL (100%)</option>
               </select>
@@ -644,14 +644,14 @@
               <label class="form-label" for="achvDepartment">DEPARTMENT (แผนกที่ร้องขอ)</label>
               <select id="achvDepartment" class="form-control">
                 <option value="">-- เลือกแผนก (SELECT DEPARTMENT) --</option>
-                <option value="FERRULE PRODUCTION">01 FERRULE PRODUCTION</option>
-                <option value="OPICAL PRODUCTION">02 OPTICAL PRODUCTION</option>
-                <option value="FIBER PRODUCTION">02 FIBER PRODUCTION</option>
-                <option value="MEDICAL PRODUCTION">03 MEDICAL PRODUCTION</option>
-                <option value="MOTOR PRODUCTION">04 MOTOR PRODUCTION</option>
-                <option value="INDIRECT">05 INDIRECT</option>
-                <option value="PRODUCTION TECHNOLOGY">06 PRO. TECHNOLOGY</option>
-                <option value="SPECIAL">07 SPECIAL</option>
+                <option value="FERRULE PRODUCTION">FERRULE PRODUCTION</option>
+                <option value="OPICAL PRODUCTION">OPTICAL PRODUCTION</option>
+                <option value="FIBER PRODUCTION">FIBER PRODUCTION</option>
+                <option value="MEDICAL PRODUCTION">MEDICAL PRODUCTION</option>
+                <option value="MOTOR PRODUCTION">MOTOR PRODUCTION</option>
+                <option value="INDIRECT">INDIRECT</option>
+                <option value="PRODUCTION TECHNOLOGY">PRO. TECHNOLOGY</option>
+                <option value="SPECIAL">SPECIAL</option>
                 <option value="QUALITY">QUALITY</option>
                 <option value="OFFICE">OFFICE</option>
                 <option value="FACILITIES">FACILITIES</option>
@@ -696,12 +696,12 @@
               <label class="form-label" for="achvJobType">JOB TYPE (ประเภทงาน)</label>
               <select id="achvJobType" class="form-control">
                 <option value="">-- อัตโนมัติ (AUTO) --</option>
-                <option value="D">D (01 DESIGN - ออกแบบ)</option>
-                <option value="R">R (02 REPAIR - ซ่อมแซม)</option>
-                <option value="M">M (03 MODIFY - ดัดแปลง/แก้ไข)</option>
-                <option value="I">I (04 INCREASE - สร้างเพิ่ม/สั่งซื้อ)</option>
-                <option value="A">A (05 ASSY/INSTALL - ประกอบ/ติดตั้ง)</option>
-                <option value="S">S (06 SIMULATION - จำลอง)</option>
+                <option value="D">D (DESIGN - ออกแบบ)</option>
+                <option value="R">R (REPAIR - ซ่อมแซม)</option>
+                <option value="M">M (MODIFY - ดัดแปลง/แก้ไข)</option>
+                <option value="I">I (INCREASE - สร้างเพิ่ม/สั่งซื้อ)</option>
+                <option value="A">A (ASSY/INSTALL - ประกอบ/ติดตั้ง)</option>
+                <option value="S">S (SIMULATION - จำลอง)</option>
                 <option value="D-A">D-A (DESIGN + ASSY/INSTALL)</option>
                 <option value="D-I">D-I (DESIGN + INCREASE)</option>
                 <option value="D-I-A">D-I-A (DESIGN + INC + ASSY)</option>
@@ -724,8 +724,8 @@
               <label class="form-label" for="achvSubJobType">SUB JOB TYPE (รูปแบบ)</label>
               <select id="achvSubJobType" class="form-control">
                 <option value="">-- อัตโนมัติ (AUTO) --</option>
-                <option value="01 In-house">01 IN-HOUSE (ทำเองภายใน)</option>
-                <option value="02 Outsource">02 OUTSOURCE (สั่งทำภายนอก)</option>
+                <option value="01 In-house">IN-HOUSE (ทำเองภายใน)</option>
+                <option value="02 Outsource">OUTSOURCE (สั่งทำภายนอก)</option>
                 <option value="All">ALL (IN-HOUSE + OUTSOURCE)</option>
                 <option value="-">- (ไม่ระบุ)</option>
               </select>
@@ -735,10 +735,10 @@
               <label class="form-label" for="achvPriority">PRIORITY / JOB LV. (ความสำคัญ)</label>
               <select id="achvPriority" class="form-control">
                 <option value="">-- อัตโนมัติ (AUTO) --</option>
-                <option value="Super High">🔥 SUPER HIGH (ด่วนพิเศษ)</option>
-                <option value="High">⚡ HIGH (สูง)</option>
-                <option value="Medium">🔹 MEDIUM (ปานกลาง)</option>
-                <option value="Low">🟢 LOW (ทั่วไป)</option>
+                <option value="Super High">SUPER HIGH (ด่วนพิเศษ)</option>
+                <option value="High">HIGH (สูง)</option>
+                <option value="Medium">MEDIUM (ปานกลาง)</option>
+                <option value="Low">LOW (ทั่วไป)</option>
               </select>
             </div>
           </div>
@@ -1027,7 +1027,11 @@
       <div class="modal-body" id="detailBody">
         <!-- Injected by JS -->
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+        <button type="button" class="btn btn-primary" id="detailEditBtn" onclick="editFromDetailModal()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          แก้ไขข้อมูล (EDIT)
+        </button>
         <button type="button" class="btn btn-secondary" onclick="closeDetailModal()">ปิดหน้าต่าง (CLOSE)</button>
       </div>
     </div>
@@ -1565,7 +1569,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20261011_v3"></script>
+  <script src="app.js?v=20261012_v6"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">

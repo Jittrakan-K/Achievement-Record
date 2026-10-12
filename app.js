@@ -7046,16 +7046,21 @@ const SUB_STATUS_ACHIEVEMENT_MAP = {
 };
 
 const JOB_TYPE_LABELS = {
-  'D': '01 DESIGN',
-  'R': '02 REPAIR',
-  'M': '03 MODIFY',
-  'I': '04 INCREASE',
-  'A': '05 ASSY/INSTALL',
-  'S': '06 SIMULATION',
+  'D': 'DESIGN',
+  'R': 'REPAIR',
+  'M': 'MODIFY',
+  'I': 'INCREASE',
+  'A': 'ASSY/INSTALL',
+  'S': 'SIMULATION',
   'T': 'TRAINING',
   'AC': 'ACTIVITY',
   'Q': 'QUOTE'
 };
+
+function stripLeadingNumberCode(val) {
+  if (!val) return '';
+  return String(val).replace(/^\d{2}\s+/, '').trim();
+}
 
 const MONTH_SHORT_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -7525,21 +7530,23 @@ function getTaskExcelTracking(item) {
   const supportBy = allSupportList.length > 0 ? allSupportList.join(', ') : '-';
   const designTeam = '-';
 
-  // Sub Status & Achievement (Two-way consistent with item.status)
-  let subStatus = item.subStatus || (excelRow && excelRow[8]) || '';
+  // Sub Status & Achievement (Respect explicit item.subStatus; fallback to Excel/status only if not set)
+  let subStatus = item.subStatus || '';
   const st = item.status || 'in_progress';
-  if (st === 'done') {
-    subStatus = '10 Finished';
-  } else if (st === 'cancel' || st === 'cancle') {
-    subStatus = 'Cancel';
-  } else if (st === 'wait' || st === 'pending') {
-    if (subStatus !== '00 Not Start' && subStatus !== 'Pending') {
-      subStatus = 'Pending';
-    }
-  } else {
-    // in_progress
-    if (!subStatus || subStatus === '10 Finished' || subStatus === 'Cancel' || subStatus === 'Pending') {
-      subStatus = (excelRow && excelRow[8] && excelRow[8] !== '10 Finished' && excelRow[8] !== 'Cancel') ? excelRow[8] : '02 Concept Design';
+  if (!subStatus) {
+    subStatus = (excelRow && excelRow[8]) || '';
+    if (st === 'done') {
+      subStatus = '10 Finished';
+    } else if (st === 'cancel' || st === 'cancle') {
+      subStatus = 'Cancel';
+    } else if (st === 'wait' || st === 'pending') {
+      if (subStatus !== '00 Not Start' && subStatus !== 'Pending') {
+        subStatus = 'Pending';
+      }
+    } else {
+      if (!subStatus || subStatus === '10 Finished' || subStatus === 'Cancel' || subStatus === 'Pending') {
+        subStatus = (excelRow && excelRow[8] && excelRow[8] !== '10 Finished' && excelRow[8] !== 'Cancel') ? excelRow[8] : '02 Concept Design';
+      }
     }
   }
 
@@ -7770,166 +7777,120 @@ function renderContent() {
   }
 }
 
-// 1. Cards View (iOS Mobile App & Desktop Modern Cards)
+// 1. Cards View (Clean Modern Cards for Desktop & Mobile)
 function renderCardsView(container, items) {
   let html = '<div class="cards-grid">';
   items.forEach(item => {
     const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#2563eb' };
     const statusHtml = getStatusPillHtml(item.status);
-    const displayDate = item.requestDate || item.completionDate || '';
+    const displayDate = item.completionDate || item.requestDate || '-';
 
     html += `
-      <div class="ios-task-card ${item.status === 'done' ? 'card-status-done' : ''}" id="ios-card-${item.id}">
-        <!-- Top bar: Category Badge + Status Pill + More Action Button -->
+      <div class="ios-task-card ${item.status === 'done' ? 'card-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'card-status-cancel' : '')}" id="ios-card-${item.id}">
+        <!-- Top bar: Category Badge + Status Pill + Mobile More Button -->
         <div class="ios-card-header-bar">
-          <div class="ios-card-cat-badge" style="background-color: ${cat.color}15; color: ${cat.color}; border: 1px solid ${cat.color}35;">
+          <div class="ios-card-cat-badge" style="background-color: ${cat.color}12; color: ${cat.color}; border: 1px solid ${cat.color}30;">
             <span class="cat-icon">${cat.icon || '📁'}</span>
             <span class="cat-name">${escapeHtml(uppercaseEnglish(cat.name))}</span>
           </div>
           <div class="ios-card-header-right">
             ${statusHtml}
-            <button type="button" class="ios-card-more-btn" onclick="openMobileActionSheet('${item.id}', event)" title="เมนูเพิ่มเติม" aria-label="More">
+            <button type="button" class="ios-card-more-btn" onclick="openMobileActionSheet('${item.id}', event)" title="เมนูจัดการ" aria-label="More">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>
             </button>
           </div>
         </div>
 
-        <!-- Main Card Body: Title, Webull 2-Column Info Grid, Files & Footer -->
-        <div class="ios-card-body" onclick="toggleCardAccordion('${item.id}', event)">
-          <div class="ios-card-title">${escapeHtml(uppercaseEnglish(item.title))}</div>
-          
+        <!-- Main Card Body -->
+        <div class="ios-card-body">
+          <div class="ios-card-title" onclick="viewAchievementDetail('${item.id}')" title="คลิกเพื่อดูรายละเอียด">
+            <span style="font-size: 13.5px; flex-shrink: 0;">📄</span>
+            <span>${escapeHtml(uppercaseEnglish(item.title))}</span>
+          </div>
+
+          <!-- Clean 2x2 Key-Value Metadata Grid -->
           <div class="webull-data-grid">
-            <div class="data-grid-col">
-              <div class="data-item">
-                <span class="data-label">REQUEST NO.</span>
-                <span class="data-val code-val">${item.code ? escapeHtml(uppercaseEnglish(item.code)) : '-'}</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">DATE</span>
-                <span class="data-val">${displayDate ? escapeHtml(displayDate) : '-'}</span>
+            <div class="data-item">
+              <span class="data-label">REQUEST &amp; QUOTATION</span>
+              <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                ${item.code ? `<span class="badge-code" style="font-size: 10.5px; padding: 1.5px 6px;">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span class="data-val">-</span>'}
+                ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" style="font-size: 10.5px; padding: 1.5px 6px;">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
               </div>
             </div>
-            <div class="data-grid-col">
-              <div class="data-item">
-                <span class="data-label">REQUESTER</span>
-                <span class="data-val">${item.requestName ? escapeHtml(uppercaseEnglish(item.requestName)) : '-'}</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">ASSIGNEE</span>
-                <span class="data-val assignee-val">${item.assignee ? escapeHtml(uppercaseEnglish(item.assignee)) : '-'}</span>
-              </div>
+            <div class="data-item">
+              <span class="data-label">DATE</span>
+              <span class="data-val">${escapeHtml(displayDate)}</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">REQUESTER</span>
+              <span class="data-val">${item.requestName ? `👤 ${escapeHtml(uppercaseEnglish(item.requestName))}` : '-'}</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">ASSIGNEE</span>
+              <span class="data-val assignee-val">${item.assignee ? `😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : '-'}</span>
             </div>
           </div>
 
-          <div class="ios-card-footer">
-            <div class="ios-card-file-chips" onclick="event.stopPropagation()">
+          <!-- Location Tags (Factory / Dept / Process) -->
+          ${(item.factory || item.department || item.process) ? `
+            <div class="card-location-tags">
+              ${item.factory ? `<span class="badge-dept" style="font-size: 10px; padding: 2px 6px;">🏢 ${escapeHtml(uppercaseEnglish(item.factory))}</span>` : ''}
+              ${item.department ? `<span class="badge-dept" style="font-size: 10px; padding: 2px 6px;">👥 ${escapeHtml(uppercaseEnglish(item.department))}</span>` : ''}
+              ${item.process ? `<span class="badge-dept" style="font-size: 10px; padding: 2px 6px;">⚙️ ${escapeHtml(uppercaseEnglish(item.process))}</span>` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Note & Description (Clean & Compact like Table Mode) -->
+          ${(item.note || item.description) ? `
+            <div class="card-detail-stack">
+              ${item.note && item.note !== '-' ? `
+                <div class="card-note-banner" title="${escapeHtml(uppercaseEnglish(item.note))}">
+                  📌 ${escapeHtml(uppercaseEnglish(item.note))}
+                </div>
+              ` : ''}
+              ${item.description && item.description !== '-' ? `
+                <div class="card-desc-snippet" title="${escapeHtml(uppercaseEnglish(item.description))}">
+                  ${escapeHtml(uppercaseEnglish(item.description))}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- Card Footer: Attachments (Left) + Actions (Right) -->
+          <div class="ios-card-footer" onclick="event.stopPropagation()">
+            <div class="ios-card-file-chips">
               ${item.pdfAttachment ? `
-                <button type="button" class="ios-file-chip chip-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู Job Request PDF">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  PDF
-                </button>` : ''}
-              ${item.workFolder ? `
-                <button type="button" class="ios-file-chip chip-folder" onclick="openWorkFolderModal('${item.id}')" title="เปิดดูข้อมูลโฟลเดอร์ผลงาน">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                  ZIP
-                </button>` : ''}
-              ${item.imageData ? `
-                <button type="button" class="ios-file-chip chip-draw" onclick="openDrawingAttachment('${item.id}')" title="เปิดดูแบบ DRAWING / รูปภาพ">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                  ${isDrawingPdf(item.imageData) ? 'DRAWING' : 'IMAGE'}
-                </button>` : ''}
-            </div>
-
-            <div class="ios-card-expand-bar">
-              <span>รายละเอียด</span>
-              <span class="accordion-arrow" id="chevron-${item.id}">▾</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="ios-card-accordion" id="accordion-${item.id}">
-          <div class="ios-accordion-content">
-            <div class="ios-row">
-              <span class="ios-row-label">Category:</span>
-              <span class="ios-row-val" style="color: ${cat.color};">${cat.icon || ''} ${escapeHtml(uppercaseEnglish(cat.name))}</span>
-            </div>
-            ${item.code ? `
-            <div class="ios-row">
-              <span class="ios-row-label">Request No:</span>
-              <span class="ios-row-val">${escapeHtml(uppercaseEnglish(item.code))}</span>
-            </div>` : ''}
-            ${item.quotation ? `
-            <div class="ios-row">
-              <span class="ios-row-label">Quotation:</span>
-              <span class="ios-row-val">${escapeHtml(uppercaseEnglish(item.quotation))}</span>
-            </div>` : ''}
-            <div class="ios-row">
-              <span class="ios-row-label">Priority / Status:</span>
-              <span class="ios-row-val">${statusHtml}</span>
-            </div>
-            ${item.requestName ? `
-            <div class="ios-row">
-              <span class="ios-row-label">From / Requester:</span>
-              <span class="ios-row-val">${escapeHtml(uppercaseEnglish(item.requestName))}</span>
-            </div>` : ''}
-            ${item.assignee ? `
-            <div class="ios-row">
-              <span class="ios-row-label">To / Assignee:</span>
-              <span class="ios-row-val">${escapeHtml(uppercaseEnglish(item.assignee))}</span>
-            </div>` : ''}
-            ${(item.factory || item.department || item.process) ? `
-            <div class="ios-row">
-              <span class="ios-row-label">Factory / Dept:</span>
-              <span class="ios-row-val">${[item.factory, item.department, item.process].filter(Boolean).map(s => escapeHtml(uppercaseEnglish(s))).join(' • ')}</span>
-            </div>` : ''}
-            ${item.description ? `
-            <div class="ios-desc-block">
-              <div class="ios-row-label" style="margin-bottom: 3px;">Description:</div>
-              <div class="ios-desc-text">${escapeHtml(uppercaseEnglish(item.description))}</div>
-            </div>` : ''}
-            ${item.note ? `
-            <div class="ios-note-block">
-              <strong>NOTE:</strong> ${escapeHtml(uppercaseEnglish(item.note))}
-            </div>` : ''}
-
-            <!-- Attachments -->
-            <div class="ios-card-attachments">
-              ${item.pdfAttachment ? `
-                <div class="card-attachment-group">
-                  <button type="button" class="btn btn-outline btn-sm" onclick="openPdfAttachment('${item.id}')" title="เปิดดู JOB REQUEST PDF" style="color: #991b1b; border-color: #fca5a5; background: #fef2f2;">
-                    📄 ดู PDF
-                  </button>
-                  <button type="button" class="btn btn-outline btn-sm" onclick="downloadPdfAttachment('${item.id}')" title="ดาวน์โหลดไฟล์ PDF ลงเครื่อง" style="color: #163282; border-color: #c8d8f6; background: #f0f4fc; font-weight: 700;">
-                    ⬇️ โหลด
-                  </button>
+                <div class="table-badge-group">
+                  <button type="button" class="badge-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู JOB REQUEST PDF" style="font-size: 10px; padding: 2px 6px;">📄 PDF</button>
+                  <button type="button" class="badge-pdf badge-dl" onclick="downloadPdfAttachment('${item.id}')" title="ดาวน์โหลดไฟล์ PDF" style="font-size: 10px; padding: 2px 4px; border-left: none; font-weight: bold;">⬇️</button>
                 </div>` : ''}
               ${item.workFolder ? `
-                <div class="card-attachment-group">
-                  <button type="button" class="btn btn-outline btn-sm" onclick="openWorkFolderModal('${item.id}')" title="ดูข้อมูลโฟลเดอร์ผลงาน">
-                    📁 FOLDER
-                  </button>
-                  <button type="button" class="btn btn-outline btn-sm" onclick="downloadWorkFolderAttachment('${item.id}')" title="ดาวน์โหลดโฟลเดอร์เป็น ZIP" style="color: #047857; border-color: #a7f3d0; background: #ecfdf5; font-weight: 700;">
-                    📥 ZIP
-                  </button>
+                <div class="table-badge-group">
+                  <button type="button" class="badge-folder" onclick="openWorkFolderModal('${item.id}')" title="เปิดดูข้อมูลโฟลเดอร์ผลงาน" style="font-size: 10px; padding: 2px 6px;">📁 ${escapeHtml(getFolderBadgeText(item.workFolder))}</button>
+                  <button type="button" class="badge-folder badge-dl" onclick="downloadWorkFolderAttachment('${item.id}')" title="ดาวน์โหลดโฟลเดอร์เป็น ZIP" style="font-size: 10px; padding: 2px 4px; border-left: none; font-weight: bold;">📥</button>
                 </div>` : ''}
-              ${item.imageData ? `
-                <div class="card-attachment-group">
-                  <button type="button" class="btn btn-outline btn-sm" onclick="openDrawingAttachment('${item.id}')" title="${isDrawingPdf(item.imageData) ? 'เปิดดู DRAWING (PDF)' : 'เปิดดูรูปภาพ'}">
-                    ${isDrawingPdf(item.imageData) ? '📄 DRAWING' : '🖼️ รูปภาพ'}
-                  </button>
-                  <button type="button" class="btn btn-outline btn-sm" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลดรูปภาพ/DRAWING" style="color: #047857; border-color: #a7f3d0; background: #ecfdf5; font-weight: 700;">
-                    ⬇️ โหลด
-                  </button>
-                </div>` : ''}
+              ${item.imageData ? (
+                isDrawingPdf(item.imageData) ? `
+                  <div class="table-badge-group">
+                    <button type="button" class="badge-pdf" onclick="openDrawingAttachment('${item.id}')" title="เปิดดู DRAWING (PDF)" style="font-size: 10px; padding: 2px 6px; background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📄 DWG</button>
+                    <button type="button" class="badge-pdf badge-dl" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลด DRAWING (PDF)" style="font-size: 10px; padding: 2px 4px; background:#ecfdf5; color:#065f46; border-color:#a7f3d0; border-left: none; font-weight: bold;">⬇️</button>
+                  </div>` : `
+                  <div class="table-badge-group">
+                    <button type="button" class="badge-code" onclick="openDrawingAttachment('${item.id}')" title="ดูรูปภาพ DRAWING" style="font-size: 10px; padding: 2px 6px; cursor: pointer;">🖼️ IMG</button>
+                    <button type="button" class="badge-code badge-dl" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลดรูปภาพ" style="font-size: 10px; padding: 2px 4px; cursor: pointer; border-left: none; font-weight: bold;">⬇️</button>
+                  </div>`
+              ) : ''}
             </div>
 
-            <!-- Quick Actions -->
-            <div class="ios-accordion-actions">
-              <button type="button" class="btn btn-outline btn-sm" onclick="viewAchievementDetail('${item.id}')">
-                👁️ ดูรายละเอียดเต็ม
+            <div class="card-actions" style="margin-left: auto;">
+              <button type="button" class="btn btn-outline btn-sm btn-icon" onclick="viewAchievementDetail('${item.id}')" title="ดูรายละเอียด">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementModal('${item.id}')">
-                ✏️ แก้ไขงาน
+              <button type="button" class="btn btn-outline btn-sm btn-icon" onclick="openAchievementModal('${item.id}')" title="แก้ไข">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button type="button" class="btn btn-outline btn-sm btn-icon text-danger" onclick="deleteAchievement('${item.id}')" title="ลบ">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               </button>
             </div>
           </div>
@@ -8178,7 +8139,7 @@ function renderTimelineView(container, items) {
       html += `
         <div class="timeline-item">
           <div class="timeline-dot" style="border-color: ${cat.color};"></div>
-          <div class="timeline-card ${item.status === 'done' ? 'card-status-done' : ''}">
+          <div class="timeline-card ${item.status === 'done' ? 'card-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'card-status-cancel' : '')}">
             <div class="card-header-meta">
               <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
                 ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
@@ -8383,53 +8344,53 @@ function renderTableView(container, items) {
                 🗂️ ตัวกรอง EXCEL:
               </span>
               <select class="excel-filter-select ${currentSectionFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('section', this.value)" title="กรองตามช่วงเวลาลงทะเบียน (Section S0/S1/S2)">
-                <option value="all" ${currentSectionFilter === 'all' ? 'selected' : ''}>⏱️ SECTION: ทั้งหมด</option>
+                <option value="all" ${currentSectionFilter === 'all' ? 'selected' : ''}>SECTION: ทั้งหมด</option>
                 <option value="S0" ${currentSectionFilter === 'S0' ? 'selected' : ''}>S0 (งานค้างปี 2025)</option>
                 <option value="S1" ${currentSectionFilter === 'S1' ? 'selected' : ''}>S1 (วันที่ 1 - 15)</option>
                 <option value="S2" ${currentSectionFilter === 'S2' ? 'selected' : ''}>S2 (วันที่ 16 - 31)</option>
               </select>
 
               <select class="excel-filter-select ${currentJobTypeFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('jobType', this.value)" title="กรองตามประเภทงานวิศวกรรม (Job Type)">
-                <option value="all" ${currentJobTypeFilter === 'all' ? 'selected' : ''}>🛠️ JOB TYPE: ทั้งหมด</option>
-                <option value="D" ${currentJobTypeFilter === 'D' ? 'selected' : ''}>D : 01 Design</option>
-                <option value="R" ${currentJobTypeFilter === 'R' ? 'selected' : ''}>R : 02 Repair</option>
-                <option value="M" ${currentJobTypeFilter === 'M' ? 'selected' : ''}>M : 03 Modify</option>
-                <option value="I" ${currentJobTypeFilter === 'I' ? 'selected' : ''}>I : 04 Increase</option>
-                <option value="A" ${currentJobTypeFilter === 'A' ? 'selected' : ''}>A : 05 Assy / Install</option>
-                <option value="S" ${currentJobTypeFilter === 'S' ? 'selected' : ''}>S : 06 Simulation</option>
+                <option value="all" ${currentJobTypeFilter === 'all' ? 'selected' : ''}>JOB TYPE: ทั้งหมด</option>
+                <option value="D" ${currentJobTypeFilter === 'D' ? 'selected' : ''}>D : Design</option>
+                <option value="R" ${currentJobTypeFilter === 'R' ? 'selected' : ''}>R : Repair</option>
+                <option value="M" ${currentJobTypeFilter === 'M' ? 'selected' : ''}>M : Modify</option>
+                <option value="I" ${currentJobTypeFilter === 'I' ? 'selected' : ''}>I : Increase</option>
+                <option value="A" ${currentJobTypeFilter === 'A' ? 'selected' : ''}>A : Assy / Install</option>
+                <option value="S" ${currentJobTypeFilter === 'S' ? 'selected' : ''}>S : Simulation</option>
                 <option value="T" ${currentJobTypeFilter === 'T' ? 'selected' : ''}>T : Training</option>
                 <option value="AC" ${currentJobTypeFilter === 'AC' ? 'selected' : ''}>AC : Activity / 5S</option>
                 <option value="Q" ${currentJobTypeFilter === 'Q' ? 'selected' : ''}>Q : Quote</option>
               </select>
 
               <select class="excel-filter-select ${currentSubJobTypeFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('subJobType', this.value)" title="กรองตามรูปแบบการผลิต (In-house / Outsource)">
-                <option value="all" ${currentSubJobTypeFilter === 'all' ? 'selected' : ''}>🏭 SUB JOB: ทั้งหมด</option>
-                <option value="01 In-house" ${currentSubJobTypeFilter === '01 In-house' ? 'selected' : ''}>01 In-house (ทำเอง)</option>
-                <option value="02 Outsource" ${currentSubJobTypeFilter === '02 Outsource' ? 'selected' : ''}>02 Outsource (จ้างผลิต)</option>
+                <option value="all" ${currentSubJobTypeFilter === 'all' ? 'selected' : ''}>SUB JOB: ทั้งหมด</option>
+                <option value="01 In-house" ${currentSubJobTypeFilter === '01 In-house' ? 'selected' : ''}>In-house (ทำเอง)</option>
+                <option value="02 Outsource" ${currentSubJobTypeFilter === '02 Outsource' ? 'selected' : ''}>Outsource (จ้างผลิต)</option>
                 <option value="All" ${currentSubJobTypeFilter === 'All' ? 'selected' : ''}>All (In-house + Outsource)</option>
               </select>
 
               <select class="excel-filter-select ${currentPriorityFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('priority', this.value)" title="กรองตามระดับความเร่งด่วน (Priority / Job Level)">
-                <option value="all" ${currentPriorityFilter === 'all' ? 'selected' : ''}>🔥 PRIORITY: ทั้งหมด</option>
-                <option value="Super High" ${currentPriorityFilter === 'Super High' ? 'selected' : ''}>🔥 Super High</option>
-                <option value="High" ${currentPriorityFilter === 'High' ? 'selected' : ''}>⚡ High</option>
-                <option value="Medium" ${currentPriorityFilter === 'Medium' ? 'selected' : ''}>🔹 Medium</option>
-                <option value="Low" ${currentPriorityFilter === 'Low' ? 'selected' : ''}>🌱 Low</option>
+                <option value="all" ${currentPriorityFilter === 'all' ? 'selected' : ''}>PRIORITY: ทั้งหมด</option>
+                <option value="Super High" ${currentPriorityFilter === 'Super High' ? 'selected' : ''}>Super High</option>
+                <option value="High" ${currentPriorityFilter === 'High' ? 'selected' : ''}>High</option>
+                <option value="Medium" ${currentPriorityFilter === 'Medium' ? 'selected' : ''}>Medium</option>
+                <option value="Low" ${currentPriorityFilter === 'Low' ? 'selected' : ''}>Low</option>
               </select>
 
               <select class="excel-filter-select ${currentSubStatusFilter !== 'all' ? 'active-filter' : ''}" onchange="setExcelFilter('subStatus', this.value)" title="กรองตามขั้นตอนย่อย 10 ขั้นตอน (Sub Status & Achievement)">
-                <option value="all" ${currentSubStatusFilter === 'all' ? 'selected' : ''}>📊 SUB STATUS: ทั้งหมด</option>
-                <option value="00 Not Start" ${currentSubStatusFilter === '00 Not Start' ? 'selected' : ''}>00 Not Start (0%)</option>
-                <option value="01 Req. Analysis" ${currentSubStatusFilter === '01 Req. Analysis' ? 'selected' : ''}>01 Req. Analysis (10%)</option>
-                <option value="02 Concept Design" ${currentSubStatusFilter === '02 Concept Design' ? 'selected' : ''}>02 Concept Design (20%)</option>
-                <option value="03 User Approval 1" ${currentSubStatusFilter === '03 User Approval 1' ? 'selected' : ''}>03 User Approval 1 (30%)</option>
-                <option value="04 Detailed Drawing" ${currentSubStatusFilter === '04 Detailed Drawing' ? 'selected' : ''}>04 Detailed Drawing (40%)</option>
-                <option value="05 Quote Request" ${currentSubStatusFilter === '05 Quote Request' ? 'selected' : ''}>05 Quote Request (50%)</option>
-                <option value="06 User Approval 2" ${currentSubStatusFilter === '06 User Approval 2' ? 'selected' : ''}>06 User Approval 2 (60%)</option>
-                <option value="07 Supp. Proc." ${currentSubStatusFilter === '07 Supp. Proc.' ? 'selected' : ''}>07 Supp. Proc. (70%)</option>
-                <option value="08 P.Techno. Proc." ${currentSubStatusFilter === '08 P.Techno. Proc.' ? 'selected' : ''}>08 P.Techno. Proc. (80%)</option>
-                <option value="09 Verification" ${currentSubStatusFilter === '09 Verification' ? 'selected' : ''}>09 Verification (90%)</option>
-                <option value="10 Finished" ${currentSubStatusFilter === '10 Finished' ? 'selected' : ''}>10 Finished (100%)</option>
+                <option value="all" ${currentSubStatusFilter === 'all' ? 'selected' : ''}>SUB STATUS: ทั้งหมด</option>
+                <option value="00 Not Start" ${currentSubStatusFilter === '00 Not Start' ? 'selected' : ''}>Not Start (0%)</option>
+                <option value="01 Req. Analysis" ${currentSubStatusFilter === '01 Req. Analysis' ? 'selected' : ''}>Req. Analysis (10%)</option>
+                <option value="02 Concept Design" ${currentSubStatusFilter === '02 Concept Design' ? 'selected' : ''}>Concept Design (20%)</option>
+                <option value="03 User Approval 1" ${currentSubStatusFilter === '03 User Approval 1' ? 'selected' : ''}>User Approval 1 (30%)</option>
+                <option value="04 Detailed Drawing" ${currentSubStatusFilter === '04 Detailed Drawing' ? 'selected' : ''}>Detailed Drawing (40%)</option>
+                <option value="05 Quote Request" ${currentSubStatusFilter === '05 Quote Request' ? 'selected' : ''}>Quote Request (50%)</option>
+                <option value="06 User Approval 2" ${currentSubStatusFilter === '06 User Approval 2' ? 'selected' : ''}>User Approval 2 (60%)</option>
+                <option value="07 Supp. Proc." ${currentSubStatusFilter === '07 Supp. Proc.' ? 'selected' : ''}>Supp. Proc. (70%)</option>
+                <option value="08 P.Techno. Proc." ${currentSubStatusFilter === '08 P.Techno. Proc.' ? 'selected' : ''}>P.Techno. Proc. (80%)</option>
+                <option value="09 Verification" ${currentSubStatusFilter === '09 Verification' ? 'selected' : ''}>Verification (90%)</option>
+                <option value="10 Finished" ${currentSubStatusFilter === '10 Finished' ? 'selected' : ''}>Finished (100%)</option>
                 <option value="Pending" ${currentSubStatusFilter === 'Pending' ? 'selected' : ''}>Pending (0%)</option>
                 <option value="Cancel" ${currentSubStatusFilter === 'Cancel' ? 'selected' : ''}>Cancel (100%)</option>
               </select>
@@ -8450,17 +8411,17 @@ function renderTableView(container, items) {
       ${!isCompact ? `
         <!-- Synced Top Horizontal Scrollbar Bar (No need to scroll to bottom of table!) -->
         <div class="table-top-scrollbar-bar">
-          <span style="font-size: 10.5px; font-weight: 800; color: #1d4ed8; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+          <span style="font-size: 10.5px; font-weight: 700; color: #475569; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
             ↔️ แถบเลื่อนซ้าย-ขวา (หรือคลิกค้างบนตารางแล้วลากเมาส์):
           </span>
-          <div class="top-scroll-track-wrap" id="topScrollTrackWrap" title="ลากแถบสีน้ำเงินเพื่อเลื่อนตารางซ้าย-ขวาได้ทันที">
+          <div class="top-scroll-track-wrap" id="topScrollTrackWrap" title="ลากแถบสีเทาเพื่อเลื่อนตารางซ้าย-ขวาได้ทันที">
             <div class="top-scroll-dummy" id="topScrollDummy"></div>
           </div>
         </div>
       ` : ''}
     </div>
 
-    <div class="table-container" id="tableScrollContainer">
+    <div class="table-container ${!isCompact ? 'has-summary-footer' : ''}" id="tableScrollContainer">
   `;
 
   if (isCompact) {
@@ -8487,7 +8448,7 @@ function renderTableView(container, items) {
       const dateDisplay = item.completionDate || item.requestDate || '-';
 
       html += `
-        <tr class="${item.status === 'done' ? 'row-status-done' : ''}">
+        <tr class="${item.status === 'done' ? 'row-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'row-status-cancel' : '')}">
           <td class="col-no" style="text-align: center; color: var(--text-light); font-weight: 600; font-size: 12px; white-space: nowrap;">${index + 1}</td>
           <td>
             <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px; line-height: 1.3;" onclick="viewAchievementDetail('${item.id}')">
@@ -8595,18 +8556,18 @@ function renderTableView(container, items) {
       <table class="data-table table-full">
         <thead>
           <tr>
-            <th class="sticky-col-no" style="width: 44px; min-width: 44px; text-align: center; white-space: nowrap;">#</th>
-            <th class="sticky-col-task" style="min-width: 225px; max-width: 255px;">TASK NAME & CATEGORY</th>
-            <th class="col-status" style="min-width: 150px; white-space: nowrap;">STATUS & ACHIEVEMENT</th>
-            <th style="min-width: 155px;">TEAM & ASSIGN</th>
-            <th style="min-width: 145px;">JOB TYPE & PRIORITY</th>
-            <th style="min-width: 165px;">REQUEST & QUOTATION</th>
-            <th style="min-width: 165px;">FACTORY / DEPT / PROCESS</th>
-            <th style="min-width: 140px; white-space: nowrap;">TIMELINE (ACT / PLAN)</th>
-            <th style="min-width: 190px; max-width: 225px;">DETAIL</th>
-            <th style="min-width: 155px; max-width: 195px;">NOTE</th>
-            <th style="min-width: 120px;">ATTACHMENTS</th>
-            <th style="width: 78px; min-width: 78px; text-align: center;">จัดการ</th>
+            <th class="sticky-col-no" style="width: 48px; min-width: 48px; text-align: center; white-space: nowrap;">#</th>
+            <th class="sticky-col-task" style="width: 300px; min-width: 295px; max-width: 315px;">TASK &amp; CATEGORY</th>
+            <th class="col-status" style="min-width: 145px; text-align: center; white-space: nowrap;">STATUS &amp; ACHIEVEMENT</th>
+            <th style="min-width: 145px;">TEAM &amp; ASSIGN</th>
+            <th style="min-width: 155px;">JOB TYPE &amp; PRIORITY</th>
+            <th style="min-width: 235px;">REQUEST &amp; QUOTATION</th>
+            <th style="min-width: 280px;">FACTORY / DEPT / PROCESS</th>
+            <th style="min-width: 135px; white-space: nowrap;">TIMELINE</th>
+            <th style="min-width: 220px; max-width: 260px;">DETAIL</th>
+            <th style="min-width: 190px; max-width: 230px;">NOTE</th>
+            <th style="min-width: 130px;">ATTACHMENTS</th>
+            <th class="sticky-col-action" style="width: 86px; min-width: 86px; text-align: center; white-space: nowrap;">จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -8621,17 +8582,25 @@ function renderTableView(container, items) {
       const secUpper = (xl.section || '').toUpperCase();
       const secClass = secUpper === 'S0' ? 'sec-s0' : (secUpper === 'S1' ? 'sec-s1' : (secUpper === 'S2' ? 'sec-s2' : ''));
 
-      // Priority badge class & icon
+      // Priority badge class (clean text only, no emoji icons)
       const priLower = (xl.priority || 'Medium').toLowerCase();
       let priClass = 'pri-medium';
-      let priIcon = '🔹';
-      if (priLower.includes('super')) { priClass = 'pri-super-high'; priIcon = '🔥'; }
-      else if (priLower.includes('high')) { priClass = 'pri-high'; priIcon = '⚡'; }
-      else if (priLower.includes('low')) { priClass = 'pri-low'; priIcon = '🌱'; }
+      if (priLower.includes('super')) { priClass = 'pri-super-high'; }
+      else if (priLower.includes('high')) { priClass = 'pri-high'; }
+      else if (priLower.includes('low')) { priClass = 'pri-low'; }
 
-      // Sub Job Type class
+      // Sub Job Type class & clean label without leading 01/02
       const subJobLower = (xl.subJobType || '').toLowerCase();
       const subJobClass = subJobLower.includes('outsource') ? 'sub-outsource' : (subJobLower === 'all' ? 'sub-all' : 'sub-inhouse');
+      const cleanSubJobLabel = stripLeadingNumberCode(xl.subJobType);
+
+      // Clean Sub Status label without leading 00-10
+      const cleanSubStatus = uppercaseEnglish(stripLeadingNumberCode(xl.subStatus));
+      const isRedundantSubStatus = (
+        (item.status === 'done' && cleanSubStatus === 'FINISHED') ||
+        ((item.status === 'wait' || item.status === 'pending') && (cleanSubStatus === 'PENDING' || cleanSubStatus === 'NOT START')) ||
+        ((item.status === 'cancel' || item.status === 'cancle') && cleanSubStatus === 'CANCEL')
+      );
 
       // Progress bar fill class
       let fillClass = 'fill-mid';
@@ -8642,42 +8611,44 @@ function renderTableView(container, items) {
       const jobTypeFullTitle = getJobTypeTitle(xl.jobType);
 
       html += `
-        <tr class="${item.status === 'done' ? 'row-status-done' : ''}">
+        <tr class="${item.status === 'done' ? 'row-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'row-status-cancel' : '')}">
           <!-- 1. # -->
-          <td class="sticky-col-no" style="color: var(--text-light); font-weight: 700; white-space: nowrap; text-align: center;">${index + 1}</td>
+          <td class="sticky-col-no" style="color: var(--text-light); font-weight: 600; font-size: 12px; white-space: nowrap; text-align: center;">${index + 1}</td>
 
-          <!-- 2. TASK NAME & CATEGORY -->
+          <!-- 2. TASK & CATEGORY (Exact match with Image 2) -->
           <td class="sticky-col-task">
-            <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px; line-height: 1.35;" onclick="viewAchievementDetail('${item.id}')">
-              <span style="flex-shrink: 0;">📄</span>
+            <div style="font-weight: 700; cursor: pointer; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px; line-height: 1.3;" onclick="viewAchievementDetail('${item.id}')">
+              <span style="font-size: 13px; flex-shrink: 0;">📄</span>
               <span style="word-break: break-word;">${escapeHtml(uppercaseEnglish(item.title))}</span>
             </div>
-            <div style="font-size: 10.5px; color: ${cat.color}; margin-top: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: ${cat.color}12; padding: 1.5px 7px; border-radius: 4px; border: 1px solid ${cat.color}30;">
+            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600;">
               ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
             </div>
           </td>
 
-          <!-- 3. STATUS & ACHIEVEMENT (0.0 - 1.0) -->
-          <td class="col-status">
+          <!-- 3. STATUS & ACHIEVEMENT -->
+          <td class="col-status" style="text-align: center;">
             <div class="status-achv-stack">
               ${statusHtml}
-              <span class="sub-status-pill" onclick="setExcelFilter('subStatus', '${escapeHtml(xl.subStatus)}')" style="cursor: pointer;" title="Sub Status (ขั้นตอนย่อยตามไฟล์ Excel): คลิกเพื่อกรอง">
-                ${escapeHtml(uppercaseEnglish(xl.subStatus))}
-              </span>
+              ${!isRedundantSubStatus && cleanSubStatus ? `
+                <span class="sub-status-pill" onclick="setExcelFilter('subStatus', '${escapeHtml(xl.subStatus)}')" style="cursor: pointer;" title="Sub Status (คลิกเพื่อกรอง)">
+                  ${escapeHtml(cleanSubStatus)}
+                </span>
+              ` : ''}
               <div class="achv-progress-wrap" title="Achievement Score: ${xl.achievement} (${xl.achievementPct}%)">
                 <div class="achv-progress-bar">
                   <div class="achv-progress-fill ${fillClass}" style="width: ${xl.achievementPct}%;"></div>
                 </div>
-                <span class="achv-score-text">${xl.achievementPct}% (${xl.achievement})</span>
+                <span class="achv-score-text">${xl.achievementPct}%</span>
               </div>
             </div>
           </td>
 
-          <!-- 4. TEAM & ASSIGN (TOOLING / DESIGN SUPPORT / MAINTENANCE SUPPORT) -->
+          <!-- 4. TEAM & ASSIGN -->
           <td>
             <div class="team-role-stack">
               ${item.assignee ? `
-                <span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="cursor: pointer;" title="ผู้รับผิดชอบหลัก (คลิกเพื่อกรอง): ${escapeHtml(uppercaseEnglish(item.assignee))}">
+                <span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="font-size: 11px; cursor: pointer;" title="ผู้รับผิดชอบหลัก (คลิกเพื่อกรอง): ${escapeHtml(uppercaseEnglish(item.assignee))}">
                   😎 ${escapeHtml(uppercaseEnglish(item.assignee))}
                 </span>
               ` : ''}
@@ -8689,83 +8660,71 @@ function renderTableView(container, items) {
               ` : ''}
               ${xl.designSupport && xl.designSupport !== '-' ? `
                 <div class="team-role-item" title="Design Support (ผู้สนับสนุน)">
-                  <span class="team-role-label role-support">DSN SUP</span>
+                  <span class="team-role-label role-support">DSN</span>
                   <span class="team-role-name">${escapeHtml(uppercaseEnglish(xl.designSupport))}</span>
                 </div>
               ` : ''}
               ${xl.maintenanceSupport && xl.maintenanceSupport !== '-' ? `
                 <div class="team-role-item" title="Maintenance Support (ผู้สนับสนุน)">
-                  <span class="team-role-label role-support">MTN SUP</span>
+                  <span class="team-role-label role-support">MTN</span>
                   <span class="team-role-name">${escapeHtml(uppercaseEnglish(xl.maintenanceSupport))}</span>
                 </div>
               ` : ''}
-              ${(!item.assignee && (!xl.toolingTeam || xl.toolingTeam === '-') && (!xl.supportBy || xl.supportBy === '-')) ? '<span style="color:#cbd5e1;">-</span>' : ''}
+              ${(!item.assignee && (!xl.toolingTeam || xl.toolingTeam === '-') && (!xl.supportBy || xl.supportBy === '-')) ? '<span style="color:#cbd5e1; font-size: 11px;">-</span>' : ''}
             </div>
           </td>
 
-          <!-- 5. JOB TYPE & PRIORITY -->
+          <!-- 5. JOB TYPE & PRIORITY (Clean soft pills, no numbers or icons) -->
           <td>
             <div class="job-meta-stack">
-              <span class="badge-priority ${priClass}" onclick="setExcelFilter('priority', '${escapeHtml(xl.priority)}')" style="cursor: pointer;" title="ระดับความสำคัญ (Job Level / Priority): คลิกเพื่อกรอง">
-                ${priIcon} ${escapeHtml(uppercaseEnglish(xl.priority))}
-              </span>
-              <div style="display: flex; gap: 4px; flex-wrap: nowrap; align-items: center;">
-                <span class="badge-job-type" title="Job Type: ${escapeHtml(jobTypeFullTitle)}">
-                  🛠️ ${escapeHtml(uppercaseEnglish(xl.jobType))}
-                </span>
-                <span class="badge-sub-job ${subJobClass}" onclick="setExcelFilter('subJobType', '${escapeHtml(xl.subJobType)}')" style="cursor: pointer;" title="Sub Job Type (In-house / Outsource): คลิกเพื่อกรอง">
-                  ${escapeHtml(uppercaseEnglish(xl.subJobType))}
-                </span>
-              </div>
-              <div style="font-size: 9.5px; color: #64748b; font-weight: 700; line-height: 1.2;">
-                ${escapeHtml(jobTypeFullTitle)}
-              </div>
-            </div>
-          </td>
-
-          <!-- 6. REQUEST, QUOTATION & REG. SECTION -->
-          <td>
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
               <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
-                ${item.code ? `<span class="badge-code" title="Request No.">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span style="color:#cbd5e1;">-</span>'}
-                ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" title="Quotation No.">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
-              </div>
-              <div class="reg-sec-inline">
-                <span class="badge-reg-month ${xl.regMonth === '2025' ? 'reg-2025' : ''}" title="Register Month (เดือนที่ลงทะเบียน)">🗓️ ${escapeHtml(uppercaseEnglish(xl.regMonth))}</span>
-                ${xl.section && xl.section !== '-' ? `
-                  <span class="badge-section ${secClass}" onclick="setExcelFilter('section', '${escapeHtml(xl.section)}')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะ Section ${escapeHtml(xl.section)}">${escapeHtml(uppercaseEnglish(xl.section))}</span>
+                <span class="badge-job-type" onclick="setExcelFilter('jobType', '${escapeHtml(xl.jobType)}')" style="cursor: pointer;" title="Job Type: ${escapeHtml(jobTypeFullTitle)}">
+                  ${escapeHtml(uppercaseEnglish(jobTypeFullTitle))}
+                </span>
+                ${cleanSubJobLabel && cleanSubJobLabel !== '-' ? `
+                  <span class="badge-sub-job ${subJobClass}" onclick="setExcelFilter('subJobType', '${escapeHtml(xl.subJobType)}')" style="cursor: pointer;" title="Sub Job Type: คลิกเพื่อกรอง">
+                    ${escapeHtml(uppercaseEnglish(cleanSubJobLabel))}
+                  </span>
                 ` : ''}
-                ${item.requestDate ? `<span style="font-size: 10px; color: var(--text-muted); font-weight: 600;">${item.requestDate}</span>` : ''}
               </div>
-              <div style="font-weight: 700; font-size: 11px; color: #334155;">
-                👤 ${escapeHtml(uppercaseEnglish(item.requestName || '-'))}
-              </div>
+              <span class="badge-priority ${priClass}" onclick="setExcelFilter('priority', '${escapeHtml(xl.priority)}')" style="cursor: pointer;" title="Priority: คลิกเพื่อกรอง">
+                ${escapeHtml(uppercaseEnglish(xl.priority))}
+              </span>
             </div>
           </td>
 
-          <!-- 7. FACTORY / DEPT / PROCESS -->
+          <!-- 6. REQUEST & QUOTATION (Exact 2-line layout matching Image 2) -->
           <td>
-            <div class="dept-badge-stack">
-              ${item.factory ? `<span class="badge-dept">🏢 ${escapeHtml(uppercaseEnglish(item.factory))}</span>` : ''}
-              ${item.department ? `<span class="badge-dept">👥 ${escapeHtml(uppercaseEnglish(item.department))}</span>` : ''}
-              ${item.process ? `<span class="badge-dept">⚙️ ${escapeHtml(uppercaseEnglish(item.process))}</span>` : ''}
-              ${(!item.factory && !item.department && !item.process) ? '<span style="color:#cbd5e1;">-</span>' : ''}
+            <div class="cell-stacked">
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
+                ${item.code ? `<span class="badge-code" title="REQUEST NUMBER">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span style="color:#cbd5e1; font-size: 10.5px;">-</span>'}
+                ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" title="QUOTATION">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
+              </div>
+              ${item.requestName ? `
+                <div class="cell-subtext" style="color: #334155; font-weight: 600;">
+                  👤 ${escapeHtml(uppercaseEnglish(item.requestName))}
+                </div>
+              ` : ''}
             </div>
           </td>
 
-          <!-- 8. TIMELINE (ACTION / PLAN / FINISHED) -->
+          <!-- 7. FACTORY / DEPT / PROCESS (Exact badge layout matching Image 2) -->
+          <td>
+            <div style="display: flex; gap: 3px; flex-wrap: wrap;">
+              ${item.factory ? `<span class="badge-dept" style="font-size: 10px; padding: 1px 5px;">🏢 ${escapeHtml(uppercaseEnglish(item.factory))}</span>` : ''}
+              ${item.department ? `<span class="badge-dept" style="font-size: 10px; padding: 1px 5px;">👥 ${escapeHtml(uppercaseEnglish(item.department))}</span>` : ''}
+              ${item.process ? `<span class="badge-dept" style="font-size: 10px; padding: 1px 5px;">⚙️ ${escapeHtml(uppercaseEnglish(item.process))}</span>` : ''}
+              ${(!item.factory && !item.department && !item.process) ? '<span style="color:#cbd5e1; font-size: 11px;">-</span>' : ''}
+            </div>
+          </td>
+
+          <!-- 8. TIMELINE (ACTION / FINISHED) -->
           <td>
             <div class="date-plan-stack">
               ${xl.actionDate ? `
                 <div class="date-plan-row" title="Action Date (วันเริ่มดำเนินการ)">
                   <span class="date-plan-tag tag-act">ACT</span>
                   <span>${escapeHtml(xl.actionDate)}</span>
-                </div>
-              ` : ''}
-              ${xl.finishPlanDate ? `
-                <div class="date-plan-row" title="SS. Finish Plan Date (แผนกำหนดเสร็จ)">
-                  <span class="date-plan-tag tag-plan">PLAN</span>
-                  <span>${escapeHtml(xl.finishPlanDate)}</span>
                 </div>
               ` : ''}
               ${item.completionDate ? `
@@ -8776,7 +8735,7 @@ function renderTableView(container, items) {
               ` : ''}
               ${xl.finishedMonth ? `
                 <span class="badge-fin-month" title="Finished Month (เดือนที่ปิดงานสำเร็จ)">✓ FIN: ${escapeHtml(uppercaseEnglish(xl.finishedMonth))}</span>
-              ` : (!xl.actionDate && !xl.finishPlanDate && !item.completionDate ? '<span style="color:#cbd5e1;">-</span>' : '')}
+              ` : (!xl.actionDate && !item.completionDate ? '<span style="color:#cbd5e1;">-</span>' : '')}
             </div>
           </td>
 
@@ -8828,8 +8787,8 @@ function renderTableView(container, items) {
             </div>
           </td>
 
-          <!-- 12. จัดการ -->
-          <td style="text-align: center;">
+          <!-- 12. จัดการ (Sticky Right Column) -->
+          <td class="sticky-col-action" style="text-align: center;">
             <div class="card-actions" style="justify-content: center;">
               <button class="btn btn-outline btn-sm btn-icon" onclick="openAchievementModal('${item.id}')" title="แก้ไข">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -8845,33 +8804,43 @@ function renderTableView(container, items) {
 
     html += `
         </tbody>
-        <tfoot>
-          <tr>
-            <td class="sticky-col-no" style="text-align: center;">Σ</td>
-            <td class="sticky-col-task">
-              รวมทั้งหมด ${items.length} งาน (TOTAL RECORDS)
-            </td>
-            <td style="background: #ecfdf5; color: #047857; border-left: 1px solid #a7f3d0; border-right: 1px solid #a7f3d0;">
-              <div>ACHIEVEMENT: ${totalAchvScore.toFixed(1)} / ${items.length}</div>
-              <div style="font-size: 12.5px; font-weight: 800; color: #065f46;">AVG: ${avgAchvPct}%</div>
-            </td>
-            <td colspan="4" style="color: #475569;">
-              DONE: <span style="color:#15803d;">${countDone}</span> &nbsp;|&nbsp;
-              IN PROGRESS: <span style="color:#1d4ed8;">${countInProg}</span> &nbsp;|&nbsp;
-              PENDING: <span style="color:#b45309;">${countWait}</span> &nbsp;|&nbsp;
-              CANCEL: <span style="color:#b91c1c;">${countCancel}</span>
-            </td>
-            <td colspan="5" style="text-align: right; color: #64748b; font-size: 11px;">
-              PRODUCTION TECHNOLOGY — ACHIEVEMENT TRACKER SUMMARY
-            </td>
-          </tr>
-        </tfoot>
       </table>
     `;
   }
 
   html += `
     </div>
+    ${!isCompact ? `
+      <div class="table-static-summary-footer">
+        <div class="summary-left-group">
+          <div class="summary-total-badge">
+            <span class="summary-sigma-icon">Σ</span>
+            <span>รวมทั้งหมด <b>${items.length}</b> งาน <span class="summary-sub-label">(TOTAL RECORDS)</span></span>
+          </div>
+          <span class="summary-v-divider"></span>
+          <div class="summary-achv-pill">
+            <span>📈 ACHIEVEMENT:</span>
+            <b>${totalAchvScore.toFixed(1)} / ${items.length}</b>
+            <span class="summary-achv-avg">AVG ${avgAchvPct}%</span>
+          </div>
+        </div>
+
+        <div class="summary-right-group">
+          <span class="summary-stat-pill pill-done">
+            <span class="stat-dot"></span>DONE <b>${countDone}</b>
+          </span>
+          <span class="summary-stat-pill pill-prog">
+            <span class="stat-dot"></span>IN PROGRESS <b>${countInProg}</b>
+          </span>
+          <span class="summary-stat-pill pill-pend">
+            <span class="stat-dot"></span>PENDING <b>${countWait}</b>
+          </span>
+          <span class="summary-stat-pill pill-canc">
+            <span class="stat-dot"></span>CANCEL <b>${countCancel}</b>
+          </span>
+        </div>
+      </div>
+    ` : ''}
   `;
   container.innerHTML = html;
 
@@ -8918,37 +8887,11 @@ function updateModalAchievementBadge(subStatusVal) {
 }
 
 function handleModalStatusChange(statusVal) {
-  const subStatusEl = document.getElementById('achvSubStatus');
-  if (!subStatusEl) return;
-  if (statusVal === 'done') {
-    subStatusEl.value = '10 Finished';
-  } else if (statusVal === 'cancel') {
-    subStatusEl.value = 'Cancel';
-  } else if (statusVal === 'wait') {
-    if (subStatusEl.value !== '00 Not Start' && subStatusEl.value !== 'Pending') {
-      subStatusEl.value = 'Pending';
-    }
-  } else if (statusVal === 'in_progress') {
-    if (subStatusEl.value === '10 Finished' || subStatusEl.value === 'Cancel' || subStatusEl.value === 'Pending' || subStatusEl.value === '00 Not Start') {
-      subStatusEl.value = '02 Concept Design';
-    }
-  }
-  updateModalAchievementBadge(subStatusEl.value);
+  // Independent selection: changing main STATUS no longer forces SUB STATUS to change
 }
 
 function handleModalSubStatusChange(subStatusVal) {
-  const statusEl = document.getElementById('achvStatus');
-  if (statusEl) {
-    if (subStatusVal === '10 Finished') {
-      statusEl.value = 'done';
-    } else if (subStatusVal === 'Cancel') {
-      statusEl.value = 'cancel';
-    } else if (subStatusVal === 'Pending' || subStatusVal === '00 Not Start') {
-      statusEl.value = 'wait';
-    } else {
-      statusEl.value = 'in_progress';
-    }
-  }
+  // Independent selection: changing SUB STATUS only updates the ACHV score badge, without overwriting main STATUS
   updateModalAchievementBadge(subStatusVal);
 }
 
@@ -9401,10 +9344,13 @@ function deleteAchievement(id) {
 }
 
 // --- Detail View Modal ---
+let currentDetailAchievementId = null;
+
 function viewAchievementDetail(id) {
   const item = achievements.find(a => a.id === id);
   if (!item) return;
 
+  currentDetailAchievementId = id;
   const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#64748b' };
   const xl = getTaskExcelTracking(item);
   const modal = document.getElementById('detailModal');
@@ -9420,7 +9366,7 @@ function viewAchievementDetail(id) {
         ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
       </span>
       ${statusHtml}
-      <span class="sub-status-pill" style="font-size: 11px; padding: 3px 8px;">📊 ${escapeHtml(uppercaseEnglish(xl.subStatus))} (${xl.achievementPct}%)</span>
+      <span class="sub-status-pill" style="font-size: 11px; padding: 3px 8px;">📊 ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subStatus)))} (${xl.achievementPct}%)</span>
       ${item.code ? `<span class="badge-code">REQUEST NO: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
       ${item.quotation ? `<span class="badge-quotation">QUOTATION: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
       ${item.assignee ? `<span class="badge-assignee">ASSIGN: 😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : ''}
@@ -9450,7 +9396,7 @@ function viewAchievementDetail(id) {
       </div>
       <div>
         <span style="color: var(--text-muted); font-size: 11px;">JOB TYPE / SUB JOB:</span>
-        <div style="font-weight: 700; color: #1e40af;">${escapeHtml(uppercaseEnglish(xl.jobType))} (${escapeHtml(getJobTypeTitle(xl.jobType))}) • ${escapeHtml(uppercaseEnglish(xl.subJobType))}</div>
+        <div style="font-weight: 700; color: #1e40af;">${escapeHtml(getJobTypeTitle(xl.jobType))} • ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subJobType)))}</div>
       </div>
       <div>
         <span style="color: var(--text-muted); font-size: 11px;">PRIORITY (JOB LEVEL):</span>
@@ -9589,6 +9535,14 @@ function viewAchievementDetail(id) {
 
 function closeDetailModal() {
   document.getElementById('detailModal').classList.remove('active');
+}
+
+function editFromDetailModal() {
+  const id = currentDetailAchievementId;
+  closeDetailModal();
+  if (id) {
+    openAchievementModal(id);
+  }
 }
 
 // --- Category Manager (Add, Edit, Delete) ---
