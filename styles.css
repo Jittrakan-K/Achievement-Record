@@ -857,19 +857,498 @@ body {
   filter: brightness(0.96);
 }
 
-/* Requester Ranking Section - Minimal 2D Aesthetic */
+/* Engineering & Operations Insights Dashboard + Requester Ranking Section */
 .requester-ranking-section {
   margin: 0 20px 20px 20px;
   padding: 16px 20px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2ecf8;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.03);
   transition: all 0.2s ease-in-out;
 }
 
+.eng-insights-wrapper {
+  padding: 0 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.eng-insights-wrapper.is-hidden,
 .requester-ranking-section.is-hidden {
   display: none !important;
+}
+
+/* Active Insights Filter Banner */
+.eng-active-filter-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #1e3a8a;
+}
+
+.eng-active-filter-banner.is-hidden {
+  display: none !important;
+}
+
+.eng-active-filter-label {
+  font-weight: 500;
+}
+
+.eng-active-filter-label strong {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.eng-active-filter-clear {
+  background: #ffffff;
+  border: 1px solid #93c5fd;
+  color: #1d4ed8;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.eng-active-filter-clear:hover {
+  background: #dbeafe;
+}
+
+/* Grid Layouts matching .analytics-content */
+.eng-charts-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.eng-charts-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.eng-chart-box {
+  padding: 15px 16px;
+}
+
+.eng-chart-title {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  font-size: 13px;
+}
+
+.eng-title-meta {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* Row 1: Clean Doughnut + Flat Tabular List */
+.eng-donut-layout {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.eng-donut-canvas-box {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.eng-flat-list {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.eng-flat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-radius: 4px;
+}
+
+.eng-flat-row:last-child {
+  border-bottom: none;
+}
+
+.eng-flat-row:hover {
+  background: #f8fafc;
+}
+
+.eng-flat-row.active {
+  background: #eff6ff;
+  box-shadow: inset 2px 0 0 #2563eb;
+}
+
+.eng-flat-row-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.eng-flat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.eng-flat-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eng-flat-row-right {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.eng-flat-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.eng-flat-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Row 2: Corporate Support Table (Design Support & Maintenance Support) */
+.eng-support-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.eng-support-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.eng-support-table thead th {
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 6px 8px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.eng-support-table thead th.col-count {
+  text-align: right;
+}
+
+.eng-support-tr {
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.eng-support-tr:last-child {
+  border-bottom: none;
+}
+
+.eng-support-tr:hover {
+  background: #f8fafc;
+}
+
+.eng-support-tr.active {
+  background: #eff6ff;
+}
+
+.eng-support-table td {
+  padding: 8px 8px;
+  vertical-align: middle;
+}
+
+.eng-sup-person-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eng-sup-color-bar {
+  width: 3px;
+  height: 26px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.eng-sup-person-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.eng-sup-person-sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.eng-sup-share-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.eng-sup-share-pct {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #0f172a;
+  min-width: 44px;
+}
+
+.eng-sup-share-track {
+  flex: 1;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.eng-sup-share-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.eng-support-table td.col-count {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.eng-sup-count-val {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.eng-sup-count-unit {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.eng-sup-status-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.sup-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1.5px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.sup-tag.tag-done {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.sup-tag.tag-prog {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.sup-tag.tag-pend {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.sup-tag.tag-canc {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Rows 3 & 4: Clean Flat Horizontal Progress Rows (Sub Status, Job Type, Department, Process) */
+.eng-flat-scroll {
+  display: flex;
+  flex-direction: column;
+  max-height: 235px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.eng-flat-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.eng-flat-scroll::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.eng-flat-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.eng-line-row {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-radius: 4px;
+}
+
+.eng-line-row:last-child {
+  border-bottom: none;
+}
+
+.eng-line-row:hover {
+  background: #f8fafc;
+}
+
+.eng-line-row.active {
+  background: #eff6ff;
+  box-shadow: inset 2px 0 0 #2563eb;
+}
+
+.eng-line-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.eng-line-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.eng-line-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.eng-meta-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.eng-code-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.5px 5px;
+  border-radius: 3px;
+}
+
+.eng-line-val {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.eng-line-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.eng-line-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  min-width: 38px;
+  text-align: right;
+}
+
+.eng-line-track {
+  height: 5px;
+  background: #f1f5f9;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.eng-line-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 1150px) {
+  .eng-charts-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .eng-charts-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .eng-insights-wrapper {
+    padding: 0 12px 14px 12px;
+    gap: 12px;
+  }
+  .eng-donut-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .eng-donut-canvas-box {
+    margin: 0 auto;
+  }
 }
 
 .ranking-header {

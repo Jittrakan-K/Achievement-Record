@@ -6428,16 +6428,22 @@ function resetAllFilters() {
   const allTimeBtn = document.querySelector('[data-time-filter="all"]');
   if (allTimeBtn) allTimeBtn.classList.add('active');
 
-  // Reset Excel Full Table Filters
+  // Reset Excel Full Table & Dashboard Insights Filters
   currentSectionFilter = 'all';
   currentJobTypeFilter = 'all';
   currentSubJobTypeFilter = 'all';
   currentPriorityFilter = 'all';
   currentSubStatusFilter = 'all';
+  currentFactoryFilter = 'all';
+  currentDeptFilter = 'all';
+  currentProcessFilter = 'all';
+  currentDesignSupportFilter = 'all';
+  currentMaintSupportFilter = 'all';
 
   document.querySelectorAll('.status-summary-pill').forEach(p => p.classList.remove('active'));
 
   renderContent();
+  renderEngineeringInsightsDashboard();
   renderRequesterRanking();
 }
 
@@ -6454,7 +6460,12 @@ function updateResetFilterButtonVisibility() {
     currentJobTypeFilter !== 'all' ||
     currentSubJobTypeFilter !== 'all' ||
     currentPriorityFilter !== 'all' ||
-    currentSubStatusFilter !== 'all'
+    currentSubStatusFilter !== 'all' ||
+    currentFactoryFilter !== 'all' ||
+    currentDeptFilter !== 'all' ||
+    currentProcessFilter !== 'all' ||
+    currentDesignSupportFilter !== 'all' ||
+    currentMaintSupportFilter !== 'all'
   );
   btnReset.style.display = isAnyFilterActive ? 'inline-flex' : 'none';
 }
@@ -6762,6 +6773,693 @@ function renderCharts() {
         }
       }
     });
+  }
+
+  renderEngineeringInsightsDashboard();
+}
+
+// --- Engineering & Operations Deep-Dive Insights Dashboard ---
+const STORAGE_KEY_SHOW_ENG_INSIGHTS = 'orbray_show_eng_insights_v1';
+let isEngInsightsVisible = localStorage.getItem(STORAGE_KEY_SHOW_ENG_INSIGHTS) !== 'false';
+let engPriorityChartInstance = null;
+let engSubJobChartInstance = null;
+let engFactoryChartInstance = null;
+
+// Dedicated exact field filters (handles 'ไม่ระบุ (UNSPECIFIED)' via '__UNSPECIFIED__' accurately)
+let currentFactoryFilter = 'all';
+let currentDeptFilter = 'all';
+let currentProcessFilter = 'all';
+let currentDesignSupportFilter = 'all';
+let currentMaintSupportFilter = 'all';
+
+function toggleEngInsights(forceState) {
+  if (typeof forceState === 'boolean') {
+    isEngInsightsVisible = forceState;
+  } else {
+    isEngInsightsVisible = !isEngInsightsVisible;
+  }
+  localStorage.setItem(STORAGE_KEY_SHOW_ENG_INSIGHTS, isEngInsightsVisible ? 'true' : 'false');
+  updateEngInsightsVisibility();
+  if (isEngInsightsVisible) {
+    renderEngineeringInsightsDashboard();
+    showToast('แสดงแดชบอร์ดวิเคราะห์ข้อมูลเชิงลึกเรียบร้อยแล้ว');
+  } else {
+    showToast('ซ่อนแดชบอร์ดวิเคราะห์ข้อมูลเชิงลึกเรียบร้อยแล้ว');
+  }
+}
+
+function updateEngInsightsVisibility() {
+  const section = document.getElementById('engInsightsSection');
+  const btn = document.getElementById('btnToggleEngInsights');
+  const btnText = document.getElementById('engInsightsToggleText');
+
+  if (section) {
+    if (isEngInsightsVisible) {
+      section.classList.remove('is-hidden');
+    } else {
+      section.classList.add('is-hidden');
+    }
+  }
+
+  if (btn) {
+    if (isEngInsightsVisible) {
+      btn.classList.add('btn-active-toggle');
+      btn.classList.remove('btn-inactive-toggle');
+      if (btnText) btnText.textContent = 'แดชบอร์ดเชิงลึก: แสดง (ON)';
+    } else {
+      btn.classList.remove('btn-active-toggle');
+      btn.classList.add('btn-inactive-toggle');
+      if (btnText) btnText.textContent = 'แดชบอร์ดเชิงลึก: ซ่อน (OFF)';
+    }
+  }
+}
+
+function updateEngActiveFilterBanner() {
+  const banner = document.getElementById('engActiveFilterBanner');
+  const textEl = document.getElementById('engActiveFilterText');
+  if (!banner || !textEl) return;
+
+  const activeParts = [];
+  if (currentPriorityFilter !== 'all') activeParts.push(`PRIORITY: ${uppercaseEnglish(currentPriorityFilter)}`);
+  if (currentSubJobTypeFilter !== 'all') activeParts.push(`SUB JOB: ${uppercaseEnglish(stripLeadingNumberCode(currentSubJobTypeFilter))}`);
+  if (currentSubStatusFilter !== 'all') activeParts.push(`SUB STATUS: ${uppercaseEnglish(stripLeadingNumberCode(currentSubStatusFilter))}`);
+  if (currentJobTypeFilter !== 'all') activeParts.push(`JOB TYPE: ${uppercaseEnglish(getJobTypeTitle(currentJobTypeFilter))}`);
+  if (currentFactoryFilter !== 'all') activeParts.push(`FACTORY: ${currentFactoryFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentFactoryFilter}`);
+  if (currentDeptFilter !== 'all') activeParts.push(`DEPARTMENT: ${currentDeptFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentDeptFilter}`);
+  if (currentProcessFilter !== 'all') activeParts.push(`PROCESS: ${currentProcessFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentProcessFilter}`);
+  if (currentDesignSupportFilter !== 'all') activeParts.push(`DESIGN SUPPORT: ${currentDesignSupportFilter}`);
+  if (currentMaintSupportFilter !== 'all') activeParts.push(`MANTENANCE SUPPORT: ${currentMaintSupportFilter}`);
+
+  if (activeParts.length > 0) {
+    banner.style.display = 'flex';
+    textEl.innerHTML = `ตัวกรองข้อมูลเชิงลึกที่เลือก: <b>${escapeHtml(activeParts.join('  •  '))}</b>`;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function filterFromInsightsExcel(type, value, displayLabel) {
+  let isClearing = false;
+  if (type === 'priority' && currentPriorityFilter === value) isClearing = true;
+  if (type === 'subJobType' && currentSubJobTypeFilter === value) isClearing = true;
+  if (type === 'subStatus' && currentSubStatusFilter === value) isClearing = true;
+  if (type === 'jobType' && currentJobTypeFilter === value) isClearing = true;
+
+  // Clear other field filters when clicking a new filter so user never gets 0 results from conflicting filters
+  if (!isClearing) {
+    currentFactoryFilter = 'all';
+    currentDeptFilter = 'all';
+    currentProcessFilter = 'all';
+    currentDesignSupportFilter = 'all';
+    currentMaintSupportFilter = 'all';
+    if (type !== 'priority') currentPriorityFilter = 'all';
+    if (type !== 'subJobType') currentSubJobTypeFilter = 'all';
+    if (type !== 'subStatus') currentSubStatusFilter = 'all';
+    if (type !== 'jobType') currentJobTypeFilter = 'all';
+  }
+
+  const nextVal = isClearing ? 'all' : value;
+  setExcelFilter(type, nextVal);
+  renderEngineeringInsightsDashboard();
+
+  if (isClearing) {
+    showToast('ยกเลิกตัวกรองแล้ว (แสดงงานทั้งหมด)');
+  } else {
+    showToast(`กรองข้อมูล: ${displayLabel || value}`);
+    if (window.innerWidth <= 768) {
+      switchMobileNavTab('tasks');
+    } else {
+      const controlsBar = document.querySelector('.controls-bar');
+      if (controlsBar) controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
+function filterFromInsightsField(fieldType, rawValue, displayLabel) {
+  let isClearing = false;
+  if (fieldType === 'factory' && currentFactoryFilter === rawValue) isClearing = true;
+  if (fieldType === 'department' && currentDeptFilter === rawValue) isClearing = true;
+  if (fieldType === 'process' && currentProcessFilter === rawValue) isClearing = true;
+  if (fieldType === 'designSupport' && currentDesignSupportFilter === rawValue) isClearing = true;
+  if (fieldType === 'maintSupport' && currentMaintSupportFilter === rawValue) isClearing = true;
+
+  // Clear conflicting insights filters so clicking a category always shows the exact count on the card
+  currentPriorityFilter = 'all';
+  currentSubJobTypeFilter = 'all';
+  currentSubStatusFilter = 'all';
+  currentJobTypeFilter = 'all';
+  currentFactoryFilter = 'all';
+  currentDeptFilter = 'all';
+  currentProcessFilter = 'all';
+  currentDesignSupportFilter = 'all';
+  currentMaintSupportFilter = 'all';
+
+  // Also clear text search if it previously had UNSPECIFIED or other text
+  if (currentSearch) {
+    currentSearch = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+  }
+
+  if (!isClearing) {
+    if (fieldType === 'factory') currentFactoryFilter = rawValue;
+    if (fieldType === 'department') currentDeptFilter = rawValue;
+    if (fieldType === 'process') currentProcessFilter = rawValue;
+    if (fieldType === 'designSupport') currentDesignSupportFilter = rawValue;
+    if (fieldType === 'maintSupport') currentMaintSupportFilter = rawValue;
+  }
+
+  updateResetFilterButtonVisibility();
+  renderContent();
+  renderEngineeringInsightsDashboard();
+  renderRequesterRanking();
+
+  if (isClearing) {
+    showToast('ยกเลิกการกรองแล้ว (แสดงงานทั้งหมด)');
+  } else {
+    showToast(`กรองเฉพาะ: ${displayLabel}`);
+    if (window.innerWidth <= 768) {
+      switchMobileNavTab('tasks');
+    } else {
+      const controlsBar = document.querySelector('.controls-bar');
+      if (controlsBar) controlsBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
+function createMiniCenterTextPlugin(labelSubtext) {
+  return {
+    id: 'miniDoughnutCenter',
+    afterDatasetsDraw(chart) {
+      const meta = chart.getDatasetMeta(0);
+      if (!meta || !meta.data || !meta.data.length || !meta.data[0]) return;
+      const firstArc = meta.data[0];
+      const cx = typeof firstArc.x === 'number' ? firstArc.x : chart.width / 2;
+      const cy = typeof firstArc.y === 'number' ? firstArc.y : chart.height / 2;
+      const total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
+      const { ctx } = chart;
+      ctx.save();
+      ctx.font = "800 18px 'Inter', 'Sarabun', sans-serif";
+      ctx.fillStyle = '#0f172a';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${total}`, cx, cy - 5);
+      ctx.font = "600 10px 'Sarabun', 'Inter', sans-serif";
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(labelSubtext || 'งานทั้งหมด', cx, cy + 10);
+      ctx.restore();
+    }
+  };
+}
+
+function renderEngineeringInsightsDashboard() {
+  updateEngInsightsVisibility();
+  updateEngActiveFilterBanner();
+  const section = document.getElementById('engInsightsSection');
+  if (!section || !isEngInsightsVisible) return;
+
+  const totalTasks = achievements.length;
+
+  // Data aggregation maps
+  const priMap = {
+    'Super High': { key: 'Super High', label: 'SUPER HIGH', sub: 'ด่วนพิเศษ', count: 0, color: '#7c3aed' },
+    'High':       { key: 'High',       label: 'HIGH',       sub: 'สูง', count: 0, color: '#dc2626' },
+    'Medium':     { key: 'Medium',     label: 'MEDIUM',     sub: 'ปานกลาง', count: 0, color: '#2563eb' },
+    'Low':        { key: 'Low',        label: 'LOW',        sub: 'ทั่วไป', count: 0, color: '#10b981' }
+  };
+
+  const subJobMap = {
+    '01 In-house':  { key: '01 In-house',  label: 'IN-HOUSE',  sub: 'ทำเองภายใน', count: 0, color: '#0284c7' },
+    '02 Outsource': { key: '02 Outsource', label: 'OUTSOURCE', sub: 'สั่งทำภายนอก', count: 0, color: '#d97706' },
+    'All':          { key: 'All',          label: 'ALL (BOTH)', sub: 'ทำเอง + สั่งนอก', count: 0, color: '#6366f1' }
+  };
+
+  const factoryMap = {};
+  const deptMap = {};
+  const processMap = {};
+  const subStatusMap = {};
+  const jobTypeMap = {};
+
+  // Pre-seed Design Support & Maintenance Support members
+  const designSupMembers = ['SUTTHIPONG M.', 'NARUEBODEE C.'];
+  const maintSupMembers = ['NANTHAPONG S.', 'NAWAPON M.', 'SARAWUT I.', 'SUTTHINAN K.', 'VORAVIT C.'];
+
+  const designSupMap = {};
+  designSupMembers.forEach(m => {
+    designSupMap[m] = { name: m, role: 'DSN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+  });
+
+  const maintSupMap = {};
+  maintSupMembers.forEach(m => {
+    maintSupMap[m] = { name: m, role: 'MTN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+  });
+
+  let totalAchvScore = 0;
+  let tasksWithDesignSup = 0;
+  let tasksWithMaintSup = 0;
+
+  achievements.forEach(item => {
+    const xl = getTaskExcelTracking(item);
+    const st = item.status || 'wait';
+    totalAchvScore += (Number(xl.achievement) || 0);
+
+    // 1. Priority
+    const pKey = priMap[xl.priority] ? xl.priority : 'Medium';
+    priMap[pKey].count++;
+
+    // 2. Sub Job Type
+    const sjKey = subJobMap[xl.subJobType] ? xl.subJobType : '01 In-house';
+    subJobMap[sjKey].count++;
+
+    // 3. Factory
+    const rawFac = uppercaseEnglish((item.factory || '').trim());
+    const facKey = (!rawFac || rawFac === '-') ? '__UNSPECIFIED__' : rawFac;
+    const facLabel = facKey === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : rawFac;
+    if (!factoryMap[facKey]) factoryMap[facKey] = { rawKey: facKey, name: facLabel, count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    factoryMap[facKey].count++;
+    if (st === 'done') factoryMap[facKey].done++;
+    else if (st === 'in_progress') factoryMap[facKey].in_progress++;
+    else if (st === 'cancel' || st === 'cancle') factoryMap[facKey].cancel++;
+    else factoryMap[facKey].wait++;
+
+    // 4. Department
+    const rawDept = uppercaseEnglish((item.department || '').trim());
+    const deptKey = (!rawDept || rawDept === '-') ? '__UNSPECIFIED__' : rawDept;
+    const deptLabel = deptKey === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : rawDept;
+    if (!deptMap[deptKey]) deptMap[deptKey] = { rawKey: deptKey, name: deptLabel, count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    deptMap[deptKey].count++;
+    if (st === 'done') deptMap[deptKey].done++;
+    else if (st === 'in_progress') deptMap[deptKey].in_progress++;
+    else if (st === 'cancel' || st === 'cancle') deptMap[deptKey].cancel++;
+    else deptMap[deptKey].wait++;
+
+    // 5. Process
+    const rawProc = uppercaseEnglish((item.process || '').trim());
+    const procKey = (!rawProc || rawProc === '-') ? '__UNSPECIFIED__' : rawProc;
+    const procLabel = procKey === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : rawProc;
+    if (!processMap[procKey]) processMap[procKey] = { rawKey: procKey, name: procLabel, count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    processMap[procKey].count++;
+    if (st === 'done') processMap[procKey].done++;
+    else if (st === 'in_progress') processMap[procKey].in_progress++;
+    else if (st === 'cancel' || st === 'cancle') processMap[procKey].cancel++;
+    else processMap[procKey].wait++;
+
+    // 6. Sub Status
+    const rawSubSt = xl.subStatus || '02 Concept Design';
+    const cleanSubSt = uppercaseEnglish(stripLeadingNumberCode(rawSubSt));
+    const weightPct = Math.round((SUB_STATUS_ACHIEVEMENT_MAP[rawSubSt] !== undefined ? SUB_STATUS_ACHIEVEMENT_MAP[rawSubSt] : xl.achievement) * 100);
+    if (!subStatusMap[rawSubSt]) {
+      subStatusMap[rawSubSt] = { rawKey: rawSubSt, label: cleanSubSt, weightPct: weightPct, count: 0 };
+    }
+    subStatusMap[rawSubSt].count++;
+
+    // 7. Job Type
+    const jtCode = (xl.jobType && xl.jobType !== '-') ? xl.jobType : 'D';
+    const jtFull = uppercaseEnglish(getJobTypeTitle(jtCode));
+    if (!jobTypeMap[jtCode]) {
+      jobTypeMap[jtCode] = { code: jtCode, label: jtFull, count: 0 };
+    }
+    jobTypeMap[jtCode].count++;
+
+    // 8. Design Support (slots 1-2)
+    const dList = [xl.designSupport1, xl.designSupport2].filter(Boolean);
+    if (dList.length > 0) tasksWithDesignSup++;
+    dList.forEach(name => {
+      if (!designSupMap[name]) {
+        designSupMap[name] = { name, role: 'DSN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+      }
+      designSupMap[name].count++;
+      if (st === 'done') designSupMap[name].done++;
+      else if (st === 'in_progress') designSupMap[name].in_progress++;
+      else if (st === 'cancel' || st === 'cancle') designSupMap[name].cancel++;
+      else designSupMap[name].wait++;
+    });
+
+    // 9. Maintenance Support (slots 1-5)
+    const mList = [
+      xl.maintenanceSupport1,
+      xl.maintenanceSupport2,
+      xl.maintenanceSupport3,
+      xl.maintenanceSupport4,
+      xl.maintenanceSupport5
+    ].filter(Boolean);
+    if (mList.length > 0) tasksWithMaintSup++;
+    mList.forEach(name => {
+      if (!maintSupMap[name]) {
+        maintSupMap[name] = { name, role: 'MTN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+      }
+      maintSupMap[name].count++;
+      if (st === 'done') maintSupMap[name].done++;
+      else if (st === 'in_progress') maintSupMap[name].in_progress++;
+      else if (st === 'cancel' || st === 'cancle') maintSupMap[name].cancel++;
+      else maintSupMap[name].wait++;
+    });
+  });
+
+  // --- PANEL 1: PRIORITY / JOB LV. ---
+  const priItems = Object.values(priMap);
+  const priListEl = document.getElementById('engPriorityList');
+  if (priListEl) {
+    priListEl.innerHTML = priItems.map(p => {
+      const pct = totalTasks > 0 ? ((p.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentPriorityFilter === p.key;
+      return `
+        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('priority', '${p.key}', 'PRIORITY: ${p.label}')" title="คลิกเพื่อกรองความสำคัญ: ${p.label}">
+          <div class="eng-flat-row-top">
+            <span class="eng-flat-name">
+              <span class="eng-dot" style="background:${p.color};"></span>
+              <span>${p.label}</span>
+            </span>
+            <span class="eng-flat-val"><b>${p.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+          </div>
+          <div class="eng-flat-track">
+            <div class="eng-flat-fill" style="width:${pct}%; background:${p.color};"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  const ctxPri = document.getElementById('engPriorityChart');
+  if (ctxPri && typeof Chart !== 'undefined') {
+    if (engPriorityChartInstance) engPriorityChartInstance.destroy();
+    engPriorityChartInstance = new Chart(ctxPri, {
+      type: 'doughnut',
+      data: {
+        labels: priItems.map(p => p.label),
+        datasets: [{
+          data: priItems.map(p => p.count),
+          backgroundColor: priItems.map(p => p.color),
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+      },
+      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+    });
+  }
+
+  // --- PANEL 2: SUB JOB TYPE ---
+  const sjItems = Object.values(subJobMap);
+  const sjListEl = document.getElementById('engSubJobList');
+  if (sjListEl) {
+    sjListEl.innerHTML = sjItems.map(sj => {
+      const pct = totalTasks > 0 ? ((sj.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentSubJobTypeFilter === sj.key;
+      return `
+        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('subJobType', '${sj.key}', 'SUB JOB: ${sj.label}')" title="คลิกเพื่อกรองรูปแบบ: ${sj.label} (${sj.sub})">
+          <div class="eng-flat-row-top">
+            <span class="eng-flat-name">
+              <span class="eng-dot" style="background:${sj.color};"></span>
+              <span>${sj.label} <small>${sj.sub}</small></span>
+            </span>
+            <span class="eng-flat-val"><b>${sj.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+          </div>
+          <div class="eng-flat-track">
+            <div class="eng-flat-fill" style="width:${pct}%; background:${sj.color};"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  const ctxSj = document.getElementById('engSubJobChart');
+  if (ctxSj && typeof Chart !== 'undefined') {
+    if (engSubJobChartInstance) engSubJobChartInstance.destroy();
+    engSubJobChartInstance = new Chart(ctxSj, {
+      type: 'doughnut',
+      data: {
+        labels: sjItems.map(s => s.label),
+        datasets: [{
+          data: sjItems.map(s => s.count),
+          backgroundColor: sjItems.map(s => s.color),
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+      },
+      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+    });
+  }
+
+  // --- PANEL 3: FACTORY ---
+  const facPalette = ['#1d4ed8', '#059669', '#d97706', '#0284c7', '#64748b', '#475569'];
+  const facItems = Object.values(factoryMap).sort((a, b) => {
+    if (a.rawKey === '__UNSPECIFIED__') return 1;
+    if (b.rawKey === '__UNSPECIFIED__') return -1;
+    return b.count - a.count || a.name.localeCompare(b.name);
+  });
+  const facBadge = document.getElementById('engFactoryBadge');
+  if (facBadge) facBadge.textContent = `${facItems.length} รายการ`;
+
+  const facListEl = document.getElementById('engFactoryList');
+  if (facListEl) {
+    facListEl.innerHTML = facItems.map((f, idx) => {
+      const color = f.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : facPalette[idx % facPalette.length];
+      const pct = totalTasks > 0 ? ((f.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentFactoryFilter === f.rawKey;
+      return `
+        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('factory', '${escapeHtml(f.rawKey).replace(/'/g, "\\'")}', 'FACTORY: ${escapeHtml(f.name).replace(/'/g, "\\'")}')" title="คลิกเพื่อกรองโรงงาน: ${escapeHtml(f.name)}">
+          <div class="eng-flat-row-top">
+            <span class="eng-flat-name">
+              <span class="eng-dot" style="background:${color};"></span>
+              <span>${escapeHtml(f.name)}</span>
+            </span>
+            <span class="eng-flat-val"><b>${f.count}</b> งาน <span class="eng-flat-pct">${pct}%</span></span>
+          </div>
+          <div class="eng-flat-track">
+            <div class="eng-flat-fill" style="width:${pct}%; background:${color};"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  const ctxFac = document.getElementById('engFactoryChart');
+  if (ctxFac && typeof Chart !== 'undefined') {
+    if (engFactoryChartInstance) engFactoryChartInstance.destroy();
+    engFactoryChartInstance = new Chart(ctxFac, {
+      type: 'doughnut',
+      data: {
+        labels: facItems.map(f => f.name),
+        datasets: [{
+          data: facItems.map(f => f.count),
+          backgroundColor: facItems.map((f, idx) => f.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : facPalette[idx % facPalette.length]),
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+      },
+      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+    });
+  }
+
+  // --- PANEL 4 & 5: DESIGN SUPPORT (%) & MAINTENANCE SUPPORT (%) (Clean Corporate Data Table) ---
+  const renderSupportTeamTable = (itemsMap, containerId, badgeId, totalTasksSupported, fieldType, accentColor) => {
+    const list = Object.values(itemsMap).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    const totalParticipations = list.reduce((sum, m) => sum + m.count, 0);
+    const badgeEl = document.getElementById(badgeId);
+    if (badgeEl) {
+      const taskCoveragePct = totalTasks > 0 ? ((totalTasksSupported / totalTasks) * 100).toFixed(1) : '0.0';
+      badgeEl.textContent = `ซัพพอร์ตรวม ${totalParticipations} งาน (${taskCoveragePct}% ของทั้งหมด)`;
+    }
+
+    const containerEl = document.getElementById(containerId);
+    if (!containerEl) return;
+
+    const rowsHtml = list.map(m => {
+      const shareOfTeamPct = totalParticipations > 0 ? ((m.count / totalParticipations) * 100).toFixed(1) : '0.0';
+      const shareOfAllTasksPct = totalTasks > 0 ? ((m.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = (fieldType === 'designSupport' && currentDesignSupportFilter === m.name) ||
+                    (fieldType === 'maintSupport' && currentMaintSupportFilter === m.name);
+
+      return `
+        <tr class="eng-sup-tr ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('${fieldType}', '${escapeHtml(m.name).replace(/'/g, "\\'")}', '${fieldType === 'designSupport' ? 'DESIGN SUPPORT' : 'MANTENANCE SUPPORT'}: ${escapeHtml(m.name)}')" title="คลิกเพื่อกรองงานที่ซัพพอร์ตโดย: ${escapeHtml(m.name)}">
+          <td class="sup-td-name">
+            <span class="sup-member-name">${escapeHtml(m.name)}</span>
+          </td>
+          <td class="sup-td-status">
+            <span class="sup-mini-stat">DONE <b>${m.done}</b></span>
+            <span class="sup-mini-sep">·</span>
+            <span class="sup-mini-stat">PROG <b>${m.in_progress}</b></span>
+            <span class="sup-mini-sep">·</span>
+            <span class="sup-mini-stat">PEND <b>${m.wait}</b></span>
+          </td>
+          <td class="sup-td-count">
+            <b>${m.count}</b> งาน <span class="sup-all-pct">(${shareOfAllTasksPct}%)</span>
+          </td>
+          <td class="sup-td-bar">
+            <div class="sup-inline-bar-wrap">
+              <div class="sup-inline-bar-track">
+                <div class="sup-inline-bar-fill" style="width:${shareOfTeamPct}%; background:${accentColor};"></div>
+              </div>
+              <span class="sup-team-pct" style="color:${m.count > 0 ? accentColor : '#94a3b8'};">${shareOfTeamPct}%</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    containerEl.innerHTML = `
+      <table class="eng-support-table">
+        <thead>
+          <tr>
+            <th>รายชื่อผู้สนับสนุน (MEMBER)</th>
+            <th>สถานะงาน</th>
+            <th style="text-align:right;">จำนวน (% ทั้งหมด)</th>
+            <th style="text-align:right; width: 150px;">สัดส่วนในทีม (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    `;
+  };
+
+  renderSupportTeamTable(designSupMap, 'engDesignSupportContainer', 'engDesignSupBadge', tasksWithDesignSup, 'designSupport', '#1d4ed8');
+  renderSupportTeamTable(maintSupMap, 'engMaintSupportContainer', 'engMaintSupBadge', tasksWithMaintSup, 'maintSupport', '#0f766e');
+
+  // --- PANEL 6: SUB STATUS (ขั้นตอนย่อย) ---
+  const avgAchvPct = totalTasks > 0 ? ((totalAchvScore / totalTasks) * 100).toFixed(1) : '0.0';
+  const subStatusBadge = document.getElementById('engSubStatusBadge');
+  if (subStatusBadge) subStatusBadge.textContent = `ACHV ${totalAchvScore.toFixed(1)} / ${totalTasks} (${avgAchvPct}%)`;
+
+  const subStatusList = Object.values(subStatusMap).sort((a, b) => b.count - a.count || b.weightPct - a.weightPct);
+  const subStatusContainer = document.getElementById('engSubStatusContainer');
+  if (subStatusContainer) {
+    subStatusContainer.innerHTML = subStatusList.map(stItem => {
+      const pct = totalTasks > 0 ? ((stItem.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentSubStatusFilter === stItem.rawKey;
+      let barColor = '#2563eb';
+      if (stItem.rawKey === '10 Finished') barColor = '#10b981';
+      else if (stItem.rawKey === 'Cancel') barColor = '#94a3b8';
+      else if (stItem.rawKey === 'Pending' || stItem.rawKey === '00 Not Start') barColor = '#f59e0b';
+
+      return `
+        <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('subStatus', '${escapeHtml(stItem.rawKey)}', 'SUB STATUS: ${escapeHtml(stItem.label)}')" title="คลิกเพื่อกรองขั้นตอนย่อย: ${escapeHtml(stItem.label)}">
+          <div class="eng-line-left">
+            <span class="eng-line-title">${escapeHtml(stItem.label)}</span>
+            <span class="eng-line-sub">(${stItem.weightPct}%)</span>
+          </div>
+          <div class="eng-line-bar-col">
+            <div class="eng-line-track">
+              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+            </div>
+          </div>
+          <div class="eng-line-right">
+            <b>${stItem.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- PANEL 7: JOB TYPE (ประเภทงานวิศวกรรม) ---
+  const jobTypeList = Object.values(jobTypeMap).sort((a, b) => b.count - a.count || a.code.localeCompare(b.code));
+  const jobTypeBadge = document.getElementById('engJobTypeBadge');
+  if (jobTypeBadge) jobTypeBadge.textContent = `${jobTypeList.length} ประเภทงาน`;
+
+  const jobTypeContainer = document.getElementById('engJobTypeContainer');
+  if (jobTypeContainer) {
+    jobTypeContainer.innerHTML = jobTypeList.map(jt => {
+      const pct = totalTasks > 0 ? ((jt.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentJobTypeFilter === jt.code;
+      return `
+        <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('jobType', '${escapeHtml(jt.code)}', 'JOB TYPE: ${escapeHtml(jt.label)}')" title="คลิกเพื่อกรองประเภทงาน: ${escapeHtml(jt.label)}">
+          <div class="eng-line-left">
+            <span class="eng-code-tag">${escapeHtml(jt.code)}</span>
+            <span class="eng-line-title">${escapeHtml(jt.label)}</span>
+          </div>
+          <div class="eng-line-bar-col">
+            <div class="eng-line-track">
+              <div class="eng-line-fill" style="width:${pct}%; background:#2563eb;"></div>
+            </div>
+          </div>
+          <div class="eng-line-right">
+            <b>${jt.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- PANEL 8: DEPARTMENT (แผนกที่ร้องขอ) ---
+  const deptList = Object.values(deptMap).sort((a, b) => {
+    if (a.rawKey === '__UNSPECIFIED__') return 1;
+    if (b.rawKey === '__UNSPECIFIED__') return -1;
+    return b.count - a.count || a.name.localeCompare(b.name);
+  });
+  const deptBadge = document.getElementById('engDeptBadge');
+  if (deptBadge) deptBadge.textContent = `${deptList.length} แผนก`;
+
+  const deptContainer = document.getElementById('engDeptContainer');
+  if (deptContainer) {
+    deptContainer.innerHTML = deptList.map(d => {
+      const pct = totalTasks > 0 ? ((d.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentDeptFilter === d.rawKey;
+      const barColor = d.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : '#0284c7';
+      return `
+        <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('department', '${escapeHtml(d.rawKey).replace(/'/g, "\\'")}', 'DEPARTMENT: ${escapeHtml(d.name).replace(/'/g, "\\'")}')" title="คลิกเพื่อกรองแผนก: ${escapeHtml(d.name)} (DONE ${d.done} | PROG ${d.in_progress} | PEND ${d.wait})">
+          <div class="eng-line-left">
+            <span class="eng-line-title">${escapeHtml(d.name)}</span>
+          </div>
+          <div class="eng-line-bar-col">
+            <div class="eng-line-track">
+              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+            </div>
+          </div>
+          <div class="eng-line-right">
+            <b>${d.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- PANEL 9: PROCESS (กระบวนการผลิต) ---
+  const procList = Object.values(processMap).sort((a, b) => {
+    if (a.rawKey === '__UNSPECIFIED__') return 1;
+    if (b.rawKey === '__UNSPECIFIED__') return -1;
+    return b.count - a.count || a.name.localeCompare(b.name);
+  });
+  const procBadge = document.getElementById('engProcessBadge');
+  if (procBadge) procBadge.textContent = `${procList.length} กระบวนการ`;
+
+  const procContainer = document.getElementById('engProcessContainer');
+  if (procContainer) {
+    procContainer.innerHTML = procList.map(pr => {
+      const pct = totalTasks > 0 ? ((pr.count / totalTasks) * 100).toFixed(1) : '0.0';
+      const isAct = currentProcessFilter === pr.rawKey;
+      const barColor = pr.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : '#0f766e';
+      return `
+        <div class="eng-line-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('process', '${escapeHtml(pr.rawKey).replace(/'/g, "\\'")}', 'PROCESS: ${escapeHtml(pr.name).replace(/'/g, "\\'")}')" title="คลิกเพื่อกรองกระบวนการ: ${escapeHtml(pr.name)} (DONE ${pr.done} | PROG ${pr.in_progress} | PEND ${pr.wait})">
+          <div class="eng-line-left">
+            <span class="eng-line-title">${escapeHtml(pr.name)}</span>
+          </div>
+          <div class="eng-line-bar-col">
+            <div class="eng-line-track">
+              <div class="eng-line-fill" style="width:${pct}%; background:${barColor};"></div>
+            </div>
+          </div>
+          <div class="eng-line-right">
+            <b>${pr.count}</b> งาน <span class="eng-line-pct">${pct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 }
 
@@ -7507,11 +8205,28 @@ function getTaskExcelTracking(item) {
     }
   }
 
-  const maintenanceSupport1 = normalizeMaintSupportName(item.maintenanceSupport1);
-  const maintenanceSupport2 = normalizeMaintSupportName(item.maintenanceSupport2);
-  const maintenanceSupport3 = normalizeMaintSupportName(item.maintenanceSupport3);
-  const maintenanceSupport4 = normalizeMaintSupportName(item.maintenanceSupport4);
-  const maintenanceSupport5 = normalizeMaintSupportName(item.maintenanceSupport5);
+  let maintenanceSupport1 = normalizeMaintSupportName(item.maintenanceSupport1);
+  let maintenanceSupport2 = normalizeMaintSupportName(item.maintenanceSupport2);
+  let maintenanceSupport3 = normalizeMaintSupportName(item.maintenanceSupport3);
+  let maintenanceSupport4 = normalizeMaintSupportName(item.maintenanceSupport4);
+  let maintenanceSupport5 = normalizeMaintSupportName(item.maintenanceSupport5);
+  if (
+    item.maintenanceSupport1 === undefined &&
+    item.maintenanceSupport2 === undefined &&
+    item.maintenanceSupport3 === undefined &&
+    item.maintenanceSupport4 === undefined &&
+    item.maintenanceSupport5 === undefined
+  ) {
+    const rawSup = item.supportBy !== undefined ? item.supportBy : ((excelRow && excelRow[7] && excelRow[7] !== '-') ? excelRow[7] : '');
+    if (rawSup) {
+      const mParts = String(rawSup).split(',').map(s => normalizeMaintSupportName(s)).filter(Boolean);
+      maintenanceSupport1 = mParts[0] || '';
+      maintenanceSupport2 = mParts[1] || '';
+      maintenanceSupport3 = mParts[2] || '';
+      maintenanceSupport4 = mParts[3] || '';
+      maintenanceSupport5 = mParts[4] || '';
+    }
+  }
 
   const toolingList = Array.from(new Set([toolingTeam1, toolingTeam2].filter(Boolean)));
   const designSupportList = Array.from(new Set([designSupport1, designSupport2].filter(Boolean)));
@@ -7615,6 +8330,7 @@ function setExcelFilter(filterType, value) {
   else if (filterType === 'subJobType') currentSubJobTypeFilter = value;
   else if (filterType === 'priority') currentPriorityFilter = value;
   else if (filterType === 'subStatus') currentSubStatusFilter = value;
+  updateEngActiveFilterBanner();
   renderContent();
 }
 
@@ -7676,8 +8392,8 @@ function getFilteredAchievements() {
       if ((xl.section || '').toUpperCase() !== currentSectionFilter.toUpperCase()) return false;
     }
     if (currentJobTypeFilter !== 'all') {
-      const parts = (xl.jobType || '').toUpperCase().split('-');
-      if (xl.jobType.toUpperCase() !== currentJobTypeFilter.toUpperCase() && !parts.includes(currentJobTypeFilter.toUpperCase())) {
+      const jtCode = (xl.jobType || 'D').trim().toUpperCase();
+      if (jtCode !== currentJobTypeFilter.toUpperCase()) {
         return false;
       }
     }
@@ -7689,6 +8405,31 @@ function getFilteredAchievements() {
     }
     if (currentSubStatusFilter !== 'all') {
       if ((xl.subStatus || '').toLowerCase() !== currentSubStatusFilter.toLowerCase()) return false;
+    }
+
+    // Engineering Insights Specific Field Filters (Factory, Department, Process, Design Support, Maintenance Support)
+    if (currentFactoryFilter !== 'all') {
+      const facRaw = (item.factory || '').trim();
+      const facKey = (!facRaw || facRaw === '-') ? '__UNSPECIFIED__' : facRaw;
+      if (facKey.toUpperCase() !== currentFactoryFilter.toUpperCase()) return false;
+    }
+    if (currentDeptFilter !== 'all') {
+      const deptRaw = (item.department || '').trim();
+      const deptKey = (!deptRaw || deptRaw === '-') ? '__UNSPECIFIED__' : deptRaw;
+      if (deptKey.toUpperCase() !== currentDeptFilter.toUpperCase()) return false;
+    }
+    if (currentProcessFilter !== 'all') {
+      const procRaw = (item.process || '').trim();
+      const procKey = (!procRaw || procRaw === '-') ? '__UNSPECIFIED__' : procRaw;
+      if (procKey.toUpperCase() !== currentProcessFilter.toUpperCase()) return false;
+    }
+    if (currentDesignSupportFilter !== 'all') {
+      const dSup = (xl.designTeam && xl.designTeam !== '-') ? xl.designTeam : ((item.assignee || 'UNASSIGNED').trim() || 'UNASSIGNED');
+      if (dSup.toUpperCase() !== currentDesignSupportFilter.toUpperCase()) return false;
+    }
+    if (currentMaintSupportFilter !== 'all') {
+      const mSup = (xl.supportBy && xl.supportBy !== '-') ? xl.supportBy : ((xl.toolingTeam && xl.toolingTeam !== '-') ? xl.toolingTeam : ((item.assignee || 'UNASSIGNED').trim() || 'UNASSIGNED'));
+      if (mSup.toUpperCase() !== currentMaintSupportFilter.toUpperCase()) return false;
     }
 
     if (currentTimeFilter !== 'all') {

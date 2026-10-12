@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261012_v6">
+  <link rel="stylesheet" href="styles.css?v=20261012_v8">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -370,7 +370,11 @@
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           สถิติและแดชบอร์ดภาพรวมงาน (REAL-TIME DASHBOARD)
         </h2>
-        <div class="section-header-actions">
+        <div class="section-header-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" id="btnToggleEngInsights" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleEngInsights()" title="สลับการแสดงผลแดชบอร์ดข้อมูลเชิงลึกวิศวกรรม (ENGINEERING INSIGHTS)">
+            <span id="engInsightsToggleIcon">📊</span>
+            <span id="engInsightsToggleText">แดชบอร์ดเชิงลึก: แสดง (ON)</span>
+          </button>
           <button type="button" id="btnToggleRequesterRanking" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleRequesterRanking()" title="สลับการแสดงผลอันดับผู้ร้องขอ (REQUEST NAME)">
             <span id="rankingToggleIcon">🏆</span>
             <span id="rankingToggleText">อันดับผู้ร้องขอ: แสดง (ON)</span>
@@ -416,6 +420,111 @@
           </div>
           <div class="chart-wrapper">
             <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engineering & Operations Deep-Dive Insights (Native Chart-Box Grid) -->
+      <div id="engInsightsSection" class="eng-insights-wrapper">
+        <!-- Active Insights Filter Banner (Only visible when filtering by Factory/Dept/Process/Support/Excel) -->
+        <div id="engActiveFilterBanner" class="eng-active-filter-banner" style="display: none;">
+          <span id="engActiveFilterText">กำลังกรองข้อมูล</span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="resetAllFilters()" style="padding: 2px 10px; font-size: 11.5px;">ล้างตัวกรอง (RESET)</button>
+        </div>
+
+        <!-- Row 1: 3-Column Overview (Priority, Sub Job Type, Factory) -->
+        <div class="eng-charts-grid-3">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ระดับความสำคัญ (PRIORITY / JOB LV.)</span>
+              <span class="eng-title-meta" id="engPriorityBadge">4 ระดับ</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engPriorityChart"></canvas>
+              </div>
+              <div class="eng-flat-list" id="engPriorityList"></div>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>รูปแบบการดำเนินงาน (SUB JOB TYPE)</span>
+              <span class="eng-title-meta" id="engSubJobBadge">IN-HOUSE / OUTSOURCE</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engSubJobChart"></canvas>
+              </div>
+              <div class="eng-flat-list" id="engSubJobList"></div>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>โรงงานที่ร้องขอ (FACTORY)</span>
+              <span class="eng-title-meta" id="engFactoryBadge">0 โรงงาน</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engFactoryChart"></canvas>
+              </div>
+              <div class="eng-flat-list" id="engFactoryList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: 2-Column Team Support Contribution (Design Support & Maintenance Support) -->
+        <div class="eng-charts-grid-2">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>สัดส่วนผู้สนับสนุนงานออกแบบ (DESIGN SUPPORT)</span>
+              <span class="eng-title-meta" id="engDesignSupBadge">0 งาน</span>
+            </div>
+            <div id="engDesignSupportContainer" class="eng-table-list"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>สัดส่วนผู้สนับสนุนงานซ่อมบำรุง (MANTENANCE SUPPORT)</span>
+              <span class="eng-title-meta" id="engMaintSupBadge">0 งาน</span>
+            </div>
+            <div id="engMaintSupportContainer" class="eng-table-list"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: 2x2 Breakdown (Sub Status, Job Type, Department, Process) -->
+        <div class="eng-charts-grid-2">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ขั้นตอนย่อยวิศวกรรม (SUB STATUS)</span>
+              <span class="eng-title-meta" id="engSubStatusBadge">AVG 0%</span>
+            </div>
+            <div class="eng-flat-scroll" id="engSubStatusContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ประเภทงานวิศวกรรม (JOB TYPE)</span>
+              <span class="eng-title-meta" id="engJobTypeBadge">0 ประเภท</span>
+            </div>
+            <div class="eng-flat-scroll" id="engJobTypeContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>แผนกที่ร้องขอ (DEPARTMENT)</span>
+              <span class="eng-title-meta" id="engDeptBadge">0 แผนก</span>
+            </div>
+            <div class="eng-flat-scroll" id="engDeptContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>กระบวนการผลิต (PROCESS)</span>
+              <span class="eng-title-meta" id="engProcessBadge">0 กระบวนการ</span>
+            </div>
+            <div class="eng-flat-scroll" id="engProcessContainer"></div>
           </div>
         </div>
       </div>
@@ -1569,7 +1678,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20261012_v6"></script>
+  <script src="app.js?v=20261012_v8"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
