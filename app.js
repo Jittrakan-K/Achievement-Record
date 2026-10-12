@@ -21,1905 +21,14076 @@ const DEFAULT_CATEGORIES = [
 
 // --- Sample Data Matching Orbray Production Technology ---
 const INITIAL_SAMPLE_ACHIEVEMENTS = [
-    {
-        "id":  "achv_pr_1",
-        "title":  "(PR) MAKITA 766004-9 HP457 / HP482",
-        "categoryId":  "cat_pr",
-        "code":  "FOR TECHNO",
-        "quotation":  "26-0508",
-        "requestName":  "NUY",
-        "requestDate":  "2026-09-02",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "wait",
-        "completionDate":  "",
-        "description":  "MAKITA 766004-9 ดอกไขควงและสว่านกระแทกไร้สายสำหรับงานเทคโนโลยี",
-        "note":  "(รอ) รอถอดออกได้ค่อยสั่ง",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "MAKITA_HP457_SPECS",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\26-0508 - MAKITA PART NO 766004-9",
-                           "fileCount":  3,
-                           "totalSize":  "2.8 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-02T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_2",
-        "title":  "(PR) PURCHASE IDA-007 FROM DRAWING",
-        "categoryId":  "cat_pr",
-        "code":  "FR-J26-076",
-        "quotation":  "26-0585",
-        "requestName":  "พี่เบิ้ม",
-        "requestDate":  "2026-09-01",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "DRAWING \u0026 MOLD",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "wait",
-        "completionDate":  "",
-        "description":  "ร้องขอให้เสนอราคา IDA-007 สั่งทำตาม DRAWING สำหรับงาน FERRULE",
-        "note":  "(รอ) ขอพี่เบิ้ม SETCODE เรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0585 - JIGIDA-007",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0585 - JIGIDA-007",
-                           "fileCount":  2,
-                           "totalSize":  "1.5 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-01T09:30:00.000Z"
-    },
-    {
-        "id":  "achv_pr_3",
-        "title":  "(PR) BATTERY LP12-8.0 12V 8.0A \"LEOCH\"",
-        "categoryId":  "cat_pr",
-        "code":  "FOR TECHNO",
-        "quotation":  "26-0602",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-09-03",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "POWER \u0026 UPS",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "wait",
-        "completionDate":  "",
-        "description":  "สั่งแบต UPS ใหม่สำหรับระบบสำรองไฟฝ่ายเทคโนโลยี",
-        "note":  "กำลังจะออก PR",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0602 - BATTERY MS7-12",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\26-0602 - BATTERY MS7-12",
-                           "fileCount":  2,
-                           "totalSize":  "890 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-03T11:00:00.000Z"
-    },
-    {
-        "id":  "achv_jig_1",
-        "title":  "JIG-QC003 CLAMP STAND DIGIMATIC",
-        "categoryId":  "cat_jig",
-        "code":  "QC-J26-003",
-        "quotation":  "",
-        "requestName":  "แผนก QC",
-        "requestDate":  "2026-08-28",
-        "factory":  "FACTORY 1",
-        "department":  "QC",
-        "process":  "INSPECTION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "ออกแบบและผลิตแคลมป์ยึดขาตั้งไดอัลเกจดิจิตอลเพื่อลดความคลาดเคลื่อนในการวัดงาน",
-        "note":  "ส่งแบบดราฟท์ 3D ให้ QC ตรวจสอบรอบแรกแล้ว อยู่ระหว่างปรับระยะฟิตติ้ง",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-28T08:00:00.000Z"
-    },
-    {
-        "id":  "achv_jig_2",
-        "title":  "JIG-MOT074 DROP GLUING",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-012",
-        "quotation":  "26-0121",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-25",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "GLUING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "จิ๊กช่วยควบคุมตำแหน่งการหยอดกาวอัตโนมัติบนแกนโรเตอร์มอเตอร์",
-        "note":  "กำลังทดสอบความแม่นยำของตำแหน่งแกนหยอดร่วมกับฝ่ายผลิต",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0121 - DROP GLUING",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0121 - DROP GLUING",
-                           "fileCount":  4,
-                           "totalSize":  "3.2 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-25T13:30:00.000Z"
-    },
-    {
-        "id":  "achv_imp_1",
-        "title":  "IMP26-003 PLC SKILL DEVELOPMENT",
-        "categoryId":  "cat_imp",
-        "code":  "TECHNO-TR03",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-15",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "AUTOMATION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "โครงการพัฒนาทักษะการเขียนโปรแกรมควบคุม PLC สำหรับระบบอัตโนมัติในสายการผลิต",
-        "note":  "จัดทำเอกสารและตัวอย่างโปรแกรมทดสอบสำหรับฝึกอบรมภายในทีม",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-15T09:00:00.000Z"
-    },
-    {
-        "id":  "achv_prj_1",
-        "title":  "PTN007 BLOWER BOX",
-        "categoryId":  "cat_prj",
-        "code":  "PRJ-26-007",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-20",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "CLEANING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "กล่องเป่าลมความดันสูงสำหรับทำความสะอาดชิ้นงานก่อนเข้าสู่กระบวนการประกอบขั้นสุดท้าย",
-        "note":  "กำลังออกแบบโครงสร้างกล่องอะคริลิคและระบบวาล์วควบคุมลม",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-20T10:15:00.000Z"
-    },
-    {
-        "id":  "achv_jig_3",
-        "title":  "JIG-MOT075 REMOVE GLUING",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-014",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-22",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "REWORK",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "อุปกรณ์ช่วยลอกและขูดกาวส่วนเกินออกจากสเตเตอร์โดยไม่ทำให้พื้นผิวเสียหาย",
-        "note":  "ทดสอบใบขูดเทฟลอนชุดแรกได้ผลดี กำลังจัดทำคู่มือการใช้งาน",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-22T14:45:00.000Z"
-    },
-    {
-        "id":  "achv_prj_2",
-        "title":  "SP25-PRJ002 WITHSTANDING VOLTAGE TESTER",
-        "categoryId":  "cat_prj",
-        "code":  "SP25-002",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-10",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "TESTING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "เครื่องทดสอบความเป็นฉนวนและความทนแรงดันไฟฟ้าสูงสำหรับมอเตอร์รุ่นใหม่",
-        "note":  "ติดตั้งวงจรความปลอดภัยและเชื่อมต่อสัญญาณกับคอมพิวเตอร์เพื่อบันทึกข้อมูล",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-10T11:00:00.000Z"
-    },
-    {
-        "id":  "achv_sys_1",
-        "title":  "CMMS (ระบบจัดการงานบำรุงรักษา)",
-        "categoryId":  "cat_prj",
-        "code":  "SYS-CMMS-01",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-01",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MANAGEMENT",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "in_progress",
-        "completionDate":  "",
-        "description":  "พัฒนาระบบฐานข้อมูลสำหรับติดตามและบันทึกประวัติการบำรุงรักษาเครื่องจักรและอุปกรณ์",
-        "note":  "นำเข้าข้อมูลเครื่องจักรหลักเข้าสู่ระบบเสร็จสิ้น อยู่ระหว่างทดสอบการแจ้งเตือนงาน PM",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-01T08:30:00.000Z"
-    },
-    {
-        "id":  "achv_acc_1",
-        "title":  "ACC-FER068 HAND PUMP STORE",
-        "categoryId":  "cat_acc",
-        "code":  "FR-J26-022",
-        "quotation":  "",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-08-12",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "STORAGE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-25",
-        "description":  "แท่นวางและจัดเก็บปั๊มมือสำหรับส่งสารเคมีในไลน์ผลิต FERRULE",
-        "note":  "ส่งมอบงานให้ฝ่ายผลิตเรียบร้อยและติดตั้งบนโต๊ะทำงานพร้อมใช้งาน",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-12T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_sys_2",
-        "title":  "LASER MINI SCREWDRIVER FROM MAKER",
-        "categoryId":  "cat_prj",
-        "code":  "SYS-TOOL-04",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-08",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-18",
-        "description":  "ติดตั้งและปรับเทียบระบบไขควงเลเซอร์ขนาดเล็กสำหรับการขันสกรูที่มีความละเอียดสูง",
-        "note":  "ปรับตั้งค่าแรงบิดและทดสอบการขันตามสเปคสำเร็จ ส่งมอบให้ไลน์ผลิตใช้งาน",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-08T09:15:00.000Z"
-    },
-    {
-        "id":  "achv_pr_4",
-        "title":  "(PR) DRILL HSS 20-21 MM",
-        "categoryId":  "cat_pr",
-        "code":  "FOR TECHNO",
-        "quotation":  "26-0533",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-07",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-20",
-        "description":  "จัดซื้อดอกสว่าน HSS ขนาด 20-21 มม. สำหรับงานเจาะรูชิ้นงานหนาพิเศษ",
-        "note":  "ของเข้าคลังและตรวจรับเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0533 - DRILL HSS 20-21 MM",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0533 - DRILL HSS 20-21 MM",
-                           "fileCount":  2,
-                           "totalSize":  "950 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-07T14:00:00.000Z"
-    },
-    {
-        "id":  "achv_acc_2",
-        "title":  "ACC-MOT081 INNER DIAMETER MEASUREMENT",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-008",
-        "quotation":  "26-0226",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-07-28",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "INSPECTION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-15",
-        "description":  "อุปกรณ์ช่วยวัดขนาดเส้นผ่านศูนย์กลางภายในของปลอกมอเตอร์ด้วยความแม่นยำสูง",
-        "note":  "ตรวจรับอุปกรณ์จากผู้ผลิตและนำเข้าไลน์ประกอบเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0226 - INNER DIAMETER PROCESSING MAC",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0226 - INNER DIAMETER PROCESSING MAC",
-                           "fileCount":  3,
-                           "totalSize":  "2.1 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-07-28T11:20:00.000Z"
-    },
-    {
-        "id":  "achv_acc_3",
-        "title":  "ACC-FER066 COVER CART FERRULE",
-        "categoryId":  "cat_acc",
-        "code":  "FR-J26-015",
-        "quotation":  "26-0297",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-07-25",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "STORAGE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-14",
-        "description":  "ฝาครอบอะคริลิคใสกันฝุ่นสำหรับรถเข็นขนส่งชิ้นงาน FERRULE ระหว่างอาคารผลิต",
-        "note":  "ส่งมอบและติดตั้งบนรถเข็นทุกคันเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0297 - CLEAR ACRYLIC FOR TROLLEY COVER A",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0297 - CLEAR ACRYLIC FOR TROLLEY COVER A",
-                           "fileCount":  3,
-                           "totalSize":  "1.8 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-07-25T08:45:00.000Z"
-    },
-    {
-        "id":  "achv_acc_4",
-        "title":  "ACC-FIB011 POLE LAMP",
-        "categoryId":  "cat_acc",
-        "code":  "FIB-J26-004",
-        "quotation":  "",
-        "requestName":  "ฝ่าย FIBER",
-        "requestDate":  "2026-08-02",
-        "factory":  "FACTORY 1",
-        "department":  "FIBER",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-16",
-        "description":  "เสาสำหรับติดตั้งโคมไฟส่องสว่างเหนือโต๊ะทำงานประกอบหัวต่อไฟเบอร์ออปติก",
-        "note":  "ทำการสั่งซื้อเสาสำหรับติดตั้งโคมไฟแบบสำเร็จ จำนวน 3 PCS เสร็จสิ้น",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-02T13:00:00.000Z"
-    },
-    {
-        "id":  "achv_acc_5",
-        "title":  "ACC-MDC001 WAGOA COVER",
-        "categoryId":  "cat_acc",
-        "code":  "MD-J26-002",
-        "quotation":  "26-0391",
-        "requestName":  "ฝ่าย MEDICAL",
-        "requestDate":  "2026-08-04",
-        "factory":  "FACTORY 1",
-        "department":  "MEDICAL",
-        "process":  "PACKAGING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-22",
-        "description":  "ฝาครอบป้องกันการกระแทกสำหรับอุปกรณ์ WAGOA ในสายการผลิตชิ้นส่วนการแพทย์",
-        "note":  "ของเข้าคลังและส่งมอบให้ฝ่ายผลิตติดตั้งบนเครื่องจักรเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0391 - WOGOA COVER",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0391 - WOGOA COVER",
-                           "fileCount":  2,
-                           "totalSize":  "1.2 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-04T10:30:00.000Z"
-    },
-    {
-        "id":  "achv_pr_5",
-        "title":  "(PR) DIE M8X1.25 AND CENTER DRILL",
-        "categoryId":  "cat_pr",
-        "code":  "FOR TECHNO",
-        "quotation":  "26-0491",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-05",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-19",
-        "description":  "ขอซื้อดรายเกลียว M8X1.25 และดอก CENTER DRILL สำหรับงานช่างเทคโน",
-        "note":  "ของเข้าและจัดเก็บเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0491 - DIE \u0026 CENTER DRILL",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0491 - DIE \u0026 CENTER DRILL",
-                           "fileCount":  2,
-                           "totalSize":  "750 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-05T09:00:00.000Z"
-    },
-    {
-        "id":  "achv_1788849662468",
-        "title":  "LAYOUT FERRULE AFT V.2.4",
-        "categoryId":  "cat_prj",
-        "code":  "PRODUCTION",
-        "quotation":  "",
-        "requestName":  "PRODUCTION",
-        "requestDate":  "2026-09-08",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-08",
-        "description":  "จัดทำ LAYOUT แผนก FERRULE AFT เวอร์ชั่น 2.4 ปรับปรุงตำแหน่งโต๊ะทำงานและเครื่องจักรเพื่อเพิ่มประสิทธิภาพการผลิต",
-        "note":  "อัพเดทไฟล์ Layout และส่งมอบเอกสารเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "LAYOUT_FERRULE_AFT_V2.4",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\WORK\\PROJECT DOCUMENT",
-                           "fileCount":  4,
-                           "totalSize":  "15.4 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-08T08:41:00.000Z"
-    },
-    {
-        "id":  "achv_1788835083076",
-        "title":  "JIG-MOT080 (V-BOX)",
-        "categoryId":  "cat_jig",
-        "code":  "GM-21",
-        "quotation":  "26-0210",
-        "requestName":  "SANAT S.",
-        "requestDate":  "2026-09-08",
-        "factory":  "FACTORY 1",
-        "department":  "GENERAL - PROCESS",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-08",
-        "description":  "ออกแบบและจัดทำ JIG-MOT080 (V-BOX) สำหรับเครื่องจักรตามความต้องการฝ่ายผลิต",
-        "note":  "ส่งมอบและติดตั้งใช้งานจริงเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0210 - V BLOCK",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0210 - V BLOCK",
-                           "fileCount":  3,
-                           "totalSize":  "2.4 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-08T07:20:00.000Z"
-    },
-    {
-        "id":  "achv_1788773676447",
-        "title":  "ACC-MOT084 HINGES AND RM TROLLEY",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-020",
-        "quotation":  "26-0515",
-        "requestName":  "SURASAT S.",
-        "requestDate":  "2026-09-07",
-        "factory":  "FACTORY 1",
-        "department":  "GENERAL - MOTOR",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-07",
-        "description":  "ร้องขอฝ่ายเทคโนโลยี ออกแบบและจัดทำ บานพับ ที่พักชิ้นงาน สำหรับรถเข็นในไลน์ประกอบ",
-        "note":  "ประกอบและทดสอบการเปิด-ปิดบานพับบนรถเข็นจริงเรียบร้อยแล้ว",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0515 - B-100-1 HINGE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0515 - B-100-1 HINGE",
-                           "fileCount":  3,
-                           "totalSize":  "1.8 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-07T12:37:00.000Z"
-    },
-    {
-        "id":  "achv_acc_mot065",
-        "title":  "ACC-MOT065 GLUE SYRINGE HOLDER (3 IN 1)",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-015",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-09-07",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "GLUING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-07",
-        "description":  "จัดทำแท่นจับหลอดฉีดกาว 3 IN 1 สำหรับหัวฉีดกาว ให้มีความมั่นคงในการปฏิบัติงาน",
-        "note":  "จำนวน 2 PCS สำเร็จ ส่งมอบเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "ACC-MOT065 O RING GLUE SYRINGE HOLDER (3 IN 1)",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\WORK\\WORK DESIGN",
-                           "fileCount":  21,
-                           "totalSize":  "35.6 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-07T12:08:00.000Z"
-    },
-    {
-        "id":  "achv_acc_fib005",
-        "title":  "ACC-FIB005 SYRINGE SUPPORT",
-        "categoryId":  "cat_acc",
-        "code":  "OPT-J26-003",
-        "quotation":  "",
-        "requestName":  "ฝ่าย OPTICAL",
-        "requestDate":  "2026-09-07",
-        "factory":  "FACTORY 1",
-        "department":  "OPTICAL",
-        "process":  "GLUING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-07",
-        "description":  "ฐานรองกระบอกกาวสำหรับหัวเข็มหยอดกาวงานชิ้นส่วนไฟเบอร์ออปติก",
-        "note":  "ส่งมอบและติดตั้งบนโต๊ะปฏิบัติงานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "ACC-FIB005 SYRINGE SUPPORT",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\WORK\\WORK DESIGN",
-                           "fileCount":  5,
-                           "totalSize":  "4.2 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-09-07T11:45:00.000Z"
-    },
-    {
-        "id":  "achv_new_motor_line",
-        "title":  "NEW MOTOR LINE PROCESS SETUP",
-        "categoryId":  "cat_prj",
-        "code":  "PRJ-26-MOT-01",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-09-08",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "SETUP",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-09-08",
-        "description":  "จัดทำผังและติดตั้งอุปกรณ์สนับสนุนสำหรับไลน์ผลิตมอเตอร์รุ่นใหม่ (NEW MOTOR)",
-        "note":  "ติดตั้งตำแหน่งเครื่องและเชื่อมต่อระบบทดสอบเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-09-08T09:30:00.000Z"
-    },
-    {
-        "id":  "achv_req_gm_020",
-        "title":  "GM-J26-020 UV CURTAIN LINE DG",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-020",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-02-23",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-25",
-        "description":  "ร้องขอทางฝ่ายเทคโนโลยีทำการออกแบบและติดตั้งม่านกันแสง UV (ลักษณะเดียวกันกับเครื่อง UV ที่ไลน์ Stator) ที่ไลน์ Direct Generator (DG) เนื่องจากเครื่องอบ UV ที่ไลน์ DG ไม่มีที่กันแสงปกป้องสายตาพนักงาน",
-        "note":  "ติดตั้งเสร็จสิ้น ส่งมอบให้ไลน์ DG เรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-23T08:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_opt_003",
-        "title":  "OPT-J26-003 JIG GLUE NEEDLE COVER",
-        "categoryId":  "cat_jig",
-        "code":  "OPT-J26-003",
-        "quotation":  "",
-        "requestName":  "ฝ่าย OPTICAL",
-        "requestDate":  "2026-02-17",
-        "factory":  "FACTORY 1",
-        "department":  "OPTICAL",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-10",
-        "description":  "ร้องขอให้จัดทำ Jig สำหรับใส่ครอบปลายเข็มฉีดกาว จำนวน 3 Pcs",
-        "note":  "จัดทำเสร็จสิ้น จำนวน 3 Pcs ส่งมอบเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-17T09:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_opt_002",
-        "title":  "OPT-J26-002 RECEPTACLE WORK MANUAL STAND \u0026 BOX",
-        "categoryId":  "cat_acc",
-        "code":  "OPT-J26-002",
-        "quotation":  "",
-        "requestName":  "ฝ่าย OPTICAL",
-        "requestDate":  "2026-02-17",
-        "factory":  "FACTORY 1",
-        "department":  "OPTICAL",
-        "process":  "ASSEMBLY",
-        "assignee":  "TANIN",
-        "status":  "done",
-        "completionDate":  "2026-08-15",
-        "description":  "ร้องขอให้จัดทำเสาและกล่อง สำหรับใส่คู่มือการทำงานของผลิตภัณฑ์ Receptacal จำนวน 16 ชิ้น",
-        "note":  "ส่งมอบและติดตั้งประจำสถานีงานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-17T09:30:00.000Z"
-    },
-    {
-        "id":  "achv_req_gm_015",
-        "title":  "GM-J26-015 SC220 INSPECTION BUTTON (3D PRINT)",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-015",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-02-18",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "INSPECTION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-12",
-        "description":  "ร้องขอฝ่ายเทคโนโลยี ทำการออกแบบปุ่มกดสำหรับเครื่อง Characteristic Inspection (SC220) เพื่อให้พนักงานสามารถกดปุ่มทดสอบได้อย่างสะดวก โดยขึ้นรูปชิ้นงานปุ่มกดด้วยเครื่อง 3D Printer",
-        "note":  "ขึ้นรูป 3D Print และติดตั้งทดสอบใช้งานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-18T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_ecr_523",
-        "title":  "ECR-523 JIG SCREENING LATCH \u0026 SLIDE CLAMP",
-        "categoryId":  "cat_jig",
-        "code":  "ECR-523",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MEDICAL",
-        "requestDate":  "2026-02-24",
-        "factory":  "FACTORY 1",
-        "department":  "MEDICAL",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-20",
-        "description":  "JIG-QC059, JIG-QC060 JIG SCREENING LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSY.",
-        "note":  "จัดทำเสร็จสิ้นและส่งมอบให้ฝ่ายผลิตทางการแพทย์",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-24T11:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_gm_023",
-        "title":  "GM-J26-023 STAND DCL12-3010-04 2 SET",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-023",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-02-24",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-22",
-        "description":  "จัดทำ Stand วางงานรุ่น DCL12-3010-04 จำนวน 2 Set",
-        "note":  "ส่งมอบ Stand วางงานให้ฝ่ายผลิตเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-24T14:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_gm_024",
-        "title":  "GM-J26-024 JIG GLUE CHECKING",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-024",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-02-24",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "GLUING",
-        "assignee":  "SUTTHIPONG",
-        "status":  "done",
-        "completionDate":  "2026-08-24",
-        "description":  "ร้องขอทางเทคโนโลยีช่วยออกแบบ Jig สำหรับเช็คกาว (Review ST Improvement Project) ลดเวลาขั้นตอนแคะเสษกาวด้านบน End Flange เนื่องจากกาวมีความหนึด พนักงานต้องใช้ก้าน Swab เช็คเข็มกาว",
-        "note":  "ส่งมอบ Jig ให้ฝ่ายผลิตเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-24T15:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_fr_018",
-        "title":  "FR-J26-018 FAN STAND CONCENTRICITY M/C 23 PCS",
-        "categoryId":  "cat_acc",
-        "code":  "FR-J26-018",
-        "quotation":  "",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-02-25",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-26",
-        "description":  "ร้องขอทาง Technology ออกแบบและจัดทำ พร้อมติดตั้งขาตั้งพัดลม ที่ M/C Concenificity จำนวน 23 Pcs จัดทำเป็น Spari เพื่อเอาไว้เปลี่ยนกรณีอันเก่าเสีย",
-        "note":  "ติดตั้งเรียบร้อย และจัดเก็บชิ้นส่วนสำรองเข้าคลัง",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-25T09:00:00.000Z"
-    },
-    {
-        "id":  "achv_req_oth_001",
-        "title":  "OTH-J26-001 ROOM CONTROL AIR GUARD COVER 12 SET",
-        "categoryId":  "cat_acc",
-        "code":  "OTH-J26-001",
-        "quotation":  "",
-        "requestName":  "ฝ่าย INDIRECT",
-        "requestDate":  "2026-02-25",
-        "factory":  "FACTORY 1",
-        "department":  "INDIRECT",
-        "process":  "SAFETY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-28",
-        "description":  "ฝาครอบ Room control Air สำหรับป้องกันไม่ให้ถูกกด โดยไม่ได้ตั้งใจ (Guard Cover) พร้อมติดตั้งหูข้าง สำหรับคล้องกุลแจ จำนวน 12 set",
-        "note":  "ติดตั้งเสร็จสิ้นครบทั้ง 12 จุด",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-02-25T13:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_01",
-        "title":  "(PR) 25-0929 - ACRYLIC 3M",
-        "categoryId":  "cat_pr",
-        "code":  "PR-25-0929",
-        "quotation":  "25-0929",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2025-09-29",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MATERIAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อแผ่นอะคริลิค 3M สำหรับงานผลิตและฝาครอบเครื่องจักร",
-        "note":  "ตรวจรับเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "25-0929 - ACRYLIC 3M",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\25-0929 - ACRYLIC 3M",
-                           "fileCount":  2,
-                           "totalSize":  "1.1 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2025-09-29T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_02",
-        "title":  "(PR) 26-0006 - HSS \u0026 END MILL \u0026 POM",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0006",
-        "quotation":  "26-0006",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-01-10",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อดอกสว่าน HSS, ดอกเอ็นมิล และพลาสติกวิศวกรรม POM สำหรับงานช่างกล",
-        "note":  "ของเข้าเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0006 - HSS \u0026 END MILL \u0026 POM",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0006 - HSS \u0026 END MILL \u0026 POM",
-                           "fileCount":  3,
-                           "totalSize":  "1.5 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-01-10T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_03",
-        "title":  "(PR) 26-0035 - SFJ \u0026 CLEAR ACRYLIC",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0035",
-        "quotation":  "26-0035",
-        "requestName":  "ฝ่ายผลิต",
-        "requestDate":  "2026-01-20",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MATERIAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-02",
-        "description":  "จัดซื้อชิ้นส่วน SFJ และแผ่นอะคริลิคใสสำหรับประกอบอุปกรณ์",
-        "note":  "ของเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0035 - SFJ \u0026 CLEAR ACRYLIC",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0035 - SFJ \u0026 CLEAR ACRYLIC",
-                           "fileCount":  2,
-                           "totalSize":  "980 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-01-20T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_04",
-        "title":  "(PR) 26-0139 - TABLE MAT",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0139",
-        "quotation":  "26-0139",
-        "requestName":  "ฝ่ายผลิต",
-        "requestDate":  "2026-02-05",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อแผ่นยางปูโต๊ะทำงานป้องกันไฟฟ้าสถิตย์ (ESD Table Mat)",
-        "note":  "ส่งมอบและปูบนโต๊ะทำงานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0139 - TABLE MAT",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0139 - TABLE MAT",
-                           "fileCount":  2,
-                           "totalSize":  "750 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-02-05T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_05",
-        "title":  "(PR) 26-0141 - MATERIAL JIG FOR CLEANING PART GEAR",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0141",
-        "quotation":  "26-0141",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-02-08",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "CLEANING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อวัสดุสำหรับทำจิ๊กล้างชิ้นส่วนเฟืองเกียร์",
-        "note":  "นำไปผลิตเป็นจิ๊กล้างสำเร็จ",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0141 - MATERIAL JIG FOR CLEANING PART GEAR",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0141 - MATERIAL JIG FOR CLEANING PART GEAR",
-                           "fileCount":  3,
-                           "totalSize":  "1.4 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-02-08T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_06",
-        "title":  "(PR) 26-0150 - TABLE MAT QA",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0150",
-        "quotation":  "26-0150",
-        "requestName":  "ฝ่าย QA",
-        "requestDate":  "2026-02-12",
-        "factory":  "FACTORY 1",
-        "department":  "QA",
-        "process":  "INSPECTION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-04",
-        "description":  "จัดซื้อแผ่นยางปูโต๊ะตรวจสอบคุณภาพแผนก QA",
-        "note":  "ติดตั้งเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0150 - TABLE MAT QA",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0150 - TABLE MAT QA",
-                           "fileCount":  2,
-                           "totalSize":  "890 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-02-12T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_07",
-        "title":  "(PR) 26-0204 - BEARING FOR FERRULE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0204",
-        "quotation":  "26-0204",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-03-01",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "SPARE PARTS",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อตลับลูกปืนความแม่นยำสูงสำหรับเครื่องจักรผลิต Ferrule",
-        "note":  "ส่งมอบเข้าสโตร์แผนกเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0204 - BEARING FOR FERRULE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0204 - BEARING FOR FERRULE",
-                           "fileCount":  2,
-                           "totalSize":  "1.2 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-01T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_08",
-        "title":  "(PR) 26-0210 - V BLOCK",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0210",
-        "quotation":  "26-0210",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-03-04",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-26",
-        "description":  "จัดซื้อบล็อกวีความแม่นยำสูง V-Block สำหรับงานจับยึดเพลากลึง",
-        "note":  "ตรวจรับเข้าห้องปฏิบัติการช่างเทคโน",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0210 - V BLOCK",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0210 - V BLOCK",
-                           "fileCount":  3,
-                           "totalSize":  "2.4 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-04T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_09",
-        "title":  "(PR) 26-0212 - STANDARD WI TABLE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0212",
-        "quotation":  "26-0212",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-03-05",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "FACILITY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-16",
-        "description":  "จัดซื้อโต๊ะมาตรฐานพร้อมชั้นวางเอกสาร WI ประจำไลน์ผลิต",
-        "note":  "ส่งมอบและจัดวางตามจุดเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0212 - STANDARD WI TABLE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0212 - STANDARD WI TABLE",
-                           "fileCount":  2,
-                           "totalSize":  "1.3 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-05T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_10",
-        "title":  "(PR) 26-0226 - INNER DIAMETER PROCESSING MAC",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0226",
-        "quotation":  "26-0226",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-03-10",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-05-18",
-        "description":  "จัดซื้อชิ้นส่วนปรับปรุงเครื่องวัดขนาดเส้นผ่านศูนย์กลางภายใน",
-        "note":  "ติดตั้งเข้ากับเครื่องจักรเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0226 - INNER DIAMETER PROCESSING MAC",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0226 - INNER DIAMETER PROCESSING MAC",
-                           "fileCount":  3,
-                           "totalSize":  "2.1 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-10T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_11",
-        "title":  "(PR) 26-0266 - END MILL, BEARING AND SPRING",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0266",
-        "quotation":  "26-0266",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-03-20",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-11",
-        "description":  "จัดซื้อดอกเอ็นมิลคาร์ไบด์ แบริ่ง และสปริงกดสำหรับงานซ่อมสร้างจิ๊ก",
-        "note":  "ตรวจรับเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0266 - END MILL, BEARING AND SPRING",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0266 - END MILL, BEARING AND SPRING",
-                           "fileCount":  3,
-                           "totalSize":  "1.6 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-20T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_12",
-        "title":  "(PR) 26-0272 - WELD",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0272",
-        "quotation":  "26-0272",
-        "requestName":  "ฝ่ายซ่อมบำรุง",
-        "requestDate":  "2026-03-25",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MAINTENANCE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-05",
-        "description":  "จัดจ้างงานเชื่อมอาร์กอนโครงสร้างโต๊ะและแท่นเครื่องจักร",
-        "note":  "งานเชื่อมผ่านการทดสอบความแข็งแรงเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0272 - WELD",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0272 - WELD",
-                           "fileCount":  2,
-                           "totalSize":  "850 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-25T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_13",
-        "title":  "(PR) 26-0278 - ลูกล้อโพลียูรีเทน PAREO",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0278",
-        "quotation":  "26-0278",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-03-28",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "FACILITY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-02",
-        "description":  "จัดซื้อลูกล้อโพลียูรีเทน PAREO แบบมีเบรกสำหรับรถเข็นขนย้ายชิ้นงาน",
-        "note":  "ติดตั้งบนรถเข็นเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0278 - ลูกล้อโพลียูรีเทน PAREO",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0278 - ลูกล้อโพลียูรีเทน PAREO",
-                           "fileCount":  2,
-                           "totalSize":  "1.0 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-28T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_14",
-        "title":  "(PR) 26-0279 - SHUTER A7-416",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0279",
-        "quotation":  "26-0279",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-03-29",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "STORAGE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-02",
-        "description":  "จัดซื้อตู้ลิ้นชักจัดเก็บชิ้นส่วนและอุปกรณ์ขนาดเล็ก SHUTER A7-416",
-        "note":  "จัดวางประจำพื้นที่ช่างเทคโนเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0279 - SHUTER A7-416",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0279 - SHUTER A7-416",
-                           "fileCount":  2,
-                           "totalSize":  "1.1 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-03-29T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_15",
-        "title":  "(PR) 26-0283 - KNOBS FERRULE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0283",
-        "quotation":  "26-0283",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-04-02",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-09",
-        "description":  "จัดซื้อลูกบิดพลาสติกปรับตำแหน่ง (Knobs) สำหรับจิ๊กจับยึดงาน Ferrule",
-        "note":  "ส่งมอบแผนก Ferrule ใช้งาน",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0283 - KNOBS FERRULE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0283 - KNOBS FERRULE",
-                           "fileCount":  2,
-                           "totalSize":  "780 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-02T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_16",
-        "title":  "(PR) 26-0297 - CLEAR ACRYLIC FOR TROLLEY COVER A",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0297",
-        "quotation":  "26-0297",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-04-08",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "MATERIAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-02",
-        "description":  "จัดซื้อแผ่นอะคริลิคใสตัดขึ้นรูปสำหรับฝาครอบรถเข็นชิ้นงาน",
-        "note":  "ประกอบร่วมกับโครงรถเข็นเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0297 - CLEAR ACRYLIC FOR TROLLEY COVER A",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0297 - CLEAR ACRYLIC FOR TROLLEY COVER A",
-                           "fileCount":  3,
-                           "totalSize":  "1.8 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-08T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_17",
-        "title":  "(PR) 26-0299 - MAGNET FOR MAGNET",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0299",
-        "quotation":  "26-0299",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-04-10",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-30",
-        "description":  "จัดซื้อแม่เหล็กนีโอไดเมียมสำหรับติดตั้งในชุดล็อคฝาครอบ",
-        "note":  "ตรวจรับเข้าสโตร์เรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0299 - MAGNET FOR MAGNET",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0299 - MAGNET FOR MAGNET",
-                           "fileCount":  2,
-                           "totalSize":  "920 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-10T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_18",
-        "title":  "(PR) 26-0323 - SPRING FOR FERRULE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0323",
-        "quotation":  "26-0323",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-04-18",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "SPARE PARTS",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-15",
-        "description":  "จัดซื้อสปริงดันสแตนเลสสำหรับเครื่องตรวจสอบชิ้นงาน Ferrule",
-        "note":  "ส่งมอบเข้าสโตร์แผนก",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0323 - SPRING FOR FERRULE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0323 - SPRING FOR FERRULE",
-                           "fileCount":  2,
-                           "totalSize":  "840 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-18T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_19",
-        "title":  "(PR) 26-0328 - HSS DRILL 15 MM",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0328",
-        "quotation":  "26-0328",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-04-20",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-17",
-        "description":  "จัดซื้อดอกสว่านไฮสปีดขนาด 15 มม. สำหรับงานขึ้นรูปชิ้นงานโลหะ",
-        "note":  "ตรวจรับเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0328 - HSS DRILL 15 MM",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0328 - HSS DRILL 15 MM",
-                           "fileCount":  2,
-                           "totalSize":  "760 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-20T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_20",
-        "title":  "(PR) 26-0391 - WOGOA COVER",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0391",
-        "quotation":  "26-0391",
-        "requestName":  "ฝ่าย MEDICAL",
-        "requestDate":  "2026-05-02",
-        "factory":  "FACTORY 1",
-        "department":  "MEDICAL",
-        "process":  "PACKAGING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-04",
-        "description":  "จัดซื้ออุปกรณ์ฝาครอบป้องกันชุดสวิตช์ Wagoa",
-        "note":  "ติดตั้งเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0391 - WOGOA COVER",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0391 - WOGOA COVER",
-                           "fileCount":  2,
-                           "totalSize":  "1.2 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-05-02T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_21",
-        "title":  "(PR) 26-0408 - END MILL 2.5, CARBIDE 6 MM",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0408",
-        "quotation":  "26-0408",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-05-02",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-09",
-        "description":  "จัดซื้อดอกเอ็นมิลคาร์ไบด์ 2.5 มม. และ 6 มม. สำหรับงาน CNC ความแม่นยำสูง",
-        "note":  "ของเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0408 - END MILL 2.5, CARBIDE 6 mm",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0408 - END MILL 2.5, CARBIDE 6 mm",
-                           "fileCount":  2,
-                           "totalSize":  "990 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-05-02T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_22",
-        "title":  "(PR) 26-0417 - HOLE SAW, STYLUS CENTER",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0417",
-        "quotation":  "26-0417",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-05-08",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "TOOLING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-16",
-        "description":  "จัดซื้อโฮลซอว์เจาะรูแผ่นเหล็ก และสไตลัสเซ็นเตอร์สำหรับการเซ็ตศูนย์เครื่องจักร",
-        "note":  "ตรวจรับเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0417 - HOLE SAW, STYLUS CENTER",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0417 - HOLE SAW, STYLUS CENTER",
-                           "fileCount":  2,
-                           "totalSize":  "880 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-05-08T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_23",
-        "title":  "(PR) 26-0426 - HOLE METAL FERRULE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0426",
-        "quotation":  "26-0426",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-05-15",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-16",
-        "description":  "จัดซื้อชิ้นส่วนแผ่นโลหะเจาะรูพิเศษสำหรับเครื่องคัดแยก Ferrule",
-        "note":  "ติดตั้งเข้ากับเครื่องคัดแยกเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0426 - HOLE METAL FERRULE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\26-0426 - HOLE METAL FERRULE",
-                           "fileCount":  2,
-                           "totalSize":  "950 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-05-15T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_24",
-        "title":  "(PR) Q26-0384 - THE WD MY PASSPORT 1 TB",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0384",
-        "quotation":  "Q26-0384",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-05-16",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "IT / BACKUP",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-25",
-        "description":  "จัดซื้อ External Harddisk WD My Passport 1TB สำหรับสำรองข้อมูลงานออกแบบและโปรแกรมเครื่องจักร",
-        "note":  "ตรวจรับและนำมาใช้สำรองข้อมูลเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "Q26-0384 - THE WD MY PASSPORT 1 TB",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\COMPLETE\\Q26-0384 - THE WD MY PASSPORT 1 TB",
-                           "fileCount":  2,
-                           "totalSize":  "650 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-05-16T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_25",
-        "title":  "(PR) 26-0515 - B-100-1 HINGE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0515",
-        "quotation":  "26-0515",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-04",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MATERIAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-25",
-        "description":  "จัดซื้อบานพับอุตสาหกรรมรุ่น B-100-1 สำหรับติดตั้งฝาครอบรถเข็นชิ้นงาน",
-        "note":  "ของเข้าคลังเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0515 - B-100-1 HINGE",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0515 - B-100-1 HINGE",
-                           "fileCount":  3,
-                           "totalSize":  "1.8 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-04T09:47:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_26",
-        "title":  "(PR) 26-0524 - CLEAR ACRYLIC FOR MAGNET",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0524",
-        "quotation":  "26-0524",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-08-06",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "MATERIAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-26",
-        "description":  "จัดซื้อแผ่นอะคริลิคใสตัดเลเซอร์ตามแบบสำหรับติดตั้งแม่เหล็กยึดฝา",
-        "note":  "นำไปประกอบร่วมกับชิ้นงานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0524 - CLEAR ACRYLIC FOR MAGNET",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0524 - CLEAR ACRYLIC FOR MAGNET",
-                           "fileCount":  2,
-                           "totalSize":  "1.1 MB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-06T16:46:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_27",
-        "title":  "(PR) 26-0469 - FOOT COMPONENT FOR GM",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0469",
-        "quotation":  "26-0469",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-07-24",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-20",
-        "description":  "จัดซื้อขาตั้งปรับระดับ (Leveling Foot) สำหรับแท่นเครื่องไลน์ผลิต GM",
-        "note":  "ติดตั้งเสร็จสมบูรณ์",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0469 - FOOT COMPONENT FOR GM",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0469 - FOOT COMPONENT FOR GM",
-                           "fileCount":  2,
-                           "totalSize":  "900 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-07-24T10:09:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_28",
-        "title":  "(PR) 26-0485 - MAKITA 12V BATTERY",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0485",
-        "quotation":  "26-0485",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-07-31",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "TOOLING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-25",
-        "description":  "จัดซื้อแบตเตอรี่สำรอง MAKITA 12V สำหรับสว่านไขควงไร้สาย",
-        "note":  "ตรวจรับและแจกจ่ายให้ช่างประจำไลน์",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0485 - MAKITA 12V",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0485 - MAKITA 12V",
-                           "fileCount":  2,
-                           "totalSize":  "820 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-07-31T12:07:00.000Z"
-    },
-    {
-        "id":  "achv_pr_c_29",
-        "title":  "(PR) 26-0510 - Z-A17B SENSOR CABLE",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0510",
-        "quotation":  "26-0510",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-08-03",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "ELECTRICAL",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-28",
-        "description":  "จัดซื้อสายสัญญาณเซนเซอร์ Z-A17B สำหรับเครื่องตรวจสอบชิ้นงาน",
-        "note":  "เชื่อมต่อระบบและทดสอบสัญญาณผ่าน",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0510 - Z-A17B",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\26-0510 - Z-A17B",
-                           "fileCount":  2,
-                           "totalSize":  "870 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-08-03T10:10:00.000Z"
-    },
-    {
-        "id":  "achv_jig_lvp_258",
-        "title":  "JIG-LVP258 PLUNGER \u0026 SCREW INSPECTION",
-        "categoryId":  "cat_jig",
-        "code":  "JIG-LVP258",
-        "quotation":  "",
-        "requestName":  "TANYALAKT",
-        "requestDate":  "2026-03-28",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "3D PRINT",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-15",
-        "description":  "ขึ้นรูปชิ้นงาน 3D Print สำหรับจิ๊กตรวจสอบ Plunger และสกรูปรับตั้งเครื่อง LVP258",
-        "note":  "ปริ้นท์ชิ้นงานและประกอบทดสอบเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-03-28T08:00:00.000Z"
-    },
-    {
-        "id":  "achv_jig_mot_074z",
-        "title":  "JIG-MOT074Z012 GEAR POSITION JIG",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-012Z",
-        "quotation":  "",
-        "requestName":  "SUTTHIPONG",
-        "requestDate":  "2026-03-28",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "3D PRINT",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-20",
-        "description":  "จัดทำจิ๊กกำหนดตำแหน่งเฟืองเกียร์ด้วย Formlabs 3D Printer เพื่อความแม่นยำในการประกอบ",
-        "note":  "ส่งมอบไลน์ประกอบมอเตอร์เรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-03-28T09:00:00.000Z"
-    },
-    {
-        "id":  "achv_acc_syr_cover",
-        "title":  "ACC-SYR01 COVER SYRINGE HOLDER",
-        "categoryId":  "cat_acc",
-        "code":  "OPT-J26-005",
-        "quotation":  "",
-        "requestName":  "ANANTACHAI J.",
-        "requestDate":  "2026-03-28",
-        "factory":  "FACTORY 1",
-        "department":  "OPTICAL",
-        "process":  "3D PRINT",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-22",
-        "description":  "ฝาครอบป้องกันกระบอกฉีดกาวสำหรับงานหยอดกาวชิ้นส่วนเลนส์ออปติก",
-        "note":  "ติดตั้งบนเครื่องหยอดกาวเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-03-28T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_jig_rot_4l",
-        "title":  "JIG-ROT04 ROTOR 4 LOBES ALIGNMENT",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-018",
-        "quotation":  "",
-        "requestName":  "ANANTACHAI J.",
-        "requestDate":  "2026-03-28",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "3D PRINT",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-06-25",
-        "description":  "จิ๊กจัดตำแหน่งโรเตอร์ 4 Lobes พร้อมเพลาและเฮ้าส์ซิ่งดีไซน์ใหม่",
-        "note":  "ขึ้นรูปและทดสอบการหมุนเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-03-28T11:00:00.000Z"
-    },
-    {
-        "id":  "achv_imp_slip_roll",
-        "title":  "IMP26-008 MODIFIED SLIP ROLL MACHINE",
-        "categoryId":  "cat_imp",
-        "code":  "IMP-26-008",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-04-23",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "MODIFICATION",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-15",
-        "description":  "ปรับปรุงและดัดแปลงเครื่องม้วนโลหะแผ่น Slip Roll เพื่อความปลอดภัยและเพิ่มขนาดหน้ากว้างม้วนงาน",
-        "note":  "จัดทำ Concept Design Presentation และดัดแปลงเครื่องสำเร็จ",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-04-23T11:40:00.000Z"
-    },
-    {
-        "id":  "achv_acc_trolley_3s",
-        "title":  "ACC-TRL03 TROLLEY 3-STORY TRAY SUPPORT",
-        "categoryId":  "cat_acc",
-        "code":  "FR-J26-025",
-        "quotation":  "",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-05-10",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "STORAGE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-28",
-        "description":  "โครงรองรับถาดชิ้นงาน 3 ชั้นบนรถเข็นขนส่ง Ferrule",
-        "note":  "ประกอบและส่งมอบรถเข็นใช้งานเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-05-10T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_sys_kv_studio",
-        "title":  "SYS-PLC01 KEYENCE KV-STUDIO AUTOMATION",
-        "categoryId":  "cat_prj",
-        "code":  "SYS-KEYENCE-01",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-06-02",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "SOFTWARE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-05",
-        "description":  "ติดตั้งและตั้งค่าโปรแกรม KEYENCE KV STUDIO สำหรับเชื่อมต่อและปรับปรุงโปรแกรม PLC เครื่องจักร",
-        "note":  "เชื่อมต่อและอัพโหลดโปรแกรมเครื่องจักรสำเร็จ",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-06-02T18:08:00.000Z"
-    },
-    {
-        "id":  "achv_jig_scr_z09",
-        "title":  "JIG-SCR09 SCREENING FIXTURE Z09",
-        "categoryId":  "cat_jig",
-        "code":  "MD-J26-008",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MEDICAL",
-        "requestDate":  "2026-05-16",
-        "factory":  "FACTORY 1",
-        "department":  "MEDICAL",
-        "process":  "SCREENING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-10",
-        "description":  "จิ๊กสกรีนชิ้นส่วนการแพทย์รุ่น Z09 พร้อมจัดทำคู่มือการทำงาน (Instruction for screening Z09)",
-        "note":  "ส่งมอบจิ๊กและเอกสารคู่มือเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-05-16T09:51:00.000Z"
-    },
-    {
-        "id":  "achv_imp_3d_present",
-        "title":  "IMP26-012 3D DATA PRESENTATION \u0026 CAD ARCHIVE",
-        "categoryId":  "cat_imp",
-        "code":  "IMP-26-012",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-04-04",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "DESIGN",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-07-20",
-        "description":  "รวบรวมและจัดระเบียบฐานข้อมูล 3D CAD Data สำหรับงานออกแบบจิ๊กและอุปกรณ์ในโรงงาน",
-        "note":  "นำเสนอผู้บริหารและจัดเก็บลงระบบเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-04-04T09:55:00.000Z"
-    },
-    {
-        "id":  "achv_sys_gx_works3",
-        "title":  "SYS-PLC02 MITSUBISHI GX-WORKS3 SETUP",
-        "categoryId":  "cat_prj",
-        "code":  "SYS-MITSUBISHI-02",
-        "quotation":  "",
-        "requestName":  "ฝ่ายเทคโนโลยี",
-        "requestDate":  "2026-06-02",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION TECHNOLOGY",
-        "process":  "SOFTWARE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-01",
-        "description":  "ติดตั้งซอฟต์แวร์ GX Works3 V1.038Q สำหรับโปรแกรม PLC Mitsubishi เครื่องจักรอัตโนมัติ",
-        "note":  "ติดตั้งและทดสอบการเชื่อมต่อสำเร็จ",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-06-02T10:57:00.000Z"
-    },
-    {
-        "id":  "achv_acc_mot_dcl12",
-        "title":  "ACC-MOT082 DCL12 FIXTURE BASE",
-        "categoryId":  "cat_acc",
-        "code":  "GM-J26-022",
-        "quotation":  "",
-        "requestName":  "SURASAT S.",
-        "requestDate":  "2026-08-18",
-        "factory":  "FACTORY 1",
-        "department":  "GENERAL - MOTOR",
-        "process":  "MACHINING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "done",
-        "completionDate":  "2026-08-30",
-        "description":  "ฐานยึดฟิกซ์เจอร์สำหรับมอเตอร์รุ่น DCL12 ช่วยให้การประกอบมีความมั่นคงและลดของเสีย",
-        "note":  "ส่งมอบและติดตั้งบนไลน์ผลิตเรียบร้อย",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-08-18T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_01",
-        "title":  "(PR) 26-0036 - PIN WINDING JIG",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0036",
-        "quotation":  "26-0036",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-01-22",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "WINDING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-27",
-        "description":  "ขอเสนอราคาจัดซื้อจิ๊กพันพินขดลวดมอเตอร์",
-        "note":  "ยกเลิกเนื่องจากเปลี่ยนวิธีการผลิตเป็นแบบกึ่งอัตโนมัติ",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0036 - PIN WINDING JIG",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\CANCLE\\26-0036 - PIN WINDING JIG",
-                           "fileCount":  2,
-                           "totalSize":  "620 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-01-22T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_02",
-        "title":  "(PR) 26-0066 - FIBER ADHESIVE CURING JIG",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0066",
-        "quotation":  "26-0066",
-        "requestName":  "ฝ่าย FIBER",
-        "requestDate":  "2026-02-01",
-        "factory":  "FACTORY 1",
-        "department":  "FIBER",
-        "process":  "CURING",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-27",
-        "description":  "ขอจัดซื้อจิ๊กอบกาวสำหรับชิ้นส่วนไฟเบอร์ออปติก",
-        "note":  "ยกเลิกใบขอซื้อเนื่องจากใช้จิ๊กเดิมปรับแต่งแทนได้",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0066 - FIBER ADHESIVE CURING JIG",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\CANCLE\\26-0066 - FIBER ADHESIVE CURING JIG",
-                           "fileCount":  2,
-                           "totalSize":  "710 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-02-01T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_03",
-        "title":  "(PR) 26-0152 - DESK DRAWER",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0152",
-        "quotation":  "26-0152",
-        "requestName":  "ฝ่ายผลิต",
-        "requestDate":  "2026-02-15",
-        "factory":  "FACTORY 1",
-        "department":  "PRODUCTION",
-        "process":  "FACILITY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-27",
-        "description":  "ขอจัดซื้อลิ้นชักใต้โต๊ะทำงานสำหรับจัดเก็บเอกสารและอุปกรณ์ส่วนตัว",
-        "note":  "ยกเลิกเนื่องจากจัดสรรงบประมาณไปส่วนอื่น",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0152 - DESK DRAWER",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\CANCLE\\26-0152 - DESK DRAWER",
-                           "fileCount":  2,
-                           "totalSize":  "540 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-02-15T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_04",
-        "title":  "(PR) 26-0302 - CLEAR ACRYLIC FOR TROLLEY 3 STORY",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0302",
-        "quotation":  "26-0302",
-        "requestName":  "ฝ่าย FERRULE",
-        "requestDate":  "2026-04-12",
-        "factory":  "FACTORY 1",
-        "department":  "FERRULE",
-        "process":  "STORAGE",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-23",
-        "description":  "ขอจัดซื้อแผ่นอะคริลิคใสสำหรับทำฝาปิดรถเข็น 3 ชั้น",
-        "note":  "ยกเลิกเนื่องจากเปลี่ยนแบบเป็นฝาเปิดด้านหน้าแทน",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0302 - CLEAR ACRYLIC FOR TROLLEY 3 STORY",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\CANCLE\\26-0302 - CLEAR ACRYLIC FOR TROLLEY 3 STORY",
-                           "fileCount":  2,
-                           "totalSize":  "890 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-12T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_05",
-        "title":  "(PR) 26-0335 - BAKELITE TRAY",
-        "categoryId":  "cat_pr",
-        "code":  "PR-26-0335",
-        "quotation":  "26-0335",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-04-22",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-22",
-        "description":  "ขอเสนอราคาถาดเบกาไลต์สำหรับรองอบชิ้นงานที่อุณหภูมิสูง",
-        "note":  "ยกเลิกเนื่องจากเปลี่ยนใช้วัสดุอะลูมิเนียมที่มีอยู่เดิมแทน",
-        "pdfAttachment":  null,
-        "workFolder":  {
-                           "name":  "26-0335 - BAKELITE TRAY",
-                           "path":  "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\PR\\CANCLE\\26-0335 - BAKELITE TRAY",
-                           "fileCount":  2,
-                           "totalSize":  "680 KB"
-                       },
-        "imageData":  null,
-        "createdAt":  "2026-04-22T10:00:00.000Z"
-    },
-    {
-        "id":  "achv_pr_cnc_06",
-        "title":  "JIG-MOT076 CANCELLED PROTOTYPE JIG",
-        "categoryId":  "cat_jig",
-        "code":  "GM-J26-019",
-        "quotation":  "",
-        "requestName":  "ฝ่าย MOTOR",
-        "requestDate":  "2026-05-02",
-        "factory":  "FACTORY 1",
-        "department":  "MOTOR",
-        "process":  "ASSEMBLY",
-        "assignee":  "JITTRAKAN K.",
-        "status":  "cancel",
-        "completionDate":  "2026-06-30",
-        "description":  "จิ๊กต้นแบบสำหรับทดสอบการประกอบสเตเตอร์รุ่นทดลอง",
-        "note":  "ลูกค้ายกเลิกแบบสเปคเดิม จึงยกเลิกการจัดทำจิ๊กต้นแบบนี้",
-        "pdfAttachment":  null,
-        "workFolder":  "",
-        "imageData":  null,
-        "createdAt":  "2026-05-02T10:00:00.000Z"
+  {
+    "requestDate": "2026-10-08",
+    "supportBy": "",
+    "maintenanceSupport4": "",
+    "maintenanceSupport": "",
+    "createdAt": "2026-10-12T02:02:56.470Z",
+    "quotation": "",
+    "maintenanceSupport1": "",
+    "categoryId": "cat_acc",
+    "subStatus": "01 Req. Analysis",
+    "process": "ROTOR PROCESS",
+    "description": "ร้องขอทางฝ่ายเทคโนโลยีจัดทำชั้นวางชิ้นงานตู้อบ จำนวน 1 ชั้น เพื่อรองรับงานที่เพิ่มขึ้น ให้มีพื้นที่เพียงพอต่อการใช้งาน",
+    "maintenanceSupport2": "",
+    "status": "in_progress",
+    "creatorPin": "20523",
+    "completionDate": "",
+    "department": "MOTOR PRODUCTION",
+    "requestName": "TEERAPONG S.",
+    "title": "ACC-MOT108 DRY MACHINE SHELF",
+    "toolingTeam1": "",
+    "lastEditedBy": "JITTRAKAN K.",
+    "note": "กำลังจะไปถามรายละเอียด",
+    "id": "achv_1791770576470",
+    "designSupport2": "",
+    "subJobType": "-",
+    "toolingTeam2": "",
+    "designSupport": "",
+    "maintenanceSupport3": "",
+    "priority": "Medium",
+    "imageData": null,
+    "designTeam": "",
+    "code": "GM-J26-143",
+    "toolingTeam": "",
+    "designSupport1": "",
+    "editorPin": "20523",
+    "factory": "FACTORY E",
+    "updatedAt": "2026-10-12T02:02:56.470Z",
+    "jobType": "D",
+    "achievement": 0.1,
+    "workFolder": null,
+    "maintenanceSupport5": "",
+    "lastEditedRole": "ADMIN",
+    "pdfAttachment": null,
+    "assignee": "JITTRAKAN K."
+  },
+  {
+    "createdAt": "2026-10-08T10:18:11.634Z",
+    "title": "UPDATE LAYOUT FINAL PROCESS (MOTOR PRODUCTION)",
+    "department": "MOTOR PRODUCTION",
+    "quotation": "",
+    "status": "in_progress",
+    "completionDate": "",
+    "code": "GM-J26-141",
+    "id": "achv_1791454691634",
+    "workFolder": null,
+    "imageData": null,
+    "requestName": "SUPANAT S.",
+    "lastEditedBy": "JITTRAKAN K.",
+    "factory": "FACTORY E",
+    "lastEditedRole": "ADMIN",
+    "editorPin": "20523",
+    "pdfAttachment": null,
+    "categoryId": "cat_prj",
+    "description": "",
+    "creatorPin": "20523",
+    "assignee": "JITTRAKAN K.",
+    "requestDate": "2026-10-08",
+    "note": "",
+    "updatedAt": "2026-10-08T10:18:11.634Z",
+    "process": "LAYOUT"
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "lastEditedBy": "JITTRAKAN K.",
+    "status": "in_progress",
+    "requestName": "TANONGSAK T.",
+    "imageData": null,
+    "lastEditedRole": "ADMIN",
+    "department": "FERRULE PRODUCTION",
+    "process": "",
+    "note": "กำลังจะขอใบเสนอราคา END MILL 0.5 จำนวน 2 ดอก",
+    "id": "achv_1791348779210",
+    "completionDate": "",
+    "quotation": "",
+    "createdAt": "2026-10-07T04:52:59.210Z",
+    "workFolder": null,
+    "requestDate": "2026-10-05",
+    "code": "FR-J26-091",
+    "title": "(PR) STOPPER END MILL 0.5 - 2 PCS",
+    "categoryId": "cat_pr",
+    "updatedAt": "2026-10-07T04:52:59.210Z",
+    "factory": "FACTORY A",
+    "pdfAttachment": null,
+    "creatorPin": "20523",
+    "description": "สั่ง END MILL เพื่อเอามาทำ REQUEST FR-J26-091",
+    "editorPin": "20523"
+  },
+  {
+    "description": "ร้องขอให้ทาง TECHNOLOGY จัดทำแท่นสำหรับวางกล่องใส่ถุงนิ้ว ดังนี้\n1. แท่นวางกล่องสำหรับ 3 กล่อง / 2 แท่น\n2. แท่นวางกล่องสำหรับ 2 กล่อง / 1 แท่น",
+    "editorPin": "20523",
+    "toolingTeam1": "",
+    "lastEditedBy": "JITTRAKAN K.",
+    "designSupport1": "",
+    "process": "ALL AREA",
+    "requestDate": "2026-10-06",
+    "title": "ACC-FIB013 FINGER COT DISPENSER 2",
+    "lastEditedRole": "ADMIN",
+    "maintenanceSupport3": "",
+    "updatedAt": "2026-10-12T08:37:55.142Z",
+    "designTeam": "",
+    "imageData": null,
+    "maintenanceSupport5": "",
+    "workFolder": null,
+    "note": "กำลังขอพี่เบิ้ม SETCODE",
+    "id": "achv_1791251384106",
+    "maintenanceSupport": "",
+    "requestName": "SARANYAPHAT S.",
+    "code": "OPT-J26-029",
+    "completionDate": "",
+    "maintenanceSupport1": "",
+    "maintenanceSupport4": "",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_acc",
+    "designSupport2": "",
+    "pdfAttachment": null,
+    "creatorPin": "20523",
+    "maintenanceSupport2": "",
+    "createdAt": "2026-10-06T01:49:44.106Z",
+    "achievement": 0,
+    "priority": "Medium",
+    "quotation": "26-0704",
+    "toolingTeam2": "",
+    "designSupport": "",
+    "department": "FIBER PRODUCTION",
+    "supportBy": "",
+    "subJobType": "02 Outsource",
+    "status": "wait",
+    "jobType": "D",
+    "factory": "FACTORY B",
+    "toolingTeam": "",
+    "subStatus": "Pending"
+  },
+  {
+    "editorPin": "20523",
+    "note": "กำลังอยู่ในช่วงออกแบบ",
+    "lastEditedRole": "ADMIN",
+    "department": "FERRULE PRODUCTION",
+    "factory": "FACTORY A",
+    "description": "ร้องขอแผนก TECHNOLOGY ช่วยออกแบบฝาปิด ชั้นจัดเก็บภาชนะที่ห้อง COMPOUND จำนวน 3 ชั้น",
+    "status": "in_progress",
+    "completionDate": "",
+    "id": "achv_1791251002029",
+    "workFolder": null,
+    "requestDate": "2026-10-06",
+    "updatedAt": "2026-10-08T07:02:56.635Z",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_acc",
+    "quotation": "",
+    "createdAt": "2026-10-06T01:43:22.029Z",
+    "lastEditedBy": "JITTRAKAN K.",
+    "process": "COMPOUND",
+    "title": "ACC-FER074 COMPOUND DOOR COVER",
+    "creatorPin": "20523",
+    "code": "FR-J26-090",
+    "imageData": null,
+    "requestName": "THEEVISARA T.",
+    "pdfAttachment": null
+  },
+  {
+    "updatedAt": "2026-10-05T04:11:38.728Z",
+    "assignee": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "department": "PRODUCTION TECHNOLOGY",
+    "factory": "FACTORY E",
+    "id": "achv_1791173498728",
+    "title": "(PR) VSF 0.5 YELLOW, WHITE AND GREEN",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "workFolder": null,
+    "completionDate": "",
+    "code": "PRODUCTION TECHNOLOGY",
+    "editorPin": "20523",
+    "note": "กำลังขอใบเสนอราคากับพี่ไอซ์",
+    "imageData": null,
+    "status": "wait",
+    "process": "REPLACEMENT PARTS",
+    "description": "ต้องการสายไฟ VSF 0.5 สีเหลือง สีเขียว และสีขาว ม้วน 100 เมตร อย่างละ 1 PCS",
+    "categoryId": "cat_pr",
+    "pdfAttachment": null,
+    "lastEditedBy": "JITTRAKAN K.",
+    "createdAt": "2026-10-05T04:11:38.728Z",
+    "requestDate": "2026-10-05",
+    "quotation": "26-0692",
+    "creatorPin": "20523"
+  },
+  {
+    "id": "achv_1790835350192",
+    "description": "ทำการออกแบบเว็บไซต์คำนวณเงินเดือนทั้งในเว็บและในมือถือ",
+    "editorPin": "20523",
+    "note": "กำลังอยู่ในช่วง DESIGN",
+    "creatorPin": "20523",
+    "title": "CALCULATION SALARY",
+    "status": "in_progress",
+    "requestDate": "2026-10-01",
+    "categoryId": "cat_pvt",
+    "updatedAt": "2026-10-01T06:16:43.243Z",
+    "process": "DOCUMENT",
+    "createdAt": "2026-10-01T06:15:50.192Z",
+    "pdfAttachment": null,
+    "workFolder": null,
+    "lastEditedBy": "JITTRAKAN K.",
+    "quotation": "",
+    "completionDate": "",
+    "imageData": null,
+    "department": "OTHER",
+    "lastEditedRole": "ADMIN",
+    "assignee": "JITTRAKAN K.",
+    "factory": "",
+    "requestName": "JITTRAKAN K.",
+    "code": ""
+  },
+  {
+    "note": "พร้อมใช้งาน VERSION 1.0.0 แล้ว",
+    "completionDate": "2026-10-01",
+    "priority": "Medium",
+    "editorPin": "20523",
+    "designSupport2": "",
+    "title": "ACM RECORD",
+    "categoryId": "cat_pvt",
+    "lastEditedBy": "JITTRAKAN K.",
+    "toolingTeam1": "",
+    "updatedAt": "2026-10-12T03:59:11.334Z",
+    "creatorPin": "20523",
+    "requestName": "JITTRAKAN K.",
+    "description": "PROJECT DOCUMENTS",
+    "department": "OTHER",
+    "maintenanceSupport4": "",
+    "assignee": "JITTRAKAN K.",
+    "maintenanceSupport1": "",
+    "subJobType": "01 In-house",
+    "imageData": null,
+    "process": "DOCUMENT",
+    "requestDate": "2026-09-30",
+    "maintenanceSupport2": "",
+    "status": "in_progress",
+    "achievement": 0.2,
+    "maintenanceSupport": "",
+    "designSupport1": "",
+    "id": "achv_1790786196011",
+    "factory": "",
+    "pdfAttachment": null,
+    "lastEditedRole": "ADMIN",
+    "jobType": "D",
+    "maintenanceSupport5": "",
+    "toolingTeam": "",
+    "designTeam": "",
+    "createdAt": "2026-09-30T16:36:36.011Z",
+    "quotation": "",
+    "supportBy": "",
+    "designSupport": "",
+    "maintenanceSupport3": "",
+    "code": "PRIVATE PROJECT",
+    "workFolder": null,
+    "toolingTeam2": "",
+    "subStatus": "02 Concept Design"
+  },
+  {
+    "imageData": null,
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "completionDate": "",
+    "department": "PRODUCTION TECHNOLOGY",
+    "note": "รอ \" ตะไบ 1 SET \" มา",
+    "process": "REPLACEMENT PARTS",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "26-0681",
+    "createdAt": "2026-09-30T01:25:38.450Z",
+    "workFolder": null,
+    "lastEditedRole": "ADMIN",
+    "lastEditedBy": "JITTRAKAN K.",
+    "pdfAttachment": null,
+    "categoryId": "cat_pr",
+    "factory": "FACTORY E",
+    "title": "(PR) PHOENIX 10PCS NEEDLE FILE SET 3MM X 140MM",
+    "status": "wait",
+    "requestDate": "2026-09-30",
+    "updatedAt": "2026-10-01T12:06:16.529Z",
+    "editorPin": "20523",
+    "creatorPin": "20523",
+    "id": "achv_1790731538450",
+    "code": "PRODUCTION TECHNOLOGY",
+    "description": "ทำการสั่งซื้อตะใบรุ่น PHOENIX 10PCS NEEDLE FILE SET 3MM X 140MM มา 1 SET ให้แผนก PRODUCTION TECHNOLOGY"
+  },
+  {
+    "imageData": null,
+    "requestName": "TEERAPONG S.",
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment": null,
+    "workFolder": {
+      "fileCount": 9,
+      "totalSize": "89.3 MB",
+      "files": [
+        {
+          "sizeBytes": 14216192,
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "type": "ZRD",
+          "relPath": "MOTOR/LT-MOT001-1f (AFTER).zrd",
+          "size": "13.6 MB"
+        },
+        {
+          "relPath": "MOTOR/LT-MOT001-1f (Befor&After) 1.zrd",
+          "size": "27.9 MB",
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 29291008
+        },
+        {
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 14653440,
+          "size": "14 MB",
+          "relPath": "MOTOR/LT-MOT001-1f (BEFORE).zrd"
+        },
+        {
+          "size": "1.7 MB",
+          "sizeBytes": 1738211,
+          "type": "PDF",
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "relPath": "MOTOR/LT-MOT001-1f rev.2 (AFTER).pdf"
+        },
+        {
+          "sizeBytes": 1942222,
+          "type": "PDF",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF",
+          "size": "1.9 MB",
+          "relPath": "MOTOR/LT-MOT001-1f rev.2 (BEFORE).pdf"
+        },
+        {
+          "name": "LT-MOT001-2F (AFTER).PDF",
+          "type": "PDF",
+          "sizeBytes": 1683135,
+          "relPath": "MOTOR/LT-MOT001-2f (AFTER).pdf",
+          "size": "1.6 MB"
+        },
+        {
+          "name": "LT-MOT001-2F (AFTER).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 14217216,
+          "size": "13.6 MB",
+          "relPath": "MOTOR/LT-MOT001-2f (AFTER).zrd"
+        },
+        {
+          "size": "1.6 MB",
+          "relPath": "MOTOR/LT-MOT001-2f (BEFORE).pdf",
+          "name": "LT-MOT001-2F (BEFORE).PDF",
+          "type": "PDF",
+          "sizeBytes": 1680973
+        },
+        {
+          "size": "13.6 MB",
+          "relPath": "MOTOR/LT-MOT001-2f (BEFORE).zrd",
+          "sizeBytes": 14216704,
+          "type": "ZRD",
+          "name": "LT-MOT001-2F (BEFORE).ZRD"
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "MOTOR",
+      "zipData": "",
+      "totalBytes": 93639101
+    },
+    "createdAt": "2026-09-29T08:34:21.035Z",
+    "status": "done",
+    "quotation": "",
+    "factory": "FACTORY E",
+    "title": "LAYOUT WINDING MACHINE MOTOR (BEFORE -> AFTER) LT-MOT001-2F",
+    "code": "GM-J26-132",
+    "completionDate": "2026-10-01",
+    "requestDate": "2026-09-29",
+    "updatedAt": "2026-10-01T02:35:40.595Z",
+    "categoryId": "cat_prj",
+    "note": "ทำการอัพเดท LAYOUT WINDING MACHINE จำนวน 3 เครื่องที่เข้ามาใหม่ และแนบเอกสาร LAYOUT (BEFORE AND AFTER) เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "id": "achv_1790670861035",
+    "process": "LAYOUT (WINDING PROCESS)",
+    "editorPin": "20523",
+    "lastEditedBy": "JITTRAKAN K.",
+    "creatorPin": "20523",
+    "description": "ร้องขอให้ฝ่ายเทคโนโลยีทำการอัพเดท LAYOUT WINDING MACHINE จำนวน 3 เครื่อง ที่เข้ามาใหม่แล้ว เนื่องจากฝ่ายผลิตต้องเขียน ACTIVITY NOTIFICATION เข้า QMS และแนบเอกสาร LAYOUT (BEFORE AND AFTER) เพื่อร้องขอในการเปลี่ยนแปลงครั้งนี้"
+  },
+  {
+    "factory": "FACTORY E",
+    "note": "ทำการอัพเดท LAYOUT BALANCER MACHINE จำนวน 1 เครื่อง ที่จะเข้ามาใหม่ และแนบเอกสาร LAYOUT (BEFORE AND AFTER) เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "imageData": null,
+    "department": "MOTOR PRODUCTION",
+    "requestName": "TEERAPONG S.",
+    "title": "LAYOUT BALANCER MACHINE MOTOR (BEFORE -> AFTER) LT-MOT001-2F",
+    "quotation": "",
+    "id": "achv_1790670465563",
+    "lastEditedBy": "JITTRAKAN K.",
+    "createdAt": "2026-09-29T08:27:45.563Z",
+    "workFolder": {
+      "fileCount": 9,
+      "hasCloudFiles": true,
+      "totalSize": "89.3 MB",
+      "zipData": "",
+      "totalBytes": 93639101,
+      "files": [
+        {
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "sizeBytes": 14216192,
+          "type": "ZRD",
+          "relPath": "MOTOR/LT-MOT001-1f (AFTER).zrd",
+          "size": "13.6 MB"
+        },
+        {
+          "size": "27.9 MB",
+          "relPath": "MOTOR/LT-MOT001-1f (Befor&After) 1.zrd",
+          "sizeBytes": 29291008,
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "type": "ZRD",
+          "relPath": "MOTOR/LT-MOT001-1f (BEFORE).zrd",
+          "size": "14 MB",
+          "sizeBytes": 14653440
+        },
+        {
+          "sizeBytes": 1738211,
+          "type": "PDF",
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "relPath": "MOTOR/LT-MOT001-1f rev.2 (AFTER).pdf",
+          "size": "1.7 MB"
+        },
+        {
+          "size": "1.9 MB",
+          "sizeBytes": 1942222,
+          "type": "PDF",
+          "relPath": "MOTOR/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF"
+        },
+        {
+          "sizeBytes": 1683135,
+          "size": "1.6 MB",
+          "name": "LT-MOT001-2F (AFTER).PDF",
+          "type": "PDF",
+          "relPath": "MOTOR/LT-MOT001-2f (AFTER).pdf"
+        },
+        {
+          "sizeBytes": 14217216,
+          "size": "13.6 MB",
+          "relPath": "MOTOR/LT-MOT001-2f (AFTER).zrd",
+          "name": "LT-MOT001-2F (AFTER).ZRD",
+          "type": "ZRD"
+        },
+        {
+          "relPath": "MOTOR/LT-MOT001-2f (BEFORE).pdf",
+          "name": "LT-MOT001-2F (BEFORE).PDF",
+          "type": "PDF",
+          "size": "1.6 MB",
+          "sizeBytes": 1680973
+        },
+        {
+          "relPath": "MOTOR/LT-MOT001-2f (BEFORE).zrd",
+          "type": "ZRD",
+          "name": "LT-MOT001-2F (BEFORE).ZRD",
+          "size": "13.6 MB",
+          "sizeBytes": 14216704
+        }
+      ],
+      "name": "MOTOR"
+    },
+    "status": "done",
+    "categoryId": "cat_prj",
+    "requestDate": "2026-09-29",
+    "process": "LAYOUT (ROTOR PROCESS)",
+    "pdfAttachment": null,
+    "lastEditedRole": "ADMIN",
+    "updatedAt": "2026-10-01T02:35:59.874Z",
+    "editorPin": "20523",
+    "code": "GM-J26-131",
+    "creatorPin": "20523",
+    "description": "ร้องขอทางฝ่ายเทคโนโลยีทำการอัพเดท LAYOUT BALANCER MACHINE จำนวน 1 เครื่อง ที่จะเข้ามาใหม่ เนื่องจากฝ่ายผลิตต้องเขียน ACTIVITY NOTIFICATION เข้า QMS และแนบเอกสาร LAYOUT (BEFORE AND AFTER) เพื่อร้องขอในการเปลี่ยนแปลงครั้งนี้)",
+    "completionDate": "2026-10-01"
+  },
+  {
+    "requestName": "SUPANAT S.",
+    "pdfAttachment": null,
+    "lastEditedRole": "ADMIN",
+    "note": "วาด DRAWING เสร็จสิ้น",
+    "title": "JIG-MOT102 STAKING",
+    "editorPin": "20523",
+    "department": "MOTOR PRODUCTION",
+    "process": "",
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-09-30T01:26:47.964Z",
+    "completionDate": "2026-09-28",
+    "workFolder": null,
+    "id": "achv_1790596153966",
+    "categoryId": "cat_jig",
+    "quotation": "",
+    "factory": "FACTORY E",
+    "status": "done",
+    "createdAt": "2026-09-28T11:49:13.966Z",
+    "requestDate": "2026-09-28",
+    "lastEditedBy": "JITTRAKAN K.",
+    "creatorPin": "20523",
+    "description": "วาด DRAWING ตัว JIG STAKING ให้แมน",
+    "code": "MOTOR PRODUCTION",
+    "imageData": null
+  },
+  {
+    "pdfAttachment": null,
+    "workFolder": null,
+    "factory": "FACTORY B",
+    "completionDate": "2026-09-28",
+    "requestDate": "2026-09-28",
+    "lastEditedBy": "JITTRAKAN K.",
+    "editorPin": "20523",
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-09-30T01:26:56.298Z",
+    "department": "FIBER PRODUCTION",
+    "description": "เขียน LAYOUT ของ FIBER ใหม่เพราะมีโต๊ะเข้ามาอีก 5 โต๊ะ",
+    "note": "เขียน LAYOUT สำเร็จ",
+    "lastEditedRole": "ADMIN",
+    "title": "LAYOUT FIBER UPDATE MAC 2",
+    "creatorPin": "20523",
+    "requestName": "FIBER PRODUCTION",
+    "status": "done",
+    "createdAt": "2026-09-28T09:23:10.612Z",
+    "code": "FIBER PRODUCTION",
+    "process": "LAYOUT",
+    "quotation": "",
+    "id": "achv_1790587390612",
+    "categoryId": "cat_prj",
+    "imageData": null
+  },
+  {
+    "lastEditedBy": "JITTRAKAN K.",
+    "title": "ACC-FER073 BLUE CART COVER",
+    "lastEditedRole": "ADMIN",
+    "editorPin": "20523",
+    "status": "wait",
+    "creatorPin": "20523",
+    "pdfAttachment": null,
+    "updatedAt": "2026-10-06T12:12:08.918Z",
+    "factory": "FACTORY B",
+    "code": "FR-J26-085",
+    "requestName": "PRAWRAVEE K.",
+    "completionDate": "",
+    "categoryId": "cat_acc",
+    "description": "ร้องขอให้ทาง TECHNOLOGY จัดทำ COVER ป้องกันชิ้นงานตก ทั้ง 2 ชิ้น 4 ด้าน บน-ล่าง",
+    "workFolder": null,
+    "id": "achv_1790414450979",
+    "assignee": "JITTRAKAN K.",
+    "createdAt": "2026-09-26T09:20:50.979Z",
+    "note": "รอ \"อะคลิลิคใส 2 แผ่น\" มา",
+    "quotation": "26-0680",
+    "department": "FERRULE PRODUCTION",
+    "requestDate": "2026-09-25",
+    "imageData": null,
+    "process": "FINAL INSPECTION"
+  },
+  {
+    "id": "achv_1790414001179",
+    "creatorPin": "20523",
+    "code": "FR-J26-086",
+    "imageData": null,
+    "pdfAttachment": null,
+    "categoryId": "cat_acc",
+    "title": "ACC-FER072 ULTRASONIC COVER",
+    "requestName": "WUTTICHAI A.",
+    "createdAt": "2026-09-26T09:13:21.179Z",
+    "factory": "FACTORY A",
+    "quotation": "26-0688",
+    "status": "wait",
+    "updatedAt": "2026-10-08T06:57:45.986Z",
+    "description": "ร้องขอแผนกเทคโนโลยี ช่วยทำ COVER เครื่อง ULTRASONIC",
+    "lastEditedBy": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "workFolder": null,
+    "note": "กำลังขอพี่เบิ้ม SETCODE",
+    "requestDate": "2026-09-25",
+    "process": "MOLDING",
+    "assignee": "JITTRAKAN K.",
+    "editorPin": "20523",
+    "department": "FERRULE PRODUCTION",
+    "completionDate": ""
+  },
+  {
+    "id": "achv_1790413822770",
+    "requestDate": "2026-09-26",
+    "categoryId": "cat_pr",
+    "note": "กำลังตัดสินใจ",
+    "quotation": "26-0676",
+    "createdAt": "2026-09-26T09:10:22.770Z",
+    "description": "ต้องการสายไฟ VSF 1X1.5 สีเหลือง สีเขียว และสีขาว ม้วน 100 เมตร อย่างละ 1 PCS",
+    "creatorPin": "20523",
+    "process": "REPLACEMENT PARTS",
+    "status": "wait",
+    "assignee": "JITTRAKAN K.",
+    "imageData": null,
+    "editorPin": "20523",
+    "title": "(PR) ELECTRIC CABLE VSF, 1X1.5, 100M",
+    "lastEditedRole": "ADMIN",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "factory": "FACTORY E",
+    "updatedAt": "2026-10-06T12:14:28.437Z",
+    "completionDate": "",
+    "lastEditedBy": "JITTRAKAN K.",
+    "workFolder": null,
+    "code": "PRODUCTION TECHNOLOGY",
+    "pdfAttachment": null
+  },
+  {
+    "id": "achv_1790298986198",
+    "workFolder": {
+      "files": [
+        {
+          "size": "16.2 KB",
+          "relPath": "26-0669 - END MILL DIA 4x12/FORM REQUEST - END MILL DIA 4x12.xlsx",
+          "sizeBytes": 16624,
+          "type": "XLSX",
+          "name": "FORM REQUEST - END MILL DIA 4X12.XLSX"
+        },
+        {
+          "relPath": "26-0669 - END MILL DIA 4x12/old cost endmill 4x12.pdf",
+          "type": "PDF",
+          "name": "OLD COST ENDMILL 4X12.PDF",
+          "sizeBytes": 17656,
+          "size": "17.2 KB"
+        },
+        {
+          "size": "13.4 KB",
+          "relPath": "26-0669 - END MILL DIA 4x12/old cost endmill 4x12.png",
+          "sizeBytes": 13742,
+          "type": "PNG",
+          "name": "OLD COST ENDMILL 4X12.PNG"
+        },
+        {
+          "name": "เสนอราคาออบเรย์-QT6909399.PDF",
+          "type": "PDF",
+          "sizeBytes": 23625,
+          "size": "23.1 KB",
+          "relPath": "26-0669 - END MILL DIA 4x12/เสนอราคาออบเรย์-QT6909399.pdf"
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "26-0669 - END MILL DIA 4X12",
+      "zipData": "",
+      "totalBytes": 71647,
+      "fileCount": 4,
+      "totalSize": "70 KB"
+    },
+    "editorPin": "20523",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "updatedAt": "2026-10-06T06:20:44.527Z",
+    "factory": "FACTORY E",
+    "lastEditedBy": "JITTRAKAN K.",
+    "department": "PRODUCTION TECHNOLOGY",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "status": "done",
+    "title": "(PR) END MILL 4X12 (UPDATE COST)",
+    "lastEditedRole": "ADMIN",
+    "pdfAttachment": null,
+    "createdAt": "2026-09-25T01:16:26.198Z",
+    "quotation": "26-0669",
+    "description": "สั่งซื้อดอก ENDMILL 4X12 ใหม่ให้พี่กล้ากับพี่แชมป์",
+    "creatorPin": "20523",
+    "code": "PRODUCTION TECHNOLOGY",
+    "completionDate": "2026-10-06",
+    "process": "SPARE PART",
+    "imageData": null,
+    "requestDate": "2026-09-25",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_pr"
+  },
+  {
+    "department": "FIBER PRODUCTION",
+    "lastEditedRole": "ADMIN",
+    "requestDate": "2026-09-21",
+    "imageData": null,
+    "note": "แก้ไขเรียบร้อยแล้ว",
+    "process": "LAYOUT",
+    "workFolder": null,
+    "status": "done",
+    "lastEditedBy": "JITTRAKAN K.",
+    "title": "EDIT LAYOUT FIBER : SEP",
+    "id": "achv_1789964175669",
+    "createdAt": "2026-09-21T04:16:15.669Z",
+    "completionDate": "2026-09-21",
+    "quotation": "",
+    "description": "แก้ไข LAYOUT ของไฟเบอร์ห้องพี่สุใหม่เนื่องจากมีโต๊ะเพิ่มมา 2 ตัวและ SHELL เพิ่มมา 2 ตัว",
+    "updatedAt": "2026-09-30T01:27:00.423Z",
+    "requestName": "FIBER PRODUCTION",
+    "categoryId": "cat_prj",
+    "factory": "FACTORY B",
+    "pdfAttachment": null,
+    "code": "FIBER PRODUCTION",
+    "creatorPin": "20523",
+    "editorPin": "20523",
+    "assignee": "JITTRAKAN K."
+  },
+  {
+    "requestDate": "2026-09-15",
+    "creatorPin": "20523",
+    "completionDate": "2026-09-15",
+    "process": "RECEPTACLE",
+    "quotation": "",
+    "createdAt": "2026-09-16T10:01:41.882Z",
+    "note": "ทำการจัดทำปอกสำหรับรองกดกาวหลอด SYRINGE 3 ML จำนวน 2 PCS เสร็จสิ้น",
+    "description": "ร้องขอให้จัดทำปอกสำหรับรองกดกาวหลอด SYRINGE 3 ML จำนวน 2 PCS รายละเอียดตามเอกสารแนบ",
+    "assignee": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "categoryId": "cat_acc",
+    "lastEditedBy": "JITTRAKAN K.",
+    "imageData": null,
+    "id": "achv_1789552901882",
+    "status": "done",
+    "editorPin": "20523",
+    "requestName": "WARAPORN W.",
+    "factory": "FACTORY B",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "name": "ACC-FIB005 SYRINGE SUPPORT",
+      "totalSize": "1.7 MB",
+      "zipData": "",
+      "files": [
+        {
+          "type": "SLDASM",
+          "sizeBytes": 156921,
+          "name": "ACC-FIB005A001-0.SLDASM",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005A001-0.SLDASM",
+          "size": "153.2 KB"
+        },
+        {
+          "size": "235.2 KB",
+          "name": "ACC-FIB005Z001-0.SLDDRW",
+          "sizeBytes": 240867,
+          "type": "SLDDRW",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FIB005Z001-0.SLDPRT",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 125904,
+          "size": "123 KB"
+        },
+        {
+          "type": "STL",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.STL",
+          "name": "ACC-FIB005Z001-0.STL",
+          "size": "218.4 KB",
+          "sizeBytes": 223684
+        },
+        {
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.SLDDRW",
+          "size": "225.8 KB",
+          "sizeBytes": 231256,
+          "name": "ACC-FIB005Z002-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FIB005Z002-0.SLDPRT",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.SLDPRT",
+          "size": "112.1 KB",
+          "sizeBytes": 114825
+        },
+        {
+          "sizeBytes": 52684,
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.STL",
+          "size": "51.4 KB",
+          "name": "ACC-FIB005Z002-0.STL",
+          "type": "STL"
+        },
+        {
+          "sizeBytes": 88140,
+          "size": "86.1 KB",
+          "type": "SLDPRT",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z003-0.SLDPRT",
+          "name": "ACC-FIB005Z003-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FIB005Z003-0.STL",
+          "type": "STL",
+          "sizeBytes": 576084,
+          "size": "562.6 KB",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z003-0.STL"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 7680,
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/Thumbs.db",
+          "size": "7.5 KB"
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "type": "SLDASM",
+          "name": "~$ACC-FIB005A001-0.SLDASM",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/~$ACC-FIB005A001-0.SLDASM"
+        },
+        {
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/~$ACC-FIB005Z001-0.SLDPRT",
+          "sizeBytes": 20,
+          "size": "20 B",
+          "name": "~$ACC-FIB005Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$ACC-FIB005Z002-0.SLDPRT",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/~$ACC-FIB005Z002-0.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20
+        }
+      ],
+      "totalBytes": 1818105,
+      "fileCount": 13
+    },
+    "pdfAttachment": null,
+    "updatedAt": "2026-09-30T01:27:11.124Z",
+    "code": "OPT-J26-026",
+    "title": "ACC-FIB012 SYRINGE SUPPORT 2",
+    "department": "OPICAL PRODUCTION"
+  },
+  {
+    "lastEditedRole": "ADMIN",
+    "code": "OTH-J26-014",
+    "lastEditedBy": "JITTRAKAN K.",
+    "department": "QUALITY",
+    "createdAt": "2026-09-16T09:56:56.250Z",
+    "quotation": "26-0658",
+    "requestName": "NAWAPHON D.",
+    "completionDate": "2026-10-06",
+    "workFolder": {
+      "files": [
+        {
+          "size": "1.3 MB",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014A001.SLDASM",
+          "name": "ACC-QC014A001.SLDASM",
+          "sizeBytes": 1354879,
+          "type": "SLDASM"
+        },
+        {
+          "name": "ACC-QC014A001.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014A001.SLDDRW",
+          "size": "1.4 MB",
+          "sizeBytes": 1487454
+        },
+        {
+          "sizeBytes": 219527,
+          "size": "214.4 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-QC014Z001-0.SLDDRW"
+        },
+        {
+          "sizeBytes": 55510,
+          "type": "SLDPRT",
+          "name": "ACC-QC014Z001-0.SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z001-0.SLDPRT",
+          "size": "54.2 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "sizeBytes": 211336,
+          "name": "ACC-QC014Z002-0.SLDDRW",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z002-0.SLDDRW",
+          "size": "206.4 KB"
+        },
+        {
+          "size": "52.9 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z002-0.SLDPRT",
+          "name": "ACC-QC014Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 54147
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z003-0.SLDDRW",
+          "size": "205.8 KB",
+          "sizeBytes": 210692,
+          "name": "ACC-QC014Z003-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "52.7 KB",
+          "sizeBytes": 53932,
+          "name": "ACC-QC014Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z003-0.SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-QC014Z004-0.SLDDRW",
+          "sizeBytes": 213931,
+          "size": "208.9 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z004-0.SLDDRW"
+        },
+        {
+          "size": "66.6 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 68187,
+          "name": "ACC-QC014Z004-0.SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z004-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z005-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-QC014Z005-0.SLDDRW",
+          "size": "205 KB",
+          "sizeBytes": 209964
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z005-0.SLDPRT",
+          "size": "52.8 KB",
+          "name": "ACC-QC014Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 54077
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z006-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 209954,
+          "name": "ACC-QC014Z006-0.SLDDRW",
+          "size": "205 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-QC014Z006-0.SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/ACC-QC014Z006-0.SLDPRT",
+          "size": "51.6 KB",
+          "sizeBytes": 52826
+        },
+        {
+          "name": "GFF-000 430MM.SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/GFF-000 430mm.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 144439,
+          "size": "141.1 KB"
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/GFF-000 590mm.SLDPRT",
+          "size": "144.4 KB",
+          "name": "GFF-000 590MM.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 147838
+        },
+        {
+          "size": "140.2 KB",
+          "sizeBytes": 143614,
+          "type": "SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/GFF-000 650mm.SLDPRT",
+          "name": "GFF-000 650MM.SLDPRT"
+        },
+        {
+          "type": "SLDASM",
+          "name": "GFJ-200.SLDASM",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-200.SLDASM",
+          "size": "120.7 KB",
+          "sizeBytes": 123613
+        },
+        {
+          "sizeBytes": 312760,
+          "type": "SLDPRT",
+          "name": "GFJ-200_1.SLDPRT",
+          "size": "305.4 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-200_1.SLDPRT"
+        },
+        {
+          "name": "GFJ-200_2.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-200_2.SLDPRT",
+          "size": "69.2 KB",
+          "sizeBytes": 70827
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-200_3.SLDPRT",
+          "size": "33.8 KB",
+          "sizeBytes": 34567,
+          "name": "GFJ-200_3.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-A15.SLDASM",
+          "name": "GFJ-A15.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 113397,
+          "size": "110.7 KB"
+        },
+        {
+          "name": "GFJ-A15_1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-A15_1.SLDPRT",
+          "size": "267.7 KB",
+          "sizeBytes": 274107
+        },
+        {
+          "name": "GFJ-A15_2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 71940,
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-A15_2.SLDPRT",
+          "size": "70.3 KB"
+        },
+        {
+          "size": "72.8 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-A15_3.SLDPRT",
+          "type": "SLDPRT",
+          "name": "GFJ-A15_3.SLDPRT",
+          "sizeBytes": 74550
+        },
+        {
+          "size": "186.3 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/GFJ-A22.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 190802,
+          "name": "GFJ-A22.SLDPRT"
+        },
+        {
+          "size": "516 KB",
+          "relPath": "ACC-QC014 CART FOR IQC/GFN-512.SLDPRT",
+          "sizeBytes": 528384,
+          "name": "GFN-512.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "397.3 KB",
+          "sizeBytes": 406878,
+          "name": "GFN-524-SLD.SLDPRT",
+          "relPath": "ACC-QC014 CART FOR IQC/GFN-524-SLD.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 1543075,
+          "relPath": "ACC-QC014 CART FOR IQC/GFN-E17-SLD.SLDPRT",
+          "size": "1.5 MB",
+          "name": "GFN-E17-SLD.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "ACC-QC014 CART FOR IQC/Thumbs.db",
+          "sizeBytes": 25088,
+          "size": "24.5 KB"
+        }
+      ],
+      "totalSize": "8.3 MB",
+      "name": "ACC-QC014 CART FOR IQC",
+      "totalBytes": 8662295,
+      "fileCount": 30,
+      "hasCloudFiles": true,
+      "zipData": ""
+    },
+    "title": "ACC-QC014 CART FOR IQC",
+    "pdfAttachment": null,
+    "factory": "FACTORY C",
+    "imageData": null,
+    "assignee": "JITTRAKAN K.",
+    "description": "จัดทำรถเข็นปฏิบัติงานสำหรับแผนก IQC จำนวน 1 คัน รูปแบบโครงสร้างอ้างอิงตามเอกสารแนบ เพื่อความสะดวก เรียบร้อย และปลอดภัย ในการทำการเคลื่อนย้ายชิ้นงาน เครื่องมือวัด และอุปกรณ์",
+    "editorPin": "20523",
+    "categoryId": "cat_acc",
+    "updatedAt": "2026-10-06T12:05:32.771Z",
+    "status": "done",
+    "process": "",
+    "id": "achv_1789552616250",
+    "note": "ทำการจัดทำรถเข็นปฏิบัติงานสำหรับแผนก IQC จำนวน 1 คัน ตามเอกสารแนบ เสร็จสิ้น",
+    "requestDate": "2026-09-15",
+    "creatorPin": "20523"
+  },
+  {
+    "createdAt": "2026-09-11T04:47:03.811Z",
+    "categoryId": "cat_acc",
+    "process": "CONCENIFICITY INSPECTION",
+    "quotation": "",
+    "id": "achv_1789102023811",
+    "requestDate": "2026-01-29",
+    "imageData": null,
+    "description": "ร้องขอทาง TECHNOLOGY จัดทำกล่องพลาสติกสำหรับ TRAVEL CARD จำนวน 5 PCS (เนื่องจากมีการเพิ่ม M/C CONCEN)",
+    "code": "FR-J26-010",
+    "factory": "FACTORY B",
+    "pdfAttachment.name": "FR-J26-010.PDF",
+    "completionDate": "2026-02-19",
+    "requestName": "PAIRIN S.",
+    "department": "FERRULE PRODUCTION",
+    "note": "ทำการจัดทำกล่องพลาสติกสำหรับ TRAVEL CARD จำนวน 5 PCS สำเร็จ",
+    "title": "BOX FOR TRAVEL CARD",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder": null,
+    "pdfAttachment": {
+      "name": "FR-J26-010.PDF",
+      "size": 1213862,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "updatedAt": "2026-09-11T10:02:38.998Z",
+    "pdfAttachment.size": 1213862,
+    "status": "done"
+  },
+  {
+    "workFolder.totalSize": "35.6 MB",
+    "process": "BLUSHLESS MOTOR (HITEC)",
+    "status": "done",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "zipData": "",
+      "totalBytes": 37378604,
+      "fileCount": 21,
+      "name": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)",
+      "totalSize": "35.6 MB",
+      "files": [
+        {
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065A001-0.SLDASM",
+          "size": "252.8 KB",
+          "sizeBytes": 258883,
+          "type": "SLDASM",
+          "name": "ACC-MOT065A001-0.SLDASM"
+        },
+        {
+          "size": "253.7 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065A001-1.SLDASM",
+          "sizeBytes": 259811,
+          "type": "SLDASM",
+          "name": "ACC-MOT065A001-1.SLDASM"
+        },
+        {
+          "size": "354.7 KB",
+          "sizeBytes": 363236,
+          "name": "ACC-MOT065A001-2.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065A001-2.SLDASM"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT065Z001-0.SLDPRT",
+          "sizeBytes": 463018,
+          "size": "452.2 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 552184,
+          "size": "539.2 KB",
+          "type": "STL",
+          "name": "ACC-MOT065Z001-0.STL",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-0.STL"
+        },
+        {
+          "size": "277.9 KB",
+          "sizeBytes": 284569,
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-1.SLDDRW",
+          "name": "ACC-MOT065Z001-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-1.SLDPRT",
+          "name": "ACC-MOT065Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "563.3 KB",
+          "sizeBytes": 576820
+        },
+        {
+          "size": "564.6 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-1.STL",
+          "type": "STL",
+          "name": "ACC-MOT065Z001-1.STL",
+          "sizeBytes": 578184
+        },
+        {
+          "size": "624.6 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 639600,
+          "name": "ACC-MOT065Z001-2.SLDPRT"
+        },
+        {
+          "size": "15.5 MB",
+          "name": "ACC-MOT065Z001-2.STL",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-2.STL",
+          "type": "STL",
+          "sizeBytes": 16289084
+        },
+        {
+          "name": "ACC-MOT065Z001-3.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 984664,
+          "size": "961.6 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-3.SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z001-3.STL",
+          "size": "14 MB",
+          "name": "ACC-MOT065Z001-3.STL",
+          "type": "STL",
+          "sizeBytes": 14672484
+        },
+        {
+          "sizeBytes": 68272,
+          "size": "66.7 KB",
+          "name": "ACC-MOT065Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z002-0.SLDPRT"
+        },
+        {
+          "size": "562.6 KB",
+          "sizeBytes": 576084,
+          "name": "ACC-MOT065Z002-0.STL",
+          "type": "STL",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z002-0.STL"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT065Z002-1.SLDDRW",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z002-1.SLDDRW",
+          "sizeBytes": 237813,
+          "size": "232.2 KB"
+        },
+        {
+          "size": "70.6 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z002-1.SLDPRT",
+          "name": "ACC-MOT065Z002-1.SLDPRT",
+          "sizeBytes": 72253,
+          "type": "SLDPRT"
+        },
+        {
+          "size": "47.4 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z002-1.STL",
+          "type": "STL",
+          "name": "ACC-MOT065Z002-1.STL",
+          "sizeBytes": 48584
+        },
+        {
+          "name": "ACC-MOT065Z003-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 230519,
+          "size": "225.1 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z003-0.SLDDRW"
+        },
+        {
+          "size": "76.3 KB",
+          "type": "SLDPRT",
+          "name": "ACC-MOT065Z003-0.SLDPRT",
+          "sizeBytes": 78176,
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/ACC-MOT065Z003-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "FAKE GLUE.SLDPRT",
+          "sizeBytes": 92142,
+          "size": "90 KB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/FAKE GLUE.SLDPRT"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)/Thumbs.db",
+          "sizeBytes": 52224,
+          "size": "51 KB"
+        }
+      ]
+    },
+    "note": "ดำเนินการจัดทำการผลิตแท่นวางหลอดกาวสำหรับใช้ในไลน์ BRUSHLESS MOTOT (HITEC) จำนวน 3 ชุด สำเร็จ",
+    "title": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER) #1",
+    "createdAt": "2026-09-11T04:44:25.459Z",
+    "quotation": "",
+    "pdfAttachment.name": "GM-J26-033.PDF",
+    "pdfAttachment.size": 877005,
+    "assignee": "JITTRAKAN K.",
+    "requestDate": "2026-03-16",
+    "completionDate": "2026-03-23",
+    "pdfAttachment": {
+      "size": 877005,
+      "hasCloudPdf": true,
+      "name": "GM-J26-033.PDF",
+      "data": ""
+    },
+    "id": "achv_1789101865459",
+    "updatedAt": "2026-09-11T09:58:42.492Z",
+    "description": "ร้องขอฝ่ายเทคโนโลยีทำการผลิตแท่นวางหลอดกาวสำหรับใช้ในไลน์ BRUSHLESS MOTOT (HITEC) จำนวน 3 ชุด ตามตัวอย่างที่แนบมา",
+    "workFolder.name": "ACC-MOT065 MOTOR PRO'S GLUE SYRINGE HOLDER (FOR 3D PRINTER)",
+    "workFolder.fileCount": 21,
+    "code": "GM-J26-033",
+    "categoryId": "cat_acc",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestName": "PONGRAT P.",
+    "factory": "FACTORY E",
+    "department": "MOTOR PRODUCTION",
+    "workFolder.hasCloudFiles": true,
+    "imageData": null
+  },
+  {
+    "lastEditedRole": "ADMIN",
+    "requestDate": "2026-03-04",
+    "toolingTeam2": "",
+    "note": "CANCLE",
+    "id": "achv_1789101731003",
+    "description": "ร้องขอฝ่ายเทคโนโลยี จัดหา PIN WINDING JIG จำนวน 13 PCS เพื่อทดแทนของที่ชำรุด",
+    "maintenanceSupport": "",
+    "assignee": "JITTRAKAN K.",
+    "workFolder": null,
+    "designSupport1": "SUTTHIPONG M.",
+    "imageData": null,
+    "factory": "FACTORY E",
+    "jobType": "I",
+    "requestName": "TEERAPONG S.",
+    "editorPin": "20523",
+    "maintenanceSupport1": "",
+    "maintenanceSupport4": "",
+    "updatedAt": "2026-10-12T08:36:38.121Z",
+    "status": "cancel",
+    "priority": "High",
+    "designTeam": "",
+    "maintenanceSupport2": "",
+    "process": "WINDING",
+    "supportBy": "SUTTHIPONG M.",
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment.size": 1006964,
+    "quotation": "",
+    "createdAt": "2026-09-11T04:42:11.003Z",
+    "designSupport": "SUTTHIPONG M.",
+    "maintenanceSupport5": "",
+    "subJobType": "02 Outsource",
+    "pdfAttachment.hasCloudPdf": true,
+    "subStatus": "Cancel",
+    "completionDate": "2026-03-26",
+    "designSupport2": "",
+    "pdfAttachment.name": "GM-J26-030.PDF",
+    "toolingTeam": "",
+    "lastEditedBy": "JITTRAKAN K.",
+    "toolingTeam1": "",
+    "categoryId": "cat_jig",
+    "pdfAttachment": {
+      "name": "GM-J26-030.PDF",
+      "size": 1006964,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "maintenanceSupport3": "",
+    "achievement": 1,
+    "title": "PIN WINDING JIG",
+    "code": "GM-J26-030",
+    "creatorPin": "20523"
+  },
+  {
+    "process": "WINDING",
+    "pdfAttachment.hasCloudPdf": true,
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment": {
+      "data": "",
+      "name": "GM-J26-021.PDF",
+      "hasCloudPdf": true,
+      "size": 2615341
+    },
+    "pdfAttachment.size": 2615341,
+    "id": "achv_1789101608797",
+    "pdfAttachment.name": "GM-J26-021.PDF",
+    "assignee": "JITTRAKAN K.",
+    "requestName": "TEERAPONG S.",
+    "updatedAt": "2026-09-11T09:59:41.633Z",
+    "code": "GM-J26-021",
+    "workFolder": null,
+    "categoryId": "cat_jig",
+    "status": "done",
+    "completionDate": "2026-03-20",
+    "description": "ร้องขอฝ่ายเทคโนโลยีจัดทำ WORK GUIDE PLATE จำนวน 1 PCS เพื่อรองรับการผลิตที่มากขึ้น MODEL : B8518-18R3-01",
+    "quotation": "",
+    "factory": "FACTORY E",
+    "createdAt": "2026-09-11T04:40:08.797Z",
+    "note": "ดำเนินการจัดทำ WORK GUIDE PLATE จำนวน 1 PCS สำเร็จ",
+    "title": "WORK GUIDE PLATE",
+    "imageData": null,
+    "requestDate": "2026-02-17"
+  },
+  {
+    "imageData": null,
+    "id": "achv_1789101482773",
+    "department": "MOTOR PRODUCTION",
+    "createdAt": "2026-09-11T04:38:02.773Z",
+    "requestName": "MOTOR PRODUCTION",
+    "quotation": "",
+    "code": "MOTOR PRODUCTION",
+    "workFolder": {
+      "fileCount": 26,
+      "files": [
+        {
+          "size": "13.6 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (AFTER).zrd",
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "sizeBytes": 14216192,
+          "type": "ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT-MOT001-1f (Befor&After) 1.zrd",
+          "size": "27.9 MB",
+          "sizeBytes": 29291008,
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD"
+        },
+        {
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT-MOT001-1f (BEFORE).zrd",
+          "sizeBytes": 14653440,
+          "size": "14 MB"
+        },
+        {
+          "sizeBytes": 1738211,
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (AFTER).pdf",
+          "size": "1.7 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "size": "1.9 MB",
+          "type": "PDF",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF",
+          "sizeBytes": 1942222
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.PDF",
+          "sizeBytes": 246408,
+          "type": "PDF",
+          "size": "240.6 KB"
+        },
+        {
+          "sizeBytes": 3371520,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.zrd",
+          "size": "3.2 MB",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.PDF",
+          "type": "PDF",
+          "sizeBytes": 246113,
+          "size": "240.3 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.pdf"
+        },
+        {
+          "sizeBytes": 3448832,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.ZRD",
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.zrd"
+        },
+        {
+          "sizeBytes": 246115,
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).pdf",
+          "size": "240.3 KB"
+        },
+        {
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).zrd",
+          "size": "3.3 MB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).ZRD",
+          "type": "ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.1.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.1.PDF",
+          "type": "PDF",
+          "sizeBytes": 164758,
+          "size": "160.9 KB"
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.pdf",
+          "size": "240.4 KB",
+          "sizeBytes": 246153
+        },
+        {
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.ZRD",
+          "sizeBytes": 3450368,
+          "size": "3.3 MB"
+        },
+        {
+          "size": "240.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.pdf",
+          "sizeBytes": 246434,
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.PDF",
+          "type": "PDF"
+        },
+        {
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.ZRD",
+          "sizeBytes": 3450368
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.pdf",
+          "sizeBytes": 246432,
+          "size": "240.7 KB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.zrd",
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.pdf",
+          "size": "240.6 KB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.PDF",
+          "sizeBytes": 246398,
+          "type": "PDF"
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.ZRD"
+        },
+        {
+          "sizeBytes": 244459,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.PDF",
+          "type": "PDF",
+          "size": "238.7 KB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER).zrd",
+          "size": "3.2 MB",
+          "sizeBytes": 3362304,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER).ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.1.zrd",
+          "size": "4.3 MB",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.1.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 4535296
+        },
+        {
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.pdf",
+          "size": "162.5 KB",
+          "sizeBytes": 166383
+        },
+        {
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.zrd",
+          "type": "ZRD",
+          "sizeBytes": 4535296,
+          "size": "4.3 MB"
+        },
+        {
+          "type": "ZRD",
+          "name": "LT26-FER001-07A.ZRD",
+          "sizeBytes": 3412992,
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a.zrd"
+        }
+      ],
+      "name": "LAYOUT",
+      "hasCloudFiles": true,
+      "totalSize": "99.2 MB",
+      "zipData": "",
+      "totalBytes": 104058806
+    },
+    "pdfAttachment": null,
+    "process": "LAYOUT",
+    "title": "NEW MOTOR LAYOUT",
+    "note": "วาด LAYOUT BEFORE & AFTER ของ MOTOR PRODUCTION สำเร็จ",
+    "categoryId": "cat_prj",
+    "status": "done",
+    "updatedAt": "2026-09-11T08:37:35.775Z",
+    "description": "วาด LAYOUT BEFORE & AFTER ของ MOTOR PRODUCTION",
+    "completionDate": "2026-05-26",
+    "assignee": "JITTRAKAN K.",
+    "requestDate": "2026-05-26",
+    "factory": "FACTORY E"
+  },
+  {
+    "title": "ACC-FER048 MINI COVER",
+    "department": "FERRULE PRODUCTION",
+    "status": "done",
+    "code": "FERRULE PRODUCTION",
+    "workFolder": {
+      "totalBytes": 478784,
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "sizeBytes": 116982,
+          "size": "114.2 KB",
+          "name": "ACC-FER048A001-1.SLDPRT.SLDASM",
+          "relPath": "ACC-FER048 MINI COVER/ACC-FER048A001-1.SLDPRT.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "name": "ACC-FER048Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER048 MINI COVER/ACC-FER048Z001-0.SLDPRT",
+          "sizeBytes": 82458,
+          "size": "80.5 KB"
+        },
+        {
+          "name": "ACC-FER048Z001-0.STL",
+          "type": "STL",
+          "relPath": "ACC-FER048 MINI COVER/ACC-FER048Z001-0.STL",
+          "sizeBytes": 23184,
+          "size": "22.6 KB"
+        },
+        {
+          "relPath": "ACC-FER048 MINI COVER/ACC-FER048Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 155072,
+          "name": "ACC-FER048Z001-1.SLDPRT",
+          "size": "151.4 KB"
+        },
+        {
+          "relPath": "ACC-FER048 MINI COVER/ACC-FER048Z001-1.STL",
+          "size": "90.2 KB",
+          "sizeBytes": 92384,
+          "type": "STL",
+          "name": "ACC-FER048Z001-1.STL"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 8704,
+          "relPath": "ACC-FER048 MINI COVER/Thumbs.db",
+          "size": "8.5 KB"
+        }
+      ],
+      "name": "ACC-FER048 MINI COVER",
+      "fileCount": 6,
+      "zipData": "",
+      "totalSize": "467.6 KB"
+    },
+    "completionDate": "2026-03-15",
+    "requestName": "FERRULE PRODUCTION",
+    "pdfAttachment": null,
+    "updatedAt": "2026-09-11T10:00:23.840Z",
+    "process": "",
+    "createdAt": "2026-09-11T04:37:01.575Z",
+    "quotation": "",
+    "id": "achv_1789101421575",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_acc",
+    "description": "จัดทำที่ป้องกันชิ้นงานตก FERRULE",
+    "imageData": null,
+    "requestDate": "2026-03-15",
+    "factory": "FACTORY A",
+    "note": "จัดทำที่ป้องกันชิ้นงานตก FERRULE สำเร็จ"
+  },
+  {
+    "workFolder.totalSize": "1.9 MB",
+    "updatedAt": "2026-09-11T08:42:14.245Z",
+    "title": "ACC-MOT068 UV PROTECTION",
+    "workFolder.hasCloudFiles": true,
+    "department": "MOTOR PRODUCTION",
+    "factory": "FACTORY E",
+    "imageData": null,
+    "code": "GM-J26-020",
+    "categoryId": "cat_acc",
+    "status": "done",
+    "workFolder.name": "ACC-MOT068 UV PROTECTION",
+    "process": "DIRECT GENERATOR",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 2183355,
+      "name": "GM-J26-020.PDF"
+    },
+    "requestName": "PONGRAT P.",
+    "workFolder": {
+      "zipData": "",
+      "fileCount": 16,
+      "totalBytes": 2012815,
+      "name": "ACC-MOT068 UV PROTECTION",
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "name": "ACC-MOT068A001.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068A001.SLDASM",
+          "sizeBytes": 117491,
+          "size": "114.7 KB"
+        },
+        {
+          "name": "ACC-MOT068Z001.SLDDRW",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z001.SLDDRW",
+          "sizeBytes": 223957,
+          "type": "SLDDRW",
+          "size": "218.7 KB"
+        },
+        {
+          "size": "73 KB",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z001.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT068Z001.SLDPRT",
+          "sizeBytes": 74760
+        },
+        {
+          "name": "ACC-MOT068Z001.STL",
+          "type": "STL",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z001.STL",
+          "size": "39.1 KB",
+          "sizeBytes": 40084
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT068Z002.SLDDRW",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z002.SLDDRW",
+          "sizeBytes": 248448,
+          "size": "242.6 KB"
+        },
+        {
+          "size": "167.7 KB",
+          "sizeBytes": 171723,
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z002.SLDPRT",
+          "name": "ACC-MOT068Z002.SLDPRT"
+        },
+        {
+          "sizeBytes": 92984,
+          "size": "90.8 KB",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z002.STL",
+          "type": "STL",
+          "name": "ACC-MOT068Z002.STL"
+        },
+        {
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z003.SLDDRW",
+          "size": "216.6 KB",
+          "name": "ACC-MOT068Z003.SLDDRW",
+          "sizeBytes": 221840,
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z003.SLDPRT",
+          "name": "ACC-MOT068Z003.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 73875,
+          "size": "72.1 KB"
+        },
+        {
+          "size": "39.1 KB",
+          "sizeBytes": 40084,
+          "type": "STL",
+          "name": "ACC-MOT068Z003.STL",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z003.STL"
+        },
+        {
+          "sizeBytes": 248821,
+          "name": "ACC-MOT068Z004.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z004.SLDDRW",
+          "size": "243 KB"
+        },
+        {
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z004.SLDPRT",
+          "size": "166.3 KB",
+          "name": "ACC-MOT068Z004.SLDPRT",
+          "sizeBytes": 170247,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT068 UV PROTECTION/ACC-MOT068Z004.STL",
+          "size": "90.5 KB",
+          "type": "STL",
+          "sizeBytes": 92684,
+          "name": "ACC-MOT068Z004.STL"
+        },
+        {
+          "name": "FAKE AKT NONMETAL SHEET.SLDPRT",
+          "relPath": "ACC-MOT068 UV PROTECTION/FAKE AKT NONMETAL SHEET.SLDPRT",
+          "type": "SLDPRT",
+          "size": "50.6 KB",
+          "sizeBytes": 51864
+        },
+        {
+          "sizeBytes": 68689,
+          "size": "67.1 KB",
+          "relPath": "ACC-MOT068 UV PROTECTION/FAKE BOX.SLDPRT",
+          "name": "FAKE BOX.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 75264,
+          "size": "73.5 KB",
+          "type": "DB",
+          "relPath": "ACC-MOT068 UV PROTECTION/Thumbs.db",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalSize": "1.9 MB"
+    },
+    "workFolder.fileCount": 16,
+    "pdfAttachment.hasCloudPdf": true,
+    "id": "achv_1789101386592",
+    "note": "ดำเนินการออกแบบและติดตั้งม่านกันแสง UV จำนวน 2 PCS สำเร็จ",
+    "completionDate": "2026-04-21",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.size": 2183355,
+    "requestDate": "2026-02-17",
+    "quotation": "",
+    "pdfAttachment.name": "GM-J26-020.PDF",
+    "createdAt": "2026-09-11T04:36:26.592Z",
+    "description": "ร้องขอทางฝ่ายเทคโนโลยีทำการออกแบบและติดตั้งม่านกันแสง UV (ลักษณะเดียวกันกับเครื่อง UV ที่ไลน์ STATOR) ที่ไลน์ DIRECT GENERATOR (DG) เนื่องจากเครื่องอบ UV ที่ไลน์ DG ไม่มีที่กันแสงปกป้องสายตาพนักงาน 2 PCS."
+  },
+  {
+    "note": "จัดทำที่ห้อยสายเคเบิล 10 เมตร สำเร็จ",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789101297627",
+    "factory": "FACTORY E",
+    "status": "done",
+    "title": "PTN005 HANGING CABLE 10M (3M)",
+    "updatedAt": "2026-09-11T08:43:14.553Z",
+    "categoryId": "cat_jig",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "workFolder": {
+      "totalBytes": 443415,
+      "hasCloudFiles": true,
+      "totalSize": "433 KB",
+      "zipData": "",
+      "name": "PTN005 HANGING TABLE 10M",
+      "files": [
+        {
+          "size": "147.9 KB",
+          "sizeBytes": 151431,
+          "relPath": "PTN005 HANGING TABLE 10M/PTN005Z001-0.SLDPRT",
+          "name": "PTN005Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "285.1 KB",
+          "relPath": "PTN005 HANGING TABLE 10M/PTN005Z001-0.STL",
+          "type": "STL",
+          "sizeBytes": 291984,
+          "name": "PTN005Z001-0.STL"
+        }
+      ],
+      "fileCount": 2
+    },
+    "description": "จัดทำที่ห้อยสายเคเบิล 10 เมตร",
+    "process": "5S",
+    "completionDate": "2026-03-30",
+    "quotation": "",
+    "createdAt": "2026-09-11T04:34:57.627Z",
+    "code": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "requestDate": "2026-03-30",
+    "pdfAttachment": null
+  },
+  {
+    "workFolder": {
+      "zipData": "",
+      "files": [
+        {
+          "sizeBytes": 131191,
+          "name": "PTN004Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "PTN004 HANGING TROLLEY/PTN004Z001-0.SLDPRT",
+          "size": "128.1 KB"
+        },
+        {
+          "sizeBytes": 23684,
+          "size": "23.1 KB",
+          "relPath": "PTN004 HANGING TROLLEY/PTN004Z001-0.STL",
+          "name": "PTN004Z001-0.STL",
+          "type": "STL"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 8192,
+          "size": "8 KB",
+          "relPath": "PTN004 HANGING TROLLEY/Thumbs.db"
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "PTN004 HANGING TROLLEY",
+      "totalBytes": 163067,
+      "totalSize": "159.2 KB",
+      "fileCount": 3
+    },
+    "requestDate": "2026-03-16",
+    "factory": "FACTORY E",
+    "pdfAttachment": null,
+    "id": "achv_1789101230763",
+    "updatedAt": "2026-09-11T10:00:03.073Z",
+    "department": "MOTOR PRODUCTION",
+    "description": "ทำที่จับอุปกรณ์ในรถเข็น",
+    "note": "จัดทำที่จับอุปกรณ์ในรถเข็น สำเร็จ",
+    "process": "5S",
+    "createdAt": "2026-09-11T04:33:50.763Z",
+    "quotation": "",
+    "code": "PRODUCTION TECHNOLOGY",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "status": "done",
+    "title": "PTN004 HANGING TROLLEY",
+    "assignee": "JITTRAKAN K.",
+    "completionDate": "2026-03-16",
+    "categoryId": "cat_acc",
+    "imageData": null
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "note": "ดำเนินการออกแบบปุ่มกดสำหรับเครื่อง CHARACTERISTIC INSPECTION (SC220) จำนวน 2 PCS สำเร็จ",
+    "title": "ACC-MOT071 PUSH BUTTON",
+    "factory": "FACTORY E",
+    "workFolder": {
+      "totalBytes": 496189,
+      "fileCount": 4,
+      "files": [
+        {
+          "size": "237.6 KB",
+          "relPath": "ACC-MOT071 PUSH BUTTON/ACC-MOT071Z001-0.SLDDRW",
+          "sizeBytes": 243261,
+          "name": "ACC-MOT071Z001-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT071Z001-0.SLDPRT",
+          "relPath": "ACC-MOT071 PUSH BUTTON/ACC-MOT071Z001-0.SLDPRT",
+          "size": "110.4 KB",
+          "sizeBytes": 113012
+        },
+        {
+          "size": "118.6 KB",
+          "relPath": "ACC-MOT071 PUSH BUTTON/ACC-MOT071Z001-0.STL",
+          "type": "STL",
+          "name": "ACC-MOT071Z001-0.STL",
+          "sizeBytes": 121484
+        },
+        {
+          "relPath": "ACC-MOT071 PUSH BUTTON/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "size": "18 KB",
+          "sizeBytes": 18432
+        }
+      ],
+      "totalSize": "484.6 KB",
+      "zipData": "",
+      "name": "ACC-MOT071 PUSH BUTTON",
+      "hasCloudFiles": true
+    },
+    "workFolder.totalSize": "484.6 KB",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 707388,
+      "name": "GM-J26-015.PDF"
+    },
+    "completionDate": "2026-03-11",
+    "createdAt": "2026-09-11T04:33:02.738Z",
+    "quotation": "",
+    "workFolder.name": "ACC-MOT071 PUSH BUTTON",
+    "id": "achv_1789101182738",
+    "workFolder.fileCount": 4,
+    "description": "ร้องขอฝ่ายเทคโนโลยี ทำการออกแบบปุ่มกดสำหรับเครื่อง CHARACTERISTIC INSPECTION (SC220) เพื่อให้พนักงานสามารถกดปุ่มทดสอบได้อย่างสะดวก โดยขึ้นรูปชิ้นงานปุ่มกดด้วยเครื่อง 3D PRINTER",
+    "department": "MOTOR PRODUCTION",
+    "updatedAt": "2026-09-11T10:00:57.591Z",
+    "status": "done",
+    "requestDate": "2026-02-11",
+    "imageData": null,
+    "categoryId": "cat_acc",
+    "workFolder.hasCloudFiles": true,
+    "pdfAttachment.name": "GM-J26-015.PDF",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment.size": 707388,
+    "requestName": "SUPANAT S.",
+    "process": "GEAR PROCESS",
+    "code": "GM-J26-015"
+  },
+  {
+    "workFolder": {
+      "totalSize": "1.1 MB",
+      "files": [
+        {
+          "size": "153.2 KB",
+          "type": "SLDASM",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005A001-0.SLDASM",
+          "name": "ACC-FIB005A001-0.SLDASM",
+          "sizeBytes": 156921
+        },
+        {
+          "name": "ACC-FIB005Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.SLDDRW",
+          "size": "235.2 KB",
+          "sizeBytes": 240867
+        },
+        {
+          "size": "123 KB",
+          "sizeBytes": 125904,
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FIB005Z001-0.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "ACC-FIB005Z001-0.STL",
+          "sizeBytes": 223684,
+          "size": "218.4 KB",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z001-0.STL"
+        },
+        {
+          "name": "ACC-FIB005Z002-0.SLDDRW",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 231256,
+          "size": "225.8 KB"
+        },
+        {
+          "size": "112.1 KB",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 114825,
+          "name": "ACC-FIB005Z002-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FIB005Z002-0.STL",
+          "sizeBytes": 52684,
+          "type": "STL",
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/ACC-FIB005Z002-0.STL",
+          "size": "51.4 KB"
+        },
+        {
+          "size": "7.5 KB",
+          "sizeBytes": 7680,
+          "relPath": "ACC-FIB005 SYRINGE SUPPORT/Thumbs.db",
+          "name": "THUMBS.DB",
+          "type": "DB"
+        }
+      ],
+      "name": "ACC-FIB005 SYRINGE SUPPORT",
+      "zipData": "",
+      "fileCount": 8,
+      "hasCloudFiles": true,
+      "totalBytes": 1153821
+    },
+    "quotation": "",
+    "createdAt": "2026-09-11T04:31:25.025Z",
+    "status": "done",
+    "id": "achv_1789101085025",
+    "completionDate": "2026-03-23",
+    "process": "GLUING",
+    "workFolder.fileCount": 8,
+    "code": "OPT-J26-003",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment": {
+      "name": "OTH-J26-003.PDF",
+      "hasCloudPdf": true,
+      "size": 756240,
+      "data": ""
+    },
+    "note": "จัดทำ JIG สำหรับใส่ครอบปลายเข็มฉีดกาว จำนวน 3 PCS เสร็จสิ้น",
+    "workFolder.name": "ACC-FIB005 SYRINGE SUPPORT",
+    "pdfAttachment.name": "OTH-J26-003.PDF",
+    "factory": "FACTORY B",
+    "requestName": "YANIKA K.",
+    "workFolder.hasCloudFiles": true,
+    "department": "OPICAL PRODUCTION",
+    "imageData": null,
+    "pdfAttachment.size": 756240,
+    "assignee": "JITTRAKAN K.",
+    "requestDate": "2026-02-17",
+    "workFolder.totalSize": "1.1 MB",
+    "title": "ACC-FIB005 SYRINGE SUPPORT",
+    "description": "ร้องขอให้จัดทำ JIG สำหรับใส่ครอบปลายเข็มฉีดกาว จำนวน 3 PCS",
+    "categoryId": "cat_acc",
+    "updatedAt": "2026-09-11T09:59:15.592Z"
+  },
+  {
+    "categoryId": "cat_prj",
+    "process": "LAYOUT",
+    "code": "OPT-J26-013",
+    "requestName": "SUCHADA J.",
+    "updatedAt": "2026-09-11T08:40:49.977Z",
+    "completionDate": "2026-05-09",
+    "assignee": "JITTRAKAN K.",
+    "note": "ดำเนินการออกแบบ LAYOUT ของ RECEPTACLE PRODUCT ใหม่ 2 แบบ เสร็จสิ้น",
+    "department": "FIBER PRODUCTION",
+    "createdAt": "2026-09-11T04:25:54.948Z",
+    "quotation": "",
+    "id": "achv_1789100754948",
+    "description": "ร้องขอให้ออกแบบ LAYOUT ของ RECEPTACLE PRODUCT ใหม่ 2 แบบ โดยมีรายละเอียดดังนี้\n1. อ้างอิงจาก LAYOUT ปัจจุบัน เพิ่มโต๊ะการทำงาน PROCESS FUSION 2 โต๊ะ\n2. ปรับเปลี่ยน LAYOUT ให้ผู้ปฏิบัติการหันหน้าไปทิศทางเดียวกันกับ FIBER ASSY และเพิ่มโต๊ะการทำงาน PROCESS FUSION 2 โต๊ะ",
+    "pdfAttachment": null,
+    "workFolder": {
+      "files": [
+        {
+          "relPath": "LAYOUT/LT-MOT001-1f (AFTER).zrd",
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 14216192,
+          "size": "13.6 MB"
+        },
+        {
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD",
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT-MOT001-1f (Befor&After) 1.zrd",
+          "size": "27.9 MB",
+          "sizeBytes": 29291008
+        },
+        {
+          "size": "14 MB",
+          "sizeBytes": 14653440,
+          "relPath": "LAYOUT/LT-MOT001-1f (BEFORE).zrd",
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (BEFORE).ZRD"
+        },
+        {
+          "type": "PDF",
+          "sizeBytes": 1738211,
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "size": "1.7 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (AFTER).pdf"
+        },
+        {
+          "size": "1.9 MB",
+          "sizeBytes": 1942222,
+          "type": "PDF",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.PDF",
+          "sizeBytes": 246408,
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.pdf",
+          "size": "240.6 KB"
+        },
+        {
+          "size": "3.2 MB",
+          "sizeBytes": 3371520,
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.PDF",
+          "type": "PDF",
+          "sizeBytes": 246113,
+          "size": "240.3 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.pdf"
+        },
+        {
+          "sizeBytes": 3448832,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.zrd",
+          "size": "3.3 MB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).PDF",
+          "sizeBytes": 246115,
+          "size": "240.3 KB"
+        },
+        {
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 3450368
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.1.PDF",
+          "type": "PDF",
+          "sizeBytes": 164758,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.1.pdf",
+          "size": "160.9 KB"
+        },
+        {
+          "size": "240.4 KB",
+          "sizeBytes": 246153,
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.pdf"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.ZRD",
+          "sizeBytes": 3450368,
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.zrd",
+          "size": "3.3 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.PDF",
+          "type": "PDF",
+          "sizeBytes": 246434,
+          "size": "240.7 KB"
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.zrd"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.pdf",
+          "sizeBytes": 246432,
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.PDF",
+          "size": "240.7 KB"
+        },
+        {
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.ZRD",
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.zrd"
+        },
+        {
+          "size": "240.6 KB",
+          "sizeBytes": 246398,
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.pdf"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 3450368,
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.zrd"
+        },
+        {
+          "size": "238.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.PDF",
+          "type": "PDF",
+          "sizeBytes": 244459
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER).zrd",
+          "sizeBytes": 3362304,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER).ZRD",
+          "size": "3.2 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.1.zrd",
+          "sizeBytes": 4535296,
+          "size": "4.3 MB",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.1.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "sizeBytes": 166383,
+          "size": "162.5 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.pdf",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.PDF",
+          "type": "PDF"
+        },
+        {
+          "type": "ZRD",
+          "sizeBytes": 4535296,
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.ZRD",
+          "size": "4.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.zrd"
+        },
+        {
+          "size": "3.3 MB",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A.ZRD",
+          "sizeBytes": 3412992,
+          "relPath": "LAYOUT/LT26-FER001-07a.zrd"
+        }
+      ],
+      "zipData": "",
+      "name": "LAYOUT",
+      "fileCount": 26,
+      "totalBytes": 104058806,
+      "hasCloudFiles": true,
+      "totalSize": "99.2 MB"
+    },
+    "imageData": null,
+    "factory": "FACTORY B",
+    "status": "done",
+    "requestDate": "2026-05-08",
+    "title": "DRAWING LAYOUT FIBER #2 (LT25-FIB002-0)"
+  },
+  {
+    "imageData": null,
+    "categoryId": "cat_acc",
+    "completionDate": "2026-03-24",
+    "status": "done",
+    "requestDate": "2026-03-24",
+    "createdAt": "2026-09-11T04:25:13.555Z",
+    "quotation": "",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment": null,
+    "description": "ทำที่ห้อยอุปกรณ์ในแผนก PRO.TECHNO",
+    "factory": "FACTORY E",
+    "note": "ทำการจัดทำที่ห้อยอุปกรณ์ในแผนก PRO.TECHNO สำเร็จ",
+    "title": "PTN002 HANGING EQUIPMENT",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "updatedAt": "2026-09-11T09:57:36.010Z",
+    "code": "PRODUCTION TECHNOLOGY",
+    "id": "achv_1789100713555",
+    "workFolder": {
+      "files": [
+        {
+          "size": "357.3 KB",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "PTN002Z001-0.SLDPRT",
+          "sizeBytes": 365868
+        },
+        {
+          "type": "STL",
+          "sizeBytes": 200684,
+          "name": "PTN002Z001-0.STL",
+          "size": "196 KB",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z001-0.STL"
+        },
+        {
+          "size": "386.6 KB",
+          "sizeBytes": 395860,
+          "type": "SLDPRT",
+          "name": "PTN002Z002-0.SLDPRT",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-0.SLDPRT"
+        },
+        {
+          "size": "284.3 KB",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-0.STL",
+          "sizeBytes": 291084,
+          "name": "PTN002Z002-0.STL",
+          "type": "STL"
+        },
+        {
+          "size": "391.7 KB",
+          "sizeBytes": 401107,
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-1.SLDPRT",
+          "name": "PTN002Z002-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "PTN002Z002-1.STL",
+          "type": "STL",
+          "sizeBytes": 291784,
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-1.STL",
+          "size": "284.9 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-2.SLDPRT",
+          "sizeBytes": 289961,
+          "name": "PTN002Z002-2.SLDPRT",
+          "size": "283.2 KB"
+        },
+        {
+          "size": "622.4 KB",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-2.STL",
+          "sizeBytes": 637384,
+          "name": "PTN002Z002-2.STL",
+          "type": "STL"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "PTN002Z002-3.SLDPRT",
+          "sizeBytes": 360125,
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-3.SLDPRT",
+          "size": "351.7 KB"
+        },
+        {
+          "type": "STL",
+          "name": "PTN002Z002-3.STL",
+          "sizeBytes": 603684,
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z002-3.STL",
+          "size": "589.5 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "PTN002Z101-0.SLDPRT",
+          "size": "181.9 KB",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z101-0.SLDPRT",
+          "sizeBytes": 186306
+        },
+        {
+          "type": "STL",
+          "name": "PTN002Z101-0.STL",
+          "relPath": "PTN002 HANGING EQUIPMENT/PTN002Z101-0.STL",
+          "size": "13.3 MB",
+          "sizeBytes": 13982584
+        },
+        {
+          "relPath": "PTN002 HANGING EQUIPMENT/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 12800,
+          "size": "12.5 KB"
+        }
+      ],
+      "fileCount": 13,
+      "name": "PTN002 HANGING EQUIPMENT",
+      "zipData": "",
+      "totalSize": "17.2 MB",
+      "hasCloudFiles": true,
+      "totalBytes": 18019231
+    },
+    "process": "5S"
+  },
+  {
+    "note": "ทำการออกแบบและจัดทำรอกเก็บสายไฟสามารถหมุนเก็บได้ สำเร็จ",
+    "requestDate": "2026-03-24",
+    "categoryId": "cat_acc",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789100658643",
+    "updatedAt": "2026-09-11T09:57:53.218Z",
+    "pdfAttachment": null,
+    "factory": "FACTORY E",
+    "description": "ทำให้รอกเก็บสายไฟสามารถหมุนเก็บได้",
+    "createdAt": "2026-09-11T04:24:18.643Z",
+    "department": "PRODUCTION TECHNOLOGY",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "completionDate": "2026-03-24",
+    "status": "done",
+    "quotation": "",
+    "workFolder": {
+      "files": [
+        {
+          "name": "PTN003A001-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 205412,
+          "size": "200.6 KB",
+          "relPath": "PTN003 CABLE REEL/PTN003A001-0.SLDASM"
+        },
+        {
+          "sizeBytes": 240617,
+          "size": "235 KB",
+          "name": "PTN003Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "PTN003 CABLE REEL/PTN003Z001-0.SLDDRW"
+        },
+        {
+          "size": "104.4 KB",
+          "sizeBytes": 106859,
+          "relPath": "PTN003 CABLE REEL/PTN003Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "PTN003Z001-0.SLDPRT"
+        },
+        {
+          "size": "75.1 KB",
+          "name": "PTN003Z001-0.STL",
+          "relPath": "PTN003 CABLE REEL/PTN003Z001-0.STL",
+          "sizeBytes": 76884,
+          "type": "STL"
+        },
+        {
+          "name": "PTN003Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "249.2 KB",
+          "relPath": "PTN003 CABLE REEL/PTN003Z002-0.SLDDRW",
+          "sizeBytes": 255157
+        },
+        {
+          "size": "64.7 KB",
+          "relPath": "PTN003 CABLE REEL/PTN003Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 66282,
+          "name": "PTN003Z002-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 33792,
+          "size": "33 KB",
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "PTN003 CABLE REEL/Thumbs.db"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "PTN003 CABLE REEL/WHEEL.SLDPRT",
+          "name": "WHEEL.SLDPRT",
+          "sizeBytes": 343541,
+          "size": "335.5 KB"
+        }
+      ],
+      "totalSize": "1.3 MB",
+      "hasCloudFiles": true,
+      "name": "PTN003 CABLE REEL",
+      "fileCount": 8,
+      "zipData": "",
+      "totalBytes": 1328544
+    },
+    "code": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "process": "5S",
+    "title": "PTN003 CABLE REEL"
+  },
+  {
+    "description": "ฝาครอบ ROOM CONTROL AIR สำหรับป้องกันไม่ให้ถูกกด โดยไม่ได้ตั้งใจ (GUARD COVER) พร้อมติดตั้งหูข้าง สำหรับคล้องกุลแจ จำนวน 12 SET",
+    "workFolder": {
+      "zipData": "",
+      "totalBytes": 3045529,
+      "fileCount": 21,
+      "totalSize": "2.9 MB",
+      "name": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL",
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "size": "184 KB",
+          "sizeBytes": 188387,
+          "name": "ACC-FAC001A001-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001A001-0.SLDASM"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FAC001A001-0.SLDDRW",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001A001-0.SLDDRW",
+          "sizeBytes": 260501,
+          "size": "254.4 KB"
+        },
+        {
+          "size": "223.1 KB",
+          "sizeBytes": 228485,
+          "type": "SLDDRW",
+          "name": "ACC-FAC001Z001-0.SLDDRW",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FAC001Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 69871,
+          "size": "68.2 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z001-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 223195,
+          "type": "SLDDRW",
+          "name": "ACC-FAC001Z002-0.SLDDRW",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z002-0.SLDDRW",
+          "size": "218 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 48274,
+          "name": "ACC-FAC001Z002-0.SLDPRT",
+          "size": "47.1 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z002-0.SLDPRT"
+        },
+        {
+          "size": "211.6 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z003-0.SLDDRW",
+          "sizeBytes": 216705,
+          "type": "SLDDRW",
+          "name": "ACC-FAC001Z003-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z003-0.SLDPRT",
+          "size": "40.1 KB",
+          "sizeBytes": 41092,
+          "name": "ACC-FAC001Z003-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "ACC-FAC001Z004-0.SLDDRW",
+          "sizeBytes": 230580,
+          "type": "SLDDRW",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z004-0.SLDDRW",
+          "size": "225.2 KB"
+        },
+        {
+          "sizeBytes": 74210,
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z004-0.SLDPRT",
+          "name": "ACC-FAC001Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "72.5 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FAC001Z005-0.SLDDRW",
+          "size": "221.7 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z005-0.SLDDRW",
+          "sizeBytes": 226976
+        },
+        {
+          "size": "66.4 KB",
+          "sizeBytes": 67966,
+          "type": "SLDPRT",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z005-0.SLDPRT",
+          "name": "ACC-FAC001Z005-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 234718,
+          "size": "229.2 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z006-0.SLDDRW",
+          "name": "ACC-FAC001Z006-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "sizeBytes": 82039,
+          "size": "80.1 KB",
+          "type": "SLDPRT",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z006-0.SLDPRT",
+          "name": "ACC-FAC001Z006-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FAC001Z007-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "232.3 KB",
+          "sizeBytes": 237881,
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z007-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FAC001Z007-0.SLDPRT",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/ACC-FAC001Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 94537,
+          "size": "92.3 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "B-100-1.SLDPRT",
+          "sizeBytes": 87088,
+          "size": "85 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/B-100-1.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "B-100-1_2.SLDPRT",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/B-100-1_2.SLDPRT",
+          "sizeBytes": 92102,
+          "size": "89.9 KB"
+        },
+        {
+          "size": "97.5 KB",
+          "sizeBytes": 99854,
+          "name": "B-100-1_ASSEMBLY.SLDASM",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/b-100-1_Assembly.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "size": "195.9 KB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/DIAKIN AIR CONDITIONAL CTRL.SLDPRT",
+          "name": "DIAKIN AIR CONDITIONAL CTRL.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 200620
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "relPath": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL/Thumbs.db",
+          "sizeBytes": 40448,
+          "size": "39.5 KB"
+        }
+      ]
+    },
+    "imageData": null,
+    "factory": "",
+    "requestDate": "2026-02-16",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder.name": "ACC-FAC001 ACRYLIC CASE FOR  AIR CONDITIONER CTRL",
+    "updatedAt": "2026-09-11T08:43:56.653Z",
+    "pdfAttachment.name": "OTH-J26-001.PDF",
+    "workFolder.totalSize": "2.9 MB",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.size": 1403183,
+    "requestName": "VEESAVID R.",
+    "note": "จัดทำฝาครอบ ROOM CONTROL AIR จำนวน 12 PCS สำเร็จ",
+    "code": "OTH-J26-001",
+    "title": "ACC-FAC001 ACRYLIC CASE FOR AIR CONDITIONER CTRL",
+    "department": "FACILITIES",
+    "quotation": "",
+    "createdAt": "2026-09-11T04:23:15.453Z",
+    "status": "done",
+    "pdfAttachment": {
+      "data": "",
+      "size": 1403183,
+      "hasCloudPdf": true,
+      "name": "OTH-J26-001.PDF"
+    },
+    "workFolder.fileCount": 21,
+    "id": "achv_1789100595453",
+    "process": "",
+    "completionDate": "2026-03-26",
+    "workFolder.hasCloudFiles": true,
+    "categoryId": "cat_acc"
+  },
+  {
+    "status": "done",
+    "workFolder": {
+      "zipData": "",
+      "totalBytes": 1376569,
+      "fileCount": 8,
+      "hasCloudFiles": true,
+      "name": "ACC-MOT073 TRAY JIG",
+      "files": [
+        {
+          "name": "ACC-MOT073A001-0.PDF",
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073A001-0.PDF",
+          "type": "PDF",
+          "sizeBytes": 137167,
+          "size": "134 KB"
+        },
+        {
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073A001-0.SLDASM",
+          "sizeBytes": 175986,
+          "type": "SLDASM",
+          "name": "ACC-MOT073A001-0.SLDASM",
+          "size": "171.9 KB"
+        },
+        {
+          "size": "256.8 KB",
+          "sizeBytes": 262993,
+          "name": "ACC-MOT073A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073A001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-MOT073Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "278.1 KB",
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073Z001-0.SLDDRW",
+          "sizeBytes": 284761
+        },
+        {
+          "size": "221 KB",
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073Z001-0.SLDPRT",
+          "name": "ACC-MOT073Z001-0.SLDPRT",
+          "sizeBytes": 226257,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 218096,
+          "name": "ACC-MOT073Z002-0.SLDDRW",
+          "size": "213 KB"
+        },
+        {
+          "sizeBytes": 51341,
+          "relPath": "ACC-MOT073 TRAY JIG/ACC-MOT073Z002-0.SLDPRT",
+          "size": "50.1 KB",
+          "name": "ACC-MOT073Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "19.5 KB",
+          "relPath": "ACC-MOT073 TRAY JIG/Thumbs.db",
+          "sizeBytes": 19968,
+          "name": "THUMBS.DB",
+          "type": "DB"
+        }
+      ],
+      "totalSize": "1.3 MB"
+    },
+    "description": "ทำที่เก็บ TRAY JIG ให้ทางฝ่าย MOTOR",
+    "imageData": null,
+    "process": "",
+    "requestDate": "2026-03-31",
+    "completionDate": "2026-03-31",
+    "note": "ทำที่เก็บ TRAY JIG ให้ทางฝ่าย MOTOR สำเร็จ",
+    "department": "MOTOR PRODUCTION",
+    "createdAt": "2026-09-11T04:21:28.535Z",
+    "quotation": "",
+    "code": "MOTOR PRODUCTION",
+    "updatedAt": "2026-09-11T08:42:39.492Z",
+    "assignee": "JITTRAKAN K.",
+    "factory": "FACTORY E",
+    "pdfAttachment": null,
+    "title": "ACC-MO073 TRAY JIG",
+    "requestName": "MOTOR PRODUCTION",
+    "id": "achv_1789100488535",
+    "categoryId": "cat_acc"
+  },
+  {
+    "requestName": "MEDICAL PRODUCTION",
+    "status": "done",
+    "createdAt": "2026-09-11T04:20:32.677Z",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_jig",
+    "quotation": "",
+    "id": "achv_1789100432677",
+    "pdfAttachment": null,
+    "imageData": null,
+    "code": "MEDICAL PRODUCTION",
+    "factory": "FACTORY D",
+    "department": "MEDICAL PRODUCTION",
+    "requestDate": "2026-03-02",
+    "note": "COMPLETE",
+    "updatedAt": "2026-09-11T10:01:33.846Z",
+    "workFolder": {
+      "totalSize": "3.4 MB",
+      "files": [
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/450-102380.SLDPRT",
+          "type": "SLDPRT",
+          "name": "450-102380.SLDPRT",
+          "sizeBytes": 113129,
+          "size": "110.5 KB"
+        },
+        {
+          "name": "ACC-QC0010A001-1.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 159898,
+          "size": "156.2 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC0010A001-1.SLDASM"
+        },
+        {
+          "sizeBytes": 175619,
+          "size": "171.5 KB",
+          "name": "ACC-QC010A001.SLDASM",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010A001.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "sizeBytes": 124459,
+          "type": "PDF",
+          "name": "ACC-QC010Z001-1.PDF",
+          "size": "121.5 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001-1.PDF"
+        },
+        {
+          "sizeBytes": 240836,
+          "name": "ACC-QC010Z001-1.SLDDRW",
+          "type": "SLDDRW",
+          "size": "235.2 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001-1.SLDDRW"
+        },
+        {
+          "sizeBytes": 92373,
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001-1.SLDPRT",
+          "size": "90.2 KB",
+          "name": "ACC-QC010Z001-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001.SLDDRW",
+          "sizeBytes": 237156,
+          "type": "SLDDRW",
+          "name": "ACC-QC010Z001.SLDDRW",
+          "size": "231.6 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-QC010Z001.SLDPRT",
+          "sizeBytes": 97913,
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001.SLDPRT",
+          "size": "95.6 KB"
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z001.STL",
+          "type": "STL",
+          "name": "ACC-QC010Z001.STL",
+          "size": "40.5 KB",
+          "sizeBytes": 41484
+        },
+        {
+          "type": "PDF",
+          "name": "ACC-QC010Z002-1.PDF",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002-1.PDF",
+          "sizeBytes": 126189,
+          "size": "123.2 KB"
+        },
+        {
+          "name": "ACC-QC010Z002-1.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002-1.SLDDRW",
+          "sizeBytes": 261340,
+          "size": "255.2 KB"
+        },
+        {
+          "size": "182.4 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002-1.SLDPRT",
+          "sizeBytes": 186747,
+          "name": "ACC-QC010Z002-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-QC010Z002.SLDDRW",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002.SLDDRW",
+          "size": "238.1 KB",
+          "sizeBytes": 243812
+        },
+        {
+          "size": "166.2 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 170224,
+          "name": "ACC-QC010Z002.SLDPRT"
+        },
+        {
+          "sizeBytes": 56584,
+          "size": "55.3 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z002.STL",
+          "name": "ACC-QC010Z002.STL",
+          "type": "STL"
+        },
+        {
+          "type": "PDF",
+          "name": "ACC-QC010Z003-1.PDF",
+          "sizeBytes": 123900,
+          "size": "121 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003-1.PDF"
+        },
+        {
+          "size": "240.6 KB",
+          "name": "ACC-QC010Z003-1.SLDDRW",
+          "sizeBytes": 246365,
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003-1.SLDPRT",
+          "size": "169.5 KB",
+          "sizeBytes": 173595,
+          "name": "ACC-QC010Z003-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-QC010Z003.SLDDRW",
+          "sizeBytes": 258187,
+          "size": "252.1 KB",
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003.SLDDRW"
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003.SLDPRT",
+          "name": "ACC-QC010Z003.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 225878,
+          "size": "220.6 KB"
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC010Z003.STL",
+          "size": "75 KB",
+          "name": "ACC-QC010Z003.STL",
+          "type": "STL",
+          "sizeBytes": 76784
+        },
+        {
+          "relPath": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/Thumbs.db",
+          "size": "90.5 KB",
+          "sizeBytes": 92672,
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "ACC-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY",
+      "fileCount": 22,
+      "totalBytes": 3525144,
+      "zipData": ""
+    },
+    "completionDate": "2026-03-02",
+    "title": "JIG-QC010 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY",
+    "process": "INSPECTION",
+    "description": "JIG-QC059, JIG-QC060 JIG SCREENING LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSY."
+  },
+  {
+    "requestDate": "2026-03-02",
+    "pdfAttachment": null,
+    "status": "done",
+    "imageData": null,
+    "department": "MEDICAL PRODUCTION",
+    "completionDate": "2026-03-02",
+    "description": "JIG-QC059, JIG-QC060 JIG SCREENING LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSY.",
+    "workFolder": {
+      "zipData": "",
+      "fileCount": 21,
+      "totalBytes": 3461537,
+      "totalSize": "3.3 MB",
+      "hasCloudFiles": true,
+      "name": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY",
+      "files": [
+        {
+          "size": "110.5 KB",
+          "sizeBytes": 113129,
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/450-102380.SLDPRT",
+          "type": "SLDPRT",
+          "name": "450-102380.SLDPRT"
+        },
+        {
+          "type": "SLDASM",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009A001-1.SLDASM",
+          "name": "ACC-QC009A001-1.SLDASM",
+          "size": "151.5 KB",
+          "sizeBytes": 155118
+        },
+        {
+          "size": "170.6 KB",
+          "sizeBytes": 174675,
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009A001.SLDASM",
+          "name": "ACC-QC009A001.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z001-1.PDF",
+          "sizeBytes": 123425,
+          "name": "ACC-QC009Z001-1.PDF",
+          "type": "PDF",
+          "size": "120.5 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-QC009Z001-1.SLDDRW",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z001-1.SLDDRW",
+          "size": "236.8 KB",
+          "sizeBytes": 242458
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z001-1.SLDPRT",
+          "name": "ACC-QC009Z001-1.SLDPRT",
+          "size": "82.9 KB",
+          "sizeBytes": 84932
+        },
+        {
+          "size": "231.2 KB",
+          "sizeBytes": 236710,
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z001.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-QC009Z001.SLDDRW"
+        },
+        {
+          "sizeBytes": 92303,
+          "size": "90.1 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z001.SLDPRT",
+          "name": "ACC-QC009Z001.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "PDF",
+          "name": "ACC-QC009Z002-1.PDF",
+          "sizeBytes": 123786,
+          "size": "120.9 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002-1.PDF"
+        },
+        {
+          "size": "243.1 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002-1.SLDDRW",
+          "name": "ACC-QC009Z002-1.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 248963
+        },
+        {
+          "sizeBytes": 168455,
+          "size": "164.5 KB",
+          "name": "ACC-QC009Z002-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 44984,
+          "size": "43.9 KB",
+          "name": "ACC-QC009Z002-1.STL",
+          "type": "STL",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002-1.STL"
+        },
+        {
+          "size": "246.6 KB",
+          "sizeBytes": 252539,
+          "name": "ACC-QC009Z002.SLDDRW",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "160.2 KB",
+          "sizeBytes": 164070,
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z002.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-QC009Z002.SLDPRT"
+        },
+        {
+          "type": "PDF",
+          "name": "ACC-QC009Z003-1.PDF",
+          "sizeBytes": 125762,
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003-1.PDF",
+          "size": "122.8 KB"
+        },
+        {
+          "size": "256.8 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003-1.SLDDRW",
+          "sizeBytes": 263008,
+          "name": "ACC-QC009Z003-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "173.7 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003-1.SLDPRT",
+          "sizeBytes": 177836,
+          "name": "ACC-QC009Z003-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003-1.STL",
+          "size": "77.9 KB",
+          "sizeBytes": 79784,
+          "name": "ACC-QC009Z003-1.STL",
+          "type": "STL"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-QC009Z003.SLDDRW",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003.SLDDRW",
+          "sizeBytes": 251233,
+          "size": "245.3 KB"
+        },
+        {
+          "sizeBytes": 220607,
+          "size": "215.4 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/ACC-QC009Z003.SLDPRT",
+          "name": "ACC-QC009Z003.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 117760,
+          "size": "115 KB",
+          "relPath": "ACC-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ]
+    },
+    "createdAt": "2026-09-11T04:19:44.177Z",
+    "assignee": "JITTRAKAN K.",
+    "factory": "FACTORY D",
+    "note": "COMPLETE",
+    "quotation": "",
+    "title": "JIG-QC009 LATCH, SLIDE CLAMP EJECTION, SLIDE CLAMP ASSEMBLY",
+    "updatedAt": "2026-09-11T10:01:57.208Z",
+    "categoryId": "cat_jig",
+    "requestName": "MEDICAL PRODUCTION",
+    "code": "MEDICAL PRODUCTION",
+    "id": "achv_1789100384177",
+    "process": "INSPECTION"
+  },
+  {
+    "workFolder": null,
+    "id": "achv_1789100280398",
+    "description": "ร้องขอฝ่ายเทคโนโลยีทำ JIG สำหรับจับชิ้นงานยึด COIL ของเครื่อง SOLDERING MANUAL (SMD-015) ที่แผนก DIRECT GENERATOR PROCESS ทำไป MODIFY ย้าย JIG ไปใส่ที่เครื่อง SOLDERING SEMI MACHINE (SDS-001) เพื่อจะนำมาใช้งานแทนกรณีเครื่อง SOLDERING MACHINE ที่ใช้งานประจำเสีย",
+    "factory": "FACTORY E",
+    "department": "MOTOR PRODUCTION",
+    "requestDate": "2026-02-11",
+    "updatedAt": "2026-09-11T08:41:19.777Z",
+    "code": "GM-J26-014",
+    "status": "done",
+    "createdAt": "2026-09-11T04:18:00.398Z",
+    "quotation": "",
+    "pdfAttachment": {
+      "hasCloudPdf": true,
+      "data": "",
+      "name": "GM-J26-014.PDF",
+      "size": 1319534
+    },
+    "pdfAttachment.hasCloudPdf": true,
+    "title": "SPRING SMD-015 (MACHINE)",
+    "note": "ดำเนินการจัดทำ JIG สำหรับจับชิ้นงานยึด COIL ของเครื่อง SOLDERING MANUAL (SMD-015) ที่แผนก DIRECT GENERATOR PROCESS ทำไป MODIFY จำนวน 1 PCS สำเร็จ",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.name": "GM-J26-014.PDF",
+    "requestName": "PONGRAT P.",
+    "imageData": null,
+    "pdfAttachment.size": 1319534,
+    "process": "DIRECT BENCRATOR",
+    "categoryId": "cat_jig",
+    "completionDate": "2026-05-05"
+  },
+  {
+    "code": "FIBER PRODUCTION",
+    "categoryId": "cat_prj",
+    "id": "achv_1789100156538",
+    "createdAt": "2026-09-11T04:15:56.538Z",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "",
+    "requestDate": "2026-05-08",
+    "completionDate": "2026-05-08",
+    "process": "LAYOUT",
+    "description": "วาด LAYOUT ห้อง FIBER ที่มีประตู EMERGENCY 2 แบบ",
+    "imageData": null,
+    "requestName": "FIBER PRODUCTION",
+    "title": "DRAWING LAYOUT FIBER #1 (LT25-FIB001-5)",
+    "department": "FIBER PRODUCTION",
+    "updatedAt": "2026-09-11T08:41:01.183Z",
+    "note": "วาด LAYOUT ห้อง FIBER ที่มีประตู EMERGENCY 2 แบบ เสร็จสิ้น",
+    "factory": "FACTORY B",
+    "status": "done",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "zipData": "",
+      "totalBytes": 104058806,
+      "totalSize": "99.2 MB",
+      "name": "LAYOUT",
+      "files": [
+        {
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "sizeBytes": 14216192,
+          "type": "ZRD",
+          "size": "13.6 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (AFTER).zrd"
+        },
+        {
+          "sizeBytes": 29291008,
+          "size": "27.9 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (Befor&After) 1.zrd",
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD"
+        },
+        {
+          "type": "ZRD",
+          "sizeBytes": 14653440,
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "size": "14 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (BEFORE).zrd"
+        },
+        {
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (AFTER).pdf",
+          "sizeBytes": 1738211,
+          "size": "1.7 MB"
+        },
+        {
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF",
+          "type": "PDF",
+          "sizeBytes": 1942222,
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "size": "1.9 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.pdf",
+          "size": "240.6 KB",
+          "sizeBytes": 246408,
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.PDF",
+          "type": "PDF"
+        },
+        {
+          "sizeBytes": 3371520,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.zrd",
+          "size": "3.2 MB",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.ZRD"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.PDF",
+          "sizeBytes": 246113,
+          "size": "240.3 KB"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.ZRD",
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.zrd",
+          "sizeBytes": 3448832,
+          "size": "3.3 MB"
+        },
+        {
+          "sizeBytes": 246115,
+          "size": "240.3 KB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).pdf"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 3450368,
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).zrd"
+        },
+        {
+          "sizeBytes": 164758,
+          "size": "160.9 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.1.pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.1.PDF"
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.pdf",
+          "size": "240.4 KB",
+          "sizeBytes": 246153
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "size": "240.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.pdf",
+          "sizeBytes": 246434,
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.PDF"
+        },
+        {
+          "sizeBytes": 3450368,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.zrd",
+          "size": "3.3 MB"
+        },
+        {
+          "sizeBytes": 246432,
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.PDF",
+          "type": "PDF",
+          "size": "240.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.pdf"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.ZRD",
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.zrd",
+          "sizeBytes": 3450368,
+          "size": "3.3 MB"
+        },
+        {
+          "sizeBytes": 246398,
+          "size": "240.6 KB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.pdf"
+        },
+        {
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.zrd",
+          "sizeBytes": 3450368,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.ZRD"
+        },
+        {
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.PDF",
+          "size": "238.7 KB",
+          "sizeBytes": 244459
+        },
+        {
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER).zrd",
+          "name": "LT26-FER001-07A (AFTER).ZRD",
+          "size": "3.2 MB",
+          "sizeBytes": 3362304
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.1.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.1.ZRD",
+          "size": "4.3 MB",
+          "sizeBytes": 4535296
+        },
+        {
+          "size": "162.5 KB",
+          "sizeBytes": 166383,
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.pdf",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.PDF"
+        },
+        {
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 4535296,
+          "size": "4.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.zrd"
+        },
+        {
+          "sizeBytes": 3412992,
+          "size": "3.3 MB",
+          "name": "LT26-FER001-07A.ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a.zrd",
+          "type": "ZRD"
+        }
+      ],
+      "fileCount": 26
+    },
+    "pdfAttachment": null
+  },
+  {
+    "updatedAt": "2026-09-11T08:40:35.235Z",
+    "workFolder": {
+      "files": [
+        {
+          "sizeBytes": 348147,
+          "name": "ACC-FER040A001-1.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040A001-1.SLDASM",
+          "size": "340 KB"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040A001-1.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER040A001-1.SLDDRW",
+          "sizeBytes": 278289,
+          "size": "271.8 KB"
+        },
+        {
+          "size": "366.1 KB",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040A001.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FER040A001.SLDASM",
+          "sizeBytes": 374937
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040A001.SLDDRW",
+          "size": "254.5 KB",
+          "sizeBytes": 260589,
+          "name": "ACC-FER040A001.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z001-1.SLDDRW",
+          "size": "230.8 KB",
+          "name": "ACC-FER040Z001-1.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 236390
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z001-1.SLDPRT",
+          "name": "ACC-FER040Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 83708,
+          "size": "81.7 KB"
+        },
+        {
+          "sizeBytes": 239597,
+          "type": "SLDDRW",
+          "name": "ACC-FER040Z001.SLDDRW",
+          "size": "234 KB",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z001.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z001.SLDPRT",
+          "size": "84.4 KB",
+          "sizeBytes": 86468,
+          "name": "ACC-FER040Z001.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z002-1.SLDDRW",
+          "size": "242.2 KB",
+          "sizeBytes": 248042,
+          "name": "ACC-FER040Z002-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "sizeBytes": 113373,
+          "size": "110.7 KB",
+          "name": "ACC-FER040Z002-1.SLDPRT",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z002-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "sizeBytes": 249729,
+          "name": "ACC-FER040Z002.SLDDRW",
+          "size": "243.9 KB",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z002.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z002.SLDPRT",
+          "name": "ACC-FER040Z002.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 113570,
+          "size": "110.9 KB"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z003-1.SLDDRW",
+          "size": "238.1 KB",
+          "sizeBytes": 243765,
+          "name": "ACC-FER040Z003-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "91.9 KB",
+          "sizeBytes": 94069,
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z003-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER040Z003-1.SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FER040Z003.SLDDRW",
+          "size": "236.3 KB",
+          "sizeBytes": 242008,
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z003.SLDDRW"
+        },
+        {
+          "size": "91.2 KB",
+          "sizeBytes": 93403,
+          "type": "SLDPRT",
+          "name": "ACC-FER040Z003.SLDPRT",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z003.SLDPRT"
+        },
+        {
+          "size": "235 KB",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z004-1.SLDDRW",
+          "sizeBytes": 240607,
+          "name": "ACC-FER040Z004-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z004-1.SLDPRT",
+          "name": "ACC-FER040Z004-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "95.2 KB",
+          "sizeBytes": 97534
+        },
+        {
+          "name": "ACC-FER040Z004.SLDDRW",
+          "sizeBytes": 238566,
+          "type": "SLDDRW",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z004.SLDDRW",
+          "size": "233 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER040Z004.SLDPRT",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z004.SLDPRT",
+          "size": "95.2 KB",
+          "sizeBytes": 97534
+        },
+        {
+          "size": "236 KB",
+          "sizeBytes": 241628,
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z005-1.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER040Z005-1.SLDDRW"
+        },
+        {
+          "name": "ACC-FER040Z005-1.SLDPRT",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z005-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 123185,
+          "size": "120.3 KB"
+        },
+        {
+          "size": "235.7 KB",
+          "sizeBytes": 241407,
+          "name": "ACC-FER040Z005.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z005.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER040Z005.SLDPRT",
+          "size": "120.3 KB",
+          "sizeBytes": 123185,
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z005.SLDPRT"
+        },
+        {
+          "sizeBytes": 406820,
+          "size": "397.3 KB",
+          "type": "SLDPRT",
+          "name": "ACC-FER040Z006-1.SLDPRT",
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z006-1.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/ACC-FER040Z006-1.STL",
+          "size": "584.7 KB",
+          "sizeBytes": 598684,
+          "name": "ACC-FER040Z006-1.STL",
+          "type": "STL"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/E-LNBM4-16-15-B.stp",
+          "type": "STP",
+          "name": "E-LNBM4-16-15-B.STP",
+          "size": "71.9 KB",
+          "sizeBytes": 73594
+        },
+        {
+          "name": "E-LNBM4-16-15-B_STEP.ZIP",
+          "type": "ZIP",
+          "relPath": "ACC-FER040 FANSTAND/E-LNBM4-16-15-B_STEP.zip",
+          "sizeBytes": 11852,
+          "size": "11.6 KB"
+        },
+        {
+          "size": "164.9 KB",
+          "relPath": "ACC-FER040 FANSTAND/FAKE MODEL MU925S-11.SLDPRT",
+          "sizeBytes": 168880,
+          "type": "SLDPRT",
+          "name": "FAKE MODEL MU925S-11.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/NHM5-15.stp",
+          "size": "57.8 KB",
+          "name": "NHM5-15.STP",
+          "sizeBytes": 59141,
+          "type": "STP"
+        },
+        {
+          "sizeBytes": 12327,
+          "type": "ZIP",
+          "relPath": "ACC-FER040 FANSTAND/NHM5-15_STEP_AP203_20260305.zip",
+          "name": "NHM5-15_STEP_AP203_20260305.ZIP",
+          "size": "12 KB"
+        },
+        {
+          "size": "57.8 KB",
+          "relPath": "ACC-FER040 FANSTAND/NHM6-15.stp",
+          "sizeBytes": 59213,
+          "name": "NHM6-15.STP",
+          "type": "STP"
+        },
+        {
+          "size": "41 KB",
+          "sizeBytes": 41984,
+          "type": "DB",
+          "relPath": "ACC-FER040 FANSTAND/Thumbs.db",
+          "name": "THUMBS.DB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$ACC-FER040Z005.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "ACC-FER040 FANSTAND/~$ACC-FER040Z005.SLDPRT"
+        },
+        {
+          "sizeBytes": 20,
+          "size": "20 B",
+          "relPath": "ACC-FER040 FANSTAND/~$ACC-FER040Z006-1.SLDPRT",
+          "name": "~$ACC-FER040Z006-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "62.7 KB",
+          "relPath": "ACC-FER040 FANSTAND/MISUMI_ORIENTAL MOTOR_MU925S-11_20260304102417/20260304102417_MU925S-11.pdf",
+          "type": "PDF",
+          "sizeBytes": 64227,
+          "name": "20260304102417_MU925S-11.PDF"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/MISUMI_ORIENTAL MOTOR_MU925S-11_20260304102417/csv_error.txt",
+          "type": "TXT",
+          "name": "CSV_ERROR.TXT",
+          "sizeBytes": 54,
+          "size": "54 B"
+        },
+        {
+          "relPath": "ACC-FER040 FANSTAND/MISUMI_ORIENTAL MOTOR_MU925S-11_20260304102417/readme.txt",
+          "name": "README.TXT",
+          "type": "TXT",
+          "sizeBytes": 4999,
+          "size": "4.9 KB"
+        }
+      ],
+      "totalSize": "5.9 MB",
+      "hasCloudFiles": true,
+      "name": "ACC-FER040 FANSTAND",
+      "zipData": "",
+      "fileCount": 38,
+      "totalBytes": 6211545
+    },
+    "process": "CONCENIFICITY INSPECTION",
+    "status": "done",
+    "requestName": "PAIRIN S.",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder.totalSize": "5.9 MB",
+    "code": "FR-J26-018",
+    "workFolder.hasCloudFiles": true,
+    "completionDate": "2026-05-11",
+    "description": "ร้องขอทาง TECHNOLOGY ออกแบบและจัดทำ พร้อมติดตั้งขาตั้งพัดลม ที่ M/C CONCENIFICITY จำนวน 23 PCS จัดทำเป็น SPARI เพื่อเอาไว้เปลี่ยนกรณีอันเก่าเสีย",
+    "imageData": null,
+    "title": "ACC-FER040 FANSTAND",
+    "requestDate": "2026-02-24",
+    "pdfAttachment.size": 2167731,
+    "id": "achv_1789100096166",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "name": "FR-J26-018.PDF",
+      "size": 2167731
+    },
+    "workFolder.fileCount": 38,
+    "department": "FERRULE PRODUCTION",
+    "pdfAttachment.name": "FR-J26-018.PDF",
+    "note": "ทำการออกแบบและจัดทำ ขาตั้งพัดลมที่ M/C CONCENIFICITY ได้จำนวน 22 PCS เนื่องจากฝ่ายผลิตนับจำนวนพัดลมได้ 23 ตัว แต่ของจริงมีแค่ 22 ตัวเท่านั้น",
+    "workFolder.name": "ACC-FER040 FANSTAND",
+    "factory": "FACTORY A",
+    "categoryId": "cat_acc",
+    "createdAt": "2026-09-11T04:14:56.166Z",
+    "quotation": "",
+    "assignee": "JITTRAKAN K."
+  },
+  {
+    "toolingTeam": "",
+    "maintenanceSupport3": "",
+    "id": "achv_1789099939244",
+    "designSupport1": "",
+    "imageData": null,
+    "priority": "Low",
+    "toolingTeam2": "",
+    "maintenanceSupport": "",
+    "subJobType": "All",
+    "designTeam": "",
+    "designSupport2": "",
+    "lastEditedBy": "JITTRAKAN K.",
+    "pdfAttachment.size": 739862,
+    "title": "ACC-QC011 SETUP DESK DRAWER",
+    "quotation": "26-0152",
+    "workFolder": {
+      "files": [
+        {
+          "size": "2.1 MB",
+          "type": "SLDASM",
+          "name": "ACC-QC011A001-0.SLDASM",
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011A001-0.SLDASM",
+          "sizeBytes": 2203427
+        },
+        {
+          "size": "57.8 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011W001-0.SLDASM",
+          "name": "ACC-QC011W001-0.SLDASM",
+          "sizeBytes": 59191,
+          "type": "SLDASM"
+        },
+        {
+          "name": "ACC-QC011Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011Z001-0.SLDPRT",
+          "size": "41.6 KB",
+          "sizeBytes": 42646
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011Z002-0.SLDPRT",
+          "size": "43.1 KB",
+          "sizeBytes": 44162,
+          "type": "SLDPRT",
+          "name": "ACC-QC011Z002-0.SLDPRT"
+        },
+        {
+          "size": "41.6 KB",
+          "sizeBytes": 42612,
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-QC011Z003-0.SLDPRT"
+        },
+        {
+          "size": "41.8 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/ACC-QC011Z004-0.SLDPRT",
+          "name": "ACC-QC011Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 42835
+        },
+        {
+          "name": "C-SR36Y18_203.STEP",
+          "type": "STEP",
+          "sizeBytes": 386525,
+          "relPath": "ACC-QC011 DRAWER DESK/C-SR36Y18_203.STEP",
+          "size": "377.5 KB"
+        },
+        {
+          "type": "SLDASM",
+          "sizeBytes": 258136,
+          "name": "C-SR36Y22_203.SLDASM",
+          "relPath": "ACC-QC011 DRAWER DESK/C-SR36Y22_203.SLDASM",
+          "size": "252.1 KB"
+        },
+        {
+          "size": "258.3 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/C-SR36Y28_203.SLDASM",
+          "sizeBytes": 264450,
+          "name": "C-SR36Y28_203.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000.SLDASM",
+          "size": "82.5 KB",
+          "sizeBytes": 84524,
+          "name": "GFA-000.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "name": "GFA-000_1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 126758,
+          "size": "123.8 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_1.SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_2.SLDPRT",
+          "name": "GFA-000_2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 84731,
+          "size": "82.7 KB"
+        },
+        {
+          "size": "25.6 KB",
+          "sizeBytes": 26204,
+          "type": "SLDASM",
+          "name": "GFA-000_3.SLDASM",
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_3.SLDASM"
+        },
+        {
+          "size": "55.8 KB",
+          "sizeBytes": 57157,
+          "type": "SLDPRT",
+          "name": "GFA-000_3_1.SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_3_1.SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_3_2.SLDPRT",
+          "size": "92.7 KB",
+          "sizeBytes": 94874,
+          "name": "GFA-000_3_2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "GFA-000_4.SLDPRT",
+          "sizeBytes": 70629,
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-000_4.SLDPRT",
+          "type": "SLDPRT",
+          "size": "69 KB"
+        },
+        {
+          "name": "GFA-400.SLDPRT",
+          "sizeBytes": 144485,
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFA-400.SLDPRT",
+          "size": "141.1 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-000 100 CM.SLDPRT",
+          "sizeBytes": 126351,
+          "size": "123.4 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 100 cm.SLDPRT"
+        },
+        {
+          "size": "125.6 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 430 cm.SLDPRT",
+          "name": "GFF-000 430 CM.SLDPRT",
+          "sizeBytes": 128619,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-000 450 MM.SLDPRT",
+          "sizeBytes": 128184,
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 450 mm.SLDPRT",
+          "size": "125.2 KB"
+        },
+        {
+          "size": "124.5 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 47.6 cm.SLDPRT",
+          "sizeBytes": 127536,
+          "type": "SLDPRT",
+          "name": "GFF-000 47.6 CM.SLDPRT"
+        },
+        {
+          "name": "GFF-000 572 MM.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 572 mm.SLDPRT",
+          "sizeBytes": 127852,
+          "size": "124.9 KB"
+        },
+        {
+          "size": "125.8 KB",
+          "sizeBytes": 128828,
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 632 mm.SLDPRT",
+          "name": "GFF-000 632 MM.SLDPRT"
+        },
+        {
+          "name": "GFF-000 656 MM.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 656 mm.SLDPRT",
+          "size": "125.1 KB",
+          "sizeBytes": 128101
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-000 66.0 CM.SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 66.0 cm.SLDPRT",
+          "size": "125.9 KB",
+          "sizeBytes": 128938
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 662 mm.SLDPRT",
+          "size": "124.2 KB",
+          "sizeBytes": 127218,
+          "type": "SLDPRT",
+          "name": "GFF-000 662 MM.SLDPRT"
+        },
+        {
+          "name": "GFF-000 78 MM.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 78 mm.SLDPRT",
+          "sizeBytes": 126919,
+          "size": "123.9 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 117957,
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 80 mm.SLDPRT",
+          "name": "GFF-000 80 MM.SLDPRT",
+          "size": "115.2 KB"
+        },
+        {
+          "size": "125.9 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-000 882 mm.SLDPRT",
+          "sizeBytes": 128873,
+          "type": "SLDPRT",
+          "name": "GFF-000 882 MM.SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-A01 500.SLDPRT",
+          "size": "84.3 KB",
+          "name": "GFF-A01 500.SLDPRT",
+          "sizeBytes": 86345,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFF-A01.SLDPRT",
+          "size": "104.7 KB",
+          "sizeBytes": 107249,
+          "name": "GFF-A01.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-200.SLDASM",
+          "name": "GFJ-200.SLDASM",
+          "type": "SLDASM",
+          "size": "120.6 KB",
+          "sizeBytes": 123522
+        },
+        {
+          "size": "305.7 KB",
+          "sizeBytes": 313048,
+          "type": "SLDPRT",
+          "name": "GFJ-200_1.SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-200_1.SLDPRT"
+        },
+        {
+          "sizeBytes": 71241,
+          "size": "69.6 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-200_2.SLDPRT",
+          "name": "GFJ-200_2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "GFJ-200_3.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 34767,
+          "size": "34 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-200_3.SLDPRT"
+        },
+        {
+          "sizeBytes": 714937,
+          "name": "GFJ-202 2.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202 2.SLDASM",
+          "size": "698.2 KB"
+        },
+        {
+          "type": "SLDASM",
+          "name": "GFJ-202.SLDASM",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202.SLDASM",
+          "size": "699.7 KB",
+          "sizeBytes": 716517
+        },
+        {
+          "size": "505.6 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_1.SLDPRT",
+          "sizeBytes": 517714,
+          "type": "SLDPRT",
+          "name": "GFJ-202_1.SLDPRT"
+        },
+        {
+          "sizeBytes": 683992,
+          "size": "668 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_2.SLDPRT",
+          "name": "GFJ-202_2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 490965,
+          "type": "SLDPRT",
+          "name": "GFJ-202_3.SLDPRT",
+          "size": "479.5 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_3.SLDPRT"
+        },
+        {
+          "sizeBytes": 69517,
+          "size": "67.9 KB",
+          "name": "GFJ-202_4.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_4.SLDPRT"
+        },
+        {
+          "name": "GFJ-202_5.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 71578,
+          "size": "69.9 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_5.SLDPRT"
+        },
+        {
+          "size": "68.4 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_6.SLDPRT",
+          "name": "GFJ-202_6.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 70070
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFJ-202_7.SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-202_7.SLDPRT",
+          "size": "70.7 KB",
+          "sizeBytes": 72371
+        },
+        {
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-A15.SLDASM",
+          "size": "111.4 KB",
+          "sizeBytes": 114034,
+          "name": "GFJ-A15.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "size": "269.4 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-A15_1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 275911,
+          "name": "GFJ-A15_1.SLDPRT"
+        },
+        {
+          "sizeBytes": 72887,
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-A15_2.SLDPRT",
+          "size": "71.2 KB",
+          "type": "SLDPRT",
+          "name": "GFJ-A15_2.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-A15_3.SLDPRT",
+          "sizeBytes": 74932,
+          "name": "GFJ-A15_3.SLDPRT",
+          "size": "73.2 KB"
+        },
+        {
+          "name": "GFJ-A22.SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/GFJ-A22.SLDPRT",
+          "type": "SLDPRT",
+          "size": "544.5 KB",
+          "sizeBytes": 557568
+        },
+        {
+          "size": "54.2 KB",
+          "relPath": "ACC-QC011 DRAWER DESK/GFN-E01.SLDPRT",
+          "sizeBytes": 55513,
+          "type": "SLDPRT",
+          "name": "GFN-E01.SLDPRT"
+        },
+        {
+          "size": "17.9 KB",
+          "sizeBytes": 18359,
+          "relPath": "ACC-QC011 DRAWER DESK/LIST ของเพิ่มเติม (ลิ้นชัก).xlsx",
+          "type": "XLSX",
+          "name": "LIST ของเพิ่มเติม (ลิ้นชัก).XLSX"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "SFA-607-SLD.SLDPRT",
+          "size": "125 KB",
+          "sizeBytes": 128000,
+          "relPath": "ACC-QC011 DRAWER DESK/SFA-607-SLD.SLDPRT"
+        },
+        {
+          "name": "SFA-613-SLD.SLDPRT",
+          "sizeBytes": 154859,
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/SFA-613-SLD.SLDPRT",
+          "size": "151.2 KB"
+        },
+        {
+          "size": "68.9 KB",
+          "sizeBytes": 70579,
+          "type": "SLDPRT",
+          "relPath": "ACC-QC011 DRAWER DESK/SFB-006.SLDPRT",
+          "name": "SFB-006.SLDPRT"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 137216,
+          "relPath": "ACC-QC011 DRAWER DESK/Thumbs.db",
+          "size": "134 KB"
+        },
+        {
+          "name": "TOP DESK.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 44810,
+          "relPath": "ACC-QC011 DRAWER DESK/TOP DESK.SLDPRT",
+          "size": "43.8 KB"
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "ACC-QC011 DRAWER DESK/~$GFF-000 66.0 cm.SLDPRT",
+          "type": "SLDPRT",
+          "name": "~$GFF-000 66.0 CM.SLDPRT"
+        }
+      ],
+      "zipData": "",
+      "name": "ACC-QC011 DRAWER DESK",
+      "fileCount": 57,
+      "hasCloudFiles": true,
+      "totalBytes": 11407243,
+      "totalSize": "10.9 MB"
+    },
+    "description": "ติดตั้งลิ้นชักใต้โต๊ะ สำหรับเก็บอุปกรณ์การทำงาน",
+    "supportBy": "",
+    "process": "QUALITY / SHIPPING INSPECTION",
+    "categoryId": "cat_acc",
+    "lastEditedRole": "ADMIN",
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-10-12T08:37:06.583Z",
+    "creatorPin": "20523",
+    "editorPin": "20523",
+    "factory": "FACTORY C",
+    "achievement": 1,
+    "jobType": "M-A",
+    "pdfAttachment.hasCloudPdf": true,
+    "department": "QUALITY",
+    "maintenanceSupport5": "",
+    "workFolder.totalSize": "10.9 MB",
+    "code": "OTH-J26-005",
+    "workFolder.name": "ACC-QC011 DRAWER DESK",
+    "maintenanceSupport2": "",
+    "requestName": "RON T.",
+    "designSupport": "",
+    "note": "CANCLE",
+    "status": "cancel",
+    "maintenanceSupport1": "",
+    "workFolder.hasCloudFiles": true,
+    "maintenanceSupport4": "",
+    "completionDate": "2026-05-09",
+    "toolingTeam1": "",
+    "workFolder.fileCount": 57,
+    "subStatus": "Cancel",
+    "requestDate": "2026-03-31",
+    "createdAt": "2026-09-11T04:12:19.244Z",
+    "pdfAttachment": {
+      "name": "OTH-J26-005.PDF",
+      "size": 739862,
+      "data": "",
+      "hasCloudPdf": true
+    },
+    "pdfAttachment.name": "OTH-J26-005.PDF"
+  },
+  {
+    "pdfAttachment": null,
+    "status": "done",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "updatedAt": "2026-09-11T08:39:59.127Z",
+    "process": "5S",
+    "title": "PTN006 HANGING 3D PRINTER",
+    "assignee": "JITTRAKAN K.",
+    "workFolder": {
+      "totalBytes": 3802163,
+      "files": [
+        {
+          "sizeBytes": 406717,
+          "type": "SLDASM",
+          "name": "PTN006A001-0.SLDASM",
+          "size": "397.2 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006A001-0.SLDASM"
+        },
+        {
+          "size": "527.6 KB",
+          "sizeBytes": 540273,
+          "type": "SLDASM",
+          "name": "PTN006A001-1.SLDASM",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006A001-1.SLDASM"
+        },
+        {
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z001-0.SLDPRT",
+          "name": "PTN006Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 861920,
+          "size": "841.7 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "PTN006Z002-0.SLDPRT",
+          "size": "101.6 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z002-0.SLDPRT",
+          "sizeBytes": 104020
+        },
+        {
+          "sizeBytes": 85484,
+          "type": "STL",
+          "name": "PTN006Z002-0.STL",
+          "size": "83.5 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z002-0.STL"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z002-1.SLDPRT",
+          "name": "PTN006Z002-1.SLDPRT",
+          "sizeBytes": 100454,
+          "size": "98.1 KB"
+        },
+        {
+          "sizeBytes": 121527,
+          "size": "118.7 KB",
+          "name": "PTN006Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z003-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 81150,
+          "size": "79.2 KB",
+          "type": "SLDPRT",
+          "name": "PTN006Z003-1.SLDPRT",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z003-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 30284,
+          "type": "STL",
+          "name": "PTN006Z003-1.STL",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z003-1.STL",
+          "size": "29.6 KB"
+        },
+        {
+          "sizeBytes": 129317,
+          "type": "SLDPRT",
+          "name": "PTN006Z004-0.SLDPRT",
+          "size": "126.3 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z004-0.SLDPRT"
+        },
+        {
+          "relPath": "PTN006 HANGING 3D PRINTER/PTN006Z004-0.STL",
+          "name": "PTN006Z004-0.STL",
+          "type": "STL",
+          "sizeBytes": 137584,
+          "size": "134.4 KB"
+        },
+        {
+          "relPath": "PTN006 HANGING 3D PRINTER/SFB-001 2 Slot 20 mm.SLDPRT",
+          "size": "108.7 KB",
+          "sizeBytes": 111260,
+          "type": "SLDPRT",
+          "name": "SFB-001 2 SLOT 20 MM.SLDPRT"
+        },
+        {
+          "name": "SFB-001 2 SLOT 20 MM.STL",
+          "type": "STL",
+          "sizeBytes": 45084,
+          "relPath": "PTN006 HANGING 3D PRINTER/SFB-001 2 Slot 20 mm.STL",
+          "size": "44 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "SFB-001.SLDPRT",
+          "size": "107 KB",
+          "sizeBytes": 109600,
+          "relPath": "PTN006 HANGING 3D PRINTER/SFB-001.SLDPRT"
+        },
+        {
+          "size": "35.4 KB",
+          "type": "STL",
+          "name": "SFB-001.STL",
+          "sizeBytes": 36284,
+          "relPath": "PTN006 HANGING 3D PRINTER/SFB-001.STL"
+        },
+        {
+          "relPath": "PTN006 HANGING 3D PRINTER/SFB-002.SLDPRT",
+          "sizeBytes": 72103,
+          "name": "SFB-002.SLDPRT",
+          "type": "SLDPRT",
+          "size": "70.4 KB"
+        },
+        {
+          "sizeBytes": 229687,
+          "type": "SLDPRT",
+          "name": "SFF-B14 (750MM).SLDPRT",
+          "size": "224.3 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/SFF-B14 (750mm).SLDPRT"
+        },
+        {
+          "size": "219.9 KB",
+          "relPath": "PTN006 HANGING 3D PRINTER/SFF-B14 (817mm).SLDPRT",
+          "sizeBytes": 225143,
+          "type": "SLDPRT",
+          "name": "SFF-B14 (817MM).SLDPRT"
+        },
+        {
+          "size": "314.5 KB",
+          "name": "SFF-B14.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 322048,
+          "relPath": "PTN006 HANGING 3D PRINTER/SFF-B14.SLDPRT"
+        },
+        {
+          "sizeBytes": 52224,
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "PTN006 HANGING 3D PRINTER/Thumbs.db",
+          "size": "51 KB"
+        }
+      ],
+      "totalSize": "3.6 MB",
+      "zipData": "",
+      "fileCount": 20,
+      "name": "PTN006 HANGING 3D PRINTER",
+      "hasCloudFiles": true
+    },
+    "code": "PRODUCTION TECHNOLOGY",
+    "completionDate": "2026-05-14",
+    "id": "achv_1789099847935",
+    "categoryId": "cat_acc",
+    "createdAt": "2026-09-11T04:10:47.935Z",
+    "note": "จัดทำที่ห้อยข้าง 3D PRINTER สำเร็จ",
+    "quotation": "",
+    "requestDate": "2026-05-14",
+    "description": "จัดทำที่ห้อยข้าง 3D PRINTER",
+    "imageData": null,
+    "factory": "FACTORY E"
+  },
+  {
+    "pdfAttachment.name": "FR-J26-042.PDF",
+    "workFolder.totalSize": "4.7 MB",
+    "process": "CENTERLESS I",
+    "completionDate": "2026-05-22",
+    "pdfAttachment": {
+      "name": "FR-J26-042.PDF",
+      "size": 818398,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "imageData": null,
+    "pdfAttachment.size": 818398,
+    "categoryId": "cat_acc",
+    "title": "ACC-FER049 STAND FOCUS CAM",
+    "pdfAttachment.hasCloudPdf": true,
+    "status": "done",
+    "department": "FERRULE PRODUCTION",
+    "updatedAt": "2026-09-11T08:39:39.888Z",
+    "code": "FR-J26-042",
+    "workFolder.name": "ACC-FER049 STAND FOCUS CAM",
+    "description": "ร้องขอให้จัดทำแท่นสำหรับยืนส่องกล้องเพื่อความปลอดภัยและเป็นมาตรฐานในการทำงาน รายละเอียดตามเอกสารแนบ",
+    "quotation": "",
+    "createdAt": "2026-09-11T04:09:56.009Z",
+    "note": "จัดทำแท่นสำหรับยืนส่องกล้องเพื่อความปลอดภัย จำนวน 1 PCS สำเร็จ",
+    "requestDate": "2026-05-18",
+    "workFolder.fileCount": 14,
+    "id": "achv_1789099796009",
+    "workFolder.hasCloudFiles": true,
+    "workFolder": {
+      "hasCloudFiles": true,
+      "totalSize": "4.7 MB",
+      "files": [
+        {
+          "size": "199.7 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/ACC-FER049A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FER049A001-0.SLDASM",
+          "sizeBytes": 204478
+        },
+        {
+          "name": "ACC-FER049A002-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/ACC-FER049A002-0.SLDASM",
+          "sizeBytes": 325264,
+          "size": "317.6 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-A01 (240MM).SLDPRT",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/GFF-A01 (240mm).SLDPRT",
+          "sizeBytes": 107249,
+          "size": "104.7 KB"
+        },
+        {
+          "sizeBytes": 614072,
+          "size": "599.7 KB",
+          "name": "POLE KHFSB5-2040-4000 (170MM).SLDPRT",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/POLE KHFSB5-2040-4000 (170mm).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "POLE KHFSB5-2040-4000 (260MM).SLDPRT",
+          "size": "619.1 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/POLE KHFSB5-2040-4000 (260mm).SLDPRT",
+          "sizeBytes": 634006
+        },
+        {
+          "size": "616.9 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/POLE KHFSB5-2040-4000 (300mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "POLE KHFSB5-2040-4000 (300MM).SLDPRT",
+          "sizeBytes": 631666
+        },
+        {
+          "size": "614.8 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/POLE KHFSB5-2040-4000 (360mm).SLDPRT",
+          "name": "POLE KHFSB5-2040-4000 (360MM).SLDPRT",
+          "sizeBytes": 629527,
+          "type": "SLDPRT"
+        },
+        {
+          "size": "617 KB",
+          "name": "POLE KHFSB5-2040-4000 (90MM).SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 631780,
+          "relPath": "ACC-FER049 STAND FOCUS CAM/POLE KHFSB5-2040-4000 (90mm).SLDPRT"
+        },
+        {
+          "sizeBytes": 264695,
+          "type": "SLDPRT",
+          "name": "SFF-B14 (170MM).SLDPRT",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/SFF-B14 (170mm).SLDPRT",
+          "size": "258.5 KB"
+        },
+        {
+          "sizeBytes": 255602,
+          "size": "249.6 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/SFF-B14 (240mm).SLDPRT",
+          "name": "SFF-B14 (240MM).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "253.4 KB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/SFF-B14 (340mm).SLDPRT",
+          "sizeBytes": 259517,
+          "type": "SLDPRT",
+          "name": "SFF-B14 (340MM).SLDPRT"
+        },
+        {
+          "name": "SFJ-036.SLDPRT",
+          "sizeBytes": 291645,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/SFJ-036.SLDPRT",
+          "size": "284.8 KB"
+        },
+        {
+          "sizeBytes": 12800,
+          "size": "12.5 KB",
+          "name": "THUMBS.DB",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/Thumbs.db",
+          "type": "DB"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 68401,
+          "name": "WOOD.SLDPRT",
+          "relPath": "ACC-FER049 STAND FOCUS CAM/WOOD.SLDPRT",
+          "size": "66.8 KB"
+        }
+      ],
+      "fileCount": 14,
+      "totalBytes": 4930702,
+      "name": "ACC-FER049 STAND FOCUS CAM",
+      "zipData": ""
+    },
+    "factory": "FACTORY A",
+    "assignee": "JITTRAKAN K.",
+    "requestName": "TANONGSAK T."
+  },
+  {
+    "categoryId": "cat_pr",
+    "pdfAttachment": null,
+    "updatedAt": "2026-09-11T10:03:48.100Z",
+    "process": "5S",
+    "title": "(PR) SHUTER A7-416",
+    "description": "ซื้อ SHUTER A7-416 สำหรับใส่ END MILL และอุปกรณ์ต่างๆ",
+    "code": "PRODUCTION TECHNOLOGY",
+    "assignee": "JITTRAKAN K.",
+    "requestDate": "2026-06-02",
+    "id": "achv_1789099696517",
+    "status": "cancel",
+    "completionDate": "2026-06-02",
+    "factory": "FACTORY E",
+    "note": "CANCLE",
+    "department": "MOTOR PRODUCTION",
+    "imageData": null,
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0279",
+    "workFolder": {
+      "fileCount": 2,
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "sizeBytes": 16175,
+          "type": "XLSX",
+          "relPath": "26-0279 - SHUTER A7-416/FORM REQUEST SHUTER A7-416.xlsx",
+          "name": "FORM REQUEST SHUTER A7-416.XLSX",
+          "size": "15.8 KB"
+        },
+        {
+          "sizeBytes": 157201,
+          "type": "PDF",
+          "name": "Q6905854-ตู้เหล็กเก็บอุปกรณ์ SHUTER.PDF",
+          "size": "153.5 KB",
+          "relPath": "26-0279 - SHUTER A7-416/Q6905854-ตู้เหล็กเก็บอุปกรณ์ SHUTER.pdf"
+        }
+      ],
+      "totalBytes": 173376,
+      "zipData": "",
+      "totalSize": "169.3 KB",
+      "name": "26-0279 - SHUTER A7-416"
+    },
+    "createdAt": "2026-09-11T04:08:16.517Z"
+  },
+  {
+    "pdfAttachment.size": 1400563,
+    "categoryId": "cat_jig",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment": {
+      "size": 1400563,
+      "hasCloudPdf": true,
+      "name": "GM-J26-058.PDF",
+      "data": ""
+    },
+    "description": "DRAFT DRAWING SPEC OF BUSHING PRESS FIT JIG NO. FI-B-019 AND COVER POM PART JIG FOR SEND TO THE DRAWING WITH MR. MURABAYASHI SAN FOR SEARCHING MATERIALS REPLACE OF POM. (ST IMPROVEMENT PROJECT CL MOTOR, ENCODER TYPE)",
+    "process": "FINAL INSPECTION",
+    "completionDate": "2026-05-25",
+    "assignee": "JITTRAKAN K.",
+    "code": "GM-J26-058",
+    "updatedAt": "2026-09-11T08:38:58.720Z",
+    "pdfAttachment.name": "GM-J26-058.PDF",
+    "requestDate": "2026-05-22",
+    "quotation": "",
+    "createdAt": "2026-09-11T04:07:14.552Z",
+    "title": "JIG-MOT077 BUSHING PRESS FIT JIG",
+    "factory": "FACTORY E",
+    "department": "MOTOR PRODUCTION",
+    "status": "done",
+    "note": "DRAFT THE DRAWING SPECIFICATION FOR BUSHING PRESS FIT NO. FI-B-019 AND COVER POM PART JIG HAS BEEN COMPLETED.",
+    "requestName": "JITTAKARN P.",
+    "imageData": null,
+    "workFolder": null,
+    "id": "achv_1789099634552"
+  },
+  {
+    "department": "MOTOR PRODUCTION",
+    "completionDate": "2026-06-02",
+    "id": "achv_1789099484247",
+    "requestName": "SAHARAT T.",
+    "workFolder.fileCount": 23,
+    "note": "ทำการจัดทำฐานสำหรับวาง BOX CONTROL ภายในห้อง ROTOR ROOM จำนวน 4 ชิ้น สำเร็จ",
+    "imageData": null,
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.name": "GM-J26-056.PDF",
+    "workFolder.hasCloudFiles": true,
+    "description": "ร้องขอทางฝ่ายเทคโนโลยีจัดทำฐานสำหรับวาง BOX CONTROL ภายในห้อง ROTOR ROOM จำนวน 4 ชิ้น",
+    "categoryId": "cat_acc",
+    "updatedAt": "2026-09-11T07:58:20.715Z",
+    "process": "ROTOR",
+    "status": "done",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestDate": "2026-05-22",
+    "pdfAttachment.size": 759274,
+    "workFolder.totalSize": "4.5 MB",
+    "workFolder.name": "ACC-MOT080 STAND BOX CONTROL",
+    "createdAt": "2026-09-11T04:04:44.247Z",
+    "quotation": "",
+    "pdfAttachment": {
+      "name": "GM-J26-056.PDF",
+      "size": 759274,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "workFolder": {
+      "files": [
+        {
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 9728,
+          "size": "9.5 KB"
+        },
+        {
+          "size": "327.9 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/ACC-MOT080A003-0.SLDASM",
+          "name": "ACC-MOT080A003-0.SLDASM",
+          "sizeBytes": 335759,
+          "type": "SLDASM"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "SFF-B14 (170MM).SLDPRT",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/SFF-B14 (170mm).SLDPRT",
+          "size": "242.5 KB",
+          "sizeBytes": 248334
+        },
+        {
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/SFF-B14 (300mm).SLDPRT",
+          "size": "255.8 KB",
+          "name": "SFF-B14 (300MM).SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 261902
+        },
+        {
+          "sizeBytes": 261364,
+          "type": "SLDPRT",
+          "name": "SFF-B14 (400MM).SLDPRT",
+          "size": "255.2 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/SFF-B14 (400mm).SLDPRT"
+        },
+        {
+          "size": "265.7 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/SFJ-045.SLDPRT",
+          "name": "SFJ-045.SLDPRT",
+          "sizeBytes": 272041,
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 7680,
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "size": "7.5 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/Thumbs.db"
+        },
+        {
+          "sizeBytes": 67149,
+          "size": "65.6 KB",
+          "name": "WOOD (400X400).SLDPRT",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 3/WOOD (400x400).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/ACC-MOT080A002-0.SLDASM",
+          "size": "321.4 KB",
+          "sizeBytes": 329073,
+          "type": "SLDASM",
+          "name": "ACC-MOT080A002-0.SLDASM"
+        },
+        {
+          "sizeBytes": 248259,
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/SFF-B14 (270mm).SLDPRT",
+          "name": "SFF-B14 (270MM).SLDPRT",
+          "type": "SLDPRT",
+          "size": "242.4 KB"
+        },
+        {
+          "sizeBytes": 263073,
+          "size": "256.9 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/SFF-B14 (340mm) T2.SLDPRT",
+          "name": "SFF-B14 (340MM) T2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 261364,
+          "name": "SFF-B14 (400MM) T2.SLDPRT",
+          "size": "255.2 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/SFF-B14 (400mm) T2.SLDPRT"
+        },
+        {
+          "size": "265.7 KB",
+          "sizeBytes": 272041,
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/SFJ-045 T2.SLDPRT",
+          "name": "SFJ-045 T2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "7.5 KB",
+          "sizeBytes": 7680,
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        },
+        {
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 2/WOOD (400x400) T2.SLDPRT",
+          "name": "WOOD (400X400) T2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 67973,
+          "size": "66.4 KB"
+        },
+        {
+          "size": "324.3 KB",
+          "name": "ACC-MOT080A001-0.SLDASM",
+          "sizeBytes": 332098,
+          "type": "SLDASM",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/ACC-MOT080A001-0.SLDASM"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "SFF-B14 (200MM).SLDPRT",
+          "sizeBytes": 247216,
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/SFF-B14 (200mm).SLDPRT",
+          "size": "241.4 KB"
+        },
+        {
+          "sizeBytes": 263073,
+          "name": "SFF-B14 (340MM).SLDPRT",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/SFF-B14 (340mm).SLDPRT",
+          "type": "SLDPRT",
+          "size": "256.9 KB"
+        },
+        {
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/SFF-B14 (400mm).SLDPRT",
+          "name": "SFF-B14 (400MM).SLDPRT",
+          "type": "SLDPRT",
+          "size": "255.2 KB",
+          "sizeBytes": 261364
+        },
+        {
+          "name": "SFJ-036.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/SFJ-036.SLDPRT",
+          "size": "284.8 KB",
+          "sizeBytes": 291645
+        },
+        {
+          "sizeBytes": 272041,
+          "size": "265.7 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/SFJ-045.SLDPRT",
+          "type": "SLDPRT",
+          "name": "SFJ-045.SLDPRT"
+        },
+        {
+          "size": "23 KB",
+          "sizeBytes": 23552,
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        },
+        {
+          "sizeBytes": 67973,
+          "size": "66.4 KB",
+          "relPath": "ACC-MOT080 STAND BOX CONTROL/TABLE 1/WOOD (400x400).SLDPRT",
+          "name": "WOOD (400X400).SLDPRT",
+          "type": "SLDPRT"
+        }
+      ],
+      "name": "ACC-MOT080 STAND BOX CONTROL",
+      "hasCloudFiles": true,
+      "fileCount": 23,
+      "totalBytes": 4672382,
+      "zipData": "",
+      "totalSize": "4.5 MB"
+    },
+    "factory": "FACTORY E",
+    "code": "GM-J26-056",
+    "title": "ACC-MOT080 STAND BOX CONTROL"
+  },
+  {
+    "pdfAttachment.size": 914770,
+    "pdfAttachment": {
+      "data": "",
+      "size": 914770,
+      "name": "FR-J26-032.PDF",
+      "hasCloudPdf": true
+    },
+    "requestDate": "2026-04-28",
+    "note": "ทำการจัดทำที่กั้น BASE FOR INSPECTION JIG จำนวน 60 PCS สำเร็จ",
+    "categoryId": "cat_acc",
+    "factory": "FACTORY A",
+    "description": "ร้องขอจัดทำที่กั้น BASE FOR INSPECTION JIG จำนวน 60 PCS.",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder.fileCount": 48,
+    "pdfAttachment.name": "FR-J26-032.PDF",
+    "requestName": "PENNAPA M.",
+    "status": "done",
+    "createdAt": "2026-09-11T04:03:22.225Z",
+    "quotation": "",
+    "department": "FERRULE PRODUCTION",
+    "updatedAt": "2026-09-11T08:36:02.560Z",
+    "completionDate": "2026-06-02",
+    "id": "achv_1789099402225",
+    "workFolder.totalSize": "12.4 MB",
+    "workFolder.hasCloudFiles": true,
+    "code": "FR-J26-032",
+    "imageData": null,
+    "workFolder.name": "ACC-FER043 BARRIER BASE INSPECTION JIG",
+    "workFolder": {
+      "fileCount": 48,
+      "totalSize": "12.4 MB",
+      "name": "ACC-FER043 BARRIER BASE INSPECTION JIG",
+      "files": [
+        {
+          "name": "ACC-FER043A001-0.SLDASM",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043A001-0.SLDASM",
+          "sizeBytes": 526046,
+          "type": "SLDASM",
+          "size": "513.7 KB"
+        },
+        {
+          "size": "546.9 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 559995,
+          "name": "ACC-FER043A001-0.SLDDRW"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z001-0.1.SLDDRW",
+          "sizeBytes": 263278,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.1.SLDDRW",
+          "size": "257.1 KB"
+        },
+        {
+          "size": "250.2 KB",
+          "sizeBytes": 256213,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z001-0.SLDPRT",
+          "sizeBytes": 120194,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.SLDPRT",
+          "size": "117.4 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z002-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.SLDDRW",
+          "sizeBytes": 239334,
+          "size": "233.7 KB"
+        },
+        {
+          "size": "107.6 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.SLDPRT",
+          "sizeBytes": 110207,
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z002-0.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "ACC-FER043Z002-0.STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.STL",
+          "sizeBytes": 433184,
+          "size": "423 KB"
+        },
+        {
+          "name": "ACC-FER043Z002-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-1.SLDPRT",
+          "size": "82.5 KB",
+          "sizeBytes": 84453
+        },
+        {
+          "size": "211.2 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z003-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 216280,
+          "name": "ACC-FER043Z003-0.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z003-0.SLDPRT",
+          "sizeBytes": 55389,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z003-0.SLDPRT",
+          "size": "54.1 KB"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.SLDDRW",
+          "size": "225.8 KB",
+          "sizeBytes": 231240,
+          "name": "ACC-FER043Z004-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "88.6 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 90679,
+          "name": "ACC-FER043Z004-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "ACC-FER043Z004-0.STL",
+          "size": "699.1 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.STL",
+          "sizeBytes": 715884
+        },
+        {
+          "size": "244.5 KB",
+          "type": "SLDDRW",
+          "sizeBytes": 250366,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.SLDDRW",
+          "name": "ACC-FER043Z005-0.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z005-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.SLDPRT",
+          "sizeBytes": 130216,
+          "size": "127.2 KB"
+        },
+        {
+          "sizeBytes": 1552684,
+          "type": "STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.STL",
+          "name": "ACC-FER043Z005-0.STL",
+          "size": "1.5 MB"
+        },
+        {
+          "name": "ACC-FER043Z006-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.SLDDRW",
+          "size": "230.1 KB",
+          "sizeBytes": 235644
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.SLDPRT",
+          "size": "74.8 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 76589,
+          "name": "ACC-FER043Z006-0.SLDPRT"
+        },
+        {
+          "size": "564.7 KB",
+          "name": "ACC-FER043Z006-0.STL",
+          "type": "STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.STL",
+          "sizeBytes": 578284
+        },
+        {
+          "size": "238.4 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.SLDDRW",
+          "sizeBytes": 244103,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z007-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z007-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.SLDPRT",
+          "sizeBytes": 98951,
+          "type": "SLDPRT",
+          "size": "96.6 KB"
+        },
+        {
+          "size": "565.3 KB",
+          "type": "STL",
+          "name": "ACC-FER043Z007-0.STL",
+          "sizeBytes": 578884,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.STL"
+        },
+        {
+          "name": "ACC-FER043Z007-1.SLDPRT",
+          "sizeBytes": 109607,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-1.SLDPRT",
+          "size": "107 KB"
+        },
+        {
+          "size": "222.9 KB",
+          "sizeBytes": 228229,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z008-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-0.SLDDRW"
+        },
+        {
+          "size": "69.8 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 71466,
+          "name": "ACC-FER043Z008-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-1.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z008-1.SLDDRW",
+          "size": "223.6 KB",
+          "sizeBytes": 228926
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-1.SLDPRT",
+          "size": "75.9 KB",
+          "sizeBytes": 77732,
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z008-1.SLDPRT"
+        },
+        {
+          "name": "ACC-FER043Z009-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z009-0.SLDDRW",
+          "size": "191.3 KB",
+          "sizeBytes": 195878
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z009-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z009-0.SLDPRT",
+          "size": "66.9 KB",
+          "sizeBytes": 68545
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z010-0.SLDDRW",
+          "size": "216.4 KB",
+          "sizeBytes": 221634,
+          "name": "ACC-FER043Z010-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "58.9 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z010-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z010-0.SLDPRT",
+          "sizeBytes": 60314
+        },
+        {
+          "name": "ACC-FER043Z011-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 247993,
+          "size": "242.2 KB"
+        },
+        {
+          "name": "ACC-FER043Z011-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 148843,
+          "size": "145.4 KB"
+        },
+        {
+          "size": "1.3 MB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.STL",
+          "name": "ACC-FER043Z011-0.STL",
+          "type": "STL",
+          "sizeBytes": 1359784
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.SLDDRW",
+          "name": "ACC-FER043Z012-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "227.5 KB",
+          "sizeBytes": 232968
+        },
+        {
+          "name": "ACC-FER043Z012-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.SLDPRT",
+          "size": "80.8 KB",
+          "sizeBytes": 82770
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.STL",
+          "size": "845.2 KB",
+          "name": "ACC-FER043Z012-0.STL",
+          "sizeBytes": 865484,
+          "type": "STL"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z013-0.SLDDRW",
+          "name": "ACC-FER043Z013-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 219666,
+          "size": "214.5 KB"
+        },
+        {
+          "name": "ACC-FER043Z013-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 46687,
+          "size": "45.6 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z013-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/C-UL4-10_203.STEP",
+          "size": "182.8 KB",
+          "sizeBytes": 187167,
+          "type": "STEP",
+          "name": "C-UL4-10_203.STEP"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "CUG3-15.STP.SLDPRT",
+          "sizeBytes": 71875,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/CUG3-15.stp.SLDPRT",
+          "size": "70.2 KB"
+        },
+        {
+          "size": "20.4 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUH4-10.stp",
+          "sizeBytes": 20931,
+          "type": "STP",
+          "name": "E-GUH4-10.STP"
+        },
+        {
+          "size": "20.5 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUH4-5.stp",
+          "name": "E-GUH4-5.STP",
+          "sizeBytes": 21031,
+          "type": "STP"
+        },
+        {
+          "sizeBytes": 20991,
+          "name": "E-GUL4-10.STP",
+          "type": "STP",
+          "size": "20.5 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUL4-10.stp"
+        },
+        {
+          "size": "98.7 KB",
+          "sizeBytes": 101026,
+          "name": "E-LB3UU FAKE.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-LB3UU FAKE.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 221482,
+          "name": "PTN007Z014-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/PTN007Z014-0.SLDDRW",
+          "size": "216.3 KB"
+        },
+        {
+          "sizeBytes": 222208,
+          "size": "217 KB",
+          "type": "DB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/Thumbs.db",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalBytes": 12981334,
+      "hasCloudFiles": true,
+      "zipData": ""
+    },
+    "process": "FINAL INSPECTION",
+    "title": "ACC-FER043 BARRIER BASE INSPECTION JIG",
+    "assignee": "JITTRAKAN K."
+  },
+  {
+    "workFolder.fileCount": 6,
+    "code": "GM-J26-047",
+    "requestDate": "2026-05-06",
+    "pdfAttachment": {
+      "hasCloudPdf": true,
+      "data": "",
+      "name": "GM-J26-047.PDF",
+      "size": 1019446
+    },
+    "createdAt": "2026-09-11T04:02:03.310Z",
+    "quotation": "26-0210",
+    "pdfAttachment.hasCloudPdf": true,
+    "description": "ร้องขอฝ่ายเทคโนโลยี ออกแบบและจัดทำ V-BOX สำหรับเครื่อง CHARACTERISTIC INSPECTION (SC220) สำหรับรองรับการผลิต MODEL : DCL07-XXX โดยออกแบบให้มีขนาดที่สอดคล้อง และพอดีกับชิ้นงานจริง (รายละเอียดตามเอกสารแนบ)",
+    "requestName": "SUPANAT S.",
+    "assignee": "JITTRAKAN K.",
+    "factory": "FACTORY E",
+    "workFolder": {
+      "name": "JIG-MOT083 V BLOCK",
+      "files": [
+        {
+          "type": "SLDDRW",
+          "name": "JIG-MOT008Z011-0.SLDDRW",
+          "sizeBytes": 242783,
+          "size": "237.1 KB",
+          "relPath": "JIG-MOT083 V BLOCK/JIG-MOT008Z011-0.SLDDRW"
+        },
+        {
+          "size": "59.3 KB",
+          "relPath": "JIG-MOT083 V BLOCK/JIG-MOT083Z001-0.PDF",
+          "sizeBytes": 60737,
+          "type": "PDF",
+          "name": "JIG-MOT083Z001-0.PDF"
+        },
+        {
+          "name": "JIG-MOT083Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "JIG-MOT083 V BLOCK/JIG-MOT083Z001-0.SLDDRW",
+          "size": "236.1 KB",
+          "sizeBytes": 241729
+        },
+        {
+          "sizeBytes": 106665,
+          "name": "JIG-MOT083Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT083 V BLOCK/JIG-MOT083Z001-0.SLDPRT",
+          "size": "104.2 KB"
+        },
+        {
+          "name": "JIG-MOT083Z001-0.STEP",
+          "type": "STEP",
+          "sizeBytes": 90324,
+          "relPath": "JIG-MOT083 V BLOCK/JIG-MOT083Z001-0.STEP",
+          "size": "88.2 KB"
+        },
+        {
+          "relPath": "JIG-MOT083 V BLOCK/Thumbs.db",
+          "size": "18.5 KB",
+          "type": "DB",
+          "sizeBytes": 18944,
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalBytes": 761182,
+      "fileCount": 6,
+      "totalSize": "743.3 KB",
+      "zipData": "",
+      "hasCloudFiles": true
+    },
+    "categoryId": "cat_jig",
+    "imageData": null,
+    "workFolder.hasCloudFiles": true,
+    "process": "FINAL PROCESS",
+    "workFolder.totalSize": "743.3 KB",
+    "workFolder.name": "JIG-MOT083 V BLOCK",
+    "id": "achv_1789099323310",
+    "pdfAttachment.size": 1019446,
+    "completionDate": "2026-06-02",
+    "updatedAt": "2026-09-11T08:36:40.123Z",
+    "department": "MOTOR PRODUCTION",
+    "note": "ทำการออกแบบและจัดทำ V-BOX สำหรับเครื่อง CHARACTERISTIC INSPECTION (SC220) จำนวน 2 PCS สำเร็จ",
+    "status": "done",
+    "pdfAttachment.name": "GM-J26-047.PDF",
+    "title": "JIG-MOT083 V BLOCK"
+  },
+  {
+    "requestName": "TANONGSAK T.",
+    "factory": "FACTORY A",
+    "updatedAt": "2026-09-11T08:37:21.694Z",
+    "id": "achv_1789099158631",
+    "requestDate": "2026-05-18",
+    "pdfAttachment.name": "FR-J26-043.PDF",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 487264,
+      "name": "FR-J26-043.PDF"
+    },
+    "workFolder": {
+      "hasCloudFiles": true,
+      "fileCount": 8,
+      "totalSize": "607.7 KB",
+      "zipData": "",
+      "name": "JIG-FER026 TRIANGULAR CASE 2",
+      "files": [
+        {
+          "sizeBytes": 58072,
+          "size": "56.7 KB",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/JIG-FER026A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "JIG-FER026A001-0.SLDASM"
+        },
+        {
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/JIG-FER026Z001-0.SLDDRW",
+          "size": "209.8 KB",
+          "sizeBytes": 214855,
+          "type": "SLDDRW",
+          "name": "JIG-FER026Z001-0.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-FER026Z001-0.SLDPRT",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/JIG-FER026Z001-0.SLDPRT",
+          "size": "53.2 KB",
+          "sizeBytes": 54464
+        },
+        {
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/JIG-FER026Z002-0.SLDDRW",
+          "size": "219.3 KB",
+          "name": "JIG-FER026Z002-0.SLDDRW",
+          "sizeBytes": 224595,
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 52373,
+          "name": "JIG-FER026Z002-0.SLDPRT",
+          "size": "51.1 KB",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/JIG-FER026Z002-0.SLDPRT"
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "size": "17.5 KB",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/Thumbs.db",
+          "sizeBytes": 17920
+        },
+        {
+          "size": "20 B",
+          "name": "~$JIG-FER026A001-0.SLDASM",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/~$JIG-FER026A001-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 20
+        },
+        {
+          "size": "20 B",
+          "relPath": "JIG-FER026 TRIANGULAR CASE 2/~$JIG-FER026Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 20,
+          "name": "~$JIG-FER026Z001-0.SLDDRW"
+        }
+      ],
+      "totalBytes": 622319
+    },
+    "imageData": null,
+    "workFolder.totalSize": "607.7 KB",
+    "pdfAttachment.hasCloudPdf": true,
+    "description": "ร้องขอให้ทำการประกอบ CASE สามเหลี่ยมเพื่อรองรับแผนการผลิต 4000 K. 100 อัน",
+    "code": "FR-J26-043",
+    "pdfAttachment.size": 487264,
+    "categoryId": "cat_jig",
+    "completionDate": "2026-06-02",
+    "note": "ทำการประกอบ CASE สามเหลี่ยมเพื่อรองรับแผนการผลิต 4000 K. 100 อัน เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "status": "done",
+    "title": "JIG-FER026 TRAINGULAR INSPECTION CASE 2",
+    "department": "FERRULE PRODUCTION",
+    "createdAt": "2026-09-11T03:59:18.631Z",
+    "workFolder.fileCount": 8,
+    "quotation": "",
+    "workFolder.name": "JIG-FER026 TRIANGULAR CASE 2",
+    "workFolder.hasCloudFiles": true,
+    "process": "CENTERLESS I"
+  },
+  {
+    "imageData": null,
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "code": "PRODUCTION TECHNOLOGY",
+    "pdfAttachment": null,
+    "categoryId": "cat_pr",
+    "createdAt": "2026-09-11T03:57:44.262Z",
+    "assignee": "JITTRAKAN K.",
+    "process": "SPARE PART",
+    "id": "achv_1789099064262",
+    "quotation": "26-0266",
+    "updatedAt": "2026-09-11T07:56:10.772Z",
+    "requestDate": "2026-06-09",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "completionDate": "2026-06-09",
+    "title": "BUY END MILL 2 FLUTE (15 MM), CARBIDE 2 FLUTE (2 MM), SPRING INNER DIA 3 (12 PCS), BEARING (12 PCS)",
+    "workFolder": {
+      "totalBytes": 190855,
+      "files": [
+        {
+          "size": "15.5 KB",
+          "sizeBytes": 15857,
+          "type": "XLSX",
+          "name": "FORM REQUEST END MILL, BEARING AND SPRING.XLSX",
+          "relPath": "26-0266 - END MILL, BEARING AND SPRING/FORM REQUEST END MILL, BEARING AND SPRING.xlsx"
+        },
+        {
+          "sizeBytes": 174998,
+          "name": "MRSQT001005B36898A-E950-4F0E-A0FB-3A694A34FC92.PDF",
+          "relPath": "26-0266 - END MILL, BEARING AND SPRING/MRSQT001005b36898a-e950-4f0e-a0fb-3a694a34fc92.pdf",
+          "type": "PDF",
+          "size": "170.9 KB"
+        }
+      ],
+      "name": "26-0266 - END MILL, BEARING AND SPRING",
+      "fileCount": 2,
+      "zipData": "",
+      "totalSize": "186.4 KB",
+      "hasCloudFiles": true
+    },
+    "status": "done",
+    "description": "ซื้อดอกเจาะ BUY END MILL 2 FLUTE (15 MM), CARBIDE 2 FLUTE (2 MM), SPRING INNER DIA 3 (12 PCS), BEARING (12 PCS) ให้แผนก",
+    "factory": "FACTORY E",
+    "department": "PRODUCTION TECHNOLOGY"
+  },
+  {
+    "workFolder.name": "26-0226 - INNER DIAMETER PROCESSING MAC",
+    "requestName": "TANONGSAK T.",
+    "pdfAttachment.name": "FR-J26-040.PDF",
+    "pdfAttachment.size": 1155361,
+    "pdfAttachment.hasCloudPdf": true,
+    "imageData": null,
+    "workFolder.totalSize": "59.2 KB",
+    "requestDate": "2026-05-13",
+    "process": "BA",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "name": "FR-J26-040.PDF",
+      "size": 1155361
+    },
+    "description": "ร้องขอให้จัดทำแผ่นอะคลิลิคสีดำ มาแทนที่ของเก่าทีชำรุด รายละเอียดตามเอกสารแนบ",
+    "workFolder": {
+      "totalBytes": 60661,
+      "fileCount": 2,
+      "zipData": "",
+      "hasCloudFiles": true,
+      "name": "26-0226 - INNER DIAMETER PROCESSING MAC",
+      "totalSize": "59.2 KB",
+      "files": [
+        {
+          "size": "42.1 KB",
+          "relPath": "26-0226 - INNER DIAMETER PROCESSING MAC/20260518_0680.pdf",
+          "type": "PDF",
+          "sizeBytes": 43103,
+          "name": "20260518_0680.PDF"
+        },
+        {
+          "relPath": "26-0226 - INNER DIAMETER PROCESSING MAC/FORM REQUEST INNER DIAMETER PROCESSING MAC.xlsx",
+          "name": "FORM REQUEST INNER DIAMETER PROCESSING MAC.XLSX",
+          "type": "XLSX",
+          "sizeBytes": 17558,
+          "size": "17.1 KB"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-11T07:57:26.659Z",
+    "code": "FR-J26-040",
+    "factory": "FACTORY A",
+    "quotation": "26-0226",
+    "completionDate": "2026-06-04",
+    "id": "achv_1789098998552",
+    "createdAt": "2026-09-11T03:56:38.552Z",
+    "note": "ทำการจัดทำแผ่นอะคลิลิคสีดำ มาแทนที่ของเก่าทีชำรุด จำนวน 4 PCS สำเร็จ",
+    "categoryId": "cat_pr",
+    "workFolder.fileCount": 2,
+    "department": "FERRULE PRODUCTION",
+    "assignee": "JITTRAKAN K.",
+    "title": "INNER DIAMETER PROCESSING MAC",
+    "workFolder.hasCloudFiles": true,
+    "status": "done"
+  },
+  {
+    "department": "FERRULE PRODUCTION",
+    "completionDate": "2026-06-05",
+    "workFolder.fileCount": 2,
+    "updatedAt": "2026-09-11T07:56:41.644Z",
+    "assignee": "JITTRAKAN K.",
+    "title": "(PR) TABLE MAT (ACRYLIC, ALUMINUM, SUPERLENE)",
+    "categoryId": "cat_pr",
+    "status": "done",
+    "factory": "FACTORY A",
+    "imageData": null,
+    "note": "ได้รับของและติดตั้งเรียบร้อยแล้ว",
+    "workFolder.name": "26-0139 - TABLE MAT",
+    "code": "FR-J26-028",
+    "workFolder.totalSize": "117.4 KB",
+    "process": "BARREL",
+    "workFolder.hasCloudFiles": true,
+    "pdfAttachment.hasCloudPdf": true,
+    "requestName": "NIRANDORN K.",
+    "workFolder": {
+      "zipData": "",
+      "hasCloudFiles": true,
+      "totalSize": "117.4 KB",
+      "name": "26-0139 - TABLE MAT",
+      "fileCount": 2,
+      "totalBytes": 120267,
+      "files": [
+        {
+          "size": "17.1 KB",
+          "sizeBytes": 17506,
+          "type": "XLSX",
+          "name": "FORM REQUEST TABLE MAT.XLSX",
+          "relPath": "26-0139 - TABLE MAT/FORM REQUEST TABLE MAT.xlsx"
+        },
+        {
+          "sizeBytes": 102761,
+          "size": "100.4 KB",
+          "relPath": "26-0139 - TABLE MAT/Q6905303-อะคริลิค แผ่นอลูมิเนียม.pdf",
+          "name": "Q6905303-อะคริลิค แผ่นอลูมิเนียม.PDF",
+          "type": "PDF"
+        }
+      ]
+    },
+    "pdfAttachment.size": 1247568,
+    "quotation": "26-0139",
+    "createdAt": "2026-09-11T03:54:50.062Z",
+    "description": "ขอเสนอราคาแผ่นปูโต๊ะขนาด 60X120X5 CM. โดยทำจากวัสดุ ACRYLIC, ALUMINUM และ SUPERLENE อย่างละ 1 ชิ้น",
+    "pdfAttachment": {
+      "name": "FR-J26-028.PDF",
+      "size": 1247568,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "pdfAttachment.name": "FR-J26-028.PDF",
+    "requestDate": "2026-04-06",
+    "id": "achv_1789098890062"
+  },
+  {
+    "updatedAt": "2026-09-11T07:55:32.746Z",
+    "description": "ซื้อลูกล้อโพลียูรีเทน PAREO สำหรับย้ายไลน์ 48 ตัว",
+    "department": "PRODUCTION TECHNOLOGY",
+    "note": "ซื้อลูกล้อโพลียูรีเทน PAREO สำหรับย้ายไลน์ 48 ตัว สำเร็จ",
+    "pdfAttachment": null,
+    "factory": "FACTORY E",
+    "status": "done",
+    "title": "PTN008 DRAG WHEEL",
+    "requestDate": "2026-06-11",
+    "workFolder": {
+      "fileCount": 3,
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "sizeBytes": 236368,
+          "type": "SLDDRW",
+          "name": "PTN008Z001-0.SLDDRW",
+          "size": "230.8 KB",
+          "relPath": "PTN008 DRAG WHEEL/PTN008Z001-0.SLDDRW"
+        },
+        {
+          "size": "112.7 KB",
+          "relPath": "PTN008 DRAG WHEEL/PTN008Z001-0.SLDPRT",
+          "sizeBytes": 115382,
+          "type": "SLDPRT",
+          "name": "PTN008Z001-0.SLDPRT"
+        },
+        {
+          "size": "17 KB",
+          "sizeBytes": 17408,
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "PTN008 DRAG WHEEL/Thumbs.db"
+        }
+      ],
+      "totalSize": "360.5 KB",
+      "name": "PTN008 DRAG WHEEL",
+      "totalBytes": 369158,
+      "zipData": ""
+    },
+    "id": "achv_1789098797435",
+    "imageData": null,
+    "completionDate": "2026-06-11",
+    "categoryId": "cat_acc",
+    "assignee": "JITTRAKAN K.",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "process": "LAYOUT",
+    "createdAt": "2026-09-11T03:53:17.435Z",
+    "quotation": "26-0278",
+    "code": "PRODUCTION TECHNOLOGY"
+  },
+  {
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "factory": "FACTORY E",
+    "status": "done",
+    "title": "(PR) MY PASSPORT WD 1TB QUOTATION",
+    "description": "ขอใบเสนอราคา MY PASSPORT (ขอผ่าน FORM IT)",
+    "requestDate": "2026-06-12",
+    "categoryId": "cat_pr",
+    "updatedAt": "2026-09-11T07:55:12.712Z",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "Q26-0384",
+    "id": "achv_1789098670632",
+    "createdAt": "2026-09-11T03:51:10.632Z",
+    "completionDate": "2026-06-12",
+    "workFolder": {
+      "totalSize": "281.9 KB",
+      "name": "Q26-0384 - THE WD MY PASSPORT 1 TB",
+      "hasCloudFiles": true,
+      "fileCount": 3,
+      "files": [
+        {
+          "size": "122.9 KB",
+          "sizeBytes": 125840,
+          "type": "PDF",
+          "name": "ORB2026-045 WD.PDF",
+          "relPath": "Q26-0384 - THE WD MY PASSPORT 1 TB/ORB2026-045 WD.pdf"
+        },
+        {
+          "relPath": "Q26-0384 - THE WD MY PASSPORT 1 TB/The WD My Passport 1TB (WDBYVG0010BBK-0B).jpg",
+          "size": "36.1 KB",
+          "sizeBytes": 36939,
+          "name": "THE WD MY PASSPORT 1TB (WDBYVG0010BBK-0B).JPG",
+          "type": "JPG"
+        },
+        {
+          "sizeBytes": 125840,
+          "name": "ใบเสนอราคา WESTERN HDD MY PASSPORT 1TB (BLACK) WDBYVG0010BBK.PDF",
+          "relPath": "Q26-0384 - THE WD MY PASSPORT 1 TB/ใบเสนอราคา WESTERN HDD MY PASSPORT 1TB (Black) WDBYVG0010BBK.pdf",
+          "type": "PDF",
+          "size": "122.9 KB"
+        }
+      ],
+      "zipData": "",
+      "totalBytes": 288619
+    },
+    "pdfAttachment": null,
+    "process": "REPLACEMENT PARTS",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "code": "PRODUCTION TECHNOLOGY"
+  },
+  {
+    "department": "FERRULE PRODUCTION",
+    "assignee": "JITTRAKAN K.",
+    "code": "FERRULE PRODUCTION",
+    "title": "LAYOUT FERRULE LT26-FER001-07A (AFTER)",
+    "status": "done",
+    "description": "ทำการวางแผน LAYOUT FERRULE ของปีหน้าภายในวันที่ 04-JUN-2026",
+    "process": "LAYOUT",
+    "updatedAt": "2026-09-11T07:53:08.799Z",
+    "completionDate": "2026-06-15",
+    "workFolder": {
+      "zipData": "",
+      "totalBytes": 104058806,
+      "files": [
+        {
+          "sizeBytes": 14216192,
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "relPath": "LAYOUT/LT-MOT001-1f (AFTER).zrd",
+          "type": "ZRD",
+          "size": "13.6 MB"
+        },
+        {
+          "size": "27.9 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (Befor&After) 1.zrd",
+          "sizeBytes": 29291008,
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD"
+        },
+        {
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "type": "ZRD",
+          "relPath": "LAYOUT/LT-MOT001-1f (BEFORE).zrd",
+          "sizeBytes": 14653440,
+          "size": "14 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (AFTER).pdf",
+          "size": "1.7 MB",
+          "sizeBytes": 1738211,
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "type": "PDF"
+        },
+        {
+          "type": "PDF",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "size": "1.9 MB",
+          "sizeBytes": 1942222
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.PDF",
+          "sizeBytes": 246408,
+          "size": "240.6 KB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.ZRD",
+          "type": "ZRD",
+          "size": "3.2 MB",
+          "sizeBytes": 3371520
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.PDF",
+          "sizeBytes": 246113,
+          "size": "240.3 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.pdf"
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3448832,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).PDF",
+          "type": "PDF",
+          "sizeBytes": 246115,
+          "size": "240.3 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).pdf"
+        },
+        {
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).ZRD",
+          "sizeBytes": 3450368
+        },
+        {
+          "size": "160.9 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.1.pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.1.PDF",
+          "sizeBytes": 164758
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.PDF",
+          "sizeBytes": 246153,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.pdf",
+          "size": "240.4 KB"
+        },
+        {
+          "sizeBytes": 3450368,
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.PDF",
+          "sizeBytes": 246434,
+          "type": "PDF",
+          "size": "240.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.pdf"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.zrd",
+          "size": "3.3 MB",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 3450368
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.pdf",
+          "size": "240.7 KB",
+          "sizeBytes": 246432
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.ZRD",
+          "type": "ZRD",
+          "size": "3.3 MB",
+          "sizeBytes": 3450368
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.PDF",
+          "sizeBytes": 246398,
+          "size": "240.6 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.pdf"
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.ZRD"
+        },
+        {
+          "size": "238.7 KB",
+          "sizeBytes": 244459,
+          "name": "LT26-FER001-07A (AFTER) VER.2.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.pdf",
+          "type": "PDF"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER).zrd",
+          "name": "LT26-FER001-07A (AFTER).ZRD",
+          "type": "ZRD",
+          "sizeBytes": 3362304,
+          "size": "3.2 MB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.1.zrd",
+          "size": "4.3 MB",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.1.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 4535296
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.PDF",
+          "size": "162.5 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.pdf",
+          "sizeBytes": 166383
+        },
+        {
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 4535296,
+          "size": "4.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.zrd"
+        },
+        {
+          "sizeBytes": 3412992,
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A.ZRD"
+        }
+      ],
+      "fileCount": 26,
+      "name": "LAYOUT",
+      "totalSize": "99.2 MB",
+      "hasCloudFiles": true
+    },
+    "requestDate": "2026-06-15",
+    "imageData": null,
+    "categoryId": "cat_prj",
+    "factory": "FACTORY A",
+    "id": "achv_1789098603745",
+    "pdfAttachment": null,
+    "quotation": "",
+    "requestName": "FERRULE PRODUCTION",
+    "note": "ทำการวางแผน LAYOUT FERRULE ของปีหน้า สำเร็จ",
+    "createdAt": "2026-09-11T03:50:03.745Z"
+  },
+  {
+    "workFolder.totalSize": "4.1 MB",
+    "pdfAttachment.name": "FR-J26-035.PDF",
+    "status": "done",
+    "note": "ทำการจัดทำรางใส่ STANDARD (WI) จำนวน 8 PCS สำเร็จ",
+    "pdfAttachment": {
+      "size": 1065823,
+      "name": "FR-J26-035.PDF",
+      "data": "",
+      "hasCloudPdf": true
+    },
+    "createdAt": "2026-09-11T03:49:03.140Z",
+    "process": "FINAL INSPECTION",
+    "pdfAttachment.size": 1065823,
+    "quotation": "26-0212",
+    "workFolder": {
+      "totalSize": "4.1 MB",
+      "files": [
+        {
+          "type": "SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFA-400.SLDPRT",
+          "name": "GFA-400.SLDPRT",
+          "size": "141 KB",
+          "sizeBytes": 144374
+        },
+        {
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFA-803G (1200mm).SLDPRT",
+          "size": "101.2 KB",
+          "sizeBytes": 103628,
+          "name": "GFA-803G (1200MM).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "GFA-803G.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 247296,
+          "size": "241.5 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFA-803G.SLDPRT"
+        },
+        {
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (1200mm).SLDPRT",
+          "size": "117.1 KB",
+          "name": "GFF-000 (1200MM).SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 119931
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-000 (1210-1MM).SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (1210-1mm).SLDPRT",
+          "size": "130.4 KB",
+          "sizeBytes": 133480
+        },
+        {
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (1210mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "GFF-000 (1210MM).SLDPRT",
+          "sizeBytes": 120475,
+          "size": "117.7 KB"
+        },
+        {
+          "sizeBytes": 128519,
+          "size": "125.5 KB",
+          "name": "GFF-000 (570MM).SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (570mm).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (60mm).SLDPRT",
+          "size": "114.6 KB",
+          "sizeBytes": 117335,
+          "type": "SLDPRT",
+          "name": "GFF-000 (60MM).SLDPRT"
+        },
+        {
+          "sizeBytes": 126504,
+          "type": "SLDPRT",
+          "name": "GFF-000 (660MM).SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (660mm).SLDPRT",
+          "size": "123.5 KB"
+        },
+        {
+          "size": "123.1 KB",
+          "sizeBytes": 126097,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (780mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "GFF-000 (780MM).SLDPRT"
+        },
+        {
+          "sizeBytes": 123001,
+          "name": "GFF-000 (910MM).SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 (910mm).SLDPRT",
+          "size": "120.1 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFF-000 - COPY (3).SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000 - Copy (3).SLDPRT",
+          "size": "205.5 KB",
+          "sizeBytes": 210432
+        },
+        {
+          "size": "205.5 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFF-000.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 210432,
+          "name": "GFF-000.SLDPRT"
+        },
+        {
+          "name": "GFJ-200.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 123726,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-200.SLDASM",
+          "size": "120.8 KB"
+        },
+        {
+          "size": "305.6 KB",
+          "sizeBytes": 312917,
+          "name": "GFJ-200_1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-200_1.SLDPRT"
+        },
+        {
+          "sizeBytes": 68172,
+          "size": "66.6 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-200_2.SLDPRT",
+          "type": "SLDPRT",
+          "name": "GFJ-200_2.SLDPRT"
+        },
+        {
+          "size": "34.4 KB",
+          "sizeBytes": 35270,
+          "type": "SLDPRT",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-200_3.SLDPRT",
+          "name": "GFJ-200_3.SLDPRT"
+        },
+        {
+          "name": "GFJ-A42.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 125021,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-A42.SLDASM",
+          "size": "122.1 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFJ-A42_1.SLDPRT",
+          "sizeBytes": 90191,
+          "size": "88.1 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-A42_1.SLDPRT"
+        },
+        {
+          "size": "558.3 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-A42_1.STL",
+          "type": "STL",
+          "sizeBytes": 571684,
+          "name": "GFJ-A42_1.STL"
+        },
+        {
+          "size": "61.1 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/GFJ-A42_2.SLDPRT",
+          "name": "GFJ-A42_2.SLDPRT",
+          "sizeBytes": 62596,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "DB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/Thumbs.db",
+          "name": "THUMBS.DB",
+          "sizeBytes": 16896,
+          "size": "16.5 KB"
+        },
+        {
+          "size": "249.8 KB",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/WTB-FER002A001-0.SLDASM",
+          "name": "WTB-FER002A001-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 255817
+        },
+        {
+          "size": "399.7 KB",
+          "type": "SLDASM",
+          "sizeBytes": 409246,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/WTB-FER002A001-1.SLDASM",
+          "name": "WTB-FER002A001-1.SLDASM"
+        },
+        {
+          "name": "WTB-FER002W001-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "WTB-FER002 RAIL STANDARD WI/WTB-FER002W001-0.SLDASM",
+          "sizeBytes": 302644,
+          "size": "295.6 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "WTB-FER002Z001-0.SLDPRT",
+          "size": "56.6 KB",
+          "sizeBytes": 57928,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/WTB-FER002Z001-0.SLDPRT"
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "WTB-FER002 RAIL STANDARD WI/~$GFF-000 (1200mm).SLDPRT",
+          "name": "~$GFF-000 (1200MM).SLDPRT",
+          "type": "SLDPRT"
+        }
+      ],
+      "fileCount": 27,
+      "totalBytes": 4343632,
+      "name": "WTB-FER002 RAIL STANDARD WI",
+      "hasCloudFiles": true,
+      "zipData": ""
+    },
+    "workFolder.name": "WTB-FER002 RAIL STANDARD WI",
+    "assignee": "JITTRAKAN K.",
+    "workFolder.hasCloudFiles": true,
+    "imageData": null,
+    "completionDate": "2026-06-15",
+    "workFolder.fileCount": 27,
+    "requestName": "PENNAPA M.",
+    "categoryId": "cat_acc",
+    "updatedAt": "2026-09-11T07:53:42.228Z",
+    "description": "ร้องขอจัดทำรางใส่ STANDARD (WI) จำนวน 8 PCS รายละเอียดตามเอกสารแนบ",
+    "requestDate": "2026-04-28",
+    "pdfAttachment.hasCloudPdf": true,
+    "department": "FERRULE PRODUCTION",
+    "id": "achv_1789098543140",
+    "title": "WTB-FER002 RAIL STANDARD WI",
+    "code": "FR-J26-035",
+    "factory": "FACTORY A"
+  },
+  {
+    "department": "FERRULE PRODUCTION",
+    "workFolder.name": "ACC-FER050 TROLLEY 3 STORY",
+    "title": "ACC-FER050 TROLLEY 3 STORY",
+    "factory": "FACTORY B",
+    "status": "cancel",
+    "workFolder.fileCount": 22,
+    "note": "การติดตั้ง COVER สำหรับรถเข็นไม่สำเร็จ เพราะมีค่าใช้จ่ายแพงเกินไป",
+    "quotation": "",
+    "pdfAttachment.size": 1279445,
+    "createdAt": "2026-09-11T03:47:15.409Z",
+    "categoryId": "cat_acc",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.name": "FR-J26-044.PDF",
+    "requestDate": "2026-05-21",
+    "pdfAttachment": {
+      "size": 1279445,
+      "hasCloudPdf": true,
+      "name": "FR-J26-044.PDF",
+      "data": ""
+    },
+    "completionDate": "2026-06-27",
+    "workFolder": {
+      "files": [
+        {
+          "type": "SLDASM",
+          "name": "ACC-FER050A001-0.SLDASM",
+          "sizeBytes": 378401,
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050A001-0.SLDASM",
+          "size": "369.5 KB"
+        },
+        {
+          "sizeBytes": 312309,
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050A001-0.SLDDRW",
+          "size": "305 KB",
+          "type": "SLDDRW",
+          "name": "ACC-FER050A001-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER050Z001-0.SLDPRT",
+          "sizeBytes": 36213,
+          "size": "35.4 KB"
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z002-0.SLDDRW",
+          "sizeBytes": 226921,
+          "name": "ACC-FER050Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "221.6 KB"
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z002-0.SLDPRT",
+          "size": "54.3 KB",
+          "sizeBytes": 55564,
+          "type": "SLDPRT",
+          "name": "ACC-FER050Z002-0.SLDPRT"
+        },
+        {
+          "size": "209.1 KB",
+          "sizeBytes": 214114,
+          "type": "SLDDRW",
+          "name": "ACC-FER050Z003-0.SLDDRW",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z003-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z003-0.SLDPRT",
+          "size": "41.6 KB",
+          "sizeBytes": 42572,
+          "name": "ACC-FER050Z003-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z004-0.SLDDRW",
+          "name": "ACC-FER050Z004-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 232222,
+          "size": "226.8 KB"
+        },
+        {
+          "size": "61.5 KB",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER050Z004-0.SLDPRT",
+          "sizeBytes": 62991
+        },
+        {
+          "name": "ACC-FER050Z005-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z005-0.SLDDRW",
+          "size": "211 KB",
+          "sizeBytes": 216019
+        },
+        {
+          "sizeBytes": 52263,
+          "name": "ACC-FER050Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z005-0.SLDPRT",
+          "size": "51 KB"
+        },
+        {
+          "sizeBytes": 147026,
+          "size": "143.6 KB",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-FER050Z006-0.SLDPRT",
+          "name": "ACC-FER050Z006-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDASM",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-QC005A001-0.SLDASM",
+          "name": "ACC-QC005A001-0.SLDASM",
+          "sizeBytes": 798020,
+          "size": "779.3 KB"
+        },
+        {
+          "sizeBytes": 83983,
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/ACC-QC005Z001-0.SLDPRT",
+          "size": "82 KB",
+          "name": "ACC-QC005Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "149.7 KB",
+          "sizeBytes": 153329,
+          "type": "STEP",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-SHHPSDN8-2-214.step",
+          "name": "C-SHHPSDN8-2-214.STEP"
+        },
+        {
+          "name": "C-SHHPSDN8-2.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-SHHPSDN8-2.sldasm",
+          "sizeBytes": 80535,
+          "size": "78.6 KB"
+        },
+        {
+          "size": "34.2 KB",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-SHHPSDN8-2_l.sldprt",
+          "type": "SLDPRT",
+          "sizeBytes": 35046,
+          "name": "C-SHHPSDN8-2_L.SLDPRT"
+        },
+        {
+          "size": "25 KB",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-SHHPSDN8-2_p.sldprt",
+          "name": "C-SHHPSDN8-2_P.SLDPRT",
+          "sizeBytes": 25651
+        },
+        {
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-SHHPSDN8-2_r.sldprt",
+          "size": "33.7 KB",
+          "name": "C-SHHPSDN8-2_R.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 34466
+        },
+        {
+          "type": "STP",
+          "name": "C-UPCN90.STP",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-UPCN90.stp",
+          "sizeBytes": 50194,
+          "size": "49 KB"
+        },
+        {
+          "size": "102.7 KB",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/C-UPPN90.SLDPRT",
+          "sizeBytes": 105172,
+          "name": "C-UPPN90.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "47.5 KB",
+          "relPath": "ACC-FER050 TROLLEY 3 STORY/Thumbs.db",
+          "sizeBytes": 48640,
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "hasCloudFiles": true,
+      "totalSize": "3.2 MB",
+      "name": "ACC-FER050 TROLLEY 3 STORY",
+      "fileCount": 22,
+      "zipData": "",
+      "totalBytes": 3391651
+    },
+    "updatedAt": "2026-09-11T10:03:10.496Z",
+    "workFolder.totalSize": "3.2 MB",
+    "description": "ร้องขอทาง TECHNOLOGY ทำการออกแบบพร้อมติดตั้ง COVER รถเข็นสำหรับใส่งาน จัดทำทั้ง 4 ด้าน จำนวน 3 ชั้น (ตามเอกสารแนบ)",
+    "requestName": "PAIRIN S.",
+    "id": "achv_1789098435409",
+    "code": "FR-J26-044",
+    "process": "INNER DIAMETER INSPECTION",
+    "workFolder.hasCloudFiles": true,
+    "pdfAttachment.hasCloudPdf": true,
+    "imageData": null
+  },
+  {
+    "createdAt": "2026-09-11T03:45:22.490Z",
+    "department": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0328",
+    "requestDate": "2026-06-21",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789098322490",
+    "workFolder": {
+      "totalSize": "186.2 KB",
+      "zipData": "",
+      "hasCloudFiles": true,
+      "fileCount": 2,
+      "totalBytes": 190650,
+      "name": "26-0328 - HSS DRILL 15 MM",
+      "files": [
+        {
+          "relPath": "26-0328 - HSS DRILL 15 MM/FORM REQUEST HSS DRILL 15 MM.xlsx",
+          "type": "XLSX",
+          "sizeBytes": 16239,
+          "name": "FORM REQUEST HSS DRILL 15 MM.XLSX",
+          "size": "15.9 KB"
+        },
+        {
+          "sizeBytes": 174411,
+          "type": "PDF",
+          "name": "MRSQT0010067D80A9C-5740-4E1A-A79F-FBEC0B0D9D3D.PDF",
+          "relPath": "26-0328 - HSS DRILL 15 MM/MRSQT0010067d80a9c-5740-4e1a-a79f-fbec0b0d9d3d.pdf",
+          "size": "170.3 KB"
+        }
+      ]
+    },
+    "code": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "factory": "FACTORY E",
+    "description": "สั่งซื้อดอกเจาะ 15 MM ให้กับแผนก PRODUCTION TECHNOLOGY",
+    "title": "HSS DRILL 15 MM",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "categoryId": "cat_pr",
+    "completionDate": "2026-06-21",
+    "process": "SPARE PART",
+    "status": "done",
+    "updatedAt": "2026-09-11T07:52:55.603Z",
+    "pdfAttachment": null
+  },
+  {
+    "completionDate": "2026-07-08",
+    "id": "achv_1789098236466",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestDate": "2026-04-28",
+    "imageData": null,
+    "description": "ร้องขอจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS",
+    "factory": "FACTORY A",
+    "requestName": "PENNAPA M.",
+    "updatedAt": "2026-09-11T07:51:31.423Z",
+    "title": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)",
+    "workFolder.totalSize": "1 MB",
+    "code": "FR-J26-033",
+    "workFolder": {
+      "totalSize": "1 MB",
+      "zipData": "",
+      "fileCount": 7,
+      "totalBytes": 1058646,
+      "name": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)",
+      "files": [
+        {
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045A001-0.SLDASM",
+          "name": "ACC-FER045A001-0.SLDASM",
+          "type": "SLDASM",
+          "size": "125.7 KB",
+          "sizeBytes": 128743
+        },
+        {
+          "name": "ACC-FER045A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045A001-0.SLDDRW",
+          "size": "279 KB",
+          "sizeBytes": 285661
+        },
+        {
+          "size": "222.6 KB",
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 227978,
+          "name": "ACC-FER045Z001-0.SLDDRW"
+        },
+        {
+          "sizeBytes": 69513,
+          "size": "67.9 KB",
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER045Z001-0.SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045Z002-0.SLDDRW",
+          "name": "ACC-FER045Z002-0.SLDDRW",
+          "sizeBytes": 224690,
+          "size": "219.4 KB"
+        },
+        {
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/ACC-FER045Z002-0.SLDPRT",
+          "size": "70.2 KB",
+          "sizeBytes": 71885,
+          "name": "ACC-FER045Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 50176,
+          "size": "49 KB",
+          "relPath": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "hasCloudFiles": true
+    },
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 3868402,
+      "name": "FR-J26-033.PDF"
+    },
+    "workFolder.hasCloudFiles": true,
+    "note": "ทำการจัดทำจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS เสร็จสิ้น",
+    "process": "FINAL INSPECTION",
+    "pdfAttachment.size": 3868402,
+    "categoryId": "cat_acc",
+    "pdfAttachment.name": "FR-J26-033.PDF",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "26-0266, 26-0323, 26-0283",
+    "createdAt": "2026-09-11T03:43:56.466Z",
+    "status": "done",
+    "department": "FERRULE PRODUCTION",
+    "workFolder.fileCount": 7,
+    "workFolder.name": "ACC-FER045 STAND FOR INSPECTION JIG (LUMINA ACE)"
+  },
+  {
+    "id": "achv_1789098190275",
+    "title": "ACC-FER044 STAND FOR INSPECTION JIG (2 LIGHT)",
+    "completionDate": "2026-07-08",
+    "createdAt": "2026-09-11T03:43:10.275Z",
+    "quotation": "26-0266, 26-0323, 26-0283",
+    "factory": "FACTORY A",
+    "workFolder": {
+      "totalSize": "5.2 MB",
+      "name": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)",
+      "hasCloudFiles": true,
+      "fileCount": 15,
+      "files": [
+        {
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/8304145.SLDPRT",
+          "name": "8304145.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 440346,
+          "size": "430 KB"
+        },
+        {
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/8304145.txt",
+          "size": "693 B",
+          "sizeBytes": 693,
+          "type": "TXT",
+          "name": "8304145.TXT"
+        },
+        {
+          "type": "SLDASM",
+          "name": "ACC-FER044A001-0.SLDASM",
+          "size": "193.8 KB",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044A001-0.SLDASM",
+          "sizeBytes": 198418
+        },
+        {
+          "sizeBytes": 278212,
+          "size": "271.7 KB",
+          "name": "ACC-FER044A001-0.SLDDRW",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044A001-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "230 KB",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z001-0.SLDDRW",
+          "name": "ACC-FER044Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 235532
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER044Z001-0.SLDPRT",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z001-0.SLDPRT",
+          "size": "76 KB",
+          "sizeBytes": 77872
+        },
+        {
+          "sizeBytes": 225391,
+          "size": "220.1 KB",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z002-0.SLDDRW",
+          "name": "ACC-FER044Z002-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "sizeBytes": 60340,
+          "name": "ACC-FER044Z002-0.SLDPRT",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "58.9 KB"
+        },
+        {
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z003-0.SLDDRW",
+          "size": "237.2 KB",
+          "sizeBytes": 242885,
+          "name": "ACC-FER044Z003-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/ACC-FER044Z003-0.SLDPRT",
+          "name": "ACC-FER044Z003-0.SLDPRT",
+          "size": "75.6 KB",
+          "sizeBytes": 77371
+        },
+        {
+          "name": "C-NDZM4-10-214.STEP",
+          "type": "STEP",
+          "sizeBytes": 368526,
+          "size": "359.9 KB",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/C-NDZM4-10-214.step"
+        },
+        {
+          "sizeBytes": 136197,
+          "name": "C-NZWM4-10-214.STEP",
+          "type": "STEP",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/C-NZWM4-10-214.step",
+          "size": "133 KB"
+        },
+        {
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/E-LHAU61-M4-L10.STEP",
+          "size": "222.8 KB",
+          "name": "E-LHAU61-M4-L10.STEP",
+          "sizeBytes": 228126,
+          "type": "STEP"
+        },
+        {
+          "size": "2.7 MB",
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/E-LNOOSX4-10.stp",
+          "type": "STP",
+          "name": "E-LNOOSX4-10.STP",
+          "sizeBytes": 2869969
+        },
+        {
+          "relPath": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)/Thumbs.db",
+          "size": "56.5 KB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 57856,
+          "type": "DB"
+        }
+      ],
+      "zipData": "",
+      "totalBytes": 5497734
+    },
+    "workFolder.fileCount": 15,
+    "workFolder.name": "ACC-FER044 STAND FOR INSPECTION JIG (Z LIGHT)",
+    "workFolder.hasCloudFiles": true,
+    "note": "ทำการจัดทำจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "status": "done",
+    "requestName": "PENNAPA M.",
+    "imageData": null,
+    "code": "FR-J26-033",
+    "categoryId": "cat_acc",
+    "updatedAt": "2026-09-11T07:51:53.205Z",
+    "pdfAttachment.name": "FR-J26-033.PDF",
+    "requestDate": "2026-04-28",
+    "pdfAttachment.hasCloudPdf": true,
+    "department": "FERRULE PRODUCTION",
+    "pdfAttachment": {
+      "name": "FR-J26-033.PDF",
+      "size": 3868402,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "pdfAttachment.size": 3868402,
+    "workFolder.totalSize": "5.2 MB",
+    "process": "FINAL INSPECTION",
+    "description": "ร้องขอจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS"
+  },
+  {
+    "title": "ACC-FER043 BASE FOR INSPECTION JIG",
+    "workFolder.totalSize": "12.4 MB",
+    "code": "FR-J26-033",
+    "workFolder": {
+      "fileCount": 48,
+      "zipData": "",
+      "name": "ACC-FER043 BARRIER BASE INSPECTION JIG",
+      "hasCloudFiles": true,
+      "totalSize": "12.4 MB",
+      "files": [
+        {
+          "size": "513.7 KB",
+          "sizeBytes": 526046,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FER043A001-0.SLDASM"
+        },
+        {
+          "size": "546.9 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043A001-0.SLDDRW",
+          "name": "ACC-FER043A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 559995
+        },
+        {
+          "type": "SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.1.SLDDRW",
+          "name": "ACC-FER043Z001-0.1.SLDDRW",
+          "sizeBytes": 263278,
+          "size": "257.1 KB"
+        },
+        {
+          "size": "250.2 KB",
+          "sizeBytes": 256213,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z001-0.SLDPRT",
+          "sizeBytes": 120194,
+          "size": "117.4 KB"
+        },
+        {
+          "size": "233.7 KB",
+          "type": "SLDDRW",
+          "sizeBytes": 239334,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.SLDDRW",
+          "name": "ACC-FER043Z002-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z002-0.SLDPRT",
+          "size": "107.6 KB",
+          "sizeBytes": 110207
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-0.STL",
+          "size": "423 KB",
+          "name": "ACC-FER043Z002-0.STL",
+          "sizeBytes": 433184,
+          "type": "STL"
+        },
+        {
+          "size": "82.5 KB",
+          "sizeBytes": 84453,
+          "type": "SLDPRT",
+          "name": "ACC-FER043Z002-1.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z002-1.SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z003-0.SLDDRW",
+          "sizeBytes": 216280,
+          "size": "211.2 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z003-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 55389,
+          "size": "54.1 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z003-0.SLDPRT"
+        },
+        {
+          "size": "225.8 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.SLDDRW",
+          "sizeBytes": 231240,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z004-0.SLDDRW"
+        },
+        {
+          "size": "88.6 KB",
+          "sizeBytes": 90679,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.SLDPRT",
+          "name": "ACC-FER043Z004-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 715884,
+          "size": "699.1 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z004-0.STL",
+          "name": "ACC-FER043Z004-0.STL",
+          "type": "STL"
+        },
+        {
+          "size": "244.5 KB",
+          "sizeBytes": 250366,
+          "type": "SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.SLDDRW",
+          "name": "ACC-FER043Z005-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z005-0.SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 130216,
+          "size": "127.2 KB"
+        },
+        {
+          "name": "ACC-FER043Z005-0.STL",
+          "type": "STL",
+          "sizeBytes": 1552684,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z005-0.STL",
+          "size": "1.5 MB"
+        },
+        {
+          "size": "230.1 KB",
+          "sizeBytes": 235644,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z006-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z006-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 76589,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.SLDPRT",
+          "size": "74.8 KB"
+        },
+        {
+          "size": "564.7 KB",
+          "sizeBytes": 578284,
+          "type": "STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z006-0.STL",
+          "name": "ACC-FER043Z006-0.STL"
+        },
+        {
+          "sizeBytes": 244103,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.SLDDRW",
+          "name": "ACC-FER043Z007-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "238.4 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.SLDPRT",
+          "name": "ACC-FER043Z007-0.SLDPRT",
+          "size": "96.6 KB",
+          "sizeBytes": 98951
+        },
+        {
+          "sizeBytes": 578884,
+          "size": "565.3 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-0.STL",
+          "name": "ACC-FER043Z007-0.STL",
+          "type": "STL"
+        },
+        {
+          "sizeBytes": 109607,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z007-1.SLDPRT",
+          "name": "ACC-FER043Z007-1.SLDPRT",
+          "size": "107 KB"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-0.SLDDRW",
+          "size": "222.9 KB",
+          "sizeBytes": 228229,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z008-0.SLDDRW"
+        },
+        {
+          "size": "69.8 KB",
+          "sizeBytes": 71466,
+          "name": "ACC-FER043Z008-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FER043Z008-1.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-1.SLDDRW",
+          "type": "SLDDRW",
+          "size": "223.6 KB",
+          "sizeBytes": 228926
+        },
+        {
+          "name": "ACC-FER043Z008-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z008-1.SLDPRT",
+          "size": "75.9 KB",
+          "sizeBytes": 77732
+        },
+        {
+          "size": "191.3 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z009-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z009-0.SLDDRW",
+          "sizeBytes": 195878
+        },
+        {
+          "size": "66.9 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z009-0.SLDPRT",
+          "sizeBytes": 68545,
+          "name": "ACC-FER043Z009-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 221634,
+          "size": "216.4 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z010-0.SLDDRW",
+          "name": "ACC-FER043Z010-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "name": "ACC-FER043Z010-0.SLDPRT",
+          "sizeBytes": 60314,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z010-0.SLDPRT",
+          "size": "58.9 KB"
+        },
+        {
+          "sizeBytes": 247993,
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z011-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.SLDDRW",
+          "size": "242.2 KB"
+        },
+        {
+          "size": "145.4 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 148843,
+          "name": "ACC-FER043Z011-0.SLDPRT"
+        },
+        {
+          "size": "1.3 MB",
+          "name": "ACC-FER043Z011-0.STL",
+          "sizeBytes": 1359784,
+          "type": "STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z011-0.STL"
+        },
+        {
+          "name": "ACC-FER043Z012-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 232968,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.SLDDRW",
+          "size": "227.5 KB"
+        },
+        {
+          "name": "ACC-FER043Z012-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 82770,
+          "size": "80.8 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "ACC-FER043Z012-0.STL",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z012-0.STL",
+          "size": "845.2 KB",
+          "sizeBytes": 865484
+        },
+        {
+          "size": "214.5 KB",
+          "type": "SLDDRW",
+          "name": "ACC-FER043Z013-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z013-0.SLDDRW",
+          "sizeBytes": 219666
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/ACC-FER043Z013-0.SLDPRT",
+          "name": "ACC-FER043Z013-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 46687,
+          "size": "45.6 KB"
+        },
+        {
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/C-UL4-10_203.STEP",
+          "size": "182.8 KB",
+          "name": "C-UL4-10_203.STEP",
+          "sizeBytes": 187167,
+          "type": "STEP"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "CUG3-15.STP.SLDPRT",
+          "sizeBytes": 71875,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/CUG3-15.stp.SLDPRT",
+          "size": "70.2 KB"
+        },
+        {
+          "sizeBytes": 20931,
+          "size": "20.4 KB",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUH4-10.stp",
+          "name": "E-GUH4-10.STP",
+          "type": "STP"
+        },
+        {
+          "type": "STP",
+          "name": "E-GUH4-5.STP",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUH4-5.stp",
+          "sizeBytes": 21031,
+          "size": "20.5 KB"
+        },
+        {
+          "size": "20.5 KB",
+          "sizeBytes": 20991,
+          "type": "STP",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-GUL4-10.stp",
+          "name": "E-GUL4-10.STP"
+        },
+        {
+          "size": "98.7 KB",
+          "sizeBytes": 101026,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/E-LB3UU FAKE.SLDPRT",
+          "type": "SLDPRT",
+          "name": "E-LB3UU FAKE.SLDPRT"
+        },
+        {
+          "size": "216.3 KB",
+          "name": "PTN007Z014-0.SLDDRW",
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/PTN007Z014-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 221482
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "size": "217 KB",
+          "sizeBytes": 222208,
+          "relPath": "ACC-FER043 BARRIER BASE INSPECTION JIG/Thumbs.db"
+        }
+      ],
+      "totalBytes": 12981334
+    },
+    "completionDate": "2026-07-08",
+    "createdAt": "2026-09-11T03:40:49.221Z",
+    "quotation": "26-0266, 26-0323, 26-0283",
+    "pdfAttachment.hasCloudPdf": true,
+    "assignee": "JITTRAKAN K.",
+    "process": "FINAL INSPECTION",
+    "status": "done",
+    "pdfAttachment.name": "FR-J26-033.PDF",
+    "requestDate": "2026-04-28",
+    "department": "FERRULE PRODUCTION",
+    "factory": "FACTORY A",
+    "description": "ร้องขอจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS",
+    "id": "achv_1789098049221",
+    "updatedAt": "2026-09-11T07:52:29.810Z",
+    "pdfAttachment.size": 3868402,
+    "workFolder.fileCount": 48,
+    "workFolder.hasCloudFiles": true,
+    "note": "ทำการจัดทำจัดทำ 1. BASE FOR INSPECTION JIG จำนวน 6 PCS, 2. STAND FOR INSPECTION JIG (ไฟ 2 LIGHT) จำนวน 6 PCS, 3. STAND FOR INSPECTION JIG (ไฟ LUMINA ACE) จำนวน 6 PCS เสร็จสิ้น",
+    "workFolder.name": "ACC-FER043 BARRIER BASE INSPECTION JIG",
+    "pdfAttachment": {
+      "name": "FR-J26-033.PDF",
+      "size": 3868402,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "requestName": "PENNAPA M.",
+    "categoryId": "cat_acc",
+    "imageData": null
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "code": "PRODUCTION TECHNOLOGY",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "status": "done",
+    "imageData": null,
+    "process": "5S",
+    "createdAt": "2026-09-11T03:36:59.553Z",
+    "quotation": "",
+    "id": "achv_1789097819553",
+    "categoryId": "cat_acc",
+    "pdfAttachment": null,
+    "updatedAt": "2026-09-11T03:36:59.553Z",
+    "requestDate": "2026-08-17",
+    "title": "ACC 5S FOR TECHNO",
+    "workFolder": null,
+    "completionDate": "2026-08-17",
+    "factory": "FACTORY E",
+    "description": "ทำจิ๊กห้อยของสำหรับเทคโน",
+    "department": "PRODUCTION TECHNOLOGY",
+    "note": "ทำจิ๊กห้อยของสำหรับเทคโนเสร็จสิ้น"
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-09-11T03:35:46.846Z",
+    "title": "E-TEN1322 COVER",
+    "description": "E-TEN1322 COVER",
+    "workFolder": null,
+    "id": "achv_1789097746846",
+    "code": "PRODUCTION TECHNOLOGY",
+    "process": "",
+    "requestDate": "2026-08-17",
+    "department": "PRODUCTION TECHNOLOGY",
+    "completionDate": "2026-08-17",
+    "status": "cancel",
+    "imageData": null,
+    "factory": "FACTORY E",
+    "pdfAttachment": null,
+    "createdAt": "2026-09-11T03:35:46.846Z",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "note": "CANCEL",
+    "categoryId": "cat_acc",
+    "quotation": ""
+  },
+  {
+    "pdfAttachment.size": 937950,
+    "imageData": null,
+    "pdfAttachment": {
+      "data": "",
+      "name": "GM-J26-067.PDF",
+      "hasCloudPdf": true,
+      "size": 937950
+    },
+    "workFolder.fileCount": 39,
+    "title": "ACC-MOT084 HINGES AND ARMRESTS",
+    "pdfAttachment.name": "GM-J26-067.PDF",
+    "requestName": "SUPANAT S.",
+    "description": "ร้องขอฝ่ายเทคโนโลยี ออกแบบและจัดทำ บานพับและที่พักแขน สำหรับ AIR CLEANING MACHINE เพื่อรองรับ MODEL รุ่นงานต่างๆ ที่เพิ่มขึ้น (โปรดดูเอกสารแนบ)",
+    "assignee": "JITTRAKAN K.",
+    "code": "GM-J26-067",
+    "workFolder": {
+      "totalBytes": 18592920,
+      "zipData": "",
+      "files": [
+        {
+          "type": "SLDPRT",
+          "name": "0036100001.SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/0036100001.SLDPRT",
+          "size": "3.8 MB",
+          "sizeBytes": 3985195
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/582465643ba31b13fdb.SLDPRT",
+          "sizeBytes": 487382,
+          "name": "582465643BA31B13FDB.SLDPRT",
+          "size": "476 KB"
+        },
+        {
+          "name": "ACC-MOT084A001-0.SLDASM",
+          "type": "SLDASM",
+          "size": "3.3 MB",
+          "sizeBytes": 3435235,
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084A001-0.SLDASM"
+        },
+        {
+          "size": "3.4 MB",
+          "sizeBytes": 3579349,
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-MOT084A001-0.SLDDRW"
+        },
+        {
+          "name": "ACC-MOT084W001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084W001-0.SLDPRT",
+          "sizeBytes": 230308,
+          "size": "224.9 KB"
+        },
+        {
+          "size": "46.9 KB",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z001-0.SLDPRT",
+          "sizeBytes": 48045,
+          "name": "ACC-MOT084Z001-0.SLDPRT"
+        },
+        {
+          "size": "219 KB",
+          "sizeBytes": 224278,
+          "type": "SLDDRW",
+          "name": "ACC-MOT084Z001.SLDDRW",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z001.SLDDRW"
+        },
+        {
+          "name": "ACC-MOT084Z001.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 69848,
+          "size": "68.2 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z001.SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 48212,
+          "name": "ACC-MOT084Z002-0.SLDPRT",
+          "size": "47.1 KB"
+        },
+        {
+          "name": "ACC-MOT084Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 55947,
+          "size": "54.6 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z003-0.SLDPRT"
+        },
+        {
+          "name": "ACC-MOT084Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 41169,
+          "size": "40.2 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z004-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 41448,
+          "name": "ACC-MOT084Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z005-0.SLDPRT",
+          "size": "40.5 KB"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z006-0.SLDPRT",
+          "sizeBytes": 40965,
+          "size": "40 KB",
+          "name": "ACC-MOT084Z006-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT084Z007-0.SLDPRT",
+          "sizeBytes": 56544,
+          "size": "55.2 KB"
+        },
+        {
+          "sizeBytes": 50434,
+          "size": "49.3 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z008-0.SLDPRT",
+          "name": "ACC-MOT084Z008-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT084Z009-0.SLDPRT",
+          "sizeBytes": 42230,
+          "size": "41.2 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT084Z010-0.SLDPRT",
+          "size": "67.9 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z010-0.SLDPRT",
+          "sizeBytes": 69539
+        },
+        {
+          "size": "127.5 KB",
+          "name": "ACC-MOT084Z011-0.SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 130601
+        },
+        {
+          "sizeBytes": 142802,
+          "size": "139.5 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-1.SLDPRT",
+          "name": "ACC-MOT084Z011-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-2.SLDPRT",
+          "size": "67.2 KB",
+          "sizeBytes": 68765,
+          "name": "ACC-MOT084Z011-2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-4.SLDPRT",
+          "name": "ACC-MOT084Z011-4.SLDPRT",
+          "sizeBytes": 107255,
+          "size": "104.7 KB"
+        },
+        {
+          "name": "ACC-MOT084Z011-5.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 138251,
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-5.SLDPRT",
+          "size": "135 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT084Z011-6.SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-6.SLDPRT",
+          "size": "154.4 KB",
+          "sizeBytes": 158077
+        },
+        {
+          "sizeBytes": 120955,
+          "size": "118.1 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z011-7.SLDPRT",
+          "name": "ACC-MOT084Z011-7.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 67955,
+          "size": "66.4 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z018-0.SLDPRT",
+          "name": "ACC-MOT084Z018-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z019-0.SLDPRT",
+          "sizeBytes": 48569,
+          "size": "47.4 KB",
+          "name": "ACC-MOT084Z019-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "40.9 KB",
+          "type": "SLDPRT",
+          "name": "ACC-MOT084Z020-0.SLDPRT",
+          "sizeBytes": 41886,
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/ACC-MOT084Z020-0.SLDPRT"
+        },
+        {
+          "name": "C-MGCER.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 91838,
+          "size": "89.7 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/C-MGCER.SLDPRT"
+        },
+        {
+          "sizeBytes": 80978,
+          "size": "79.1 KB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/C-SHHPSDN5-2.SLDASM",
+          "type": "SLDASM",
+          "name": "C-SHHPSDN5-2.SLDASM"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/C-SHHPSDN5-2_l^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "name": "C-SHHPSDN5-2_L^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 68993,
+          "size": "67.4 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "C-SHHPSDN5-2_P^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "sizeBytes": 31859,
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/C-SHHPSDN5-2_p^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "size": "31.1 KB"
+        },
+        {
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/C-SHHPSDN5-2_r^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "size": "70.5 KB",
+          "sizeBytes": 72238,
+          "name": "C-SHHPSDN5-2_R^C-SHHPSDN5-2(2)_C-SHHPSDN5-2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "FLUORESCENT.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/fluorescent.SLDPRT",
+          "size": "165.3 KB",
+          "sizeBytes": 169279
+        },
+        {
+          "size": "2.6 MB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/GE G62 C20.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 2733808,
+          "name": "GE G62 C20.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "HHDS104.SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/HHDS104.sldprt",
+          "size": "105.4 KB",
+          "sizeBytes": 107894
+        },
+        {
+          "sizeBytes": 122639,
+          "name": "MIRRORPT25-212P011-3.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/MirrorPT25-212P011-3.SLDPRT",
+          "size": "119.8 KB"
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/Thumbs.db",
+          "size": "16.5 KB",
+          "sizeBytes": 16896
+        },
+        {
+          "size": "1.5 MB",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/uni body rev 6.SLDPRT",
+          "sizeBytes": 1565234,
+          "name": "UNI BODY REV 6.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$UNI BODY REV 6.SLDPRT",
+          "relPath": "ACC-MOT084 HINGES AND ARMRESTS/~$uni body rev 6.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20
+        }
+      ],
+      "name": "ACC-MOT084 HINGES AND ARMRESTS",
+      "fileCount": 39,
+      "totalSize": "17.7 MB",
+      "hasCloudFiles": true
+    },
+    "updatedAt": "2026-09-11T07:48:13.922Z",
+    "factory": "FACTORY E",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestDate": "2026-06-11",
+    "status": "done",
+    "workFolder.totalSize": "17.7 MB",
+    "process": "FINAL PROCESS",
+    "categoryId": "cat_acc",
+    "workFolder.name": "ACC-MOT084 HINGES AND ARMRESTS",
+    "quotation": "",
+    "note": "ทำการ ออกแบบและจัดทำ บานพับและที่พักแขน สำหรับ AIR CLEANING MACHINE จำนวน 1 PCS สำเร็จ",
+    "createdAt": "2026-09-11T03:34:18.803Z",
+    "completionDate": "2026-07-16",
+    "id": "achv_1789097658803",
+    "workFolder.hasCloudFiles": true,
+    "department": "PRODUCTION TECHNOLOGY"
+  },
+  {
+    "workFolder.totalSize": "3.1 MB",
+    "pdfAttachment.hasCloudPdf": true,
+    "imageData": null,
+    "department": "MOTOR PRODUCTION",
+    "requestDate": "2026-05-22",
+    "id": "achv_1789097536698",
+    "note": "ทำการจัดทำ JIG SPOT WELDING M/C ให้แก่แผนก ROTOR จำนวน 4 PCS เสร็จสิ้น",
+    "description": "ร้องขอฝ่ายเทคโนโลยีจัดทำ JIG SPOT WELDING M/C ให้แก่แผนก ROTOR จำนวน 4 PCS. เนืองจาก JIG สึกมากแล้ว ส่งผลให้การผลิตล่าช้า",
+    "categoryId": "cat_jig",
+    "factory": "FACTORY E",
+    "requestName": "TEERAPONG S.",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment": {
+      "data": "",
+      "size": 1731024,
+      "hasCloudPdf": true,
+      "name": "GM-J26-057.PDF"
+    },
+    "pdfAttachment.size": 1731024,
+    "updatedAt": "2026-09-11T07:50:54.662Z",
+    "status": "done",
+    "pdfAttachment.name": "GM-J26-057.PDF",
+    "completionDate": "2026-07-15",
+    "process": "ROTOR",
+    "quotation": "26-0272",
+    "workFolder.fileCount": 45,
+    "workFolder.hasCloudFiles": true,
+    "createdAt": "2026-09-11T03:32:16.698Z",
+    "workFolder": {
+      "fileCount": 45,
+      "totalSize": "3.1 MB",
+      "totalBytes": 3261471,
+      "files": [
+        {
+          "name": "JIG-MOT008A001-0.SLDPRT.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 237766,
+          "size": "232.2 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008A001-0.SLDPRT.SLDASM"
+        },
+        {
+          "size": "225.6 KB",
+          "sizeBytes": 231049,
+          "name": "JIG-MOT008A001-1.SLDASM",
+          "type": "SLDASM",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008A001-1.SLDASM"
+        },
+        {
+          "size": "120.2 KB",
+          "sizeBytes": 123082,
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z001-0.SLDPRT",
+          "name": "JIG-MOT008Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z002-0.SLDPRT",
+          "size": "56 KB",
+          "sizeBytes": 57295,
+          "type": "SLDPRT",
+          "name": "JIG-MOT008Z002-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 151395,
+          "size": "147.8 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z003-0.SLDPRT",
+          "name": "JIG-MOT008Z003-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 53752,
+          "name": "JIG-MOT008Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "52.5 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z004-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT008Z005-0.SLDPRT",
+          "size": "84.6 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z005-0.SLDPRT",
+          "sizeBytes": 86661
+        },
+        {
+          "sizeBytes": 56915,
+          "size": "55.6 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z006-0.SLDPRT",
+          "name": "JIG-MOT008Z006-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 57849,
+          "size": "56.5 KB",
+          "name": "JIG-MOT008Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z007-0.SLDPRT"
+        },
+        {
+          "name": "JIG-MOT008Z008-0.PDF",
+          "type": "PDF",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z008-0.PDF",
+          "size": "59.1 KB",
+          "sizeBytes": 60487
+        },
+        {
+          "size": "249.2 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z008-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "JIG-MOT008Z008-0.SLDDRW",
+          "sizeBytes": 255193
+        },
+        {
+          "name": "JIG-MOT008Z008-0.SLDPRT",
+          "sizeBytes": 134228,
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z008-0.SLDPRT",
+          "size": "131.1 KB"
+        },
+        {
+          "size": "58.2 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z009-0.PDF",
+          "name": "JIG-MOT008Z009-0.PDF",
+          "type": "PDF",
+          "sizeBytes": 59608
+        },
+        {
+          "sizeBytes": 238161,
+          "size": "232.6 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z009-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "JIG-MOT008Z009-0.SLDDRW"
+        },
+        {
+          "sizeBytes": 99649,
+          "name": "JIG-MOT008Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z009-0.SLDPRT",
+          "size": "97.3 KB"
+        },
+        {
+          "size": "130.8 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z010-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT008Z010-0.SLDPRT",
+          "sizeBytes": 133891
+        },
+        {
+          "type": "PDF",
+          "name": "JIG-MOT008Z011-0.PDF",
+          "size": "58 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z011-0.PDF",
+          "sizeBytes": 59391
+        },
+        {
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z011-0.SLDDRW",
+          "size": "229.8 KB",
+          "name": "JIG-MOT008Z011-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 235344
+        },
+        {
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT008Z011-0.SLDPRT",
+          "size": "96.8 KB",
+          "sizeBytes": 99095
+        },
+        {
+          "size": "55 KB",
+          "sizeBytes": 56358,
+          "type": "SLDPRT",
+          "name": "JIG-MOT008Z012-0.SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z012-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 73545,
+          "size": "71.8 KB",
+          "name": "JIG-MOT008Z013-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z013-0.SLDPRT"
+        },
+        {
+          "name": "JIG-MOT008Z014-0.SLDPRT",
+          "sizeBytes": 85354,
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z014-0.SLDPRT",
+          "size": "83.4 KB"
+        },
+        {
+          "name": "JIG-MOT008Z015-0.SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z015-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "73.4 KB",
+          "sizeBytes": 75141
+        },
+        {
+          "type": "PDF",
+          "name": "JIG-MOT008Z016-0.PDF",
+          "sizeBytes": 61948,
+          "size": "60.5 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z016-0.PDF"
+        },
+        {
+          "size": "240.3 KB",
+          "sizeBytes": 246047,
+          "name": "JIG-MOT008Z016-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z016-0.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 136548,
+          "name": "JIG-MOT008Z016-0.SLDPRT",
+          "size": "133.3 KB",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z016-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/JIG-MOT008Z017-0.SLDPRT",
+          "name": "JIG-MOT008Z017-0.SLDPRT",
+          "size": "46.6 KB",
+          "sizeBytes": 47763
+        },
+        {
+          "sizeBytes": 47616,
+          "size": "46.5 KB",
+          "name": "THUMBS.DB",
+          "relPath": "JIG-MOT008 WELD/Thumbs.db",
+          "type": "DB"
+        },
+        {
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008A001-1.SLDASM",
+          "type": "SLDASM",
+          "name": "~$JIG-MOT008A001-1.SLDASM",
+          "sizeBytes": 20
+        },
+        {
+          "name": "~$JIG-MOT008Z001-0.SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20
+        },
+        {
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z002-0.SLDPRT",
+          "size": "20 B"
+        },
+        {
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z003-0.SLDPRT",
+          "sizeBytes": 20,
+          "type": "SLDPRT",
+          "name": "~$JIG-MOT008Z003-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z004-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z005-0.SLDPRT",
+          "size": "20 B"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$JIG-MOT008Z006-0.SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z006-0.SLDPRT",
+          "sizeBytes": 20,
+          "size": "20 B"
+        },
+        {
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z007-0.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z007-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$JIG-MOT008Z008-0.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z008-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z009-0.SLDPRT",
+          "size": "20 B"
+        },
+        {
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z010-0.SLDPRT",
+          "size": "20 B",
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z010-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 20,
+          "size": "20 B",
+          "name": "~$JIG-MOT008Z012-0.SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z012-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 20,
+          "name": "~$JIG-MOT008Z013-0.SLDPRT",
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z013-0.SLDPRT"
+        },
+        {
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z014-0.SLDPRT",
+          "name": "~$JIG-MOT008Z014-0.SLDPRT",
+          "sizeBytes": 20,
+          "type": "SLDPRT"
+        },
+        {
+          "name": "~$JIG-MOT008Z015-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 20,
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z015-0.SLDPRT",
+          "size": "20 B"
+        },
+        {
+          "sizeBytes": 20,
+          "size": "20 B",
+          "name": "~$JIG-MOT008Z016-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z016-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "~$JIG-MOT008Z017-0.SLDPRT",
+          "sizeBytes": 20,
+          "size": "20 B",
+          "relPath": "JIG-MOT008 WELD/~$JIG-MOT008Z017-0.SLDPRT"
+        }
+      ],
+      "name": "JIG-MOT008 WELD",
+      "hasCloudFiles": true,
+      "zipData": ""
+    },
+    "workFolder.name": "JIG-MOT008 WELD",
+    "code": "GM-J26-057",
+    "title": "JIG-MOT008 WELD"
+  },
+  {
+    "imageData": null,
+    "pdfAttachment": null,
+    "requestDate": "2026-07-21",
+    "assignee": "JITTRAKAN K.",
+    "title": "(PR) END MILL 2.5 MM, CARBIDE 4 FLUTE 6 MM",
+    "status": "done",
+    "createdAt": "2026-09-11T03:29:18.324Z",
+    "categoryId": "cat_pr",
+    "description": "สั่งของดอก END MILL 2.5 MM และ CARBIDE 4 เขี้ยว 4 MM",
+    "quotation": "26-0408",
+    "completionDate": "2026-07-21",
+    "factory": "FACTORY E",
+    "code": "PRODUCTION TECHNOLOGY",
+    "id": "achv_1789097358324",
+    "workFolder": {
+      "files": [
+        {
+          "size": "15.7 KB",
+          "relPath": "26-0408 - END MILL 2.5, CARBIDE 6 mm/FORM REQUEST END MILL 2.5, CARBIDE 6 mm-NPT-NB-0363.xlsx",
+          "type": "XLSX",
+          "name": "FORM REQUEST END MILL 2.5, CARBIDE 6 MM-NPT-NB-0363.XLSX",
+          "sizeBytes": 16108
+        },
+        {
+          "sizeBytes": 16106,
+          "type": "XLSX",
+          "relPath": "26-0408 - END MILL 2.5, CARBIDE 6 mm/FORM REQUEST END MILL 2.5, CARBIDE 6 mm.xlsx",
+          "name": "FORM REQUEST END MILL 2.5, CARBIDE 6 MM.XLSX",
+          "size": "15.7 KB"
+        },
+        {
+          "size": "170.6 KB",
+          "sizeBytes": 174652,
+          "type": "PDF",
+          "name": "MRSQT00100E903AC26-5289-41A8-A3AD-7132C20F286C.PDF",
+          "relPath": "26-0408 - END MILL 2.5, CARBIDE 6 mm/MRSQT00100e903ac26-5289-41a8-a3ad-7132c20f286c.pdf"
+        }
+      ],
+      "totalSize": "202 KB",
+      "name": "26-0408 - END MILL 2.5, CARBIDE 6 MM",
+      "fileCount": 3,
+      "zipData": "",
+      "hasCloudFiles": true,
+      "totalBytes": 206866
+    },
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "updatedAt": "2026-09-11T07:47:41.935Z",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "department": "PRODUCTION TECHNOLOGY",
+    "process": "SPARE PART"
+  },
+  {
+    "workFolder.name": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK",
+    "title": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK",
+    "note": "THE JIG FOR CLEANING THE GEAR HOUSING ANG HOUSING BLANK IS COMPLETED",
+    "imageData": null,
+    "factory": "FACTORY E",
+    "completionDate": "2026-07-25",
+    "updatedAt": "2026-09-11T07:49:38.292Z",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder.totalSize": "650.1 KB",
+    "id": "achv_1789097260905",
+    "workFolder": {
+      "files": [
+        {
+          "name": "ACC-MOT075Z001-0.PDF",
+          "type": "PDF",
+          "sizeBytes": 99478,
+          "size": "97.1 KB",
+          "relPath": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK/ACC-MOT075Z001-0.PDF"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT075Z001-0.SLDDRW",
+          "size": "232.7 KB",
+          "sizeBytes": 238326,
+          "relPath": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK/ACC-MOT075Z001-0.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT075Z001-0.SLDPRT",
+          "size": "288.3 KB",
+          "relPath": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK/ACC-MOT075Z001-0.SLDPRT",
+          "sizeBytes": 295174
+        },
+        {
+          "size": "32 KB",
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK/Thumbs.db",
+          "sizeBytes": 32768
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "ACC-MOT075 TRAY CLEASING PART GEAR HOUSING & HOUSING BLANK",
+      "totalBytes": 665746,
+      "zipData": "",
+      "fileCount": 4,
+      "totalSize": "650.1 KB"
+    },
+    "status": "done",
+    "workFolder.hasCloudFiles": true,
+    "process": "IN-HOUSE",
+    "pdfAttachment.name": "GM-J26-046.PDF",
+    "requestDate": "2026-04-04",
+    "categoryId": "cat_acc",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.size": 1418527,
+    "quotation": "26-0141, 26-0335",
+    "description": "DESIGN AND MAKE A JIG FOR CLEANING PART GEAR HOUSING & HOUSING BLANK",
+    "createdAt": "2026-09-11T03:27:40.905Z",
+    "requestName": "KRIDSANAPONG P.",
+    "department": "MOTOR PRODUCTION",
+    "code": "GM-J26-046",
+    "pdfAttachment": {
+      "hasCloudPdf": true,
+      "name": "GM-J26-046.PDF",
+      "size": 1418527,
+      "data": ""
+    },
+    "workFolder.fileCount": 4
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "note": "ทำการจัดทำ TRAY เพื่อใช้ในกระบวนการประกอบ GEAR DIAMETER 16 MM จำนวน 10 PCS สำเร็จ",
+    "status": "done",
+    "categoryId": "cat_acc",
+    "requestName": "SUPANAT S.",
+    "factory": "FACTORY E",
+    "pdfAttachment.hasCloudPdf": true,
+    "completionDate": "2026-07-25",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "name": "GM-J26-069.PDF",
+      "size": 1472762
+    },
+    "title": "ACC-MOT000 TRAY TRAINEE WORK",
+    "updatedAt": "2026-09-11T07:50:23.000Z",
+    "department": "MOTOR PRODUCTION",
+    "quotation": "",
+    "requestDate": "2026-06-19",
+    "createdAt": "2026-09-11T02:48:26.919Z",
+    "pdfAttachment.size": 1472762,
+    "process": "GEAR PROCESS",
+    "id": "achv_1789094906919",
+    "workFolder": null,
+    "imageData": null,
+    "code": "GM-J26-069",
+    "description": "ร้องขอฝ่ายเทคโนโลยี จัดทำ TRAY เพื่อใช้ในกระบวนการประกอบ GEAR DIAMETER 16 MM เพื่อรองรับกำลังการผลิตที่เพิ่มขึ้น",
+    "pdfAttachment.name": "GM-J26-069.PDF"
+  },
+  {
+    "id": "achv_1789059299555",
+    "status": "done",
+    "categoryId": "cat_prj",
+    "imageData": null,
+    "requestName": "ORBRAY",
+    "completionDate": "2026-07-25",
+    "createdAt": "2026-09-10T16:54:59.555Z",
+    "pdfAttachment": null,
+    "title": "JUNIOR ACADEMY 2026",
+    "factory": "",
+    "quotation": "",
+    "code": "ORBRAY",
+    "updatedAt": "2026-09-10T16:56:14.642Z",
+    "note": "JUNIOR ACADEMY 2026 (COMPLETE)",
+    "assignee": "JITTRAKAN K.",
+    "description": "JUNIOR ACADEMY 2026",
+    "department": "OTHER",
+    "process": "",
+    "requestDate": "2026-07-25",
+    "workFolder": null
+  },
+  {
+    "updatedAt": "2026-09-11T07:49:02.981Z",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "totalSize": "390.6 KB",
+      "zipData": "",
+      "totalBytes": 399933,
+      "name": "26-0417 - HOLE SAW, STYLUS CENTER",
+      "fileCount": 3,
+      "files": [
+        {
+          "type": "XLSX",
+          "sizeBytes": 16700,
+          "name": "FORM REQUEST HOLE SAW, STYLUS CENTER.XLSX",
+          "relPath": "26-0417 - HOLE SAW, STYLUS CENTER/FORM REQUEST HOLE SAW, STYLUS CENTER.xlsx",
+          "size": "16.3 KB"
+        },
+        {
+          "sizeBytes": 174606,
+          "relPath": "26-0417 - HOLE SAW, STYLUS CENTER/MRSQT0010081210163-8b05-4a54-903f-c1576fe369cf.pdf",
+          "size": "170.5 KB",
+          "name": "MRSQT0010081210163-8B05-4A54-903F-C1576FE369CF.PDF",
+          "type": "PDF"
+        },
+        {
+          "type": "PDF",
+          "name": "ORBRAY_20260709.HOLE SAW SET 16PC.PDF",
+          "relPath": "26-0417 - HOLE SAW, STYLUS CENTER/Orbray_20260709.Hole saw set 16pc.pdf",
+          "size": "203.7 KB",
+          "sizeBytes": 208627
+        }
+      ]
+    },
+    "factory": "FACTORY E",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789059251425",
+    "department": "PRODUCTION TECHNOLOGY",
+    "completionDate": "2026-07-31",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "requestDate": "2026-07-31",
+    "title": "(PR) HOLE SAW KIT, STYLUS CENTER",
+    "status": "done",
+    "pdfAttachment": null,
+    "code": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "process": "SPARE PART",
+    "categoryId": "cat_pr",
+    "description": "สั่งซื้อ HOLE SAW สำหรับ PRODUCTION TECHNOLOGY",
+    "quotation": "26-0417",
+    "createdAt": "2026-09-10T16:54:11.425Z"
+  },
+  {
+    "workFolder.totalSize": "2.3 MB",
+    "assignee": "JITTRAKAN K.",
+    "description": "ร้องขอทาง TECHNOLOGY ทำการออกแบบพร้อมติดตั้ง COVER รถเข็นสำหรับขนย้าย MATERIAL ทั้ง 4 ด้าน พร้อมประตู เปิด-ปิด มีมือจับ (ตามเอกสารแนบ)",
+    "pdfAttachment.hasCloudPdf": true,
+    "process": "INCOMING INPUT",
+    "workFolder.hasCloudFiles": true,
+    "requestDate": "2026-05-26",
+    "workFolder": {
+      "files": [
+        {
+          "type": "SLDASM",
+          "name": "ACC-FER051A001-0.SLDASM",
+          "size": "358.1 KB",
+          "sizeBytes": 366734,
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051A001-0.SLDASM"
+        },
+        {
+          "size": "321.8 KB",
+          "name": "ACC-FER051A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051A001-0.SLDDRW",
+          "sizeBytes": 329508
+        },
+        {
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER051Z001-0.SLDDRW",
+          "sizeBytes": 222923,
+          "size": "217.7 KB"
+        },
+        {
+          "name": "ACC-FER051Z001-0.SLDPRT",
+          "sizeBytes": 57505,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z001-0.SLDPRT",
+          "size": "56.2 KB"
+        },
+        {
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z002-0.SLDDRW",
+          "sizeBytes": 212971,
+          "type": "SLDDRW",
+          "name": "ACC-FER051Z002-0.SLDDRW",
+          "size": "208 KB"
+        },
+        {
+          "sizeBytes": 42025,
+          "size": "41 KB",
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z002-0.SLDPRT",
+          "name": "ACC-FER051Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 223758,
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z003-0.SLDDRW",
+          "size": "218.5 KB",
+          "name": "ACC-FER051Z003-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER051Z003-0.SLDPRT",
+          "sizeBytes": 63181,
+          "size": "61.7 KB"
+        },
+        {
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z004-0.SLDDRW",
+          "size": "207.1 KB",
+          "sizeBytes": 212056,
+          "name": "ACC-FER051Z004-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "name": "ACC-FER051Z004-0.SLDPRT",
+          "sizeBytes": 52514,
+          "type": "SLDPRT",
+          "size": "51.3 KB",
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z004-0.SLDPRT"
+        },
+        {
+          "size": "141.5 KB",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER051 TROLLEY COVER A/ACC-FER051Z005-0.SLDPRT",
+          "name": "ACC-FER051Z005-0.SLDPRT",
+          "sizeBytes": 144861
+        },
+        {
+          "size": "149.7 KB",
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-SHHPSDN8-2-214.step",
+          "name": "C-SHHPSDN8-2-214.STEP",
+          "type": "STEP",
+          "sizeBytes": 153329
+        },
+        {
+          "type": "SLDASM",
+          "name": "C-SHHPSDN8-2.SLDASM",
+          "sizeBytes": 80535,
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-SHHPSDN8-2.sldasm",
+          "size": "78.6 KB"
+        },
+        {
+          "size": "34.2 KB",
+          "sizeBytes": 35046,
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-SHHPSDN8-2_l.sldprt",
+          "name": "C-SHHPSDN8-2_L.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "25 KB",
+          "sizeBytes": 25651,
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-SHHPSDN8-2_p.sldprt",
+          "type": "SLDPRT",
+          "name": "C-SHHPSDN8-2_P.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-SHHPSDN8-2_r.sldprt",
+          "size": "33.7 KB",
+          "name": "C-SHHPSDN8-2_R.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 34466
+        },
+        {
+          "type": "STP",
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-UPCN90.stp",
+          "name": "C-UPCN90.STP",
+          "size": "49 KB",
+          "sizeBytes": 50194
+        },
+        {
+          "name": "C-UPPN90.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 105172,
+          "size": "102.7 KB",
+          "relPath": "ACC-FER051 TROLLEY COVER A/C-UPPN90.SLDPRT"
+        },
+        {
+          "sizeBytes": 26624,
+          "size": "26 KB",
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "ACC-FER051 TROLLEY COVER A/Thumbs.db"
+        }
+      ],
+      "zipData": "",
+      "name": "ACC-FER051 TROLLEY COVER A",
+      "totalSize": "2.3 MB",
+      "hasCloudFiles": true,
+      "totalBytes": 2439053,
+      "fileCount": 19
+    },
+    "code": "FR-J26-047",
+    "pdfAttachment": {
+      "data": "",
+      "size": 1057566,
+      "hasCloudPdf": true,
+      "name": "FR-J26-047.PDF"
+    },
+    "requestName": "SARANYA J.",
+    "createdAt": "2026-09-10T16:51:09.333Z",
+    "quotation": "26-0297",
+    "updatedAt": "2026-09-11T07:47:09.669Z",
+    "department": "FERRULE PRODUCTION",
+    "note": "ทำการออกแบบพร้อมติดตั้ง COVER รถเข็นสำหรับขนย้าย MATERIAL ทั้ง 4 ด้าน พร้อมประตู เปิด-ปิด มีมือจับ (ตามเอกสารแนบ) เสร็จสิ้น",
+    "workFolder.fileCount": 19,
+    "workFolder.name": "ACC-FER051 TROLLEY COVER A",
+    "imageData": null,
+    "id": "achv_1789059069333",
+    "pdfAttachment.size": 1057566,
+    "categoryId": "cat_acc",
+    "title": "ACC-FER051 TROLLEY COVER A",
+    "factory": "FACTORY A",
+    "pdfAttachment.name": "FR-J26-047.PDF",
+    "status": "done",
+    "completionDate": "2026-08-04"
+  },
+  {
+    "id": "achv_1789054664412",
+    "title": "IMP26-002 MODIFIED SLIP ROLL",
+    "imageData": null,
+    "status": "done",
+    "factory": "FACTORY B",
+    "quotation": "26-0204",
+    "note": "ทำการ IMPROVEMENT เรียบร้อยแล้ว ผลลัพธ์คือสามารถลดคนได้ 1 คน",
+    "createdAt": "2026-09-10T15:37:44.412Z",
+    "categoryId": "cat_imp",
+    "pdfAttachment": null,
+    "completionDate": "2026-08-05",
+    "requestName": "FERRULE PRODUCTION",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "totalSize": "47.4 MB",
+      "name": "IMP26-002 MODIFIED SLIP ROLL",
+      "totalBytes": 49750346,
+      "files": [
+        {
+          "type": "PDF",
+          "name": "3D IMP26-002A001-0.PDF",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/3D IMP26-002A001-0.PDF",
+          "sizeBytes": 202488,
+          "size": "197.7 KB"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/3D REVIEW TO USER 1.SLDASM",
+          "sizeBytes": 460131,
+          "size": "449.3 KB",
+          "name": "3D REVIEW TO USER 1.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/ACC-MOT084Z001.SLDDRW",
+          "sizeBytes": 227259,
+          "name": "ACC-MOT084Z001.SLDDRW",
+          "type": "SLDDRW",
+          "size": "221.9 KB"
+        },
+        {
+          "sizeBytes": 23514,
+          "size": "23 KB",
+          "type": "STP",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/C-E6006ZZ.stp",
+          "name": "C-E6006ZZ.STP"
+        },
+        {
+          "sizeBytes": 23552,
+          "size": "23 KB",
+          "name": "C-E6906ZZ.STP",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/C-E6906ZZ.stp",
+          "type": "STP"
+        },
+        {
+          "name": "C-LM30UU.SLDPRT",
+          "sizeBytes": 174538,
+          "type": "SLDPRT",
+          "size": "170.4 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/C-LM30UU.sldprt"
+        },
+        {
+          "sizeBytes": 14089,
+          "name": "C-SE6704ZZ.STP",
+          "type": "STP",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/C-SE6704ZZ.stp",
+          "size": "13.8 KB"
+        },
+        {
+          "type": "STP",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/C-SE6903ZZ.stp",
+          "name": "C-SE6903ZZ.STP",
+          "size": "13.7 KB",
+          "sizeBytes": 13992
+        },
+        {
+          "size": "155.9 KB",
+          "name": "E-LB20UU.SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/E-LB20UU.sldprt",
+          "type": "SLDPRT",
+          "sizeBytes": 159666
+        },
+        {
+          "name": "E-LB25UU.SLDPRT",
+          "sizeBytes": 164359,
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/E-LB25UU.sldprt",
+          "size": "160.5 KB"
+        },
+        {
+          "sizeBytes": 38252,
+          "type": "SLDPRT",
+          "name": "FAKE SPRING.SLDPRT",
+          "size": "37.4 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/FAKE SPRING.SLDPRT"
+        },
+        {
+          "sizeBytes": 144374,
+          "size": "141 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFA-400.SLDPRT",
+          "name": "GFA-400.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFF-000 (120mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "GFF-000 (120MM).SLDPRT",
+          "size": "128.2 KB",
+          "sizeBytes": 131236
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFF-000 (162mm).SLDPRT",
+          "size": "228.5 KB",
+          "sizeBytes": 233990,
+          "name": "GFF-000 (162MM).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "185.9 KB",
+          "sizeBytes": 190344,
+          "type": "SLDPRT",
+          "name": "GFF-000 (90MM).SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFF-000 (90mm).SLDPRT"
+        },
+        {
+          "sizeBytes": 123726,
+          "size": "120.8 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFJ-200.SLDASM",
+          "type": "SLDASM",
+          "name": "GFJ-200.SLDASM"
+        },
+        {
+          "size": "305.6 KB",
+          "name": "GFJ-200_1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFJ-200_1.SLDPRT",
+          "sizeBytes": 312917
+        },
+        {
+          "type": "SLDPRT",
+          "name": "GFJ-200_2.SLDPRT",
+          "size": "66.6 KB",
+          "sizeBytes": 68172,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFJ-200_2.SLDPRT"
+        },
+        {
+          "size": "34.4 KB",
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFJ-200_3.SLDPRT",
+          "name": "GFJ-200_3.SLDPRT",
+          "sizeBytes": 35270
+        },
+        {
+          "sizeBytes": 195931,
+          "size": "191.3 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/GFJ-A22.SLDPRT",
+          "name": "GFJ-A22.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "142.4 KB",
+          "name": "IMP26-002A001-0.PDF",
+          "type": "PDF",
+          "sizeBytes": 145858,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002A001-0.PDF"
+        },
+        {
+          "sizeBytes": 464445,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002A001-0.SLDASM",
+          "size": "453.6 KB",
+          "type": "SLDASM",
+          "name": "IMP26-002A001-0.SLDASM"
+        },
+        {
+          "name": "IMP26-002A001-1.SLDASM",
+          "sizeBytes": 454005,
+          "type": "SLDASM",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002A001-1.SLDASM",
+          "size": "443.4 KB"
+        },
+        {
+          "size": "548.2 KB",
+          "sizeBytes": 561334,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002A002-0.SLDASM",
+          "type": "SLDASM",
+          "name": "IMP26-002A002-0.SLDASM"
+        },
+        {
+          "size": "284.4 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002A002-0.SLDDRW",
+          "sizeBytes": 291214,
+          "name": "IMP26-002A002-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "sizeBytes": 242964,
+          "type": "SLDASM",
+          "name": "IMP26-002W001-0.SLDASM",
+          "size": "237.3 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002W001-0.SLDASM"
+        },
+        {
+          "name": "IMP26-002W002-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002W002-0.SLDASM",
+          "size": "308.7 KB",
+          "sizeBytes": 316151
+        },
+        {
+          "name": "IMP26-002Z001-0.SLDPRT",
+          "sizeBytes": 151469,
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z001-0.SLDPRT",
+          "size": "147.9 KB"
+        },
+        {
+          "name": "IMP26-002Z002-0.SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z002-0.SLDPRT",
+          "sizeBytes": 144308,
+          "type": "SLDPRT",
+          "size": "140.9 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-002Z002-1.SLDPRT",
+          "sizeBytes": 164656,
+          "size": "160.8 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z002-1.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "sizeBytes": 40440684,
+          "name": "IMP26-002Z002-1.STL",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z002-1.STL",
+          "size": "38.6 MB"
+        },
+        {
+          "name": "IMP26-002Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 206884,
+          "size": "202 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z003-0.SLDPRT"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z004-0.SLDPRT",
+          "size": "114.7 KB",
+          "sizeBytes": 117503,
+          "name": "IMP26-002Z004-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "59.7 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 61121,
+          "name": "IMP26-002Z005-0.SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z005-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 119499,
+          "name": "IMP26-002Z006-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "116.7 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-0.SLDPRT"
+        },
+        {
+          "name": "IMP26-002Z006-0.STL",
+          "sizeBytes": 217184,
+          "type": "STL",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-0.STL",
+          "size": "212.1 KB"
+        },
+        {
+          "size": "134.3 KB",
+          "type": "SLDPRT",
+          "name": "IMP26-002Z006-1.SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-1.SLDPRT",
+          "sizeBytes": 137542
+        },
+        {
+          "sizeBytes": 184384,
+          "name": "IMP26-002Z006-1.STL",
+          "type": "STL",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-1.STL",
+          "size": "180.1 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 107893,
+          "name": "IMP26-002Z006-2.SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-2.SLDPRT",
+          "size": "105.4 KB"
+        },
+        {
+          "sizeBytes": 648084,
+          "size": "632.9 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z006-2.STL",
+          "name": "IMP26-002Z006-2.STL",
+          "type": "STL"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-002Z007-0.SLDPRT",
+          "sizeBytes": 134348,
+          "size": "131.2 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z007-0.SLDPRT"
+        },
+        {
+          "size": "227.5 KB",
+          "sizeBytes": 232953,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z007-1.SLDDRW",
+          "type": "SLDDRW",
+          "name": "IMP26-002Z007-1.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z007-1.SLDPRT",
+          "name": "IMP26-002Z007-1.SLDPRT",
+          "size": "99.1 KB",
+          "sizeBytes": 101471
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z008-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-002Z008-0.SLDPRT",
+          "size": "49.2 KB",
+          "sizeBytes": 50367
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z009-0.SLDPRT",
+          "size": "57.2 KB",
+          "sizeBytes": 58523,
+          "type": "SLDPRT",
+          "name": "IMP26-002Z009-0.SLDPRT"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z010-0.SLDDRW",
+          "name": "IMP26-002Z010-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 239127,
+          "size": "233.5 KB"
+        },
+        {
+          "size": "104.6 KB",
+          "sizeBytes": 107159,
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z010-0.SLDPRT",
+          "name": "IMP26-002Z010-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 223125,
+          "name": "IMP26-002Z011-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z011-0.SLDDRW",
+          "size": "217.9 KB"
+        },
+        {
+          "sizeBytes": 79919,
+          "name": "IMP26-002Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/IMP26-002Z011-0.SLDPRT",
+          "size": "78 KB"
+        },
+        {
+          "sizeBytes": 27261,
+          "size": "26.6 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/SH-LSMSB5.5-35.stp",
+          "type": "STP",
+          "name": "SH-LSMSB5.5-35.STP"
+        },
+        {
+          "sizeBytes": 75776,
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/Thumbs.db",
+          "size": "74 KB"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/ZA00554 LOOSE TUBE D0.6X0.9 WHITE.SLDPRT",
+          "size": "73.5 KB",
+          "sizeBytes": 75290,
+          "name": "ZA00554 LOOSE TUBE D0.6X0.9 WHITE.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ZA00568 LOOSE TUBE D0.35X0.9 (4767N).SLDPRT",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/ZA00568 LOOSE TUBE D0.35X0.9 (4767N).SLDPRT",
+          "size": "72.9 KB",
+          "sizeBytes": 74606
+        },
+        {
+          "size": "73.5 KB",
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/ZA00576 LOOSE TUBE D0.9X0.35 BLUE.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 75290,
+          "name": "ZA00576 LOOSE TUBE D0.9X0.35 BLUE.SLDPRT"
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/ZA00739 LOOSE TUBE D0.35X0.9 WHITE.SLDPRT",
+          "size": "78.3 KB",
+          "name": "ZA00739 LOOSE TUBE D0.35X0.9 WHITE.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 80129
+        },
+        {
+          "relPath": "IMP26-002 MODIFIED SLIP ROLL/~$ACC-MOT084Z001.SLDDRW",
+          "type": "SLDDRW",
+          "name": "~$ACC-MOT084Z001.SLDDRW",
+          "sizeBytes": 20,
+          "size": "20 B"
+        }
+      ],
+      "zipData": "",
+      "fileCount": 56
+    },
+    "description": "IMPROVEMENT MODIFIED SLIP ROLL",
+    "code": "FERRULE PRODUCTION",
+    "updatedAt": "2026-09-11T07:46:19.584Z",
+    "process": "IMPROVEMENT",
+    "requestDate": "2026-09-08",
+    "department": "OPICAL PRODUCTION",
+    "assignee": "JITTRAKAN K."
+  },
+  {
+    "createdAt": "2026-09-10T15:33:54.602Z",
+    "department": "FERRULE PRODUCTION",
+    "quotation": "",
+    "pdfAttachment.size": 1034876,
+    "completionDate": "2026-08-06",
+    "description": "ร้องขอให้จัดทำแผ่นอะคลิลิคของเครื่อง BA เพื่อนำมาเป็นตำแหน่งในการปรับเซ็ตเส้น WIRE (ตามเอกสารแนบ)",
+    "title": "(PR) BLACK ACRYLIC BA 6 PCS",
+    "note": "จัดทำแผ่นอะคลิลิคของเครื่อง BA เพื่อนำมาเป็นตำแหน่งในการปรับเซ็ตเส้น WIRE (ตามเอกสารแนบ) เสร็จสิ้น",
+    "workFolder": null,
+    "factory": "FACTORY A",
+    "requestDate": "2026-07-23",
+    "imageData": null,
+    "pdfAttachment.name": "FR-J26-068.PDF",
+    "status": "done",
+    "pdfAttachment.hasCloudPdf": true,
+    "categoryId": "cat_pr",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789054434602",
+    "pdfAttachment": {
+      "name": "FR-J26-068.PDF",
+      "hasCloudPdf": true,
+      "size": 1034876,
+      "data": ""
+    },
+    "process": "BA",
+    "updatedAt": "2026-09-11T07:45:53.315Z",
+    "code": "FR-J26-068",
+    "requestName": "TANONGSAK T."
+  },
+  {
+    "workFolder.totalSize": "3.3 MB",
+    "department": "FERRULE PRODUCTION",
+    "requestDate": "2026-07-14",
+    "code": "FR-J26-053",
+    "updatedAt": "2026-09-11T07:45:32.302Z",
+    "description": "ร้องขอให้ออกแบบและจัดทำที่สำหรับใส่ถุงนิ้ว รายละเอียดตามเอกสารแนบ จำนวน 4 PCS → ACTION COMMENT FROM NAMIKISAN",
+    "factory": "FACTORY A",
+    "categoryId": "cat_jig",
+    "workFolder.name": "ACC-FER058 FINGER COT DISPENSER",
+    "status": "done",
+    "requestName": "TANONGSAK T.",
+    "pdfAttachment.size": 1356721,
+    "imageData": null,
+    "id": "achv_1789054243342",
+    "pdfAttachment.name": "FR-J26-053.PDF",
+    "title": "ACC-FER058 FINGER COT DISPENSER",
+    "pdfAttachment": {
+      "name": "FR-J26-053.PDF",
+      "hasCloudPdf": true,
+      "size": 1356721,
+      "data": ""
+    },
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.hasCloudPdf": true,
+    "workFolder.fileCount": 23,
+    "workFolder": {
+      "name": "ACC-FER058 FINGER COT DISPENSER",
+      "zipData": "",
+      "hasCloudFiles": true,
+      "totalSize": "3.3 MB",
+      "files": [
+        {
+          "type": "SLDASM",
+          "name": "ACC-FER058A001-0.SLDASM",
+          "size": "62.1 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058A001-0.SLDASM",
+          "sizeBytes": 63567
+        },
+        {
+          "name": "ACC-FER058A001-0.SLDDRW",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058A001-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "238.3 KB",
+          "sizeBytes": 243969
+        },
+        {
+          "size": "428.2 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058A002-0.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FER058A002-0.SLDASM",
+          "sizeBytes": 438507
+        },
+        {
+          "name": "ACC-FER058A003-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058A003-0.SLDASM",
+          "size": "63 KB",
+          "sizeBytes": 64563
+        },
+        {
+          "size": "72.9 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058W001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FER058W001-0.SLDASM",
+          "sizeBytes": 74657
+        },
+        {
+          "name": "ACC-FER058Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z001-0.SLDPRT",
+          "sizeBytes": 54961,
+          "size": "53.7 KB"
+        },
+        {
+          "sizeBytes": 51993,
+          "name": "ACC-FER058Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "50.8 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z002-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z003-0.SLDPRT",
+          "size": "53.3 KB",
+          "sizeBytes": 54625,
+          "name": "ACC-FER058Z003-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER058Z004-0.SLDPRT",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z004-0.SLDPRT",
+          "size": "54 KB",
+          "sizeBytes": 55333
+        },
+        {
+          "size": "56.6 KB",
+          "sizeBytes": 57993,
+          "type": "SLDPRT",
+          "name": "ACC-FER058Z005-0.SLDPRT",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z005-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z006-0.pdf",
+          "size": "66.1 KB",
+          "sizeBytes": 67653,
+          "name": "ACC-FER058Z006-0.PDF",
+          "type": "PDF"
+        },
+        {
+          "sizeBytes": 227843,
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z006-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-FER058Z006-0.SLDDRW",
+          "size": "222.5 KB"
+        },
+        {
+          "size": "56 KB",
+          "sizeBytes": 57297,
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z006-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER058Z006-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER058Z007-0.SLDPRT",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z007-0.SLDPRT",
+          "size": "53.8 KB",
+          "sizeBytes": 55111
+        },
+        {
+          "size": "230.1 KB",
+          "name": "ACC-FER058Z008-0.PDF",
+          "type": "PDF",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z008-0.pdf",
+          "sizeBytes": 235589
+        },
+        {
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z008-0.SLDDRW",
+          "size": "257.8 KB",
+          "name": "ACC-FER058Z008-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 264005
+        },
+        {
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/ACC-FER058Z008-0.SLDPRT",
+          "name": "ACC-FER058Z008-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 58108,
+          "size": "56.7 KB"
+        },
+        {
+          "sizeBytes": 266930,
+          "type": "SLDPRT",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/SFF-B14 (185mm).SLDPRT",
+          "name": "SFF-B14 (185MM).SLDPRT",
+          "size": "260.7 KB"
+        },
+        {
+          "size": "252.1 KB",
+          "name": "SFF-B14 (340MM).SLDPRT",
+          "sizeBytes": 258140,
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/SFF-B14 (340mm).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "SFF-B14 (400MM).SLDPRT",
+          "sizeBytes": 262522,
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/SFF-B14 (400mm).SLDPRT",
+          "size": "256.4 KB"
+        },
+        {
+          "sizeBytes": 247065,
+          "name": "SFF-B14 (930MM).SLDPRT",
+          "type": "SLDPRT",
+          "size": "241.3 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/SFF-B14 (930mm).SLDPRT"
+        },
+        {
+          "sizeBytes": 272041,
+          "size": "265.7 KB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/SFJ-045.SLDPRT",
+          "type": "SLDPRT",
+          "name": "SFJ-045.SLDPRT"
+        },
+        {
+          "size": "30 KB",
+          "sizeBytes": 30720,
+          "type": "DB",
+          "relPath": "ACC-FER058 FINGER COT DISPENSER/Thumbs.db",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalBytes": 3463192,
+      "fileCount": 23
+    },
+    "createdAt": "2026-09-10T15:30:43.342Z",
+    "note": "ออกแบบและจัดทำที่สำหรับใส่ถุงนิ้ว รายละเอียดตามเอกสารแนบ จำนวน 4 PCS เสร็จสิ้น",
+    "quotation": "26-0426",
+    "completionDate": "2026-08-07",
+    "process": "ALL PROCESS",
+    "workFolder.hasCloudFiles": true
+  },
+  {
+    "department": "MOTOR PRODUCTION",
+    "requestName": "TEERAKAN T.",
+    "completionDate": "2026-08-08",
+    "factory": "FACTORY E",
+    "code": "GM-J26-084",
+    "workFolder": null,
+    "title": "FIX DOOR COVER MAGNET",
+    "updatedAt": "2026-09-11T07:44:55.537Z",
+    "status": "done",
+    "id": "achv_1789054076213",
+    "createdAt": "2026-09-10T15:27:56.213Z",
+    "categoryId": "cat_jig",
+    "process": "MAGNET",
+    "pdfAttachment.size": 1623759,
+    "requestDate": "2026-07-09",
+    "pdfAttachment": {
+      "name": "GM-J26-084.PDF",
+      "size": 1623759,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "quotation": "",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.name": "GM-J26-084.PDF",
+    "note": "ทำการแก้ไขประตู COVER ชำรุด เสร็จสิ้น",
+    "imageData": null,
+    "description": "ร้องขอทางเทคโนโลยี ทำการแก้ไขประตู COVER ชำรุด รายละเอียดตามรูป",
+    "pdfAttachment.hasCloudPdf": true
+  },
+  {
+    "department": "MOTOR PRODUCTION",
+    "workFolder.name": "26-0469 - FOOT COMPONENT FOR GM",
+    "title": "CHANGE FOOT COMPONENT",
+    "status": "done",
+    "imageData": null,
+    "workFolder.fileCount": 2,
+    "process": "BRUSHLESS MOTOR (HITEC)",
+    "code": "GM-J26-080",
+    "pdfAttachment.name": "GM-J26-080.PDF",
+    "workFolder.hasCloudFiles": true,
+    "categoryId": "cat_pr",
+    "id": "achv_1789053940188",
+    "updatedAt": "2026-09-11T07:44:24.728Z",
+    "pdfAttachment.size": 1104687,
+    "createdAt": "2026-09-10T15:25:40.188Z",
+    "workFolder.totalSize": "150.5 KB",
+    "quotation": "26-0469",
+    "workFolder": {
+      "fileCount": 2,
+      "totalSize": "150.5 KB",
+      "totalBytes": 154151,
+      "name": "26-0469 - FOOT COMPONENT FOR GM",
+      "zipData": "",
+      "files": [
+        {
+          "size": "16.4 KB",
+          "relPath": "26-0469 - FOOT COMPONENT FOR GM/FORM REQUEST FOOT COMPONENT FOR GM.xlsx",
+          "name": "FORM REQUEST FOOT COMPONENT FOR GM.XLSX",
+          "sizeBytes": 16841,
+          "type": "XLSX"
+        },
+        {
+          "sizeBytes": 137310,
+          "relPath": "26-0469 - FOOT COMPONENT FOR GM/Q6907752-ขาไนล่อนปรับระดับ.pdf",
+          "size": "134.1 KB",
+          "name": "Q6907752-ขาไนล่อนปรับระดับ.PDF",
+          "type": "PDF"
+        }
+      ],
+      "hasCloudFiles": true
+    },
+    "requestName": "PONGRAT P.",
+    "completionDate": "2026-08-17",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment": {
+      "hasCloudPdf": true,
+      "data": "",
+      "name": "GM-J26-080.PDF",
+      "size": 1104687
+    },
+    "description": "ร้องขอทางฝ่ายเทคโนโลยี ทำการออกแบบฐานรองโต๊ะทำงานใหม่ เนื่องจากฐานรองเดิมมีลักษณะที่เล็กและอาจส่งผลต่อเรื่องของความปลอดภัยในการใช้งาน รายละเอียดแนบไปทางรูปภาพ จำนวน 8 PCS",
+    "note": "ทำการออกแบบฐานรองโต๊ะทำงานใหม่ จำนวน 8 PCS (สั่งซื้อ) เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "factory": "FACTORY E",
+    "requestDate": "2026-07-06"
+  },
+  {
+    "workFolder": {
+      "name": "26-0485 - MAKITA 12V",
+      "totalSize": "195.4 KB",
+      "files": [
+        {
+          "type": "XLSX",
+          "name": "FORM REQUEST MAKITA 12V.XLSX",
+          "sizeBytes": 16374,
+          "relPath": "26-0485 - MAKITA 12V/FORM REQUEST MAKITA 12V.xlsx",
+          "size": "16 KB"
+        },
+        {
+          "name": "ใบเสนอราคา ELECTRIC SCREWDRIVER MAKITA 12V.PDF",
+          "sizeBytes": 183729,
+          "type": "PDF",
+          "relPath": "26-0485 - MAKITA 12V/ใบเสนอราคา ELECTRIC SCREWDRIVER MAKITA 12V.pdf",
+          "size": "179.4 KB"
+        }
+      ],
+      "zipData": "",
+      "fileCount": 2,
+      "hasCloudFiles": true,
+      "totalBytes": 200103
+    },
+    "title": "(PR) ELECTRIC SCREWDRIVER MAKITA 12V",
+    "requestDate": "2026-06-19",
+    "pdfAttachment": null,
+    "description": "สั่งสว่าน MAKITA ตัวเล็ก",
+    "department": "PRODUCTION TECHNOLOGY",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "id": "achv_1789053753528",
+    "process": "SPARE PART",
+    "updatedAt": "2026-09-11T07:43:04.195Z",
+    "completionDate": "2026-08-19",
+    "createdAt": "2026-09-10T15:22:33.528Z",
+    "code": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0485",
+    "assignee": "JITTRAKAN K.",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "factory": "FACTORY E",
+    "imageData": null,
+    "categoryId": "cat_pr",
+    "status": "done"
+  },
+  {
+    "code": "PRODUCTION TECHNOLOGY",
+    "title": "(PR) DIE M8X1.25 AND CENTER DRILL 2X90X6",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_pr",
+    "updatedAt": "2026-09-30T01:26:35.839Z",
+    "description": "ขอซื้อดรายเกลียว M8X1.25 จำนวน 1 PCS และ เซนเตอร์ดิว จำนวน 2 PCS",
+    "editorPin": "20523",
+    "creatorPin": "20523",
+    "requestDate": "2026-08-19",
+    "process": "SPARE PART",
+    "imageData": null,
+    "department": "PRODUCTION TECHNOLOGY",
+    "lastEditedBy": "JITTRAKAN K.",
+    "id": "achv_1789053670786",
+    "lastEditedRole": "ADMIN",
+    "status": "done",
+    "pdfAttachment": null,
+    "createdAt": "2026-09-10T15:21:10.786Z",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "totalSize": "409.7 KB",
+      "totalBytes": 419551,
+      "name": "26-0491 - DIE & CENTER DRILL",
+      "zipData": "",
+      "files": [
+        {
+          "relPath": "26-0491 - DIE & CENTER DRILL/FORM REQUEST DIE & CENTER DRILL.xlsx",
+          "name": "FORM REQUEST DIE & CENTER DRILL.XLSX",
+          "type": "XLSX",
+          "sizeBytes": 16515,
+          "size": "16.1 KB"
+        },
+        {
+          "relPath": "26-0491 - DIE & CENTER DRILL/Orbray_20260730.ดายเกลียว-ลูกต๊าปกลม.pdf",
+          "sizeBytes": 219734,
+          "name": "ORBRAY_20260730.ดายเกลียว-ลูกต๊าปกลม.PDF",
+          "type": "PDF",
+          "size": "214.6 KB"
+        },
+        {
+          "type": "PDF",
+          "name": "ใบเสนอราคา CTDA2.PDF",
+          "size": "179 KB",
+          "relPath": "26-0491 - DIE & CENTER DRILL/ใบเสนอราคา CTDA2.pdf",
+          "sizeBytes": 183302
+        }
+      ],
+      "fileCount": 3
+    },
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "quotation": "26-0491",
+    "factory": "FACTORY E",
+    "completionDate": "2026-08-19"
+  },
+  {
+    "factory": "FACTORY D",
+    "categoryId": "cat_acc",
+    "workFolder.name": "ACC-MDC001 WAGOA COVER",
+    "description": "ร้องขอให้ทาง TECHNOLOGY ติดตั้ง COVER ให้กับรถเข็น ชั้น 2,3 พร้อมติดตั้งประตูเปิด-ปิด",
+    "completionDate": "2026-08-22",
+    "quotation": "26-0391, 26-0515",
+    "workFolder.fileCount": 18,
+    "createdAt": "2026-09-10T15:18:13.911Z",
+    "requestDate": "2026-06-19",
+    "status": "done",
+    "pdfAttachment.name": "MD-J26-001.PDF",
+    "pdfAttachment": {
+      "size": 1319530,
+      "name": "MD-J26-001.PDF",
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "department": "MEDICAL PRODUCTION",
+    "pdfAttachment.hasCloudPdf": true,
+    "title": "ACC-MDC001 WAGOA COVER",
+    "requestName": "WANCHALOEM F.",
+    "code": "MD-J26-001",
+    "workFolder.hasCloudFiles": true,
+    "pdfAttachment.size": 1319530,
+    "note": "ติดตั้ง COVER ให้กับรถเข็น ชั้น 2,3 พร้อมติดตั้งประตูเปิด-ปิด จำนวน 1 คัน เสร็จสิ้น",
+    "assignee": "JITTRAKAN K.",
+    "workFolder.totalSize": "2.9 MB",
+    "imageData": null,
+    "process": "LVP",
+    "id": "achv_1789053493911",
+    "updatedAt": "2026-09-11T07:41:53.738Z",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "totalBytes": 3032782,
+      "name": "ACC-MDC001 WAGOA COVER",
+      "fileCount": 18,
+      "zipData": "",
+      "files": [
+        {
+          "size": "299.4 KB",
+          "type": "SLDASM",
+          "name": "ACC-MDC001A001-0.SLDASM",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001A001-0.SLDASM",
+          "sizeBytes": 306551
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MDC001A001-0.SLDDRW",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001A001-0.SLDDRW",
+          "sizeBytes": 352772,
+          "size": "344.5 KB"
+        },
+        {
+          "name": "ACC-MDC001Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 214893,
+          "size": "209.9 KB",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z001-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MDC001Z001-0.SLDPRT",
+          "sizeBytes": 55405,
+          "size": "54.1 KB"
+        },
+        {
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z002-0.SLDDRW",
+          "size": "209.3 KB",
+          "name": "ACC-MDC001Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 214273
+        },
+        {
+          "name": "ACC-MDC001Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z002-0.SLDPRT",
+          "size": "53.5 KB",
+          "sizeBytes": 54787
+        },
+        {
+          "name": "ACC-MDC001Z003-0.SLDDRW",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z003-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 220827,
+          "size": "215.7 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MDC001Z003-0.SLDPRT",
+          "sizeBytes": 80050,
+          "size": "78.2 KB",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z003-0.SLDPRT"
+        },
+        {
+          "size": "300.7 KB",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z004-0.SLDPRT",
+          "sizeBytes": 307870,
+          "name": "ACC-MDC001Z004-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 218369,
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z005-0.SLDDRW",
+          "size": "213.3 KB",
+          "type": "SLDDRW",
+          "name": "ACC-MDC001Z005-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z005-0.SLDPRT",
+          "size": "68.7 KB",
+          "type": "SLDPRT",
+          "name": "ACC-MDC001Z005-0.SLDPRT",
+          "sizeBytes": 70396
+        },
+        {
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z005-1.SLDDRW",
+          "sizeBytes": 219701,
+          "type": "SLDDRW",
+          "name": "ACC-MDC001Z005-1.SLDDRW",
+          "size": "214.6 KB"
+        },
+        {
+          "sizeBytes": 70777,
+          "name": "ACC-MDC001Z005-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "69.1 KB",
+          "relPath": "ACC-MDC001 WAGOA COVER/ACC-MDC001Z005-1.SLDPRT"
+        },
+        {
+          "size": "163.5 KB",
+          "name": "B-100-1.STEP",
+          "sizeBytes": 167447,
+          "type": "STEP",
+          "relPath": "ACC-MDC001 WAGOA COVER/B-100-1.STEP"
+        },
+        {
+          "size": "183.8 KB",
+          "name": "C-SHHPSDN5-2.SLDASM",
+          "sizeBytes": 188202,
+          "type": "SLDASM",
+          "relPath": "ACC-MDC001 WAGOA COVER/C-SHHPSDN5-2.SLDASM"
+        },
+        {
+          "size": "102.7 KB",
+          "sizeBytes": 105172,
+          "relPath": "ACC-MDC001 WAGOA COVER/C-UPPN90.SLDPRT",
+          "type": "SLDPRT",
+          "name": "C-UPPN90.SLDPRT"
+        },
+        {
+          "sizeBytes": 135114,
+          "type": "SLDPRT",
+          "name": "SMALL WAGON.SLDPRT",
+          "relPath": "ACC-MDC001 WAGOA COVER/SMALL WAGON.SLDPRT",
+          "size": "131.9 KB"
+        },
+        {
+          "relPath": "ACC-MDC001 WAGOA COVER/Thumbs.db",
+          "size": "49 KB",
+          "sizeBytes": 50176,
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalSize": "2.9 MB"
     }
+  },
+  {
+    "department": "OPICAL PRODUCTION",
+    "process": "RECEPTICLE",
+    "assignee": "JITTRAKAN K.",
+    "id": "achv_1789053198936",
+    "note": "ทำการสั่งซื้อเสาสำหรับติดตั้งโคมไฟแบบสำเร็จ จำนวน 3 PCS เสร็จสิ้น",
+    "imageData": null,
+    "workFolder.fileCount": 19,
+    "categoryId": "cat_acc",
+    "pdfAttachment.size": 1069190,
+    "title": "ACC-FIB011 POLE LAMP",
+    "pdfAttachment.name": "OPT-J26-021.PDF",
+    "updatedAt": "2026-09-11T07:40:36.759Z",
+    "quotation": "26-0510",
+    "createdAt": "2026-09-10T15:13:18.936Z",
+    "requestName": "WARAPORN W.",
+    "workFolder.totalSize": "42.2 MB",
+    "workFolder.name": "ACC-FIB011 POLE LAMP",
+    "workFolder": {
+      "name": "ACC-FIB011 POLE LAMP",
+      "totalBytes": 44263423,
+      "totalSize": "42.2 MB",
+      "files": [
+        {
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FIB011A001-0.SLDASM",
+          "sizeBytes": 387148,
+          "size": "378.1 KB"
+        },
+        {
+          "size": "133.3 KB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A001-002-1.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-FIB011A001-002-1.SLDASM",
+          "sizeBytes": 136533
+        },
+        {
+          "name": "ACC-FIB011A001-002-1.SLDASM.SLDPRT",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A001-002-1.SLDASM.SLDPRT",
+          "type": "SLDPRT",
+          "size": "143.5 KB",
+          "sizeBytes": 146912
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 166680,
+          "name": "ACC-FIB011A001-002-1.SLDPRT",
+          "size": "162.8 KB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A001-002-1.SLDPRT"
+        },
+        {
+          "size": "27.3 MB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A001-002-1.STL",
+          "sizeBytes": 28590684,
+          "name": "ACC-FIB011A001-002-1.STL",
+          "type": "STL"
+        },
+        {
+          "type": "SLDASM",
+          "name": "ACC-FIB011A002-0.SLDASM",
+          "size": "193 KB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011A002-0.SLDASM",
+          "sizeBytes": 197651
+        },
+        {
+          "size": "141.5 KB",
+          "name": "ACC-FIB011Z001-0.SLDPRT",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 144871
+        },
+        {
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z001-0.STL",
+          "size": "888.8 KB",
+          "sizeBytes": 910084,
+          "type": "STL",
+          "name": "ACC-FIB011Z001-0.STL"
+        },
+        {
+          "name": "ACC-FIB011Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "132.1 KB",
+          "sizeBytes": 135294,
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z001-1.SLDPRT"
+        },
+        {
+          "size": "132.6 KB",
+          "type": "SLDPRT",
+          "name": "ACC-FIB011Z002-0.SLDPRT",
+          "sizeBytes": 135745,
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z002-0.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z002-0.STL",
+          "sizeBytes": 8584084,
+          "size": "8.2 MB",
+          "type": "STL",
+          "name": "ACC-FIB011Z002-0.STL"
+        },
+        {
+          "size": "161.9 KB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z002-1.SLDPRT",
+          "sizeBytes": 165769,
+          "type": "SLDPRT",
+          "name": "ACC-FIB011Z002-1.SLDPRT"
+        },
+        {
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z003-0.SLDPRT",
+          "name": "ACC-FIB011Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 230495,
+          "size": "225.1 KB"
+        },
+        {
+          "name": "ACC-FIB011Z003-0.STL",
+          "sizeBytes": 2544084,
+          "type": "STL",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z003-0.STL",
+          "size": "2.4 MB"
+        },
+        {
+          "sizeBytes": 155834,
+          "type": "SLDPRT",
+          "name": "ACC-FIB011Z003-1.SLDPRT",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z003-1.SLDPRT",
+          "size": "152.2 KB"
+        },
+        {
+          "sizeBytes": 946784,
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z003-1.STL",
+          "size": "924.6 KB",
+          "name": "ACC-FIB011Z003-1.STL",
+          "type": "STL"
+        },
+        {
+          "name": "ACC-FIB011Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 93839,
+          "size": "91.6 KB",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z004-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FIB011Z004-0.STL",
+          "relPath": "ACC-FIB011 POLE LAMP/ACC-FIB011Z004-0.STL",
+          "type": "STL",
+          "sizeBytes": 576084,
+          "size": "562.6 KB"
+        },
+        {
+          "size": "14.5 KB",
+          "sizeBytes": 14848,
+          "type": "DB",
+          "relPath": "ACC-FIB011 POLE LAMP/Thumbs.db",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "hasCloudFiles": true,
+      "zipData": "",
+      "fileCount": 19
+    },
+    "status": "done",
+    "completionDate": "2026-08-25",
+    "workFolder.hasCloudFiles": true,
+    "requestDate": "2026-07-22",
+    "code": "OPT-J26-021",
+    "factory": "FACTORY A",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment": {
+      "name": "OPT-J26-021.PDF",
+      "size": 1069190,
+      "data": "",
+      "hasCloudPdf": true
+    },
+    "description": "ร้องขอให้ทำการจัดทำเสา สำหรับติดตั้งโคมไฟ รายละเอียดตามเอกสารแนบ เนื่องจากเป็นโคมไฟเก่าไม่มีขาจับยึด จำนวน 3 PCS"
+  },
+  {
+    "status": "done",
+    "categoryId": "cat_pr",
+    "pdfAttachment": null,
+    "updatedAt": "2026-10-01T02:00:48.311Z",
+    "completionDate": "2026-10-01",
+    "description": "ต้องการ มีดกลึงคว้านรูในขนาดเล็ก MTR 4 R0.2 L15 และ MTR 6 R0.2 L35 ของ CARMEX อย่างละ 1 ชิ้น ตามลิงค์ที่แนบให้",
+    "editorPin": "20523",
+    "requestDate": "2026-09-10",
+    "creatorPin": "20523",
+    "title": "(PR) MTR 4 R0.2 L15 - MTR 6 R0.2 L35",
+    "factory": "FACTORY E",
+    "code": "PRODUCTION TECHNOLOGY",
+    "lastEditedRole": "ADMIN",
+    "imageData": null,
+    "department": "PRODUCTION TECHNOLOGY",
+    "id": "achv_1789053105413",
+    "note": "ได้รับของเรียบร้อยแล้ว",
+    "assignee": "JITTRAKAN K.",
+    "lastEditedBy": "JITTRAKAN K.",
+    "createdAt": "2026-09-10T15:11:45.413Z",
+    "workFolder": {
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "size": "16.1 KB",
+          "relPath": "26-0622 - MTR 4 R0.2 L15, MTR 6 R0.2 L35/FORM REQUEST - MTR 4 R0.2 L15, MTR 6 R0.2 L35.xlsx",
+          "type": "XLSX",
+          "sizeBytes": 16529,
+          "name": "FORM REQUEST - MTR 4 R0.2 L15, MTR 6 R0.2 L35.XLSX"
+        },
+        {
+          "sizeBytes": 16499,
+          "name": "FORM REQUEST MTR 4 R0.2 L15, MTR 6 R0.2 L35.XLSX",
+          "type": "XLSX",
+          "size": "16.1 KB",
+          "relPath": "26-0622 - MTR 4 R0.2 L15, MTR 6 R0.2 L35/FORM REQUEST MTR 4 R0.2 L15, MTR 6 R0.2 L35.xlsx"
+        },
+        {
+          "type": "PDF",
+          "relPath": "26-0622 - MTR 4 R0.2 L15, MTR 6 R0.2 L35/orbraymtr4mtr6.pdf",
+          "sizeBytes": 143179,
+          "name": "ORBRAYMTR4MTR6.PDF",
+          "size": "139.8 KB"
+        }
+      ],
+      "name": "26-0622 - MTR 4 R0.2 L15, MTR 6 R0.2 L35",
+      "fileCount": 3,
+      "totalSize": "172.1 KB",
+      "totalBytes": 176207,
+      "zipData": ""
+    },
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0622",
+    "process": "SPARE PART"
+  },
+  {
+    "requestDate": "2026-09-02",
+    "editorPin": "20523",
+    "process": "",
+    "pdfAttachment.name": "GM-J26-112.PDF",
+    "workFolder.fileCount": 2,
+    "department": "MOTOR PRODUCTION",
+    "title": "(PR) SPRING FOR JIG SPOT WELDER M/C",
+    "pdfAttachment.size": 637295,
+    "description": "ร้องขอฝ่ายเทคโนโลยีปรับปรุง JIG SPOT WELDER M/C เนื่องจาก SPRING อ่อน ส่งผลให้คุณภาพไม่สม่ำเสมอ",
+    "updatedAt": "2026-10-06T12:13:22.680Z",
+    "pdfAttachment.hasCloudPdf": true,
+    "code": "GM-J26-112",
+    "requestName": "TEERAPONG S.",
+    "creatorPin": "20523",
+    "completionDate": "",
+    "status": "in_progress",
+    "imageData": null,
+    "pdfAttachment": {
+      "isLargeFile": true,
+      "size": 637295,
+      "data": "",
+      "type": "",
+      "note": "ไฟล์ขนาดใหญ่ บันทึกใน IndexedDB เครื่องนี้",
+      "name": "GM-J26-112.PDF",
+      "hasCloudPdf": true
+    },
+    "categoryId": "cat_pr",
+    "workFolder": {
+      "zipData": "",
+      "files": [
+        {
+          "size": "16 KB",
+          "relPath": "26-0640 - TENSION SPRING C-AUT4-20/FORM REQUEST TENSION SPRING C-AUT4-20.xlsx",
+          "sizeBytes": 16398,
+          "type": "XLSX",
+          "name": "FORM REQUEST TENSION SPRING C-AUT4-20.XLSX"
+        },
+        {
+          "relPath": "26-0640 - TENSION SPRING C-AUT4-20/misumi_spring.pdf",
+          "name": "MISUMI_SPRING.PDF",
+          "type": "PDF",
+          "sizeBytes": 174619,
+          "size": "170.5 KB"
+        }
+      ],
+      "hasCloudFiles": true,
+      "name": "26-0640 - TENSION SPRING C-AUT4-20",
+      "totalBytes": 191017,
+      "totalSize": "186.5 KB",
+      "fileCount": 2
+    },
+    "assignee": "JITTRAKAN K.",
+    "workFolder.hasCloudFiles": true,
+    "workFolder.name": "26-0640 - TENSION SPRING C-AUT4-20",
+    "workFolder.totalSize": "186.5 KB",
+    "note": "รอติดตั้งเครื่องที่เหลือ 1/4",
+    "quotation": "26-2640",
+    "factory": "FACTORY E",
+    "createdAt": "2026-09-10T14:50:55.298Z",
+    "lastEditedBy": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "id": "achv_1789051855298"
+  },
+  {
+    "process": "",
+    "requestDate": "2026-09-10",
+    "updatedAt": "2026-10-01T01:26:31.044Z",
+    "description": "ร้องขอฝ่ายเทคโนโลยี JIG SPOT WELDER M/C จำนวน 3 MODEL - MODEL ละ 2 ตัว เนื่องจากของเดิมไม่ได้ SPEC. ส่งผลให้คุณภาพงานไม่สม่ำเสมอ 1. CRR17-1502-01, 2. CRS17-18XX, 3. CRS17-2502-01",
+    "title": "JIG-MOT098 JIG SPOT WELDER MC",
+    "editorPin": "20523",
+    "id": "achv_1789051785520",
+    "workFolder": {
+      "name": "JIG-MOT098 JIG SPOT WELDER MC",
+      "files": [
+        {
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098A001-0.SLDASM",
+          "size": "64.3 KB",
+          "name": "JIG-MOT098A001-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 65796
+        },
+        {
+          "type": "SLDASM",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098A002-0.SLDASM",
+          "name": "JIG-MOT098A002-0.SLDASM",
+          "sizeBytes": 68102,
+          "size": "66.5 KB"
+        },
+        {
+          "size": "64.3 KB",
+          "sizeBytes": 65821,
+          "type": "SLDASM",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098A003-0.SLDASM",
+          "name": "JIG-MOT098A003-0.SLDASM"
+        },
+        {
+          "name": "JIG-MOT098Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 275222,
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z001-0.SLDDRW",
+          "size": "268.8 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 89724,
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z001-0.SLDPRT",
+          "name": "JIG-MOT098Z001-0.SLDPRT",
+          "size": "87.6 KB"
+        },
+        {
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z001-1.SLDPRT",
+          "size": "80.2 KB",
+          "sizeBytes": 82172,
+          "name": "JIG-MOT098Z001-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 264650,
+          "name": "JIG-MOT098Z002-0.SLDDRW",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "258.4 KB"
+        },
+        {
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z002-0.SLDPRT",
+          "sizeBytes": 90861,
+          "name": "JIG-MOT098Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "88.7 KB"
+        },
+        {
+          "sizeBytes": 254380,
+          "size": "248.4 KB",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z003-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "JIG-MOT098Z003-0.SLDDRW"
+        },
+        {
+          "size": "79.6 KB",
+          "sizeBytes": 81491,
+          "name": "JIG-MOT098Z003-0.SLDPRT",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/JIG-MOT098Z003-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "DB",
+          "sizeBytes": 27648,
+          "name": "THUMBS.DB",
+          "size": "27 KB",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/Thumbs.db"
+        },
+        {
+          "sizeBytes": 10752,
+          "size": "10.5 KB",
+          "name": "THUMBS.DB",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/Thumbs.db",
+          "type": "DB"
+        },
+        {
+          "sizeBytes": 156377,
+          "type": "PDF",
+          "name": "W071164-03.PDF",
+          "size": "152.7 KB",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071164-03.pdf"
+        },
+        {
+          "name": "W071164.SLDPRT",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071164.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 55621,
+          "size": "54.3 KB"
+        },
+        {
+          "size": "153.8 KB",
+          "name": "W071246-02.PDF",
+          "type": "PDF",
+          "sizeBytes": 157474,
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071246-02.pdf"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "W071246.SLDPRT",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071246.SLDPRT",
+          "sizeBytes": 57394,
+          "size": "56 KB"
+        },
+        {
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071680-03.pdf",
+          "sizeBytes": 154562,
+          "size": "150.9 KB",
+          "name": "W071680-03.PDF",
+          "type": "PDF"
+        },
+        {
+          "size": "49.9 KB",
+          "relPath": "JIG-MOT098 JIG SPOT WELDER MC/COIL ASSY/W071680.SLDPRT",
+          "type": "SLDPRT",
+          "name": "W071680.SLDPRT",
+          "sizeBytes": 51099
+        }
+      ],
+      "hasCloudFiles": true,
+      "fileCount": 18,
+      "zipData": "",
+      "totalSize": "1.9 MB",
+      "totalBytes": 2009146
+    },
+    "workFolder.hasCloudFiles": true,
+    "requestName": "TEERAPONG S.",
+    "imageData": null,
+    "completionDate": "2026-10-01",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 634936,
+      "name": "GM-J26-117.PDF"
+    },
+    "workFolder.totalSize": "1.9 MB",
+    "status": "done",
+    "code": "GM-J26-117",
+    "pdfAttachment.hasCloudPdf": true,
+    "note": "ทำการจัดทำ JIG SPOT WELDER M/C จำนวน 3 MODEL MODLE ละ 2 ตัว เสร็จสิ้น",
+    "creatorPin": "20523",
+    "categoryId": "cat_jig",
+    "workFolder.fileCount": 18,
+    "factory": "FACTORY E",
+    "pdfAttachment.size": 634936,
+    "workFolder.name": "JIG-MOT098 JIG SPOT WELDER MC",
+    "lastEditedBy": "JITTRAKAN K.",
+    "pdfAttachment.name": "GM-J26-117.PDF",
+    "department": "MOTOR PRODUCTION",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "",
+    "lastEditedRole": "ADMIN",
+    "createdAt": "2026-09-10T14:49:45.520Z"
+  },
+  {
+    "factory": "FACTORY E",
+    "editorPin": "20523",
+    "workFolder.totalSize": "20 MB",
+    "requestName": "SUPANAT S.",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 665967,
+      "name": "GM-J26-114.PDF"
+    },
+    "updatedAt": "2026-10-08T06:58:09.956Z",
+    "workFolder.name": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY",
+    "lastEditedBy": "JITTRAKAN K.",
+    "requestDate": "2026-09-04",
+    "completionDate": "",
+    "description": "ร้องขอฝ่ายเทคโนโลยี ออกแบบ วัดขนาด และจัดทำ TRAY FOR LINER CARRIA ASSY ASSEMBLY เพื่อรองรับการผลิตที่เพิ่มขึ้น โดยต้องการ TRAY แบบ 100 ช่อง จำนวน 3 ชุด และแบบ 20 ช่อง จำนวน 2 ชุด (โปรดดูเอกสารแนบ 1)",
+    "workFolder": {
+      "fileCount": 9,
+      "totalBytes": 20960426,
+      "zipData": "",
+      "totalSize": "20 MB",
+      "hasCloudFiles": true,
+      "name": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY",
+      "files": [
+        {
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z001-0.pdf",
+          "name": "JIG-MOT097Z001-0.PDF",
+          "type": "PDF",
+          "sizeBytes": 130820,
+          "size": "127.8 KB"
+        },
+        {
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z001-0.SLDDRW",
+          "name": "JIG-MOT097Z001-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 378738,
+          "size": "369.9 KB"
+        },
+        {
+          "size": "237.3 KB",
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z001-0.SLDPRT",
+          "sizeBytes": 242963,
+          "type": "SLDPRT",
+          "name": "JIG-MOT097Z001-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 15577484,
+          "size": "14.9 MB",
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z001-0.STL",
+          "name": "JIG-MOT097Z001-0.STL",
+          "type": "STL"
+        },
+        {
+          "name": "JIG-MOT097Z002-0.PDF",
+          "type": "PDF",
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z002-0.pdf",
+          "sizeBytes": 129840,
+          "size": "126.8 KB"
+        },
+        {
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z002-0.SLDDRW",
+          "size": "284.3 KB",
+          "sizeBytes": 291166,
+          "type": "SLDDRW",
+          "name": "JIG-MOT097Z002-0.SLDDRW"
+        },
+        {
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT097Z002-0.SLDPRT",
+          "sizeBytes": 136323,
+          "size": "133.1 KB"
+        },
+        {
+          "name": "JIG-MOT097Z002-0.STL",
+          "type": "STL",
+          "size": "3.9 MB",
+          "sizeBytes": 4042884,
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/JIG-MOT097Z002-0.STL"
+        },
+        {
+          "size": "29.5 KB",
+          "sizeBytes": 30208,
+          "name": "THUMBS.DB",
+          "relPath": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY/Thumbs.db",
+          "type": "DB"
+        }
+      ]
+    },
+    "assignee": "JITTRAKAN K.",
+    "note": "พี่แชมป์กำลังจะทำให้ 100 PCS จำนวน 3 ชิ้น",
+    "imageData": null,
+    "categoryId": "cat_jig",
+    "code": "GM-J26-114",
+    "creatorPin": "20523",
+    "workFolder.fileCount": 9,
+    "department": "MOTOR PRODUCTION",
+    "title": "JIG-MOT097 TRAY FOR LINER CARRIA ASSY",
+    "process": "GEAR PROCESS",
+    "pdfAttachment.size": 665967,
+    "quotation": "26-0631, 26-0675",
+    "id": "achv_1789051723698",
+    "workFolder.hasCloudFiles": true,
+    "createdAt": "2026-09-10T14:48:43.698Z",
+    "pdfAttachment.name": "GM-J26-114.PDF",
+    "pdfAttachment.hasCloudPdf": true,
+    "status": "in_progress",
+    "lastEditedRole": "ADMIN"
+  },
+  {
+    "description": "ร้องขอฝ่ายเทคโนโลยี เปลี่ยนอะคริลิครถเข็น ชิ้นส่วนที่แตกหัก/จุดยึดขอบมุมฉีกขาด เนื่องจากชำรุดจากการใช้งาน (โปรดดูเอกสารแนบ 1)",
+    "workFolder": null,
+    "updatedAt": "2026-10-08T01:46:49.137Z",
+    "requestDate": "2026-09-02",
+    "completionDate": "",
+    "editorPin": "20523",
+    "status": "wait",
+    "id": "achv_1789051472901",
+    "process": "FINAL INSPECTION",
+    "lastEditedBy": "JITTRAKAN K.",
+    "imageData": null,
+    "pdfAttachment.name": "GM-J26-110.PDF",
+    "pdfAttachment.size": 803890,
+    "code": "GM-J26-110",
+    "requestName": "SUPANAT S.",
+    "lastEditedRole": "ADMIN",
+    "factory": "FACTORY E",
+    "note": "รอ \" เหลือกลอนและแม่เหล็ก \" มา",
+    "pdfAttachment": {
+      "name": "GM-J26-110.PDF",
+      "size": 803890,
+      "hasCloudPdf": true,
+      "data": ""
+    },
+    "department": "MOTOR PRODUCTION",
+    "title": "ACC-MOT102 ACRYLIC CART COVER",
+    "creatorPin": "20523",
+    "assignee": "JITTRAKAN K.",
+    "quotation": "26-0663",
+    "categoryId": "cat_acc",
+    "createdAt": "2026-09-10T14:44:32.901Z",
+    "pdfAttachment.hasCloudPdf": true
+  },
+  {
+    "factory": "FACTORY E",
+    "lastEditedBy": "JITTRAKAN K.",
+    "assignee": "JITTRAKAN K.",
+    "title": "(PR) DRILL HSS 20-21 MM",
+    "completionDate": "2026-09-01",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "pdfAttachment": null,
+    "workFolder": {
+      "files": [
+        {
+          "name": "FORM REQUEST DRILL HSS 20-21 MM.XLSX",
+          "type": "XLSX",
+          "relPath": "26-0533 - DRILL HSS 20-21 MM/FORM REQUEST DRILL HSS 20-21 MM.xlsx",
+          "sizeBytes": 16540,
+          "size": "16.2 KB"
+        },
+        {
+          "size": "205.4 KB",
+          "sizeBytes": 210379,
+          "type": "PDF",
+          "relPath": "26-0533 - DRILL HSS 20-21 MM/Orbray_20260807.ดอกสว่านเกรดเจาะเหล็กไฮสปีด.pdf",
+          "name": "ORBRAY_20260807.ดอกสว่านเกรดเจาะเหล็กไฮสปีด.PDF"
+        }
+      ],
+      "name": "26-0533 - DRILL HSS 20-21 MM",
+      "totalSize": "221.6 KB",
+      "zipData": "",
+      "fileCount": 2,
+      "hasCloudFiles": true,
+      "totalBytes": 226919
+    },
+    "imageData": null,
+    "code": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0533",
+    "lastEditedRole": "ADMIN",
+    "department": "PRODUCTION TECHNOLOGY",
+    "id": "achv_1788968262714",
+    "createdAt": "2026-09-09T15:37:42.714Z",
+    "status": "done",
+    "updatedAt": "2026-09-30T01:27:24.159Z",
+    "process": "SPARE PART",
+    "requestDate": "2026-09-01",
+    "creatorPin": "20523",
+    "note": "สั่งดอกสว่านเกรดเจาะเหล็กไฮสปีด HSS 20.0 MM สำเร็จ",
+    "description": "สั่งดอกสว่านเกรดเจาะเหล็กไฮสปีด HSS 20.0 MM และ ดอกสว่านเกรดเจาะเหล็กไฮสปีด HSS 21.0 MM อย่างละ 1 ชิ้น ตามลิงค์ที่แนบให้ด้านบน",
+    "categoryId": "cat_pr",
+    "editorPin": "20523"
+  },
+  {
+    "factory": "FACTORY A",
+    "quotation": "",
+    "createdAt": "2026-09-08T08:41:00.000Z",
+    "department": "FERRULE PRODUCTION",
+    "note": "อัพเดทไฟล์ LAYOUT และส่งมอบเอกสารเรียบร้อยแล้ว",
+    "lastEditedRole": "ADMIN",
+    "requestName": "FERRULE PRODUCTION",
+    "imageData": null,
+    "workFolder": {
+      "files": [
+        {
+          "size": "13.6 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (AFTER).zrd",
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (AFTER).ZRD",
+          "sizeBytes": 14216192
+        },
+        {
+          "size": "27.9 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (Befor&After) 1.zrd",
+          "type": "ZRD",
+          "sizeBytes": 29291008,
+          "name": "LT-MOT001-1F (BEFOR&AFTER) 1.ZRD"
+        },
+        {
+          "type": "ZRD",
+          "name": "LT-MOT001-1F (BEFORE).ZRD",
+          "sizeBytes": 14653440,
+          "size": "14 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f (BEFORE).zrd"
+        },
+        {
+          "name": "LT-MOT001-1F REV.2 (AFTER).PDF",
+          "type": "PDF",
+          "sizeBytes": 1738211,
+          "size": "1.7 MB",
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (AFTER).pdf"
+        },
+        {
+          "sizeBytes": 1942222,
+          "relPath": "LAYOUT/LT-MOT001-1f rev.2 (BEFORE).pdf",
+          "size": "1.9 MB",
+          "name": "LT-MOT001-1F REV.2 (BEFORE).PDF",
+          "type": "PDF"
+        },
+        {
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.pdf",
+          "sizeBytes": 246408,
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.PDF",
+          "size": "240.6 KB"
+        },
+        {
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.2.ZRD",
+          "size": "3.2 MB",
+          "sizeBytes": 3371520,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.2.zrd"
+        },
+        {
+          "size": "240.3 KB",
+          "sizeBytes": 246113,
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.pdf"
+        },
+        {
+          "sizeBytes": 3448832,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.3.ZRD",
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.3.zrd"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).pdf",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).PDF",
+          "type": "PDF",
+          "size": "240.3 KB",
+          "sizeBytes": 246115
+        },
+        {
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4 (CUT OUT 5 TABLES).ZRD",
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4 (Cut out 5 tables).zrd",
+          "sizeBytes": 3450368
+        },
+        {
+          "size": "160.9 KB",
+          "sizeBytes": 164758,
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.1.PDF",
+          "type": "PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.1.pdf"
+        },
+        {
+          "sizeBytes": 246153,
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.pdf",
+          "size": "240.4 KB"
+        },
+        {
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.4.zrd",
+          "name": "LT26-FER001-07A (AFTER) VER.2.4.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "size": "240.7 KB",
+          "sizeBytes": 246434,
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.pdf",
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.PDF"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.5.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.5.ZRD",
+          "sizeBytes": 3450368,
+          "size": "3.3 MB"
+        },
+        {
+          "type": "PDF",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.pdf",
+          "size": "240.7 KB",
+          "sizeBytes": 246432
+        },
+        {
+          "size": "3.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.1.zrd",
+          "sizeBytes": 3450368,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.1.ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.PDF",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.pdf",
+          "type": "PDF",
+          "sizeBytes": 246398,
+          "size": "240.6 KB"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.6.zrd",
+          "size": "3.3 MB",
+          "sizeBytes": 3450368,
+          "name": "LT26-FER001-07A (AFTER) VER.2.6.ZRD",
+          "type": "ZRD"
+        },
+        {
+          "name": "LT26-FER001-07A (AFTER) VER.2.PDF",
+          "sizeBytes": 244459,
+          "type": "PDF",
+          "size": "238.7 KB",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER) Ver.2.pdf"
+        },
+        {
+          "size": "3.2 MB",
+          "sizeBytes": 3362304,
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (AFTER).ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a (AFTER).zrd"
+        },
+        {
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.1.zrd",
+          "type": "ZRD",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.1.ZRD",
+          "sizeBytes": 4535296,
+          "size": "4.3 MB"
+        },
+        {
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.PDF",
+          "type": "PDF",
+          "size": "162.5 KB",
+          "sizeBytes": 166383,
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.pdf"
+        },
+        {
+          "size": "4.3 MB",
+          "relPath": "LAYOUT/LT26-FER001-07a (BEFORE) Ver.2.4.zrd",
+          "name": "LT26-FER001-07A (BEFORE) VER.2.4.ZRD",
+          "type": "ZRD",
+          "sizeBytes": 4535296
+        },
+        {
+          "type": "ZRD",
+          "name": "LT26-FER001-07A.ZRD",
+          "relPath": "LAYOUT/LT26-FER001-07a.zrd",
+          "size": "3.3 MB",
+          "sizeBytes": 3412992
+        }
+      ],
+      "name": "LAYOUT",
+      "hasCloudFiles": true,
+      "zipData": "",
+      "totalBytes": 104058806,
+      "fileCount": 26,
+      "totalSize": "99.2 MB"
+    },
+    "completionDate": "2026-07-01",
+    "categoryId": "cat_prj",
+    "editorPin": "20523",
+    "id": "achv_1788849662468",
+    "assignee": "JITTRAKAN K.",
+    "process": "LAYOUT",
+    "title": "LAYOUT FERRULE AFTER V.2.4",
+    "description": "จัดทำ LAYOUT แผนก FERRULE AFTER เวอร์ชั่น 2.4 ปรับปรุงตำแหน่งโต๊ะทำงานและเครื่องจักรเพื่อเพิ่มประสิทธิภาพการผลิต",
+    "pdfAttachment": null,
+    "creatorPin": "20523",
+    "status": "done",
+    "updatedAt": "2026-09-26T09:22:35.754Z",
+    "requestDate": "2026-07-01",
+    "lastEditedBy": "JITTRAKAN K.",
+    "code": "FERRULE PRODUCTION"
+  },
+  {
+    "workFolder": {
+      "zipData": "",
+      "path": "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\26-0602 - BATTERY MS7-12",
+      "totalBytes": 16383,
+      "fileCount": 1,
+      "hasCloudFiles": true,
+      "name": "26-0602 - BATTERY MS7-12",
+      "files": [
+        {
+          "name": "FORM REQUEST BATTERY MS7-12.XLSX",
+          "type": "XLSX",
+          "sizeBytes": 16383,
+          "size": "16 KB",
+          "relPath": "26-0602 - BATTERY MS7-12/FORM REQUEST BATTERY MS7-12.xlsx"
+        }
+      ],
+      "totalSize": "16 KB"
+    },
+    "status": "done",
+    "process": "REPLACEMENT PARTS",
+    "note": "ได้รับของและติดตั้งเรียบร้อยแล้ว",
+    "workFolder.name": "26-0602 - BATTERY MS7-12",
+    "createdAt": "2026-09-03T11:00:00.000Z",
+    "quotation": "26-0602",
+    "workFolder.totalSize": "16 KB",
+    "completionDate": "2026-09-15",
+    "title": "(PR) BATTERY LP12-8.0 12V 8.0A \"LEOCH\"",
+    "pdfAttachment": null,
+    "editorPin": "20523",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-09-30T01:27:16.191Z",
+    "department": "PRODUCTION TECHNOLOGY",
+    "creatorPin": "20523",
+    "requestDate": "2026-09-03",
+    "id": "achv_pr_3",
+    "lastEditedBy": "JITTRAKAN K.",
+    "code": "PRODUCTION TECHNOLOGY",
+    "workFolder.hasCloudFiles": true,
+    "imageData": null,
+    "description": "สั่งแบต UPS ใหม่สำหรับระบบสำรองไฟฝ่ายเทคโนโลยี",
+    "categoryId": "cat_pr",
+    "workFolder.fileCount": 1,
+    "factory": "FACTORY E",
+    "lastEditedRole": "ADMIN"
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "description": "MAKITA 766004-9 ดอกไขควงและสว่านกระแทกไร้สายสำหรับงานเทคโนโลยี",
+    "department": "PRODUCTION TECHNOLOGY",
+    "factory": "FACTORY E",
+    "requestDate": "2026-09-02",
+    "completionDate": "2026-10-05",
+    "workFolder.fileCount": 2,
+    "lastEditedBy": "JITTRAKAN K.",
+    "creatorPin": "20523",
+    "note": "CANCEL เนื่องจากสว่านไม่ใช้แล้ว",
+    "createdAt": "2026-09-02T10:00:00.000Z",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "quotation": "26-0508",
+    "categoryId": "cat_pr",
+    "pdfAttachment": null,
+    "workFolder": {
+      "name": "26-0508 - MAKITA PART NO 766004-9",
+      "hasCloudFiles": true,
+      "totalSize": "216.2 KB",
+      "zipData": "",
+      "fileCount": 2,
+      "totalBytes": 221397,
+      "files": [
+        {
+          "type": "XLSX",
+          "name": "FORM REQUEST MAKITA PART NO 766004-9.XLSX",
+          "sizeBytes": 16558,
+          "size": "16.2 KB",
+          "relPath": "26-0508 - MAKITA PART NO 766004-9/FORM REQUEST MAKITA PART NO 766004-9.xlsx"
+        },
+        {
+          "relPath": "26-0508 - MAKITA PART NO 766004-9/Orbray_20260807.MAKITA 766004-9.pdf",
+          "type": "PDF",
+          "name": "ORBRAY_20260807.MAKITA 766004-9.PDF",
+          "sizeBytes": 204839,
+          "size": "200 KB"
+        }
+      ],
+      "path": "D:\\jittrakan.katprasat\\OneDrive - Orbray (Thailand)\\ORBRAY 20523\\20523 JUNIOR\\QUOTATION\\26-0508 - MAKITA PART NO 766004-9"
+    },
+    "lastEditedRole": "ADMIN",
+    "updatedAt": "2026-10-05T02:55:23.971Z",
+    "status": "cancel",
+    "editorPin": "20523",
+    "code": "PRODUCTION TECHNOLOGY",
+    "id": "achv_pr_1",
+    "imageData": null,
+    "title": "(PR) MAKITA 766004-9 HP457 / HP482",
+    "workFolder.name": "26-0508 - MAKITA PART NO 766004-9",
+    "workFolder.totalSize": "216.2 KB",
+    "workFolder.hasCloudFiles": true,
+    "process": "REPLACEMENT PARTS"
+  },
+  {
+    "creatorPin": "20523",
+    "imageData": null,
+    "workFolder.fileCount": 2,
+    "requestDate": "2026-08-25",
+    "note": "ทำการขอใบเสนอราคาและสั่งของให้เรียบร้อยแล้ว จำนวน 1 PCS",
+    "categoryId": "cat_pr",
+    "description": "ร้องขอให้เสนอราคาแกนมูเล่ เพื่อนำมาทดแทนของเก่าที่ชำรุด รายละเอียดแบบภาพตามเอกสารแนบ",
+    "lastEditedBy": "JITTRAKAN K.",
+    "requestName": "TANONGSAK T.",
+    "updatedAt": "2026-09-18T06:02:21.766Z",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.hasCloudPdf": true,
+    "editorPin": "20523",
+    "lastEditedRole": "ADMIN",
+    "process": "BA",
+    "department": "FERRULE PRODUCTION",
+    "id": "achv_pr_2",
+    "status": "done",
+    "workFolder.name": "26-0585 - JIGIDA-007",
+    "createdAt": "2026-09-01T09:30:00.000Z",
+    "workFolder.totalSize": "5.8 MB",
+    "quotation": "26-0585",
+    "factory": "FACTORY A",
+    "completionDate": "",
+    "workFolder": {
+      "fileCount": 2,
+      "zipData": "",
+      "hasCloudFiles": true,
+      "path": "26-0585 - JIGIDA-007",
+      "totalBytes": 6056781,
+      "totalSize": "5.8 MB",
+      "name": "26-0585 - JIGIDA-007",
+      "note": "โฟลเดอร์ขนาดใหญ่ บันทึกไฟล์ใน IndexedDB เครื่องนี้",
+      "files": [
+        {
+          "size": "312.5 KB",
+          "sizeBytes": 319983,
+          "name": "093 BA JIG FOR FERRULE.PDF",
+          "relPath": "26-0585 - JIGIDA-007/093 BA Jig for Ferrule.pdf",
+          "type": "PDF"
+        },
+        {
+          "type": "PDF",
+          "name": "IDA-007 DRAWING.PDF",
+          "sizeBytes": 5736798,
+          "size": "5.5 MB",
+          "relPath": "26-0585 - JIGIDA-007/IDA-007 DRAWING.pdf"
+        }
+      ],
+      "isLargeFolder": true
+    },
+    "pdfAttachment.name": "FR-J26-076.PDF",
+    "workFolder.hasCloudFiles": true,
+    "pdfAttachment.size": 720679,
+    "title": "(PR) PURCHASE IDA-007 FROM DRAWING",
+    "code": "FR-J26-076",
+    "pdfAttachment": {
+      "isLargeFile": true,
+      "size": 720679,
+      "data": "",
+      "hasCloudPdf": true,
+      "type": "",
+      "note": "ไฟล์ขนาดใหญ่ บันทึกใน IndexedDB เครื่องนี้",
+      "name": "FR-J26-076.PDF"
+    }
+  },
+  {
+    "lastEditedBy": "JITTRAKAN K.",
+    "factory": "FACTORY C",
+    "workFolder": {
+      "zipData": "",
+      "totalBytes": 421317171,
+      "name": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR",
+      "fileCount": 107,
+      "hasCloudFiles": true,
+      "files": [
+        {
+          "size": "360 KB",
+          "sizeBytes": 368637,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "JIG-QC003A001-0.SLDASM"
+        },
+        {
+          "size": "195.9 KB",
+          "type": "SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003A002-0.SLDASM",
+          "sizeBytes": 200603,
+          "name": "JIG-QC003A002-0.SLDASM"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003A003-0.SLDASM",
+          "sizeBytes": 227365,
+          "size": "222 KB",
+          "name": "JIG-QC003A003-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "size": "243.2 KB",
+          "type": "SLDASM",
+          "name": "JIG-QC003A004-0.SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003A004-0.SLDASM",
+          "sizeBytes": 249038
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z001-0.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z001-0.SLDPRT",
+          "size": "296 KB",
+          "sizeBytes": 303070
+        },
+        {
+          "sizeBytes": 308460,
+          "size": "301.2 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z001-1.SLDPRT",
+          "name": "JIG-QC003Z001-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-QC003Z001-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 196798,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z001-2.SLDPRT",
+          "size": "192.2 KB"
+        },
+        {
+          "sizeBytes": 240952,
+          "size": "235.3 KB",
+          "name": "JIG-QC003Z002-0.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z002-1.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z002-1.SLDPRT",
+          "size": "238.5 KB",
+          "sizeBytes": 244238
+        },
+        {
+          "sizeBytes": 181313,
+          "size": "177.1 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z002-2.SLDPRT",
+          "name": "JIG-QC003Z002-2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z003-0.SLDPRT",
+          "name": "JIG-QC003Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 128016,
+          "size": "125 KB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z003-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z003-1.SLDPRT",
+          "sizeBytes": 127648,
+          "size": "124.7 KB"
+        },
+        {
+          "size": "124.7 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z003-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 127731,
+          "name": "JIG-QC003Z003-2.SLDPRT"
+        },
+        {
+          "name": "JIG-QC003Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z004-0.SLDPRT",
+          "size": "229.8 KB",
+          "sizeBytes": 235272
+        },
+        {
+          "size": "210.6 KB",
+          "name": "JIG-QC003Z005-0.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z005-0.SLDPRT",
+          "sizeBytes": 215684,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z006-0.SLDPRT",
+          "name": "JIG-QC003Z006-0.SLDPRT",
+          "sizeBytes": 201608,
+          "type": "SLDPRT",
+          "size": "196.9 KB"
+        },
+        {
+          "size": "193.6 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/JIG-QC003Z007-0.SLDPRT",
+          "name": "JIG-QC003Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 198282
+        },
+        {
+          "sizeBytes": 36352,
+          "size": "35.5 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        },
+        {
+          "sizeBytes": 11416,
+          "name": "JIG DESIGN LIST.XLSX",
+          "type": "XLSX",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/JIG DESIGN LIST.xlsx",
+          "size": "11.1 KB"
+        },
+        {
+          "size": "13.5 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 13824
+        },
+        {
+          "type": "PDF",
+          "name": "D400175-00.PDF",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 8 MM/D400175-00.pdf",
+          "size": "108.4 KB",
+          "sizeBytes": 111036
+        },
+        {
+          "size": "67.2 KB",
+          "sizeBytes": 68769,
+          "name": "D400175-00.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 8 MM/D400175-00.SLDPRT"
+        },
+        {
+          "sizeBytes": 5120,
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 8 MM/Thumbs.db",
+          "size": "5 KB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 7 MM/D072065-04.pdf",
+          "type": "PDF",
+          "name": "D072065-04.PDF",
+          "sizeBytes": 99494,
+          "size": "97.2 KB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 7 MM/D072065-04.SLDPRT",
+          "size": "67.6 KB",
+          "sizeBytes": 69200,
+          "type": "SLDPRT",
+          "name": "D072065-04.SLDPRT"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 7 MM/Thumbs.db",
+          "size": "5 KB",
+          "sizeBytes": 5120,
+          "type": "DB",
+          "name": "THUMBS.DB"
+        },
+        {
+          "size": "149.2 KB",
+          "name": "D068690-05.PDF",
+          "type": "PDF",
+          "sizeBytes": 152772,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/D068690-05.pdf"
+        },
+        {
+          "size": "80.4 KB",
+          "sizeBytes": 82323,
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/D068690-05.SLDPRT",
+          "name": "D068690-05.SLDPRT"
+        },
+        {
+          "size": "125.2 KB",
+          "sizeBytes": 128178,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/D400969-01.pdf",
+          "name": "D400969-01.PDF",
+          "type": "PDF"
+        },
+        {
+          "name": "D400969-01.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/D400969-01.SLDPRT",
+          "sizeBytes": 115246,
+          "type": "SLDPRT",
+          "size": "112.5 KB"
+        },
+        {
+          "type": "PDF",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/S069606-01.pdf",
+          "name": "S069606-01.PDF",
+          "sizeBytes": 142811,
+          "size": "139.5 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "S069606-01.SLDPRT",
+          "sizeBytes": 106705,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 18 MM/S069606-01.SLDPRT",
+          "size": "104.2 KB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 17.4 MM/D066773-05.pdf",
+          "size": "95.9 KB",
+          "sizeBytes": 98154,
+          "name": "D066773-05.PDF",
+          "type": "PDF"
+        },
+        {
+          "name": "D066773-05.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 106995,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 17.4 MM/D066773-05.SLDPRT",
+          "size": "104.5 KB"
+        },
+        {
+          "sizeBytes": 121577,
+          "type": "PDF",
+          "name": "D057178-09.PDF",
+          "size": "118.7 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 16 MM/D057178-09.pdf"
+        },
+        {
+          "size": "83.6 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 16 MM/D057178-09.SLDPRT",
+          "name": "D057178-09.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 85634
+        },
+        {
+          "sizeBytes": 125227,
+          "name": "D069675-02.PDF",
+          "type": "PDF",
+          "size": "122.3 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 16 MM/D069675-02.pdf"
+        },
+        {
+          "sizeBytes": 94124,
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 16 MM/D069675-02.SLDPRT",
+          "name": "D069675-02.SLDPRT",
+          "size": "91.9 KB"
+        },
+        {
+          "type": "PDF",
+          "name": "D038744-03.PDF",
+          "sizeBytes": 112376,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D038744-03.pdf",
+          "size": "109.7 KB"
+        },
+        {
+          "size": "102.7 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D038744-03.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 105164,
+          "name": "D038744-03.SLDPRT"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072054-00.pdf",
+          "size": "78.7 KB",
+          "sizeBytes": 80609,
+          "type": "PDF",
+          "name": "D072054-00.PDF"
+        },
+        {
+          "name": "D072054-00.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 96318,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072054-00.SLDPRT",
+          "size": "94.1 KB"
+        },
+        {
+          "sizeBytes": 112574,
+          "name": "D072082-01.PDF",
+          "type": "PDF",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072082-01.pdf",
+          "size": "109.9 KB"
+        },
+        {
+          "name": "D072082-01.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072082-01.SLDPRT",
+          "type": "SLDPRT",
+          "size": "70.4 KB",
+          "sizeBytes": 72078
+        },
+        {
+          "size": "99.7 KB",
+          "sizeBytes": 102070,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072291-00.pdf",
+          "type": "PDF",
+          "name": "D072291-00.PDF"
+        },
+        {
+          "size": "90.2 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/D072291-00.SLDPRT",
+          "name": "D072291-00.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 92407
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 12 MM/Thumbs.db",
+          "name": "THUMBS.DB",
+          "sizeBytes": 10240,
+          "type": "DB",
+          "size": "10 KB"
+        },
+        {
+          "sizeBytes": 79314,
+          "type": "PDF",
+          "name": "D057221-05.PDF",
+          "size": "77.5 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 10 MM/D057221-05.pdf"
+        },
+        {
+          "size": "84.8 KB",
+          "sizeBytes": 86862,
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 10 MM/D057221-05.SLDPRT",
+          "name": "D057221-05.SLDPRT"
+        },
+        {
+          "sizeBytes": 111510,
+          "size": "108.9 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 10 MM/D072230-00.pdf",
+          "type": "PDF",
+          "name": "D072230-00.PDF"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 10 MM/D072230-00.SLDPRT",
+          "size": "82.2 KB",
+          "name": "D072230-00.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 84153
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/MODEL FOR JIG FABRICATION/DIAMETER 10 MM/Thumbs.db",
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 5120,
+          "size": "5 KB"
+        },
+        {
+          "size": "10 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 10240
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 8/JIG-QC003A006-0.SLDASM",
+          "size": "135.2 KB",
+          "sizeBytes": 138396,
+          "name": "JIG-QC003A006-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "size": "173.9 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 8/JIG-QC003Z009-0.SLDPRT",
+          "sizeBytes": 178122,
+          "name": "JIG-QC003Z009-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-QC003Z009-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 8/JIG-QC003Z009-0.STL",
+          "type": "STL",
+          "sizeBytes": 19022884,
+          "size": "18.1 MB"
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 8/Thumbs.db",
+          "size": "11 KB",
+          "sizeBytes": 11264
+        },
+        {
+          "size": "134.9 KB",
+          "sizeBytes": 138100,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 7/JIG-QC003A005-0.SLDASM",
+          "type": "SLDASM",
+          "name": "JIG-QC003A005-0.SLDASM"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 7/JIG-QC003Z008-0.SLDPRT",
+          "sizeBytes": 179600,
+          "name": "JIG-QC003Z008-0.SLDPRT",
+          "size": "175.4 KB"
+        },
+        {
+          "sizeBytes": 80,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 7/JIG-QC003Z008-0.STL",
+          "type": "STL",
+          "name": "JIG-QC003Z008-0.STL",
+          "size": "80 B"
+        },
+        {
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 7/Thumbs.db",
+          "size": "14.5 KB",
+          "sizeBytes": 14848
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "name": "~$JIG-QC003A005-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 7/~$JIG-QC003A005-0.SLDASM"
+        },
+        {
+          "type": "SLDASM",
+          "name": "JIG-QC003A012-0.SLDASM",
+          "sizeBytes": 270399,
+          "size": "264.1 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/JIG-QC003A012-0.SLDASM"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/JIG-QC003Z016-0.SLDPRT",
+          "size": "178 KB",
+          "sizeBytes": 182260,
+          "name": "JIG-QC003Z016-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 19463784,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/JIG-QC003Z016-0.STL",
+          "name": "JIG-QC003Z016-0.STL",
+          "type": "STL",
+          "size": "18.6 MB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/JIG-QC003Z017-0.SLDPRT",
+          "sizeBytes": 199462,
+          "size": "194.8 KB",
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z017-0.SLDPRT"
+        },
+        {
+          "size": "18.6 MB",
+          "type": "STL",
+          "name": "JIG-QC003Z017-0.STL",
+          "sizeBytes": 19463984,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/JIG-QC003Z017-0.STL"
+        },
+        {
+          "size": "15.5 KB",
+          "sizeBytes": 15872,
+          "type": "DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 18/Thumbs.db",
+          "name": "THUMBS.DB"
+        },
+        {
+          "name": "JIG-QC003A011-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 176299,
+          "size": "172.2 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/JIG-QC003A011-0.SLDASM"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/JIG-QC003Z015-0.SLDPRT",
+          "name": "JIG-QC003Z015-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 200161,
+          "size": "195.5 KB"
+        },
+        {
+          "sizeBytes": 19380984,
+          "size": "18.5 MB",
+          "name": "JIG-QC003Z015-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/JIG-QC003Z015-0.STL",
+          "type": "STL"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/JIG-QC003Z015-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z015-1.SLDPRT",
+          "sizeBytes": 198066,
+          "size": "193.4 KB"
+        },
+        {
+          "size": "18.5 MB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/JIG-QC003Z015-1.STL",
+          "type": "STL",
+          "sizeBytes": 19406484,
+          "name": "JIG-QC003Z015-1.STL"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 17.4/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 22528,
+          "size": "22 KB"
+        },
+        {
+          "type": "SLDASM",
+          "name": "JIG-QC003A010-0.SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 16 LONG/JIG-QC003A010-0.SLDASM",
+          "sizeBytes": 163663,
+          "size": "159.8 KB"
+        },
+        {
+          "size": "172.2 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 16 LONG/JIG-QC003Z014-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z014-0.SLDPRT",
+          "sizeBytes": 176334
+        },
+        {
+          "size": "18.2 MB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 16 LONG/JIG-QC003Z014-0.STL",
+          "sizeBytes": 19098784,
+          "name": "JIG-QC003Z014-0.STL",
+          "type": "STL"
+        },
+        {
+          "size": "11 KB",
+          "sizeBytes": 11264,
+          "name": "THUMBS.DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 16 LONG/Thumbs.db",
+          "type": "DB"
+        },
+        {
+          "type": "SLDASM",
+          "sizeBytes": 277079,
+          "name": "JIG-QC003A009-0.SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003A009-0.SLDASM",
+          "size": "270.6 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z012-0.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003Z012-0.SLDPRT",
+          "sizeBytes": 79946,
+          "size": "78.1 KB"
+        },
+        {
+          "type": "STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003Z012-0.STL",
+          "name": "JIG-QC003Z012-0.STL",
+          "sizeBytes": 18576084,
+          "size": "17.7 MB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-QC003Z012-1.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003Z012-1.SLDPRT",
+          "size": "166.9 KB",
+          "sizeBytes": 170936
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 190188,
+          "name": "JIG-QC003Z013-0.SLDPRT",
+          "size": "185.7 KB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003Z013-0.SLDPRT"
+        },
+        {
+          "size": "17.1 MB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/JIG-QC003Z013-0.STL",
+          "name": "JIG-QC003Z013-0.STL",
+          "sizeBytes": 17900384,
+          "type": "STL"
+        },
+        {
+          "name": "THUMBS.DB",
+          "sizeBytes": 10752,
+          "type": "DB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/Thumbs.db",
+          "size": "10.5 KB"
+        },
+        {
+          "sizeBytes": 20,
+          "size": "20 B",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 12/~$JIG-QC003Z012-0.SLDPRT",
+          "name": "~$JIG-QC003Z012-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "121.7 KB",
+          "sizeBytes": 124606,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10 LONG/JIG-QC003A008-0.SLDASM",
+          "type": "SLDASM",
+          "name": "JIG-QC003A008-0.SLDASM"
+        },
+        {
+          "name": "JIG-QC003Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10 LONG/JIG-QC003Z011-0.SLDPRT",
+          "sizeBytes": 165107,
+          "size": "161.2 KB"
+        },
+        {
+          "name": "JIG-QC003Z011-0.STL",
+          "type": "STL",
+          "sizeBytes": 17683884,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10 LONG/JIG-QC003Z011-0.STL",
+          "size": "16.9 MB"
+        },
+        {
+          "size": "14 KB",
+          "sizeBytes": 14336,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10 LONG/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        },
+        {
+          "size": "152 KB",
+          "type": "SLDASM",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10/JIG-QC003A007-0.SLDASM",
+          "name": "JIG-QC003A007-0.SLDASM",
+          "sizeBytes": 155609
+        },
+        {
+          "sizeBytes": 181143,
+          "size": "176.9 KB",
+          "name": "JIG-QC003Z010-0.SLDPRT",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10/JIG-QC003Z010-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-QC003Z010-0.STL",
+          "type": "STL",
+          "sizeBytes": 19754284,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10/JIG-QC003Z010-0.STL",
+          "size": "18.8 MB"
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "size": "10.5 KB",
+          "sizeBytes": 10752,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/DIAMETER 10/Thumbs.db"
+        },
+        {
+          "type": "STL",
+          "name": "JIG-QC003Z012-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/09-SEP-2026/JIG-QC003Z012-0.STL",
+          "size": "504.4 KB",
+          "sizeBytes": 516484
+        },
+        {
+          "size": "15 MB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/09-SEP-2026/JIG-QC003Z012-1.STL",
+          "name": "JIG-QC003Z012-1.STL",
+          "type": "STL",
+          "sizeBytes": 15695384
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/08-SEP-2026/JIG-QC003Z012-0.STL",
+          "sizeBytes": 18610884,
+          "size": "17.7 MB",
+          "name": "JIG-QC003Z012-0.STL",
+          "type": "STL"
+        },
+        {
+          "type": "STL",
+          "name": "JIG-QC003Z015-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/08-SEP-2026/JIG-QC003Z015-0.STL",
+          "size": "18.5 MB",
+          "sizeBytes": 19397284
+        },
+        {
+          "size": "18.5 MB",
+          "sizeBytes": 19406484,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/08-SEP-2026/JIG-QC003Z015-1.STL",
+          "name": "JIG-QC003Z015-1.STL",
+          "type": "STL"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z008-0.STL",
+          "name": "JIG-QC003Z008-0.STL",
+          "type": "STL",
+          "sizeBytes": 18622984,
+          "size": "17.8 MB"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z011-0.STL",
+          "size": "16.9 MB",
+          "sizeBytes": 17716584,
+          "type": "STL",
+          "name": "JIG-QC003Z011-0.STL"
+        },
+        {
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z012-0.STL",
+          "sizeBytes": 18603984,
+          "type": "STL",
+          "name": "JIG-QC003Z012-0.STL",
+          "size": "17.7 MB"
+        },
+        {
+          "name": "JIG-QC003Z013-0.STL",
+          "type": "STL",
+          "sizeBytes": 17925284,
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z013-0.STL",
+          "size": "17.1 MB"
+        },
+        {
+          "name": "JIG-QC003Z014-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z014-0.STL",
+          "sizeBytes": 16380884,
+          "type": "STL",
+          "size": "15.6 MB"
+        },
+        {
+          "sizeBytes": 19388184,
+          "size": "18.5 MB",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z015-0.STL",
+          "type": "STL",
+          "name": "JIG-QC003Z015-0.STL"
+        },
+        {
+          "sizeBytes": 19474084,
+          "size": "18.6 MB",
+          "type": "STL",
+          "name": "JIG-QC003Z016-0.STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z016-0.STL"
+        },
+        {
+          "name": "JIG-QC003Z017-0.STL",
+          "type": "STL",
+          "relPath": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR/3D MODEL/07-SEP-2026/JIG-QC003Z017-0.STL",
+          "sizeBytes": 19474084,
+          "size": "18.6 MB"
+        }
+      ],
+      "totalSize": "401.8 MB"
+    },
+    "pdfAttachment.hasCloudPdf": true,
+    "status": "done",
+    "quotation": "",
+    "createdAt": "2026-08-28T08:00:00.000Z",
+    "code": "OTH-J26-011",
+    "pdfAttachment.size": 691831,
+    "workFolder.fileCount": 107,
+    "lastEditedRole": "ADMIN",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment.name": "OTH-J26-011.PDF",
+    "workFolder.name": "JIG-QC003 CLAMP STAND DIGIMATIC INDICATOR",
+    "id": "achv_jig_1",
+    "workFolder.hasCloudFiles": true,
+    "requestName": "PIYATHIDA B.",
+    "imageData": null,
+    "title": "JIG-QC003 CLAMP STAND DIGIMATIC",
+    "note": "ออกแบบและจัดทำ JIG สำหรับใช้เป็นฐานรองรับการวางมอเตอร์ โดยรองรับการวัดด้วยเครื่อง DIGIMATIC INDICATOR จำนวน 1 PCS สำเร็จ",
+    "department": "QUALITY",
+    "requestDate": "2026-07-02",
+    "process": "SHIPPING INSPECTION",
+    "creatorPin": "20523",
+    "completionDate": "2026-09-10",
+    "updatedAt": "2026-09-30T01:27:18.854Z",
+    "categoryId": "cat_jig",
+    "pdfAttachment": {
+      "isLargeFile": true,
+      "size": 691831,
+      "data": "",
+      "note": "ไฟล์ขนาดใหญ่ บันทึกใน IndexedDB เครื่องนี้",
+      "name": "OTH-J26-011.PDF",
+      "type": "",
+      "hasCloudPdf": true
+    },
+    "description": "ออกแบบและจัดทำ JIG สำหรับใช้เป็นฐานรองรับการวางมอเตอร์ โดยรองรับการวัดด้วยเครื่อง DIGIMATIC INDICATOR เพื่อเพิ่มความถูกต้องและน่าเชื่อถือของผลการวัด ลดความคลาดเคลื่อนจากผู้ปฏิบัติงานและเพิ่มประสิทธิภาพ",
+    "editorPin": "20523",
+    "workFolder.totalSize": "401.8 MB"
+  },
+  {
+    "imageData": null,
+    "lastEditedRole": "ADMIN",
+    "note": "ทำการวัดและออกแบบจัดทำ JIG สำหรับรุ่น DPG12-509-01 สำหรับขั้นตอน FLANG GLUING และ BEARING INSERTING เพื่อให้พนักงานทำงานได้สะดวก รวดเร็ว เพิ่มความแม่นยำในการหยอดกาว และลดระยะเวลาการผลิตโดยรวมลง โดยชิ้นงานมีขนาด DIAMETER = 12MM จำนวน 1 เครื่อง สำเร็จ",
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestName": "SUPANAT S.",
+    "assignee": "JITTRAKAN K.",
+    "description": "ร้องขอฝ่ายเทคโนโลยีวัดและออกแบบจัดทำ JIG สำหรับรุ่น DPG12-509-01 สำหรับขั้นตอน FLANG GLUING และ BEARING INSERTING เพื่อให้พนักงานทำงานได้สะดวก รวดเร็ว เพิ่มความแม่นยำในการหยอดกาว และลดระยะเวลาการผลิตโดยรวมลง โดยชิ้นงานมีขนาด DIAMETER = 12MM.",
+    "process": "GEAR PROCESS",
+    "creatorPin": "20523",
+    "updatedAt": "2026-09-30T01:27:21.283Z",
+    "requestDate": "2025-09-12",
+    "editorPin": "20523",
+    "lastEditedBy": "JITTRAKAN K.",
+    "workFolder.totalSize": "15.5 MB",
+    "categoryId": "cat_jig",
+    "workFolder.hasCloudFiles": true,
+    "title": "JIG-MOT074 DROP GLUING",
+    "id": "achv_jig_2",
+    "workFolder": {
+      "path": "JIG-MOT074 DROP GLUING",
+      "name": "JIG-MOT074 DROP GLUING",
+      "hasCloudFiles": true,
+      "totalBytes": 16287467,
+      "totalSize": "15.5 MB",
+      "files": [
+        {
+          "name": "030-4E1-83-PSL.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/030-4E1-83-PSL.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 195971,
+          "size": "191.4 KB"
+        },
+        {
+          "sizeBytes": 24445,
+          "type": "SLDASM",
+          "name": "ES-SSEB13-95.SLDASM",
+          "relPath": "JIG-MOT074 DROP GLUING/ES-SSEB13-95.sldasm",
+          "size": "23.9 KB"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/FAKE GLUE ASSY.SLDASM",
+          "sizeBytes": 58672,
+          "type": "SLDASM",
+          "name": "FAKE GLUE ASSY.SLDASM",
+          "size": "57.3 KB"
+        },
+        {
+          "size": "90 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/FAKE GLUE.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 92142,
+          "name": "FAKE GLUE.SLDPRT"
+        },
+        {
+          "size": "1.2 MB",
+          "sizeBytes": 1220785,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074A001-0.SLDASM",
+          "name": "JIG-MOT074A001-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "type": "PDF",
+          "sizeBytes": 311425,
+          "name": "JIG-MOT074A001-1 (NO 3D).PDF",
+          "size": "304.1 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074A001-1 (NO 3D).PDF"
+        },
+        {
+          "sizeBytes": 548713,
+          "size": "535.9 KB",
+          "type": "PDF",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074A001-1.PDF",
+          "name": "JIG-MOT074A001-1.PDF"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074A001-1.SLDASM",
+          "sizeBytes": 1345457,
+          "type": "SLDASM",
+          "name": "JIG-MOT074A001-1.SLDASM",
+          "size": "1.3 MB"
+        },
+        {
+          "size": "232.9 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074W001-0.SLDASM",
+          "name": "JIG-MOT074W001-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 238520
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074W001-1.SLDASM",
+          "name": "JIG-MOT074W001-1.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 218263,
+          "size": "213.1 KB"
+        },
+        {
+          "type": "SLDASM",
+          "name": "JIG-MOT074W002-0.SLDASM",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074W002-0.SLDASM",
+          "size": "208.8 KB",
+          "sizeBytes": 213795
+        },
+        {
+          "type": "SLDASM",
+          "name": "JIG-MOT074W002-1.SLDASM",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074W002-1.SLDASM",
+          "size": "207.8 KB",
+          "sizeBytes": 212786
+        },
+        {
+          "sizeBytes": 93594,
+          "size": "91.4 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074W003-1.SLDASM",
+          "type": "SLDASM",
+          "name": "JIG-MOT074W003-1.SLDASM"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z001-0.SLDPRT",
+          "size": "47.7 KB",
+          "sizeBytes": 48824,
+          "name": "JIG-MOT074Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z001-1.SLDPRT",
+          "name": "JIG-MOT074Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "47.7 KB",
+          "sizeBytes": 48824
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z002-0.SLDPRT",
+          "size": "173.4 KB",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z002-0.SLDPRT",
+          "sizeBytes": 177600
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z002-1.SLDPRT",
+          "sizeBytes": 175598,
+          "size": "171.5 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z002-1.SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z003-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "92.2 KB",
+          "sizeBytes": 94443
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z003-1.SLDPRT",
+          "name": "JIG-MOT074Z003-1.SLDPRT",
+          "size": "92.2 KB",
+          "sizeBytes": 94443
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z004-0.SLDPRT",
+          "size": "84.4 KB",
+          "sizeBytes": 86407,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z004-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z004-1.SLDPRT",
+          "sizeBytes": 86407,
+          "name": "JIG-MOT074Z004-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "84.4 KB"
+        },
+        {
+          "sizeBytes": 77779,
+          "size": "76 KB",
+          "name": "JIG-MOT074Z005-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z005-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z005-1.SLDPRT",
+          "size": "76 KB",
+          "sizeBytes": 77779,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z005-1.SLDPRT"
+        },
+        {
+          "size": "98.2 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 100511,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z006-0.SLDPRT",
+          "name": "JIG-MOT074Z006-0.SLDPRT"
+        },
+        {
+          "size": "98.2 KB",
+          "sizeBytes": 100511,
+          "name": "JIG-MOT074Z006-1.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z006-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z007-0.SLDPRT",
+          "size": "102.7 KB",
+          "sizeBytes": 105131,
+          "name": "JIG-MOT074Z007-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z007-1.SLDPRT",
+          "sizeBytes": 105131,
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z007-1.SLDPRT",
+          "size": "102.7 KB"
+        },
+        {
+          "sizeBytes": 38643,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z008-0.SLDPRT",
+          "size": "37.7 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z008-0.SLDPRT"
+        },
+        {
+          "size": "37.7 KB",
+          "sizeBytes": 38643,
+          "name": "JIG-MOT074Z008-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z008-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 89407,
+          "name": "JIG-MOT074Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "87.3 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z009-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z009-1.SLDPRT",
+          "sizeBytes": 89407,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z009-1.SLDPRT",
+          "size": "87.3 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z010-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z010-0.SLDPRT",
+          "size": "148.8 KB",
+          "sizeBytes": 152345
+        },
+        {
+          "sizeBytes": 152345,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z010-1.SLDPRT",
+          "size": "148.8 KB",
+          "name": "JIG-MOT074Z010-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "133.2 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z011-0.SLDPRT",
+          "name": "JIG-MOT074Z011-0.SLDPRT",
+          "sizeBytes": 136357,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z011-1.SLDPRT",
+          "sizeBytes": 136357,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z011-1.SLDPRT",
+          "size": "133.2 KB"
+        },
+        {
+          "size": "89.6 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z012-0.SLDPRT",
+          "name": "JIG-MOT074Z012-0.SLDPRT",
+          "sizeBytes": 91710,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "PDF",
+          "name": "JIG-MOT074Z012-1.PDF",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z012-1.PDF",
+          "size": "124.6 KB",
+          "sizeBytes": 127543
+        },
+        {
+          "sizeBytes": 255450,
+          "type": "SLDDRW",
+          "name": "JIG-MOT074Z012-1.SLDDRW",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z012-1.SLDDRW",
+          "size": "249.5 KB"
+        },
+        {
+          "name": "JIG-MOT074Z012-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z012-1.SLDPRT",
+          "sizeBytes": 93877,
+          "size": "91.7 KB"
+        },
+        {
+          "size": "81.8 KB",
+          "sizeBytes": 83784,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z012-1.STL",
+          "type": "STL",
+          "name": "JIG-MOT074Z012-1.STL"
+        },
+        {
+          "size": "94.5 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z013-0.SLDPRT",
+          "sizeBytes": 96735,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z013-0.SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z013-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z013-1.SLDPRT",
+          "sizeBytes": 96735,
+          "size": "94.5 KB"
+        },
+        {
+          "sizeBytes": 65895,
+          "name": "JIG-MOT074Z014-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z014-0.SLDPRT",
+          "size": "64.4 KB"
+        },
+        {
+          "name": "JIG-MOT074Z014-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 65889,
+          "size": "64.3 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z014-1.SLDPRT"
+        },
+        {
+          "size": "114.4 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 117114,
+          "name": "JIG-MOT074Z015-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z015-0.SLDPRT"
+        },
+        {
+          "size": "114.4 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z015-1.SLDPRT",
+          "name": "JIG-MOT074Z015-1.SLDPRT",
+          "sizeBytes": 117114,
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z016-0.SLDPRT",
+          "sizeBytes": 151963,
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z016-0.SLDPRT",
+          "size": "148.4 KB"
+        },
+        {
+          "sizeBytes": 168139,
+          "size": "164.2 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z016-1.SLDPRT",
+          "name": "JIG-MOT074Z016-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z017-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z017-0.SLDPRT",
+          "size": "61.5 KB",
+          "sizeBytes": 63009
+        },
+        {
+          "size": "53.8 KB",
+          "sizeBytes": 55052,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z017-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z017-1.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z018-0.SLDPRT",
+          "sizeBytes": 130377,
+          "size": "127.3 KB",
+          "name": "JIG-MOT074Z018-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z018-1.SLDPRT",
+          "sizeBytes": 130377,
+          "size": "127.3 KB",
+          "name": "JIG-MOT074Z018-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z019-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 99716,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z019-0.SLDPRT",
+          "size": "97.4 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z019-1.SLDPRT",
+          "sizeBytes": 99716,
+          "size": "97.4 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z019-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 141816,
+          "size": "138.5 KB",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z020-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z020-0.SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z020-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 141816,
+          "size": "138.5 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z020-1.SLDPRT"
+        },
+        {
+          "size": "68 KB",
+          "sizeBytes": 69609,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z021-0.SLDPRT",
+          "name": "JIG-MOT074Z021-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z021-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z021-1.SLDPRT",
+          "size": "68 KB",
+          "sizeBytes": 69609
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z022-0.SLDPRT",
+          "size": "144.8 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 148276,
+          "name": "JIG-MOT074Z022-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z022-1.SLDPRT",
+          "size": "144.8 KB",
+          "name": "JIG-MOT074Z022-1.SLDPRT",
+          "sizeBytes": 148276,
+          "type": "SLDPRT"
+        },
+        {
+          "size": "50.6 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z023-0.SLDPRT",
+          "name": "JIG-MOT074Z023-0.SLDPRT",
+          "sizeBytes": 51771,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z023-1.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z023-1.SLDPRT",
+          "size": "50.6 KB",
+          "sizeBytes": 51771
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z024-0.SLDPRT",
+          "name": "JIG-MOT074Z024-0.SLDPRT",
+          "sizeBytes": 86393,
+          "size": "84.4 KB"
+        },
+        {
+          "size": "84.4 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z024-1.SLDPRT",
+          "name": "JIG-MOT074Z024-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 86393
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z025-0.SLDPRT",
+          "sizeBytes": 57286,
+          "size": "55.9 KB",
+          "name": "JIG-MOT074Z025-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z025-1.SLDPRT",
+          "size": "55.9 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z025-1.SLDPRT",
+          "sizeBytes": 57286
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z026-0.SLDPRT",
+          "name": "JIG-MOT074Z026-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 37559,
+          "size": "36.7 KB"
+        },
+        {
+          "name": "JIG-MOT074Z026-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "36.7 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z026-1.SLDPRT",
+          "sizeBytes": 37559
+        },
+        {
+          "sizeBytes": 78126,
+          "size": "76.3 KB",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z027-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z027-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z027-1.SLDPRT",
+          "size": "76.3 KB",
+          "sizeBytes": 78126,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z027-1.SLDPRT"
+        },
+        {
+          "size": "54.9 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z028-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 56216,
+          "name": "JIG-MOT074Z028-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z028-1.SLDPRT",
+          "name": "JIG-MOT074Z028-1.SLDPRT",
+          "sizeBytes": 56216,
+          "type": "SLDPRT",
+          "size": "54.9 KB"
+        },
+        {
+          "size": "73.6 KB",
+          "sizeBytes": 75382,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z029-0.SLDPRT",
+          "name": "JIG-MOT074Z029-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z029-1.SLDPRT",
+          "size": "73.6 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 75382,
+          "name": "JIG-MOT074Z029-1.SLDPRT"
+        },
+        {
+          "size": "234.5 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z030-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z030-0.SLDPRT",
+          "sizeBytes": 240096
+        },
+        {
+          "name": "JIG-MOT074Z030-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z030-1.SLDPRT",
+          "sizeBytes": 240096,
+          "size": "234.5 KB"
+        },
+        {
+          "sizeBytes": 258662,
+          "name": "JIG-MOT074Z031-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "252.6 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z031-0.SLDPRT"
+        },
+        {
+          "size": "252.6 KB",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z031-1.SLDPRT",
+          "name": "JIG-MOT074Z031-1.SLDPRT",
+          "sizeBytes": 258662
+        },
+        {
+          "size": "88 KB",
+          "sizeBytes": 90149,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z032-0.SLDPRT",
+          "name": "JIG-MOT074Z032-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z032-1.SLDPRT",
+          "name": "JIG-MOT074Z032-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 90149,
+          "size": "88 KB"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z033-0.SLDPRT",
+          "size": "217.7 KB",
+          "sizeBytes": 222892,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z033-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z033-1.SLDPRT",
+          "sizeBytes": 222892,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z033-1.SLDPRT",
+          "size": "217.7 KB"
+        },
+        {
+          "sizeBytes": 104961,
+          "name": "JIG-MOT074Z034-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z034-0.SLDPRT",
+          "size": "102.5 KB"
+        },
+        {
+          "sizeBytes": 104961,
+          "size": "102.5 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z034-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z034-1.SLDPRT"
+        },
+        {
+          "size": "78.9 KB",
+          "sizeBytes": 80749,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z035-0.SLDPRT",
+          "name": "JIG-MOT074Z035-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "JIG-MOT074Z035-1.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z035-1.SLDPRT",
+          "sizeBytes": 80749,
+          "type": "SLDPRT",
+          "size": "78.9 KB"
+        },
+        {
+          "name": "JIG-MOT074Z036-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z036-0.SLDPRT",
+          "size": "71.9 KB",
+          "sizeBytes": 73626
+        },
+        {
+          "sizeBytes": 73626,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z036-1.SLDPRT",
+          "size": "71.9 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z036-1.SLDPRT"
+        },
+        {
+          "size": "211.5 KB",
+          "sizeBytes": 216613,
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z037-0.SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z037-0.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z037-0.STL",
+          "name": "JIG-MOT074Z037-0.STL",
+          "type": "STL",
+          "sizeBytes": 152884,
+          "size": "149.3 KB"
+        },
+        {
+          "size": "123.3 KB",
+          "sizeBytes": 126298,
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z038-1.PDF",
+          "name": "JIG-MOT074Z038-1.PDF",
+          "type": "PDF"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z038-1.SLDDRW",
+          "type": "SLDDRW",
+          "name": "JIG-MOT074Z038-1.SLDDRW",
+          "size": "241.5 KB",
+          "sizeBytes": 247334
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z038-1.SLDPRT",
+          "size": "121.3 KB",
+          "name": "JIG-MOT074Z038-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 124253
+        },
+        {
+          "sizeBytes": 124073,
+          "size": "121.2 KB",
+          "name": "JIG-MOT074Z039-1.PDF",
+          "type": "PDF",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z039-1.PDF"
+        },
+        {
+          "sizeBytes": 249527,
+          "size": "243.7 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z039-1.SLDDRW",
+          "name": "JIG-MOT074Z039-1.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "JIG-MOT074Z039-1.SLDPRT",
+          "sizeBytes": 105086,
+          "size": "102.6 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z039-1.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/JIG-MOT074Z040-1.SLDPRT",
+          "name": "JIG-MOT074Z040-1.SLDPRT",
+          "sizeBytes": 80928,
+          "size": "79 KB"
+        },
+        {
+          "size": "396 KB",
+          "sizeBytes": 405515,
+          "relPath": "JIG-MOT074 DROP GLUING/MINI GEAR.SLDPRT",
+          "type": "SLDPRT",
+          "name": "MINI GEAR.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/Mounting.SLDPRT",
+          "sizeBytes": 240096,
+          "size": "234.5 KB",
+          "type": "SLDPRT",
+          "name": "MOUNTING.SLDPRT"
+        },
+        {
+          "size": "22.4 KB",
+          "type": "XLSX",
+          "name": "MPP4-01.XLSX",
+          "sizeBytes": 22981,
+          "relPath": "JIG-MOT074 DROP GLUING/MPP4-01.xlsx"
+        },
+        {
+          "name": "PKP243D23A2.SLDPRT",
+          "sizeBytes": 173594,
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/PKP243D23A2.sldprt",
+          "size": "169.5 KB"
+        },
+        {
+          "name": "RING BLACK.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 57593,
+          "size": "56.2 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/RING BLACK.SLDPRT"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/SSEB13-95_r.sldprt",
+          "type": "SLDPRT",
+          "name": "SSEB13-95_R.SLDPRT",
+          "sizeBytes": 114392,
+          "size": "111.7 KB"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/SSEB13_b.sldprt",
+          "size": "300.8 KB",
+          "type": "SLDPRT",
+          "name": "SSEB13_B.SLDPRT",
+          "sizeBytes": 308006
+        },
+        {
+          "size": "482 KB",
+          "relPath": "JIG-MOT074 DROP GLUING/Thumbs.db",
+          "name": "THUMBS.DB",
+          "sizeBytes": 493568,
+          "type": "DB"
+        },
+        {
+          "relPath": "JIG-MOT074 DROP GLUING/V-15-1A5.SLDPRT",
+          "sizeBytes": 199893,
+          "size": "195.2 KB",
+          "name": "V-15-1A5.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "JIG-MOT074 DROP GLUING/~$JIG-MOT074Z038-1.SLDPRT",
+          "name": "~$JIG-MOT074Z038-1.SLDPRT",
+          "sizeBytes": 20,
+          "size": "20 B"
+        },
+        {
+          "size": "20 B",
+          "type": "SLDPRT",
+          "sizeBytes": 20,
+          "relPath": "JIG-MOT074 DROP GLUING/~$SSEB-90-3C095607 +1.0.SLDPRT",
+          "name": "~$SSEB-90-3C095607 +1.0.SLDPRT"
+        }
+      ],
+      "fileCount": 108,
+      "zipData": ""
+    },
+    "factory": "FACTORY E",
+    "workFolder.name": "JIG-MOT074 DROP GLUING",
+    "quotation": "26-0121",
+    "createdAt": "2026-08-25T13:30:00.000Z",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "name": "PT-25-187.PDF",
+      "size": 2958885
+    },
+    "completionDate": "2026-09-09",
+    "status": "done",
+    "workFolder.fileCount": 108,
+    "pdfAttachment.name": "PT-25-187.PDF",
+    "code": "PT-25-187",
+    "pdfAttachment.size": 2958885
+  },
+  {
+    "assignee": "JITTRAKAN K.",
+    "note": "จะทำการดำเนินการถ้ามีเวลาว่าง",
+    "updatedAt": "2026-09-11T07:38:00.886Z",
+    "factory": "FACTORY E",
+    "requestName": "JITTAKARN P.",
+    "status": "in_progress",
+    "workFolder": null,
+    "completionDate": "",
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment.hasCloudPdf": true,
+    "requestDate": "2026-02-24",
+    "pdfAttachment.size": 807872,
+    "title": "JIG-MOT075 REMOVE GLUING",
+    "imageData": null,
+    "process": "REWORK",
+    "description": "ร้องขอทางเทคโนโลยีช่วยออกแบบ JIG สำหรับเช็คกาว (REVIEW ST IMPROVEMENT PROJECT) ลดเวลาขั้นตอนแคะเสษกาวด้านบน END FLANGE เนื่องจากกาวมีความหนึด พนักงานต้องใช้ก้าน SWAB เช็คเข็มกาว",
+    "code": "GM-J26-024",
+    "categoryId": "cat_prj",
+    "pdfAttachment.name": "GM-J26-024.PDF",
+    "id": "achv_jig_3",
+    "quotation": "",
+    "createdAt": "2026-08-22T14:45:00.000Z",
+    "pdfAttachment": {
+      "size": 807872,
+      "name": "GM-J26-024.PDF",
+      "hasCloudPdf": true,
+      "data": ""
+    }
+  },
+  {
+    "subStatus": "02 Concept Design",
+    "requestName": "JITTRAKAN K.",
+    "status": "in_progress",
+    "lastEditedBy": "JITTRAKAN K.",
+    "toolingTeam1": "",
+    "creatorPin": "20523",
+    "supportBy": "",
+    "quotation": "",
+    "categoryId": "cat_prj",
+    "createdAt": "2026-08-20T10:15:00.000Z",
+    "maintenanceSupport3": "",
+    "subJobType": "01 In-house",
+    "requestDate": "2026-05-05",
+    "code": "PRODUCTION TECHNOLOGY",
+    "designSupport1": "",
+    "process": "5S",
+    "department": "PRODUCTION TECHNOLOGY",
+    "description": "กล่องเป่าลมความดันสูงสำหรับทำความสะอาดชิ้นงานก่อนเข้าสู่กระบวนการประกอบขั้นสุดท้าย",
+    "maintenanceSupport5": "",
+    "lastEditedRole": "ADMIN",
+    "toolingTeam": "",
+    "maintenanceSupport1": "",
+    "maintenanceSupport4": "",
+    "jobType": "D",
+    "factory": "FACTORY E",
+    "imageData": null,
+    "maintenanceSupport": "",
+    "designTeam": "",
+    "assignee": "JITTRAKAN K.",
+    "note": "กำลังออกแบบโครงสร้างระบบวาล์วควบคุมลม",
+    "achievement": 0.2,
+    "maintenanceSupport2": "",
+    "designSupport": "",
+    "toolingTeam2": "",
+    "title": "PTN007 BLOWER BOX",
+    "updatedAt": "2026-10-12T09:09:36.727Z",
+    "workFolder": null,
+    "designSupport2": "",
+    "pdfAttachment": null,
+    "completionDate": "",
+    "id": "achv_prj_1",
+    "editorPin": "20523",
+    "priority": "Medium"
+  },
+  {
+    "lastEditedBy": "JITTRAKAN K.",
+    "workFolder": {
+      "zipData": "",
+      "totalSize": "242.9 MB",
+      "files": [
+        {
+          "name": "030-4E1-83-PSL.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 484617,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/030-4E1-83-PSL.SLDASM",
+          "size": "473.3 KB"
+        },
+        {
+          "sizeBytes": 624087,
+          "type": "STEP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/030-4E1-83-PSL.STEP",
+          "name": "030-4E1-83-PSL.STEP",
+          "size": "609.5 KB"
+        },
+        {
+          "name": "3D PLC SKILL DEVELOPMENT REV.1.PDF",
+          "sizeBytes": 181135,
+          "type": "PDF",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/3D PLC SKILL DEVELOPMENT REV.1.pdf",
+          "size": "176.9 KB"
+        },
+        {
+          "size": "702 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ABW110-G.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 718812,
+          "name": "ABW110-G.SLDASM"
+        },
+        {
+          "type": "SLDASM",
+          "name": "ABW110-R.SLDASM",
+          "size": "703.4 KB",
+          "sizeBytes": 720288,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ABW110-R.SLDASM"
+        },
+        {
+          "size": "1013.2 KB",
+          "type": "STEP",
+          "sizeBytes": 1037555,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ABW110G.STEP",
+          "name": "ABW110G.STEP"
+        },
+        {
+          "sizeBytes": 2453792,
+          "type": "STEP",
+          "name": "AD16-22DS PILOT LIGHT.STEP",
+          "size": "2.3 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/AD16-22DS Pilot Light.STEP"
+        },
+        {
+          "size": "270.6 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ALUMINIUM PROFILE 1 (140mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "ALUMINIUM PROFILE 1 (140MM).SLDPRT",
+          "sizeBytes": 277087
+        },
+        {
+          "size": "255.3 KB",
+          "sizeBytes": 261427,
+          "name": "ALUMINIUM PROFILE 1 (470MM).SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ALUMINIUM PROFILE 1 (470mm).SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 262317,
+          "name": "ALUMINIUM PROFILE 1 (50CM).SLDPRT",
+          "type": "SLDPRT",
+          "size": "256.2 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ALUMINIUM PROFILE 1 (50cm).SLDPRT"
+        },
+        {
+          "name": "ALUMINIUM PROFILE 1 (60CM).SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 266533,
+          "size": "260.3 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/ALUMINIUM PROFILE 1 (60cm).SLDPRT"
+        },
+        {
+          "type": "STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/B6903ZZ.stp",
+          "name": "B6903ZZ.STP",
+          "sizeBytes": 28544,
+          "size": "27.9 KB"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/C-57STM01.SLDASM",
+          "size": "356.9 KB",
+          "type": "SLDASM",
+          "name": "C-57STM01.SLDASM",
+          "sizeBytes": 365500
+        },
+        {
+          "name": "C-57STM01_203.STEP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/C-57STM01_203.STEP",
+          "type": "STEP",
+          "sizeBytes": 1009643,
+          "size": "986 KB"
+        },
+        {
+          "name": "CDJ2KB10-60Z-B(0_0).STP",
+          "type": "STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/CDJ2KB10-60Z-B(0_0).stp",
+          "sizeBytes": 125081,
+          "size": "122.1 KB"
+        },
+        {
+          "name": "CDJ2KB10-60Z-B.SLDASM",
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/CDJ2KB10-60Z-B.SLDASM",
+          "sizeBytes": 402521,
+          "size": "393.1 KB"
+        },
+        {
+          "sizeBytes": 4419479,
+          "type": "STP",
+          "name": "DT-25-A02W-16 TERMINAL BLOCK 15A.STP",
+          "size": "4.2 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/DT-25-A02W-16 Terminal Block 15A.stp"
+        },
+        {
+          "sizeBytes": 55311,
+          "size": "54 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/FAKE BUZZER.SLDPRT",
+          "name": "FAKE BUZZER.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "FAKE MOTOR.SLDPRT",
+          "sizeBytes": 55895,
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/FAKE MOTOR.SLDPRT",
+          "size": "54.6 KB"
+        },
+        {
+          "type": "STP",
+          "name": "FS-N41_43.STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/FS-N41_43.stp",
+          "sizeBytes": 5523737,
+          "size": "5.3 MB"
+        },
+        {
+          "type": "SLDASM",
+          "name": "FX3U-16MTES.SLDASM",
+          "sizeBytes": 1347877,
+          "size": "1.3 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/FX3U-16MTES.SLDASM"
+        },
+        {
+          "size": "1.8 MB",
+          "type": "STP",
+          "name": "FX3U-16MTES.STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/FX3U-16MTES.stp",
+          "sizeBytes": 1840063
+        },
+        {
+          "sizeBytes": 1576392,
+          "name": "GREEN PILOT LAMP.SLDPRT",
+          "type": "SLDPRT",
+          "size": "1.5 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/GREEN PILOT LAMP.SLDPRT"
+        },
+        {
+          "name": "GT2103-PMBD.STP",
+          "sizeBytes": 733510,
+          "type": "STP",
+          "size": "716.3 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/GT2103-PMBD.stp"
+        },
+        {
+          "sizeBytes": 16809842,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003A001-0.SLDASM",
+          "type": "SLDASM",
+          "name": "IMP26-003A001-0.SLDASM",
+          "size": "16 MB"
+        },
+        {
+          "size": "24.4 MB",
+          "sizeBytes": 25579092,
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003A002-0.SLDASM",
+          "name": "IMP26-003A002-0.SLDASM"
+        },
+        {
+          "name": "IMP26-003A002-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 8800539,
+          "size": "8.4 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003A002-0.SLDDRW"
+        },
+        {
+          "size": "434.2 KB",
+          "sizeBytes": 444653,
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W001-0.SLDASM",
+          "name": "IMP26-003W001-0.SLDASM"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W002-0.SLDASM",
+          "size": "53.1 KB",
+          "sizeBytes": 54387,
+          "name": "IMP26-003W002-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "type": "SLDASM",
+          "name": "IMP26-003W003-0.SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W003-0.SLDASM",
+          "size": "2.4 MB",
+          "sizeBytes": 2508300
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W004-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 587759,
+          "name": "IMP26-003W004-0.SLDASM",
+          "size": "574 KB"
+        },
+        {
+          "name": "IMP26-003W005-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W005-0.SLDASM",
+          "sizeBytes": 155940,
+          "size": "152.3 KB"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003W006-0.SLDASM",
+          "size": "1.4 MB",
+          "type": "SLDASM",
+          "name": "IMP26-003W006-0.SLDASM",
+          "sizeBytes": 1450694
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z001-0-1.SLDDRW",
+          "name": "IMP26-003Z001-0-1.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 256063,
+          "size": "250.1 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "IMP26-003Z001-0.SLDDRW",
+          "size": "255.2 KB",
+          "sizeBytes": 261324,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z001-0.SLDDRW"
+        },
+        {
+          "size": "262.3 KB",
+          "sizeBytes": 268560,
+          "name": "IMP26-003Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z001-0.SLDPRT"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z002-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "IMP26-003Z002-0.SLDDRW",
+          "sizeBytes": 242462,
+          "size": "236.8 KB"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z002-0.SLDPRT",
+          "sizeBytes": 55234,
+          "size": "53.9 KB",
+          "name": "IMP26-003Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "268.8 KB",
+          "sizeBytes": 275236,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z003-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z003-0.SLDPRT"
+        },
+        {
+          "name": "IMP26-003Z003-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "124.2 KB",
+          "sizeBytes": 127191,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z003-1.SLDPRT"
+        },
+        {
+          "size": "916.4 KB",
+          "sizeBytes": 938384,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z003-1.STL",
+          "type": "STL",
+          "name": "IMP26-003Z003-1.STL"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 270994,
+          "name": "IMP26-003Z003-2.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z003-2.SLDPRT",
+          "size": "264.6 KB"
+        },
+        {
+          "size": "92.7 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z004-0.SLDPRT",
+          "name": "IMP26-003Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 94961
+        },
+        {
+          "sizeBytes": 77381,
+          "size": "75.6 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z005-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z005-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 80461,
+          "name": "IMP26-003Z006-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z006-0.SLDPRT",
+          "size": "78.6 KB"
+        },
+        {
+          "size": "145.2 KB",
+          "sizeBytes": 148693,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z007-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z007-0.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "IMP26-003Z007-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z007-0.STL",
+          "sizeBytes": 1277884,
+          "size": "1.2 MB"
+        },
+        {
+          "sizeBytes": 87037,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z008-0.SLDPRT",
+          "size": "85 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z008-0.SLDPRT"
+        },
+        {
+          "size": "235.5 KB",
+          "sizeBytes": 241163,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z009-0.SLDDRW",
+          "name": "IMP26-003Z009-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "size": "93.5 KB",
+          "sizeBytes": 95721,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z009-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z010-0.SLDPRT",
+          "name": "IMP26-003Z010-0.SLDPRT",
+          "sizeBytes": 383163,
+          "size": "374.2 KB"
+        },
+        {
+          "sizeBytes": 309324,
+          "size": "302.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z011-0.SLDPRT",
+          "name": "IMP26-003Z011-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "51.5 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z012-0.SLDPRT",
+          "name": "IMP26-003Z012-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 52741
+        },
+        {
+          "size": "425.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z012-0.STL",
+          "type": "STL",
+          "sizeBytes": 435284,
+          "name": "IMP26-003Z012-0.STL"
+        },
+        {
+          "name": "IMP26-003Z012-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 93368,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z012-1.SLDPRT",
+          "size": "91.2 KB"
+        },
+        {
+          "sizeBytes": 283969,
+          "size": "277.3 KB",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z013-0.SLDPRT",
+          "name": "IMP26-003Z013-0.SLDPRT"
+        },
+        {
+          "name": "IMP26-003Z014-0.SLDPRT",
+          "sizeBytes": 120917,
+          "type": "SLDPRT",
+          "size": "118.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z014-0.SLDPRT"
+        },
+        {
+          "size": "32.9 KB",
+          "sizeBytes": 33660,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z015-0.SLDPRT",
+          "name": "IMP26-003Z015-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "117.4 KB",
+          "sizeBytes": 120251,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z016-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z016-0.SLDPRT"
+        },
+        {
+          "name": "IMP26-003Z017-0.SLDPRT",
+          "sizeBytes": 157252,
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z017-0.SLDPRT",
+          "size": "153.6 KB"
+        },
+        {
+          "sizeBytes": 164440,
+          "size": "160.6 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z018-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z018-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-003Z019-0.SLDPRT",
+          "size": "129.5 KB",
+          "sizeBytes": 132575,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z019-0.SLDPRT"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z020-0.SLDPRT",
+          "name": "IMP26-003Z020-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 146742,
+          "size": "143.3 KB"
+        },
+        {
+          "name": "IMP26-003Z021-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 92889,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z021-0.SLDPRT",
+          "size": "90.7 KB"
+        },
+        {
+          "size": "773.5 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z021-0.STL",
+          "type": "STL",
+          "sizeBytes": 792084,
+          "name": "IMP26-003Z021-0.STL"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z022-0.SLDPRT",
+          "name": "IMP26-003Z022-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 307255,
+          "size": "300.1 KB"
+        },
+        {
+          "size": "2.4 MB",
+          "sizeBytes": 2542484,
+          "type": "STL",
+          "name": "IMP26-003Z022-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z022-0.STL"
+        },
+        {
+          "sizeBytes": 222785,
+          "size": "217.6 KB",
+          "type": "SLDDRW",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z023-0.SLDDRW",
+          "name": "IMP26-003Z023-0.SLDDRW"
+        },
+        {
+          "name": "IMP26-003Z023-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 56969,
+          "size": "55.6 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z023-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 148370,
+          "size": "144.9 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z024-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z024-0.SLDPRT"
+        },
+        {
+          "size": "1.2 MB",
+          "sizeBytes": 1299284,
+          "type": "STL",
+          "name": "IMP26-003Z024-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z024-0.STL"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z024-1.SLDPRT",
+          "sizeBytes": 135312,
+          "size": "132.1 KB",
+          "name": "IMP26-003Z024-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "782.3 KB",
+          "sizeBytes": 801084,
+          "type": "STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z024-1.STL",
+          "name": "IMP26-003Z024-1.STL"
+        },
+        {
+          "name": "IMP26-003Z025-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z025-0.SLDPRT",
+          "sizeBytes": 106210,
+          "size": "103.7 KB"
+        },
+        {
+          "sizeBytes": 717884,
+          "size": "701.1 KB",
+          "name": "IMP26-003Z025-0.STL",
+          "type": "STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z025-0.STL"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z026-0.SLDPRT",
+          "sizeBytes": 445585,
+          "name": "IMP26-003Z026-0.SLDPRT",
+          "size": "435.1 KB"
+        },
+        {
+          "size": "439.7 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z027-0.SLDPRT",
+          "name": "IMP26-003Z027-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 450301
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z028-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "IMP26-003Z028-0.SLDDRW",
+          "size": "214.3 KB",
+          "sizeBytes": 219447
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-003Z028-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z028-0.SLDPRT",
+          "size": "76.5 KB",
+          "sizeBytes": 78311
+        },
+        {
+          "size": "113.7 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z029-0.SLDPRT",
+          "name": "IMP26-003Z029-0.SLDPRT",
+          "sizeBytes": 116387,
+          "type": "SLDPRT"
+        },
+        {
+          "size": "134.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z030-0.SLDPRT",
+          "sizeBytes": 137296,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z030-0.SLDPRT"
+        },
+        {
+          "size": "440.9 KB",
+          "sizeBytes": 451507,
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z031-0.SLDPRT",
+          "name": "IMP26-003Z031-0.SLDPRT"
+        },
+        {
+          "size": "226.7 KB",
+          "type": "SLDDRW",
+          "name": "IMP26-003Z032-0.SLDDRW",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z032-0.SLDDRW",
+          "sizeBytes": 232176
+        },
+        {
+          "size": "221.2 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z032-0.SLDPRT",
+          "sizeBytes": 226476,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z032-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z033-0.SLDPRT",
+          "name": "IMP26-003Z033-0.SLDPRT",
+          "sizeBytes": 152206,
+          "size": "148.6 KB"
+        },
+        {
+          "size": "240.2 KB",
+          "sizeBytes": 245948,
+          "name": "IMP26-003Z033-1.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z033-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-003Z034-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z034-0.SLDPRT",
+          "size": "466.9 KB",
+          "sizeBytes": 478059
+        },
+        {
+          "size": "253.4 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z035-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z035-0.SLDPRT",
+          "sizeBytes": 259448
+        },
+        {
+          "name": "IMP26-003Z036-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "301.6 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z036-0.SLDPRT",
+          "sizeBytes": 308858
+        },
+        {
+          "sizeBytes": 228700,
+          "size": "223.3 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z036-1.SLDPRT",
+          "type": "SLDPRT",
+          "name": "IMP26-003Z036-1.SLDPRT"
+        },
+        {
+          "name": "IMP26-003Z037-0.SLDPRT",
+          "sizeBytes": 161713,
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z037-0.SLDPRT",
+          "size": "157.9 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "IMP26-003Z037-1.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z037-1.SLDPRT",
+          "sizeBytes": 325704,
+          "size": "318.1 KB"
+        },
+        {
+          "size": "63.6 KB",
+          "sizeBytes": 65116,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z038-0.SLDPRT",
+          "name": "IMP26-003Z038-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "255.2 KB",
+          "sizeBytes": 261373,
+          "type": "SLDPRT",
+          "name": "IMP26-003Z039-0.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/IMP26-003Z039-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 56685,
+          "type": "STP",
+          "name": "KM-11.STP",
+          "size": "55.4 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/KM-11.stp"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/MEANWELL LRS-75-24.step",
+          "size": "2.3 MB",
+          "sizeBytes": 2395225,
+          "type": "STEP",
+          "name": "MEANWELL LRS-75-24.STEP"
+        },
+        {
+          "size": "118.4 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/MHZ2-16D(20_9_0).sldasm",
+          "name": "MHZ2-16D(20_9_0).SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 121208
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/MHZ2-16D_Body(0).sldprt",
+          "type": "SLDPRT",
+          "sizeBytes": 99009,
+          "name": "MHZ2-16D_BODY(0).SLDPRT",
+          "size": "96.7 KB"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/MHZ2-16D_Finger(0).sldprt",
+          "name": "MHZ2-16D_FINGER(0).SLDPRT",
+          "sizeBytes": 50362,
+          "type": "SLDPRT",
+          "size": "49.2 KB"
+        },
+        {
+          "size": "153 KB",
+          "sizeBytes": 156628,
+          "type": "SLDPRT",
+          "name": "NF30-CS-2P.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/NF30-CS-2P.SLDPRT"
+        },
+        {
+          "sizeBytes": 1860815,
+          "size": "1.8 MB",
+          "name": "PR30-15DN_PR30-15DN2_PRT30-15DO_PR30-15DN-V.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/PR30-15DN_PR30-15DN2_PRT30-15DO_PR30-15DN-V.SLDPRT"
+        },
+        {
+          "type": "SLDASM",
+          "name": "PTF08A_E.SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/PTF08A_E.SLDASM",
+          "size": "63.3 KB",
+          "sizeBytes": 64804
+        },
+        {
+          "size": "96.5 KB",
+          "sizeBytes": 98816,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/PTF08A_E.SLDDRW",
+          "type": "SLDDRW",
+          "name": "PTF08A_E.SLDDRW"
+        },
+        {
+          "size": "154.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/PTF08A_E_BASE.SLDPRT",
+          "sizeBytes": 157754,
+          "name": "PTF08A_E_BASE.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "36.7 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/PTF08A_E_SLIDE.SLDPRT",
+          "sizeBytes": 37594,
+          "type": "SLDPRT",
+          "name": "PTF08A_E_SLIDE.SLDPRT"
+        },
+        {
+          "size": "2.3 MB",
+          "sizeBytes": 2453792,
+          "name": "RED PILOT LAMP (LED)",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/RED PILOT LAMP (LED)",
+          "type": ""
+        },
+        {
+          "type": "SLDPRT",
+          "name": "RED PILOT LAMP.SLDPRT",
+          "size": "1.5 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/RED PILOT LAMP.SLDPRT",
+          "sizeBytes": 1577034
+        },
+        {
+          "sizeBytes": 3551745,
+          "size": "3.4 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/RZ30-M5-G1C-B.STEP",
+          "name": "RZ30-M5-G1C-B.STEP",
+          "type": "STEP"
+        },
+        {
+          "sizeBytes": 138135,
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SFF-204 (400mm).SLDPRT",
+          "name": "SFF-204 (400MM).SLDPRT",
+          "size": "134.9 KB"
+        },
+        {
+          "name": "SFJ-045.SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SFJ-045.SLDPRT",
+          "type": "SLDPRT",
+          "size": "265.5 KB",
+          "sizeBytes": 271870
+        },
+        {
+          "name": "SPSNL4-M5.STP",
+          "type": "STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SPSNL4-M5.stp",
+          "sizeBytes": 177148,
+          "size": "173 KB"
+        },
+        {
+          "sizeBytes": 177155,
+          "size": "173 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SPSNN4-M5.stp",
+          "name": "SPSNN4-M5.STP",
+          "type": "STP"
+        },
+        {
+          "size": "737 KB",
+          "sizeBytes": 754650,
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SUPS16X50.SLDASM",
+          "name": "SUPS16X50.SLDASM"
+        },
+        {
+          "sizeBytes": 289589,
+          "name": "SY7120-5LZD-02.STP",
+          "type": "STP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/SY7120-5LZD-02.stp",
+          "size": "282.8 KB"
+        },
+        {
+          "size": "579.2 KB",
+          "sizeBytes": 593083,
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/TBDA10X50.SLDASM",
+          "name": "TBDA10X50.SLDASM"
+        },
+        {
+          "name": "TBDA10X50.STEP",
+          "type": "STEP",
+          "sizeBytes": 1174689,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/TBDA10X50.step",
+          "size": "1.1 MB"
+        },
+        {
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/Thumbs.db",
+          "size": "155.5 KB",
+          "sizeBytes": 159232
+        },
+        {
+          "size": "227.8 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/TL6-01M.STEP",
+          "sizeBytes": 233269,
+          "type": "STEP",
+          "name": "TL6-01M.STEP"
+        },
+        {
+          "size": "138.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/TSH3-M5M.STEP",
+          "type": "STEP",
+          "name": "TSH3-M5M.STEP",
+          "sizeBytes": 141429
+        },
+        {
+          "size": "143.6 KB",
+          "sizeBytes": 147045,
+          "name": "TSH6-M5M.STEP",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/TSH6-M5M.STEP",
+          "type": "STEP"
+        },
+        {
+          "sizeBytes": 1576960,
+          "type": "SLDPRT",
+          "name": "YELLOW PILOT LAMP.SLDPRT",
+          "size": "1.5 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YELLOW PILOT LAMP.SLDPRT"
+        },
+        {
+          "type": "SLDASM",
+          "name": "YM4F01U.SLDASM",
+          "sizeBytes": 1977257,
+          "size": "1.9 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YM4F01U.SLDASM"
+        },
+        {
+          "type": "SLDASM",
+          "name": "YMF01260606114940-ASM1.STEP.SLDASM",
+          "sizeBytes": 23245,
+          "size": "22.7 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-asm1.step.SLDASM"
+        },
+        {
+          "size": "23.3 KB",
+          "sizeBytes": 23818,
+          "name": "YMF01260606114940-ASM5.STEP.SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-asm5.step.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "sizeBytes": 102702,
+          "size": "100.3 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-prt0.step.SLDPRT",
+          "type": "SLDPRT",
+          "name": "YMF01260606114940-PRT0.STEP.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "sizeBytes": 133494,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-prt1.step.SLDPRT",
+          "name": "YMF01260606114940-PRT1.STEP.SLDPRT",
+          "size": "130.4 KB"
+        },
+        {
+          "size": "63.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-prt2.step.SLDPRT",
+          "name": "YMF01260606114940-PRT2.STEP.SLDPRT",
+          "sizeBytes": 64602,
+          "type": "SLDPRT"
+        },
+        {
+          "size": "40.5 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-prt3.step.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 41504,
+          "name": "YMF01260606114940-PRT3.STEP.SLDPRT"
+        },
+        {
+          "size": "54.2 KB",
+          "name": "YMF01260606114940-PRT4.STEP.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940-prt4.step.SLDPRT",
+          "sizeBytes": 55467
+        },
+        {
+          "type": "STEP",
+          "name": "YMF01260606114940.STEP",
+          "sizeBytes": 1346787,
+          "size": "1.3 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/YMF01260606114940.step"
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/~$ALUMINIUM PROFILE 1 (300mm).SLDPRT",
+          "type": "SLDPRT",
+          "name": "~$ALUMINIUM PROFILE 1 (300MM).SLDPRT"
+        },
+        {
+          "size": "20 B",
+          "sizeBytes": 20,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/~$C-57STM01.SLDASM",
+          "name": "~$C-57STM01.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "type": "SLDASM",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/~$IMP26-003W005-0.SLDASM",
+          "name": "~$IMP26-003W005-0.SLDASM",
+          "size": "20 B",
+          "sizeBytes": 20
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/~$IMP26-003W006-0.SLDASM",
+          "name": "~$IMP26-003W006-0.SLDASM",
+          "type": "SLDASM",
+          "sizeBytes": 20,
+          "size": "20 B"
+        },
+        {
+          "sizeBytes": 20,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/~$IMP26-003Z034-0.SLDPRT",
+          "size": "20 B",
+          "name": "~$IMP26-003Z034-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "805.3 KB",
+          "sizeBytes": 824584,
+          "type": "STL",
+          "name": "IMP26-003Z039-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/29-SEP-2026/IMP26-003Z039-0.STL"
+        },
+        {
+          "type": "STL",
+          "name": "IMP26-003Z036-0.STL",
+          "sizeBytes": 2685784,
+          "size": "2.6 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/28-SEP-2026/IMP26-003Z036-0.STL"
+        },
+        {
+          "size": "417.1 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/28-AUG-2026/IMP26-003Z034-0.STL",
+          "type": "STL",
+          "sizeBytes": 427084,
+          "name": "IMP26-003Z034-0.STL"
+        },
+        {
+          "size": "318.9 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/28-AUG-2026/IMP26-003Z035-0.STL",
+          "sizeBytes": 326584,
+          "name": "IMP26-003Z035-0.STL",
+          "type": "STL"
+        },
+        {
+          "type": "STL",
+          "sizeBytes": 1505584,
+          "name": "IMP26-003Z036-0.STL",
+          "size": "1.4 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/28-AUG-2026/IMP26-003Z036-0.STL"
+        },
+        {
+          "type": "STL",
+          "name": "IMP26-003Z032-0.STL",
+          "sizeBytes": 75284,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/27-AUG-2026/IMP26-003Z032-0.STL",
+          "size": "73.5 KB"
+        },
+        {
+          "sizeBytes": 46884,
+          "type": "STL",
+          "name": "IMP26-003Z033-0.STL",
+          "size": "45.8 KB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/27-AUG-2026/IMP26-003Z033-0.STL"
+        },
+        {
+          "sizeBytes": 1443084,
+          "size": "1.4 MB",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/26-SEP-2026/IMP26-003Z029-0.STL",
+          "name": "IMP26-003Z029-0.STL",
+          "type": "STL"
+        },
+        {
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/26-SEP-2026/IMP26-003Z030-0.STL",
+          "name": "IMP26-003Z030-0.STL",
+          "type": "STL",
+          "sizeBytes": 701084,
+          "size": "684.7 KB"
+        },
+        {
+          "type": "STL",
+          "name": "IMP26-003Z037-0.STL",
+          "size": "1.2 MB",
+          "sizeBytes": 1233484,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/26-SEP-2026/IMP26-003Z037-0.STL"
+        },
+        {
+          "sizeBytes": 995684,
+          "type": "STL",
+          "name": "IMP26-003Z039-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/26-SEP-2026/IMP26-003Z039-0.STL",
+          "size": "972.3 KB"
+        },
+        {
+          "sizeBytes": 1036884,
+          "type": "STL",
+          "name": "IMP26-003Z010-0.STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/24-SEP-2026/IMP26-003Z010-0.STL",
+          "size": "1012.6 KB"
+        },
+        {
+          "sizeBytes": 1036884,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/24-SEP-2026/IMP26-003Z033-0.STL",
+          "size": "1012.6 KB",
+          "name": "IMP26-003Z033-0.STL",
+          "type": "STL"
+        },
+        {
+          "sizeBytes": 1464184,
+          "type": "STL",
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/24-SEP-2026/IMP26-003Z033-1.STL",
+          "name": "IMP26-003Z033-1.STL",
+          "size": "1.4 MB"
+        },
+        {
+          "type": "STL",
+          "name": "IMP26-003Z034-0.STL",
+          "size": "46.2 MB",
+          "sizeBytes": 48435884,
+          "relPath": "IMP26-003 PLC SKILL DEVELOPMENT/22-SEP-2026/IMP26-003Z034-0.STL"
+        }
+      ],
+      "fileCount": 164,
+      "name": "IMP26-003 PLC SKILL DEVELOPMENT",
+      "totalBytes": 254751302,
+      "hasCloudFiles": true
+    },
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "quotation": "",
+    "createdAt": "2026-08-15T09:00:00.000Z",
+    "factory": "FACTORY E",
+    "assignee": "JITTRAKAN K.",
+    "department": "PRODUCTION TECHNOLOGY",
+    "id": "achv_imp_1",
+    "imageData": null,
+    "note": "เหลือทำ COVER ข้างหลังและป้ายด้านบน",
+    "status": "in_progress",
+    "requestDate": "2026-06-01",
+    "lastEditedRole": "ADMIN",
+    "code": "PRODUCTION TECHNOLOGY",
+    "editorPin": "20523",
+    "process": "PLC TRAINING KIT",
+    "creatorPin": "20523",
+    "title": "IMP26-003 PLC SKILL DEVELOPMENT",
+    "completionDate": "2026-09-30",
+    "description": "โครงการพัฒนาทักษะการเขียนโปรแกรมควบคุม PLC สำหรับระบบอัตโนมัติ (ชุดฝึก PLC)",
+    "updatedAt": "2026-10-06T12:12:56.388Z",
+    "pdfAttachment": null,
+    "categoryId": "cat_imp"
+  },
+  {
+    "requestName": "WITCHAYAPORN T.",
+    "code": "FR-J26-079",
+    "factory": "FACTORY A",
+    "completionDate": "2026-09-01",
+    "workFolder.fileCount": 4,
+    "quotation": "",
+    "createdAt": "2026-08-12T10:00:00.000Z",
+    "department": "FERRULE PRODUCTION",
+    "pdfAttachment": {
+      "data": "",
+      "isLargeFile": true,
+      "type": "",
+      "note": "ไฟล์ขนาดใหญ่ บันทึกใน IndexedDB เครื่องนี้",
+      "name": "FR-J26-079.PDF",
+      "size": 804687
+    },
+    "requestDate": "2026-08-18",
+    "workFolder.hasCloudFiles": true,
+    "title": "ACC-FER068 HAND PUMP STORE",
+    "assignee": "JITTRAKAN K.",
+    "categoryId": "cat_acc",
+    "description": "ร้องขอให้ทางฝ่าย TECHNOLOGY ช่วยออกแบบที่จัดเก็บ HAND PUMP สำหรับถ่ายเทสารเคมี",
+    "workFolder.totalSize": "1.3 MB",
+    "imageData": null,
+    "workFolder": {
+      "hasCloudFiles": true,
+      "zipData": "",
+      "fileCount": 4,
+      "files": [
+        {
+          "sizeBytes": 1160051,
+          "size": "1.1 MB",
+          "name": "ACC-FER068A001-0.SLDASM",
+          "type": "SLDASM",
+          "relPath": "ACC-FER068 HAND PUMP STORE/ACC-FER068A001-0.SLDASM"
+        },
+        {
+          "size": "51.8 KB",
+          "relPath": "ACC-FER068 HAND PUMP STORE/ACC-FER068Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER068Z001-0.SLDPRT",
+          "sizeBytes": 53079
+        },
+        {
+          "relPath": "ACC-FER068 HAND PUMP STORE/ALUMINIUM PROFILE 300mm (GREEN FLAME).SLDPRT",
+          "size": "110.8 KB",
+          "sizeBytes": 113510,
+          "type": "SLDPRT",
+          "name": "ALUMINIUM PROFILE 300MM (GREEN FLAME).SLDPRT"
+        },
+        {
+          "size": "7 KB",
+          "sizeBytes": 7168,
+          "relPath": "ACC-FER068 HAND PUMP STORE/Thumbs.db",
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "name": "ACC-FER068 HAND PUMP STORE",
+      "totalSize": "1.3 MB",
+      "totalBytes": 1333808,
+      "path": "ACC-FER068 HAND PUMP STORE"
+    },
+    "status": "done",
+    "pdfAttachment.name": "FR-J26-079.PDF",
+    "updatedAt": "2026-09-11T04:52:44.256Z",
+    "process": "WASHING & DRYING",
+    "id": "achv_acc_1",
+    "workFolder.name": "ACC-FER068 HAND PUMP STORE",
+    "pdfAttachment.hasCloudPdf": true,
+    "pdfAttachment.size": 804687,
+    "note": "ทำการออกแบบและจัดทำที่จัดเก็บ HAND PUMP สำหรับถ่ายเทสารเคมีในห้องล้าง จำนวน 3 PCS เสร็จสิ้น"
+  },
+  {
+    "code": "MOTOR PRODUCTION",
+    "categoryId": "cat_prj",
+    "assignee": "JITTRAKAN K.",
+    "updatedAt": "2026-09-14T03:26:36.736Z",
+    "requestName": "MOTOR PRODUCTION",
+    "id": "achv_prj_2",
+    "process": "",
+    "status": "in_progress",
+    "pdfAttachment": null,
+    "quotation": "",
+    "description": "เครื่องทดสอบความเป็นฉนวนและความทนแรงดันไฟฟ้าสูงสำหรับมอเตอร์รุ่นใหม่",
+    "department": "MOTOR PRODUCTION",
+    "createdAt": "2026-08-10T11:00:00.000Z",
+    "note": "กำลัง REDESIGN ใหม่ เนื่องจากระยะ CYLENDER ยังสั้นไป",
+    "title": "SP25-PRJ002 WITHSTANDING VOLTAGE CHECKING JIG",
+    "completionDate": "",
+    "workFolder": null,
+    "factory": "FACTORY E",
+    "imageData": null,
+    "requestDate": "2026-08-06"
+  },
+  {
+    "createdAt": "2026-08-08T09:15:00.000Z",
+    "note": "เลเซอร์สำเร็จเรียบร้อย",
+    "categoryId": "cat_prj",
+    "quotation": "",
+    "assignee": "JITTRAKAN K.",
+    "imageData": null,
+    "factory": "FACTORY E",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "description": "เอาสว่านไปเลเซอร์เป็นชื่อ TECHNO",
+    "department": "PRODUCTION TECHNOLOGY",
+    "id": "achv_sys_2",
+    "process": "",
+    "pdfAttachment": null,
+    "code": "PRODUCTION TECHNOLOGY",
+    "status": "done",
+    "workFolder": null,
+    "updatedAt": "2026-09-10T14:57:25.525Z",
+    "requestDate": "2026-08-27",
+    "title": "LASER MINI SCREWDRIVER FROM MOTOR",
+    "completionDate": "2026-08-27"
+  },
+  {
+    "status": "in_progress",
+    "editorPin": "20523",
+    "creatorPin": "20523",
+    "completionDate": "",
+    "requestDate": "2026-09-08",
+    "id": "achv_sys_1",
+    "title": "CMMS",
+    "updatedAt": "2026-10-01T01:28:42.481Z",
+    "note": "กำลังอยู่ในช่วงออกแบบเว็บไซต์และฟังก์ชั่นต่างๆ",
+    "categoryId": "cat_pvt",
+    "assignee": "JITTRAKAN K.",
+    "pdfAttachment": null,
+    "lastEditedRole": "ADMIN",
+    "factory": "",
+    "description": "พัฒนาระบบฐานข้อมูลสำหรับติดตามและบันทึกประวัติการบำรุงรักษาเครื่องจักรและอุปกรณ์",
+    "workFolder": null,
+    "createdAt": "2026-08-01T08:30:00.000Z",
+    "requestName": "PRODUCTION TECHNOLOGY",
+    "quotation": "",
+    "code": "PRODUCTION TECHNOLOGY",
+    "imageData": null,
+    "department": "OTHER",
+    "process": "DOCUMENT",
+    "lastEditedBy": "JITTRAKAN K."
+  },
+  {
+    "description": "ร้องขอทางเทคโนโลยีจัดทำ COVER สำหรับเครื่อง INNER DIAMETER MACHINE เพื่อป้องกันน้ำยา RISCUT ฟุ้งกระจาย รายละเอียดตามรูป/และออกแบบให้เห็นได้ชัดเจน (รบกวรพิจารณาเร่งด่วนที่สุด จุดนี้เป็นสาเหตุไฟไหม้ที่ AOMORI เป็นการขยายผลเพื่อป้องกัน",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "name": "GM-J26-060.PDF",
+      "size": 2998572
+    },
+    "lastEditedBy": "JITTRAKAN K.",
+    "requestDate": "2026-05-27",
+    "completionDate": "2026-09-01",
+    "code": "GM-J26-060",
+    "factory": "FACTORY E",
+    "workFolder.hasCloudFiles": true,
+    "workFolder.totalSize": "19.8 MB",
+    "createdAt": "2026-07-28T11:20:00.000Z",
+    "quotation": "26-0299, 26-0524",
+    "requestName": "TEERAKAN T.",
+    "workFolder": {
+      "files": [
+        {
+          "size": "124.8 KB",
+          "sizeBytes": 127802,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT000A001-0.pdf",
+          "type": "PDF",
+          "name": "ACC-MOT000A001-0.PDF"
+        },
+        {
+          "sizeBytes": 229047,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081A001-0.SLDASM",
+          "size": "223.7 KB",
+          "name": "ACC-MOT081A001-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "sizeBytes": 246283,
+          "type": "SLDASM",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081A001-1.SLDASM",
+          "name": "ACC-MOT081A001-1.SLDASM",
+          "size": "240.5 KB"
+        },
+        {
+          "sizeBytes": 391636,
+          "size": "382.5 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081A001-2.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-MOT081A001-2.SLDASM"
+        },
+        {
+          "size": "462.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081A001-2.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-MOT081A001-2.SLDDRW",
+          "sizeBytes": 473441
+        },
+        {
+          "name": "ACC-MOT081Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z001-0.SLDPRT",
+          "sizeBytes": 84347,
+          "size": "82.4 KB"
+        },
+        {
+          "size": "122.5 KB",
+          "type": "SLDPRT",
+          "sizeBytes": 125473,
+          "name": "ACC-MOT081Z001-1.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z001-1.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z002-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z002-0.SLDPRT",
+          "sizeBytes": 69467,
+          "size": "67.8 KB"
+        },
+        {
+          "name": "ACC-MOT081Z003-0.SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z003-0.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 229592,
+          "size": "224.2 KB"
+        },
+        {
+          "name": "ACC-MOT081Z003-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 78582,
+          "size": "76.7 KB"
+        },
+        {
+          "size": "227.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z003-1.SLDDRW",
+          "sizeBytes": 232613,
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z003-1.SLDDRW"
+        },
+        {
+          "sizeBytes": 78227,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z003-1.SLDPRT",
+          "name": "ACC-MOT081Z003-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "76.4 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z004-0.SLDDRW",
+          "size": "216.6 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z004-0.SLDDRW",
+          "sizeBytes": 221791
+        },
+        {
+          "size": "73.5 KB",
+          "name": "ACC-MOT081Z004-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z004-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 75242
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z004-1.SLDDRW",
+          "size": "217.6 KB",
+          "sizeBytes": 222781,
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z004-1.SLDDRW"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z004-1.SLDPRT",
+          "name": "ACC-MOT081Z004-1.SLDPRT",
+          "type": "SLDPRT",
+          "size": "73.4 KB",
+          "sizeBytes": 75207
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z005-0.SLDPRT",
+          "sizeBytes": 86941,
+          "size": "84.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z005-0.SLDPRT"
+        },
+        {
+          "name": "ACC-MOT081Z005-0.STL",
+          "type": "STL",
+          "sizeBytes": 289684,
+          "size": "282.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z005-0.STL"
+        },
+        {
+          "size": "99.8 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z006-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z006-0.SLDPRT",
+          "sizeBytes": 102159
+        },
+        {
+          "size": "63.5 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z007-0.SLDPRT",
+          "name": "ACC-MOT081Z007-0.SLDPRT",
+          "sizeBytes": 65028,
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z008-0.SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z008-0.SLDDRW",
+          "size": "215.2 KB",
+          "sizeBytes": 220378
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z008-0.SLDPRT",
+          "size": "276.3 KB",
+          "sizeBytes": 282957,
+          "name": "ACC-MOT081Z008-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z009-0.SLDDRW",
+          "name": "ACC-MOT081Z009-0.SLDDRW",
+          "sizeBytes": 258814,
+          "size": "252.7 KB"
+        },
+        {
+          "name": "ACC-MOT081Z009-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 172308,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z009-0.SLDPRT",
+          "size": "168.3 KB"
+        },
+        {
+          "size": "228.4 KB",
+          "sizeBytes": 233877,
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z009-1.SLDDRW",
+          "name": "ACC-MOT081Z009-1.SLDDRW"
+        },
+        {
+          "sizeBytes": 120787,
+          "name": "ACC-MOT081Z009-1.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z009-1.SLDPRT",
+          "size": "118 KB"
+        },
+        {
+          "sizeBytes": 172308,
+          "size": "168.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z009-2.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z009-2.SLDPRT"
+        },
+        {
+          "size": "254 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z010-0.SLDDRW",
+          "sizeBytes": 260128,
+          "name": "ACC-MOT081Z010-0.SLDDRW",
+          "type": "SLDDRW"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z010-0.SLDPRT",
+          "size": "108.3 KB",
+          "name": "ACC-MOT081Z010-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 110903
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z010-1.SLDPRT",
+          "name": "ACC-MOT081Z010-1.SLDPRT",
+          "size": "77 KB",
+          "sizeBytes": 78822
+        },
+        {
+          "size": "83.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z011-0.SLDPRT",
+          "sizeBytes": 85228,
+          "name": "ACC-MOT081Z011-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z012-0.SLDPRT",
+          "size": "109.6 KB",
+          "sizeBytes": 112196,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z012-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 101264,
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z012-1.SLDPRT",
+          "name": "ACC-MOT081Z012-1.SLDPRT",
+          "size": "98.9 KB"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z013-0.SLDDRW",
+          "size": "235 KB",
+          "sizeBytes": 240690,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-0.SLDDRW"
+        },
+        {
+          "size": "75.5 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z013-0.SLDPRT",
+          "sizeBytes": 77278
+        },
+        {
+          "name": "ACC-MOT081Z013-1.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-1.SLDDRW",
+          "sizeBytes": 238057,
+          "size": "232.5 KB"
+        },
+        {
+          "sizeBytes": 77681,
+          "size": "75.9 KB",
+          "name": "ACC-MOT081Z013-1.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z013-2.SLDDRW",
+          "sizeBytes": 226982,
+          "size": "221.7 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-2.SLDDRW"
+        },
+        {
+          "name": "ACC-MOT081Z013-2.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-2.SLDPRT",
+          "sizeBytes": 110978,
+          "type": "SLDPRT",
+          "size": "108.4 KB"
+        },
+        {
+          "size": "721.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-2.STL",
+          "sizeBytes": 738584,
+          "type": "STL",
+          "name": "ACC-MOT081Z013-2.STL"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-3.SLDDRW",
+          "size": "221.7 KB",
+          "sizeBytes": 227003,
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z013-3.SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z013-3.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-3.SLDPRT",
+          "sizeBytes": 110094,
+          "size": "107.5 KB"
+        },
+        {
+          "name": "ACC-MOT081Z013-3.STL",
+          "type": "STL",
+          "sizeBytes": 738584,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z013-3.STL",
+          "size": "721.3 KB"
+        },
+        {
+          "name": "ACC-MOT081Z014-1.SLDDRW",
+          "type": "SLDDRW",
+          "sizeBytes": 237189,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-1.SLDDRW",
+          "size": "231.6 KB"
+        },
+        {
+          "size": "77.4 KB",
+          "sizeBytes": 79293,
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z014-1.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-1.SLDPRT"
+        },
+        {
+          "size": "222.4 KB",
+          "sizeBytes": 227724,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-2.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z014-2.SLDDRW"
+        },
+        {
+          "size": "107.7 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 110267,
+          "name": "ACC-MOT081Z014-2.SLDPRT"
+        },
+        {
+          "type": "STL",
+          "name": "ACC-MOT081Z014-2.STL",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-2.STL",
+          "sizeBytes": 738584,
+          "size": "721.3 KB"
+        },
+        {
+          "size": "223.4 KB",
+          "sizeBytes": 228731,
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z014-3.SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-3.SLDDRW"
+        },
+        {
+          "size": "109.1 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-3.SLDPRT",
+          "sizeBytes": 111668,
+          "name": "ACC-MOT081Z014-3.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "ACC-MOT081Z014-3.STL",
+          "sizeBytes": 738584,
+          "type": "STL",
+          "size": "721.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z014-3.STL"
+        },
+        {
+          "size": "228.8 KB",
+          "sizeBytes": 234332,
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z015-1.SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z015-1.SLDDRW"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z015-1.SLDPRT",
+          "sizeBytes": 115018,
+          "size": "112.3 KB",
+          "name": "ACC-MOT081Z015-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z016-0.SLDDRW",
+          "sizeBytes": 224152,
+          "size": "218.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z016-0.SLDDRW"
+        },
+        {
+          "sizeBytes": 63705,
+          "size": "62.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z016-0.SLDPRT",
+          "name": "ACC-MOT081Z016-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z101-0.SLDDRW",
+          "size": "207.2 KB",
+          "name": "ACC-MOT081Z101-0.SLDDRW",
+          "sizeBytes": 212211,
+          "type": "SLDDRW"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z101-0.SLDPRT",
+          "name": "ACC-MOT081Z101-0.SLDPRT",
+          "size": "132.7 KB",
+          "sizeBytes": 135863
+        },
+        {
+          "sizeBytes": 212128,
+          "name": "ACC-MOT081Z102-0.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z102-0.SLDDRW",
+          "size": "207.2 KB"
+        },
+        {
+          "name": "ACC-MOT081Z102-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z102-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 133778,
+          "size": "130.6 KB"
+        },
+        {
+          "size": "210.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z103-0.SLDDRW",
+          "type": "SLDDRW",
+          "name": "ACC-MOT081Z103-0.SLDDRW",
+          "sizeBytes": 215318
+        },
+        {
+          "name": "ACC-MOT081Z103-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/ACC-MOT081Z103-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "168.4 KB",
+          "sizeBytes": 172417
+        },
+        {
+          "sizeBytes": 434284,
+          "type": "STL",
+          "name": "BOTTONCOOK.STL",
+          "size": "424.1 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/BOTTONCOOK.STL"
+        },
+        {
+          "size": "169.6 KB",
+          "sizeBytes": 173676,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCBR-214.step.SLDASM",
+          "name": "C-MGCBR-214.STEP.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "sizeBytes": 225519,
+          "type": "SLDPRT",
+          "name": "C-MGCBR_1.STEP.SLDPRT",
+          "size": "220.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCBR_1.step.SLDPRT"
+        },
+        {
+          "size": "25.6 KB",
+          "name": "C-MGCBR_2.STEP.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCBR_2.step.SLDPRT",
+          "sizeBytes": 26190,
+          "type": "SLDPRT"
+        },
+        {
+          "name": "C-MGCBR_3.STEP.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCBR_3.step.SLDPRT",
+          "sizeBytes": 29466,
+          "size": "28.8 KB"
+        },
+        {
+          "size": "31.9 KB",
+          "sizeBytes": 32652,
+          "type": "SLDPRT",
+          "name": "C-MGCBR_4.STEP.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCBR_4.step.SLDPRT"
+        },
+        {
+          "name": "C-MGCPN-214.STEP",
+          "sizeBytes": 312746,
+          "type": "STEP",
+          "size": "305.4 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-MGCPN-214.step"
+        },
+        {
+          "size": "96 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-NUWANS10-80-27-214.sldprt",
+          "name": "C-NUWANS10-80-27-214.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 98301
+        },
+        {
+          "size": "102.7 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/C-UPPN90.SLDPRT",
+          "sizeBytes": 105172,
+          "type": "SLDPRT",
+          "name": "C-UPPN90.SLDPRT"
+        },
+        {
+          "size": "54 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/FAKE MAGNET.SLDPRT",
+          "sizeBytes": 55322,
+          "type": "SLDPRT",
+          "name": "FAKE MAGNET.SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/Thumbs.db",
+          "name": "THUMBS.DB",
+          "type": "DB",
+          "sizeBytes": 132608,
+          "size": "129.5 KB"
+        },
+        {
+          "sizeBytes": 54489,
+          "name": "TOP PLATE.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TOP PLATE.SLDPRT",
+          "size": "53.2 KB"
+        },
+        {
+          "type": "SLDASM",
+          "sizeBytes": 268601,
+          "name": "ACC-MOT081A001-3.SLDASM",
+          "size": "262.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081A001-3.SLDASM"
+        },
+        {
+          "size": "122.5 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z001-2.SLDPRT",
+          "sizeBytes": 125473,
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z001-2.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z007-1.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z007-1.SLDPRT",
+          "size": "63.5 KB",
+          "sizeBytes": 65028
+        },
+        {
+          "size": "225.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z009-2.SLDDRW",
+          "name": "ACC-MOT081Z009-2.SLDDRW",
+          "sizeBytes": 231288,
+          "type": "SLDDRW"
+        },
+        {
+          "sizeBytes": 121232,
+          "size": "118.4 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z009-2.SLDPRT",
+          "name": "ACC-MOT081Z009-2.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "83.6 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z011-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 85568,
+          "name": "ACC-MOT081Z011-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 81616,
+          "name": "ACC-MOT081Z012-2.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z012-2.SLDPRT",
+          "size": "79.7 KB"
+        },
+        {
+          "name": "ACC-MOT081Z012-3.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z012-3.SLDPRT",
+          "size": "83 KB",
+          "sizeBytes": 84956
+        },
+        {
+          "sizeBytes": 77681,
+          "size": "75.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z013-4.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z013-4.SLDPRT"
+        },
+        {
+          "size": "108.4 KB",
+          "sizeBytes": 110978,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z013-5.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z013-5.SLDPRT"
+        },
+        {
+          "sizeBytes": 110094,
+          "size": "107.5 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z013-6.SLDPRT",
+          "name": "ACC-MOT081Z013-6.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z014-4.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 110267,
+          "name": "ACC-MOT081Z014-4.SLDPRT",
+          "size": "107.7 KB"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z014-5.SLDPRT",
+          "size": "109.1 KB",
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z014-5.SLDPRT",
+          "sizeBytes": 111668
+        },
+        {
+          "size": "229.2 KB",
+          "sizeBytes": 234660,
+          "name": "ACC-MOT081Z015-2.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z015-2.SLDDRW"
+        },
+        {
+          "name": "ACC-MOT081Z015-2.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 114790,
+          "size": "112.1 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z015-2.SLDPRT"
+        },
+        {
+          "name": "ACC-MOT081Z016-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 60799,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/ACC-MOT081Z016-0.SLDPRT",
+          "size": "59.4 KB"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/C-NUWANS10-80-27-214.sldprt",
+          "sizeBytes": 98301,
+          "type": "SLDPRT",
+          "name": "C-NUWANS10-80-27-214.SLDPRT",
+          "size": "96 KB"
+        },
+        {
+          "size": "113.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/CSPCSSA-STU-TP4-10.SLDPRT",
+          "name": "CSPCSSA-STU-TP4-10.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 115917
+        },
+        {
+          "sizeBytes": 186580,
+          "type": "SLDPRT",
+          "name": "LFF-16_ADJUSTER FOR AL FLAME.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/LFF-16_ADJUSTER FOR AL FLAME.SLDPRT",
+          "size": "182.2 KB"
+        },
+        {
+          "size": "15.5 KB",
+          "type": "DB",
+          "name": "THUMBS.DB",
+          "sizeBytes": 15872,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/Thumbs.db"
+        },
+        {
+          "size": "164.4 KB",
+          "sizeBytes": 168322,
+          "type": "SLDASM",
+          "name": "WTB-MOT002A001-0.SLDASM",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/WTB-MOT002A001-0.SLDASM"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/WTB-MOT002Z001-0.SLDPRT",
+          "size": "57.1 KB",
+          "sizeBytes": 58489,
+          "name": "WTB-MOT002Z001-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "name": "WTB-MOT002Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/WTB-MOT002Z002-0.SLDPRT",
+          "sizeBytes": 130815,
+          "size": "127.7 KB"
+        },
+        {
+          "size": "83.7 KB",
+          "sizeBytes": 85683,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/WTB-MOT002Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "WTB-MOT002Z003-0.SLDPRT"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 2/WTB-MOT002Z004-0.SLDPRT",
+          "name": "WTB-MOT002Z004-0.SLDPRT",
+          "sizeBytes": 88178,
+          "size": "86.1 KB"
+        },
+        {
+          "size": "388.8 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081A001-2.SLDASM",
+          "type": "SLDASM",
+          "name": "ACC-MOT081A001-2.SLDASM",
+          "sizeBytes": 398163
+        },
+        {
+          "name": "ACC-MOT081A001-3.SLDDRW",
+          "type": "SLDDRW",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081A001-3.SLDDRW",
+          "sizeBytes": 402325,
+          "size": "392.9 KB"
+        },
+        {
+          "name": "ACC-MOT081Z001-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 125473,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z001-1.SLDPRT",
+          "size": "122.5 KB"
+        },
+        {
+          "size": "63.5 KB",
+          "name": "ACC-MOT081Z007-0.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 65028
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z009-1.SLDPRT",
+          "name": "ACC-MOT081Z009-1.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 118758,
+          "size": "116 KB"
+        },
+        {
+          "sizeBytes": 85228,
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z011-0.SLDPRT",
+          "name": "ACC-MOT081Z011-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "83.2 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z012-0.SLDPRT",
+          "size": "109.6 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z012-0.SLDPRT",
+          "sizeBytes": 112196
+        },
+        {
+          "size": "98.9 KB",
+          "sizeBytes": 101264,
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z012-1.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z012-1.SLDPRT"
+        },
+        {
+          "sizeBytes": 77681,
+          "size": "75.9 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z013-1.SLDPRT",
+          "name": "ACC-MOT081Z013-1.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "125.3 KB",
+          "name": "ACC-MOT081Z013-2.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z013-2.SLDPRT",
+          "sizeBytes": 128305,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z013-3.SLDPRT",
+          "name": "ACC-MOT081Z013-3.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 126899,
+          "size": "123.9 KB"
+        },
+        {
+          "sizeBytes": 124678,
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z014-2.SLDPRT",
+          "size": "121.8 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z014-2.SLDPRT"
+        },
+        {
+          "size": "124.3 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z014-3.SLDPRT",
+          "name": "ACC-MOT081Z014-3.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 127323
+        },
+        {
+          "name": "ACC-MOT081Z014-EDIT-2.SLDPRT",
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z014-EDIT-2.SLDPRT",
+          "size": "122.5 KB",
+          "sizeBytes": 125467
+        },
+        {
+          "size": "41 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z014-EDIT-2.STL",
+          "name": "ACC-MOT081Z014-EDIT-2.STL",
+          "type": "STL",
+          "sizeBytes": 41984
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-MOT081Z015-1.SLDPRT",
+          "size": "111.2 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z015-1.SLDPRT",
+          "sizeBytes": 113818
+        },
+        {
+          "sizeBytes": 60799,
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/ACC-MOT081Z016-0.SLDPRT",
+          "name": "ACC-MOT081Z016-0.SLDPRT",
+          "size": "59.4 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/C-NUWANS10-80-27-214.sldprt",
+          "name": "C-NUWANS10-80-27-214.SLDPRT",
+          "size": "96 KB",
+          "sizeBytes": 98301
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/CSPCSSA-STU-TP4-10.SLDPRT",
+          "sizeBytes": 115917,
+          "size": "113.2 KB",
+          "name": "CSPCSSA-STU-TP4-10.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "size": "182.2 KB",
+          "name": "LFF-16_ADJUSTER FOR AL FLAME.SLDPRT",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/LFF-16_ADJUSTER FOR AL FLAME.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 186580
+        },
+        {
+          "type": "DB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/Thumbs.db",
+          "sizeBytes": 16384,
+          "name": "THUMBS.DB",
+          "size": "16 KB"
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/WTB-MOT002A001-0.SLDASM",
+          "sizeBytes": 168993,
+          "size": "165 KB",
+          "name": "WTB-MOT002A001-0.SLDASM",
+          "type": "SLDASM"
+        },
+        {
+          "sizeBytes": 58489,
+          "name": "WTB-MOT002Z001-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "57.1 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/WTB-MOT002Z001-0.SLDPRT"
+        },
+        {
+          "size": "127.7 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/WTB-MOT002Z002-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "WTB-MOT002Z002-0.SLDPRT",
+          "sizeBytes": 130815
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/WTB-MOT002Z003-0.SLDPRT",
+          "name": "WTB-MOT002Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "size": "83.7 KB",
+          "sizeBytes": 85683
+        },
+        {
+          "type": "SLDPRT",
+          "name": "WTB-MOT002Z004-0.SLDPRT",
+          "sizeBytes": 88178,
+          "size": "86.1 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/WTB-MOT002Z004-0.SLDPRT"
+        },
+        {
+          "size": "41.4 KB",
+          "sizeBytes": 42384,
+          "name": "ACC-MOT081Z013-2.STL",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/21-AUG-2026/ACC-MOT081Z013-2.STL",
+          "type": "STL"
+        },
+        {
+          "name": "ACC-MOT081Z013-3.STL",
+          "type": "STL",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/21-AUG-2026/ACC-MOT081Z013-3.STL",
+          "size": "40.6 KB",
+          "sizeBytes": 41584
+        },
+        {
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/21-AUG-2026/ACC-MOT081Z014-2.STL",
+          "size": "41 KB",
+          "name": "ACC-MOT081Z014-2.STL",
+          "type": "STL",
+          "sizeBytes": 41984
+        },
+        {
+          "sizeBytes": 41584,
+          "size": "40.6 KB",
+          "relPath": "ACC-MOT081 COVER INNER DIAMETER MACHINE/TABLE 1,3,4/21-AUG-2026/ACC-MOT081Z014-3.STL",
+          "type": "STL",
+          "name": "ACC-MOT081Z014-3.STL"
+        }
+      ],
+      "name": "ACC-MOT081 COVER INNER DIAMETER MACHINE",
+      "hasCloudFiles": true,
+      "zipData": "",
+      "totalBytes": 20767752,
+      "fileCount": 128,
+      "totalSize": "19.8 MB"
+    },
+    "editorPin": "20523",
+    "status": "done",
+    "categoryId": "cat_acc",
+    "assignee": "JITTRAKAN K.",
+    "lastEditedRole": "ADMIN",
+    "creatorPin": "20523",
+    "workFolder.name": "ACC-MOT081 COVER INNER DIAMETER MACHINE",
+    "updatedAt": "2026-09-30T01:27:29.388Z",
+    "note": "ทำการจัดทำ COVER สำหรับเครื่อง INNER DIAMETER MACHINE เพื่อป้องกันน้ำยา RISCUT ฟุ้งกระจาย จำนวน 4 เครื่อง สำเร็จ",
+    "department": "MOTOR PRODUCTION",
+    "pdfAttachment.size": 2998572,
+    "imageData": null,
+    "id": "achv_acc_2",
+    "workFolder.fileCount": 128,
+    "pdfAttachment.name": "GM-J26-060.PDF",
+    "title": "ACC-MOT081 INNER DIAMETER MACHINE",
+    "process": "MAGNET",
+    "pdfAttachment.hasCloudPdf": true
+  },
+  {
+    "imageData": null,
+    "status": "done",
+    "department": "FERRULE PRODUCTION",
+    "id": "achv_acc_3",
+    "updatedAt": "2026-09-11T07:41:23.148Z",
+    "pdfAttachment.hasCloudPdf": true,
+    "note": "ทำการจัดทำ COVER รถเข็นทั้ง 2 ชั้น เพื่อป้องกันงานตก จำนวน 1 คันสำเร็จ",
+    "workFolder.totalSize": "2.7 MB",
+    "factory": "FACTORY B",
+    "categoryId": "cat_acc",
+    "requestDate": "2026-08-13",
+    "workFolder": {
+      "zipData": "",
+      "files": [
+        {
+          "type": "SLDASM",
+          "sizeBytes": 189123,
+          "name": "ACC-FER066W001-0.SLDASM",
+          "size": "184.7 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066W001-0.SLDASM"
+        },
+        {
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066W001-0.SLDDRW",
+          "sizeBytes": 349123,
+          "name": "ACC-FER066W001-0.SLDDRW",
+          "type": "SLDDRW",
+          "size": "340.9 KB"
+        },
+        {
+          "size": "306.1 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z001-0.SLDPRT",
+          "sizeBytes": 313442,
+          "type": "SLDPRT",
+          "name": "ACC-FER066Z001-0.SLDPRT"
+        },
+        {
+          "name": "ACC-FER066Z001-0.STL",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z001-0.STL",
+          "type": "STL",
+          "sizeBytes": 755684,
+          "size": "738 KB"
+        },
+        {
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z002-0.SLDDRW",
+          "sizeBytes": 220848,
+          "size": "215.7 KB",
+          "type": "SLDDRW",
+          "name": "ACC-FER066Z002-0.SLDDRW"
+        },
+        {
+          "sizeBytes": 71679,
+          "size": "70 KB",
+          "name": "ACC-FER066Z002-0.SLDPRT",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z002-0.SLDPRT",
+          "type": "SLDPRT"
+        },
+        {
+          "sizeBytes": 226136,
+          "type": "SLDDRW",
+          "name": "ACC-FER066Z002-1.SLDDRW",
+          "size": "220.8 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z002-1.SLDDRW"
+        },
+        {
+          "size": "69.2 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z002-1.SLDPRT",
+          "name": "ACC-FER066Z002-1.SLDPRT",
+          "sizeBytes": 70858,
+          "type": "SLDPRT"
+        },
+        {
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z003-0.SLDDRW",
+          "size": "213.4 KB",
+          "sizeBytes": 218508,
+          "type": "SLDDRW",
+          "name": "ACC-FER066Z003-0.SLDDRW"
+        },
+        {
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z003-0.SLDPRT",
+          "type": "SLDPRT",
+          "name": "ACC-FER066Z003-0.SLDPRT",
+          "sizeBytes": 67559,
+          "size": "66 KB"
+        },
+        {
+          "type": "SLDPRT",
+          "name": "ACC-FER066Z004-0.SLDPRT",
+          "size": "53.7 KB",
+          "sizeBytes": 55030,
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z004-0.SLDPRT"
+        },
+        {
+          "size": "54.5 KB",
+          "sizeBytes": 55855,
+          "type": "SLDPRT",
+          "name": "ACC-FER066Z005-0.SLDPRT",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z005-0.SLDPRT"
+        },
+        {
+          "sizeBytes": 82769,
+          "type": "SLDPRT",
+          "name": "ACC-FER066Z006-0.SLDPRT",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z006-0.SLDPRT",
+          "size": "80.8 KB"
+        },
+        {
+          "size": "139.1 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/ACC-FER066Z007-0.SLDPRT",
+          "type": "SLDPRT",
+          "sizeBytes": 142392,
+          "name": "ACC-FER066Z007-0.SLDPRT"
+        },
+        {
+          "size": "26 KB",
+          "relPath": "ACC-FER066 COVER CART FERRULE 2/Thumbs.db",
+          "sizeBytes": 26624,
+          "type": "DB",
+          "name": "THUMBS.DB"
+        }
+      ],
+      "totalBytes": 2845630,
+      "name": "ACC-FER066 COVER CART FERRULE 2",
+      "fileCount": 15,
+      "totalSize": "2.7 MB",
+      "hasCloudFiles": true
+    },
+    "pdfAttachment.name": "FR-J26-074.PDF",
+    "workFolder.name": "ACC-FER066 COVER CART FERRULE 2",
+    "workFolder.hasCloudFiles": true,
+    "description": "ร้องขอจัดทำ COVER รถเข็นทั้ง 2 ชั้น เพื่อป้องกันงานตก ขนาด COVER กว้างXยาวXสูง 40CMX60CMX7CM",
+    "pdfAttachment.size": 1790644,
+    "code": "FR-J26-074",
+    "assignee": "JITTRAKAN K.",
+    "createdAt": "2026-07-25T08:45:00.000Z",
+    "process": "FINAL INSPECTION",
+    "quotation": "",
+    "completionDate": "2026-08-25",
+    "workFolder.fileCount": 15,
+    "title": "ACC-FER066 COVER CART FERRULE 2",
+    "requestName": "PENNAPA M.",
+    "pdfAttachment": {
+      "data": "",
+      "hasCloudPdf": true,
+      "size": 1790644,
+      "name": "FR-J26-074.PDF"
+    }
+  }
 ];
 
 // --- Storage Keys ---
@@ -3564,31 +15735,22 @@ function loadData() {
     saveAchievements();
   }
 
-  // Auto-restore and protect user dataset (restore all 79 tasks if missing or overwritten)
-  const isDataRestored = localStorage.getItem('orbray_achievements_restored_v1') === 'true';
-  if (!isDataRestored || !achievements || achievements.length < 10) {
-    console.info('Restoring full historical achievements dataset (79 items)...');
-    const mergedMap = new Map();
-    INITIAL_SAMPLE_ACHIEVEMENTS.forEach(item => {
-      mergedMap.set(item.id, { ...item });
-    });
-    if (Array.isArray(achievements)) {
-      achievements.forEach(existing => {
-        if (existing && existing.title && existing.title.trim().toUpperCase() !== 'TEST') {
-          if (existing.categoryId === 'cat_sys') existing.categoryId = 'cat_prj';
-          if (existing.assignee && existing.assignee.trim().toUpperCase() === 'NUY') existing.assignee = 'JITTRAKAN K.';
-          if (existing.assignee && existing.assignee.trim().toUpperCase() === 'SUTTHIPONG') existing.assignee = 'SUTTHIPONG M.';
-          if (existing.assignee && existing.assignee.trim().toUpperCase() === 'TANIN') existing.assignee = 'TANIN P.';
-          mergedMap.set(existing.id, { ...(mergedMap.get(existing.id) || {}), ...existing });
-        }
-      });
-    }
-    achievements = Array.from(mergedMap.values());
+  // Ensure stale 79-item or outdated local cache (e.g. FACTORY 1 / deleted test items) is cleanly synced to the latest 102 cloud baseline
+  const isV5Synced = localStorage.getItem('orbray_achievements_synced_v5_102') === 'true';
+  const hasStaleLegacyData = Array.isArray(achievements) && achievements.some(a =>
+    a && (a.factory === 'FACTORY 1' || a.department === 'FERRULE' || a.department === 'MOTOR')
+  );
+  if (!isV5Synced || !achievements || achievements.length < 10 || hasStaleLegacyData) {
+    console.info('Synchronizing local cache with latest 102 cloud dataset...');
+    achievements = mergePreservingLocalAttachments(
+      INITIAL_SAMPLE_ACHIEVEMENTS.map(item => ({ ...item })),
+      Array.isArray(achievements) ? achievements : []
+    );
     saveAchievements();
-    localStorage.setItem('orbray_achievements_restored_v1', 'true');
+    localStorage.setItem('orbray_achievements_synced_v5_102', 'true');
   }
 
-  // Restore heavy attachments from IndexedDB if any were stored there
+  // Restore heavy binary attachments ONLY (never overwrite item list or resurrect deleted items) from IndexedDB
   loadAchievementsFromIndexedDB().then(idbData => {
     if (idbData && Array.isArray(idbData) && idbData.length > 0) {
       let restoredCount = 0;
@@ -3605,7 +15767,7 @@ function loadData() {
           a.assignee = 'TANIN P.';
           restoredCount++;
         }
-        const fullItem = idbData.find(i => i.id === a.id);
+        const fullItem = idbData.find(i => i && i.id === a.id);
         if (fullItem) {
           if (fullItem.pdfAttachment && fullItem.pdfAttachment.data && (!a.pdfAttachment || !a.pdfAttachment.data)) {
             a.pdfAttachment = fullItem.pdfAttachment;
@@ -3623,16 +15785,6 @@ function loadData() {
           }
         }
       });
-      // If IndexedDB has records not in localStorage
-      if (idbData.length > achievements.length) {
-        achievements = idbData;
-        achievements.forEach(a => {
-          if (a.assignee && a.assignee.trim().toUpperCase() === 'NUY') a.assignee = 'JITTRAKAN K.';
-          if (a.assignee && a.assignee.trim().toUpperCase() === 'SUTTHIPONG') a.assignee = 'SUTTHIPONG M.';
-          if (a.assignee && a.assignee.trim().toUpperCase() === 'TANIN') a.assignee = 'TANIN P.';
-        });
-        restoredCount++;
-      }
       if (restoredCount > 0) {
         saveAchievements();
         renderAll();
@@ -3688,6 +15840,14 @@ function saveAchievements() {
 
 function saveCategories() {
   localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
+  if (firebaseDb) {
+    try {
+      firebaseDb.collection('settings').doc('categories').set({
+        list: cleanFirestoreObject(categories),
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).catch(() => {});
+    } catch (e) {}
+  }
 }
 
 // --- Render Everything ---
@@ -3829,16 +15989,161 @@ function updateCloudStatusUI(status, errorMsg = '') {
   }
 }
 
+function parseFirestoreRestValue(v) {
+  if (!v || typeof v !== 'object') return null;
+  if ('stringValue' in v) return String(v.stringValue);
+  if ('integerValue' in v) return Number(v.integerValue);
+  if ('doubleValue' in v) return Number(v.doubleValue);
+  if ('booleanValue' in v) return Boolean(v.booleanValue);
+  if ('nullValue' in v) return null;
+  if ('timestampValue' in v) return String(v.timestampValue);
+  if ('mapValue' in v) {
+    const out = {};
+    const fields = (v.mapValue && v.mapValue.fields) || {};
+    for (const [k, val] of Object.entries(fields)) {
+      out[k] = parseFirestoreRestValue(val);
+    }
+    return out;
+  }
+  if ('arrayValue' in v) {
+    const vals = (v.arrayValue && v.arrayValue.values) || [];
+    return vals.map(parseFirestoreRestValue);
+  }
+  return null;
+}
+
+function applyCloudAchievementsSnapshot(rawCloudItems, isInitial = false) {
+  if (!Array.isArray(rawCloudItems) || rawCloudItems.length === 0) return;
+
+  const cloudItems = rawCloudItems.map(raw => {
+    let data = { ...raw };
+    const cachedItem = achievements.find(a => a && a.id === data.id);
+    if (cachedItem) {
+      data = mergeSingleItemAttachments(data, cachedItem);
+    }
+    return data;
+  });
+
+  // Sort achievements: newest first
+  cloudItems.sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : (a.requestDate ? new Date(a.requestDate).getTime() : 0);
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : (b.requestDate ? new Date(b.requestDate).getTime() : 0);
+    return timeB - timeA;
+  });
+
+  const rehydrateFromIDBIfNeeded = () => {
+    loadAchievementsFromIndexedDB().then(idbData => {
+      if (idbData && Array.isArray(idbData) && idbData.length > 0) {
+        achievements = mergePreservingLocalAttachments(achievements, idbData);
+      }
+    }).catch(() => {});
+  };
+
+  if (cloudItems.length >= 5) {
+    const pendingItems = achievements.filter(a => a && a._pendingSync === true);
+    if (pendingItems.length > 0) {
+      pendingItems.forEach(p => {
+        delete p._pendingSync;
+        saveAchievementToCloud(p);
+        if (!cloudItems.some(c => c.id === p.id)) {
+          cloudItems.unshift(p);
+        }
+      });
+    }
+
+    achievements = mergePreservingLocalAttachments(cloudItems, achievements);
+    localStorage.setItem('orbray_achievements_synced_v5_102', 'true');
+    saveAchievements();
+    rehydrateFromIDBIfNeeded();
+    renderAll();
+    if (!isInitial) {
+      showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
+    } else if (firebaseDb) {
+      setTimeout(() => {
+        autoSyncLocalAttachmentsToCloud(firebaseDb);
+      }, 1500);
+    }
+    return;
+  }
+
+  // Fallback merge by ID for partial data (< 5 items)
+  const mergedMap = new Map();
+  achievements.forEach(a => mergedMap.set(a.id, a));
+  cloudItems.forEach(c => {
+    if (c.title && c.title.trim().toUpperCase() !== 'TEST') {
+      const existing = mergedMap.get(c.id);
+      mergedMap.set(c.id, existing ? mergeSingleItemAttachments({ ...existing, ...c }, existing) : c);
+    }
+  });
+  achievements = Array.from(mergedMap.values());
+  saveAchievements();
+  rehydrateFromIDBIfNeeded();
+  renderAll();
+}
+
+async function fetchAchievementsViaRestFallback(projectId = 'orbray-techno-achievements', silent = true) {
+  try {
+    const url = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/achievements?pageSize=300&_t=${Date.now()}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) return false;
+    const json = await res.json();
+    if (!json || !Array.isArray(json.documents) || json.documents.length === 0) return false;
+
+    const restItems = json.documents.map(doc => {
+      const obj = {};
+      const fields = doc.fields || {};
+      for (const [k, val] of Object.entries(fields)) {
+        obj[k] = parseFirestoreRestValue(val);
+      }
+      if (!obj.id && doc.name) {
+        obj.id = doc.name.split('/').pop();
+      }
+      return obj;
+    });
+
+    const isInitial = !hasInitialCloudSnapshot;
+    hasInitialCloudSnapshot = true;
+    isFirebaseConnected = true;
+    updateCloudStatusUI('connected');
+    applyCloudAchievementsSnapshot(restItems, isInitial || silent);
+    return true;
+  } catch (err) {
+    console.warn('REST cloud sync fallback notice:', err);
+    return false;
+  }
+}
+
+let isVisibilitySyncBound = false;
+
 async function initFirebase(config, showToasts = false) {
   if (!config || (!config.projectId && !config.apiKey)) {
     updateCloudStatusUI('disconnected');
     return false;
   }
 
+  const projectId = config.projectId || 'orbray-techno-achievements';
+
+  // Bind mobile/desktop tab focus & visibility auto-refresh once so switching devices is always instant
+  if (!isVisibilitySyncBound) {
+    isVisibilitySyncBound = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        fetchAchievementsViaRestFallback(projectId, true);
+      }
+    });
+    window.addEventListener('focus', () => {
+      fetchAchievementsViaRestFallback(projectId, true);
+    });
+  }
+
   if (typeof firebase === 'undefined') {
-    console.warn('Firebase SDK is not loaded. Working in local mode.');
-    updateCloudStatusUI('error', 'Firebase SDK โหลดไม่สำเร็จ (กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต)');
-    return false;
+    console.warn('Firebase SDK is not loaded. Falling back to direct Firestore REST sync.');
+    updateCloudStatusUI('connecting');
+    const ok = await fetchAchievementsViaRestFallback(projectId, !showToasts);
+    if (!ok) {
+      updateCloudStatusUI('error', 'Firebase SDK โหลดไม่สำเร็จ (กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต)');
+    }
+    return ok;
   }
 
   try {
@@ -3856,18 +16161,16 @@ async function initFirebase(config, showToasts = false) {
 
     firebaseDb = firebase.firestore();
 
-    // Enable multi-tab persistence
-    try {
-      await firebaseDb.enablePersistence({ synchronizeTabs: true });
-    } catch (persistErr) {
-      if (persistErr.code === 'failed-precondition') {
-        console.warn('Firestore persistence warning (multiple tabs open):', persistErr);
-      } else {
-        console.warn('Firestore persistence unsupported:', persistErr);
-      }
-    }
+    // NOTE: Do NOT call firebaseDb.enablePersistence() here.
+    // On Mobile Safari / iOS WebKit / LINE in-app browsers, enablePersistence frequently hangs on IndexedDB locks
+    // or serves stale cached snapshots instead of live server data. Local persistence is already handled by
+    // localStorage + OrbrayAchievementDB.
 
     updateCloudStatusUI('connecting');
+
+    // Immediate parallel REST fetch guarantees mobile browsers receive live server data within <1s
+    // even if mobile cellular / corporate Wi-Fi throttles WebChannel streaming.
+    fetchAchievementsViaRestFallback(projectId, true);
 
     // Subscribe to achievements collection in real-time
     const colRef = firebaseDb.collection('achievements');
@@ -3888,94 +16191,47 @@ async function initFirebase(config, showToasts = false) {
         return;
       }
 
-      const cloudItems = [];
+      const rawCloudItems = [];
       snapshot.forEach(doc => {
-        let data = doc.data();
+        const data = doc.data();
         data.id = data.id || doc.id;
-
-        // Merge cached local heavy attachments if missing from cloud
-        const cachedItem = achievements.find(a => a.id === data.id);
-        if (cachedItem) {
-          data = mergeSingleItemAttachments(data, cachedItem);
-        }
-
-        cloudItems.push(data);
+        rawCloudItems.push(data);
       });
 
-      // Sort achievements: newest first
-      cloudItems.sort((a, b) => {
-        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : (a.requestDate ? new Date(a.requestDate).getTime() : 0);
-        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : (b.requestDate ? new Date(b.requestDate).getTime() : 0);
-        return timeB - timeA;
-      });
-
-      // Helper to re-hydrate in-memory achievements from IndexedDB if onSnapshot arrived before IDB finished loading
-      const rehydrateFromIDBIfNeeded = () => {
-        loadAchievementsFromIndexedDB().then(idbData => {
-          if (idbData && Array.isArray(idbData) && idbData.length > 0) {
-            achievements = mergePreservingLocalAttachments(achievements, idbData);
-          }
-        }).catch(() => {});
-      };
-
-      // When cloud has rich dataset (>= 5 items), keep all devices in 100% real-time sync
-      if (cloudItems.length >= 5) {
-        // Sync any offline-created drafts that have not yet been sent to cloud
-        const pendingItems = achievements.filter(a => a && a._pendingSync === true);
-        if (pendingItems.length > 0) {
-          pendingItems.forEach(p => {
-            delete p._pendingSync;
-            saveAchievementToCloud(p);
-            cloudItems.unshift(p);
-          });
-        }
-
-        achievements = mergePreservingLocalAttachments(cloudItems, achievements);
-        saveAchievements();
-        rehydrateFromIDBIfNeeded();
-        renderAll();
-        if (!isInitial) {
-          showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
-        } else {
-          setTimeout(() => {
-            autoSyncLocalAttachmentsToCloud(firebaseDb);
-          }, 1500);
-        }
-        return;
-      }
-
-      // Fallback merge by ID for initial or partial data
-      const mergedMap = new Map();
-      achievements.forEach(a => mergedMap.set(a.id, a));
-      cloudItems.forEach(c => {
-        if (c.title && c.title.trim().toUpperCase() !== 'TEST') {
-          const existing = mergedMap.get(c.id);
-          mergedMap.set(c.id, existing ? mergeSingleItemAttachments({ ...existing, ...c }, existing) : c);
-        }
-      });
-      achievements = Array.from(mergedMap.values());
-      saveAchievements();
-      rehydrateFromIDBIfNeeded();
-      renderAll();
-      if (!isInitial) {
-        showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
-      } else {
-        setTimeout(() => {
-          autoSyncLocalAttachmentsToCloud(firebaseDb);
-        }, 1500);
-      }
+      applyCloudAchievementsSnapshot(rawCloudItems, isInitial);
     }, (error) => {
       console.error('Firestore listener error:', error);
-      isFirebaseConnected = false;
-      let userFriendlyMsg = error.message;
-      if (error.code === 'permission-denied') {
-        userFriendlyMsg = 'ติดสิทธิ์การเข้าถึง (Permission Denied) - กรุณาอัปเดต Firestore Rules ใน Firebase Console เป็น allow read, write: if true;';
-      }
-      updateCloudStatusUI('error', userFriendlyMsg);
-      if (showToasts) {
-        alert('เกิดข้อผิดพลาดจาก Firestore: ' + userFriendlyMsg);
-      }
+      // Try REST fallback before declaring error
+      fetchAchievementsViaRestFallback(projectId, true).then(restOk => {
+        if (!restOk) {
+          isFirebaseConnected = false;
+          let userFriendlyMsg = error.message;
+          if (error.code === 'permission-denied') {
+            userFriendlyMsg = 'ติดสิทธิ์การเข้าถึง (Permission Denied) - กรุณาอัปเดต Firestore Rules ใน Firebase Console เป็น allow read, write: if true;';
+          }
+          updateCloudStatusUI('error', userFriendlyMsg);
+          if (showToasts) {
+            alert('เกิดข้อผิดพลาดจาก Firestore: ' + userFriendlyMsg);
+          }
+        }
+      });
     });
+
+    // Real-time subscribe to categories settings
+    try {
+      firebaseDb.collection('settings').doc('categories').onSnapshot(docSnap => {
+        if (docSnap && docSnap.exists) {
+          const data = docSnap.data();
+          if (data && Array.isArray(data.list) && data.list.length > 0) {
+            categories = data.list;
+            localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
+            populateCategoryDropdowns();
+            renderCharts();
+            renderContent();
+          }
+        }
+      }, () => {});
+    } catch (catErr) {}
 
     // Real-time subscribe to team accounts & pins settings
     try {
