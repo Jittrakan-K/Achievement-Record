@@ -14096,12 +14096,22 @@ const INITIAL_SAMPLE_ACHIEVEMENTS = [
 // --- Storage Keys ---
 const STORAGE_KEY_ACHIEVEMENTS = 'orbray_prod_techno_achievements_v4';
 const STORAGE_KEY_CATEGORIES = 'orbray_prod_techno_categories_v4';
+const STORAGE_KEY_WORKSPACES = 'orbray_workspaces_v1';
+const STORAGE_KEY_WORKSPACE_ORDER = 'orbray_workspace_tab_order_v1';
+const STORAGE_KEY_CURRENT_WORKSPACE = 'orbray_current_workspace_v1';
 const STORAGE_KEY_SHOW_RANKING = 'orbray_show_requester_ranking';
 const STORAGE_KEY_FIREBASE_CONFIG = 'orbray_firebase_config_v1';
 const STORAGE_KEY_AUTH_USER = 'orbray_auth_current_user_v1';
 const STORAGE_KEY_TEAM_PINS = 'orbray_team_account_pins_v1';
 const STORAGE_KEY_CUSTOM_ACCOUNTS = 'orbray_team_custom_accounts_v1';
 const STORAGE_KEY_DELETED_ACCOUNTS = 'orbray_team_deleted_accounts_v1';
+
+// --- Multi-Company / Workspace Pages Initial Defaults ---
+const DEFAULT_WORKSPACES = [
+  { id: 'ws_orbray', name: 'ORBRAY (THAILAND)', subtitle: 'PRODUCTION TECHNOLOGY', icon: '🏢', color: '#005bac', isDefault: true },
+  { id: 'ws_personal', name: 'PRIVATE PROJECT', subtitle: 'PERSONAL PROJECT', icon: '💻', color: '#0d9488' },
+  { id: 'ws_murata', name: 'MURATA', subtitle: 'ENGINEERING & TECHNOLOGY', icon: '🏭', color: '#e60012' }
+];
 
 // --- Production Technology Team Accounts & Initial PINs ---
 const DEFAULT_TEAM_ACCOUNTS = [
@@ -14288,6 +14298,9 @@ async function loadAchievementsFromIndexedDB() {
 // --- State ---
 let achievements = [];
 let categories = [];
+let workspaces = [];
+let currentWorkspaceId = localStorage.getItem(STORAGE_KEY_CURRENT_WORKSPACE) || 'ws_orbray';
+let editingWorkspaceId = null;
 let currentView = localStorage.getItem('orbray_view_preference') || (window.innerWidth <= 768 ? 'cards' : 'table');
 let currentSearch = '';
 let currentCategoryFilter = 'all';
@@ -14317,6 +14330,125 @@ let editingCategoryId = null;
 function uppercaseEnglish(str) {
   if (typeof str !== 'string') return str;
   return str.replace(/[a-z]/g, char => char.toUpperCase());
+}
+
+// --- Multi-Company / Workspace Helpers ---
+function getItemWorkspaceId(item) {
+  if (!item || !item.workspaceId) return 'ws_orbray';
+  if (Array.isArray(workspaces) && workspaces.length > 0 && workspaces.some(w => w.id === item.workspaceId)) {
+    return item.workspaceId;
+  }
+  return item.workspaceId || 'ws_orbray';
+}
+
+function getWorkspaceById(wsId) {
+  if (!wsId || wsId === 'all') {
+    return { id: 'all', name: 'รวมทุกหน้า (ALL PAGES)', subtitle: 'ALL COMPANIES & WORKSPACES', icon: '🌐', color: '#475569' };
+  }
+  const found = Array.isArray(workspaces) ? workspaces.find(w => w.id === wsId) : null;
+  if (found) return found;
+  return DEFAULT_WORKSPACES[0];
+}
+
+function getWorkspaceAchievements(wsId = currentWorkspaceId) {
+  if (!Array.isArray(achievements)) return [];
+  if (!wsId || wsId === 'all') return achievements;
+  return achievements.filter(item => getItemWorkspaceId(item) === wsId);
+}
+
+function getWorkspaceBadgeHtml(item, forceShow = false) {
+  if (!forceShow && currentWorkspaceId !== 'all') return '';
+  const wsId = getItemWorkspaceId(item);
+  const ws = getWorkspaceById(wsId);
+  const color = ws.color || '#005bac';
+  return `<span class="workspace-tag-badge" style="--ws-color: ${color}; --ws-bg: ${color}14; --ws-border: ${color}40;" title="หน้าบริษัท / พื้นที่เก็บงาน: ${escapeHtml(ws.name)}"><span style="width: 6px; height: 6px; border-radius: 1.5px; background: ${color}; display: inline-block; flex-shrink: 0;"></span> ${escapeHtml(uppercaseEnglish(ws.name))}</span>`;
+}
+
+function isPrivateProjectWorkspace(wsId) {
+  if (!wsId || wsId === 'all') return false;
+  if (wsId === 'ws_personal') return true;
+  const ws = getWorkspaceById(wsId);
+  if (!ws) return false;
+  const nameUpper = String(ws.name || '').toUpperCase();
+  return ws.type === 'personal' || nameUpper.includes('PRIVATE') || nameUpper.includes('PERSONAL') || nameUpper.includes('ส่วนตัว');
+}
+
+function getWorkspacePdfLabel(wsId) {
+  if (!wsId || wsId === 'all') return 'ORBRAY (THAILAND) (PDF)';
+  const ws = getWorkspaceById(wsId);
+  const wsName = uppercaseEnglish((ws && ws.name) ? ws.name.trim() : 'DOCUMENT');
+  return `${wsName} (PDF)`;
+}
+
+function handleModalWorkspaceChange(wsId) {
+  const selectEl = document.getElementById('achvWorkspace');
+  const targetWsId = wsId || (selectEl ? selectEl.value : currentWorkspaceId) || 'ws_orbray';
+  const isPrivate = isPrivateProjectWorkspace(targetWsId);
+
+  // 1. Dynamically update PDF attachment label according to selected workspace (e.g. PRIVATE PROJECT (PDF))
+  const pdfLabelEl = document.getElementById('achvPdfLabelTitle');
+  if (pdfLabelEl) {
+    pdfLabelEl.textContent = getWorkspacePdfLabel(targetWsId);
+  }
+
+  // 2. Toggle private-project-mode class on #achievementForm
+  const form = document.getElementById('achievementForm');
+  if (form) {
+    form.classList.toggle('private-project-mode', isPrivate);
+  }
+
+  // 3. Toggle required attribute on hidden fields so browser validation never blocks form submit
+  const titleInput = document.getElementById('achvTitle');
+  const catSelect = document.getElementById('achvCategory');
+  if (titleInput) titleInput.required = !isPrivate;
+  if (catSelect) catSelect.required = !isPrivate;
+
+  // 4. Arrange STATUS, DATE COMPLETED, and ASSIGN in exact requested order when in PRIVATE PROJECT mode
+  const rowStatusCat = document.getElementById('fgRowStatusCategory');
+  const rowAssignDate = document.getElementById('fgRowAssignDate');
+  const fgCategory = document.getElementById('fgCategory');
+  const fgStatus = document.getElementById('fgStatus');
+  const fgSubStatus = document.getElementById('fgSubStatus');
+  const fgAssignee = document.getElementById('fgAssignee');
+  const fgCompletionDate = document.getElementById('fgCompletionDate');
+
+  if (rowStatusCat && rowAssignDate && fgStatus && fgCompletionDate && fgAssignee) {
+    if (isPrivate) {
+      // Order: 1. STATUS (สถานะหลัก), 2. DATE COMPLETED (วันที่บันทึก / วันที่สำเร็จ), 3. ASSIGN (เจ้าของงานหลัก)
+      rowStatusCat.appendChild(fgStatus);
+      rowStatusCat.appendChild(fgCompletionDate);
+      rowStatusCat.appendChild(fgAssignee);
+    } else {
+      // Restore standard engineering layout
+      if (fgCategory) rowStatusCat.appendChild(fgCategory);
+      rowStatusCat.appendChild(fgStatus);
+      if (fgSubStatus) rowStatusCat.appendChild(fgSubStatus);
+      rowAssignDate.appendChild(fgAssignee);
+      rowAssignDate.appendChild(fgCompletionDate);
+    }
+  }
+
+  // 5. Adjust Detail & Note placeholders and rows for Private Project vs Factory mode
+  const descInput = document.getElementById('achvDescription');
+  const noteInput = document.getElementById('achvNote');
+  if (descInput) {
+    descInput.rows = isPrivate ? 3 : 2;
+    descInput.placeholder = isPrivate
+      ? 'ระบุรายละเอียดงาน โปรเจกต์ หรือสิ่งที่ดำเนินการ...'
+      : 'เช่น ร้องขอให้ฝ่ายเทคโนโลยีจัดทำ JIG, สั่งซื้ออะไหล่...';
+  }
+  if (noteInput) {
+    noteInput.placeholder = isPrivate
+      ? 'ระบุหมายเหตุ สิ่งที่กำลังรอ หรือความคืบหน้า...'
+      : 'เช่น (รอ) รอถอดออกได้ค่อยสั่ง, รอปริ้นงาน, กำลังจะ WIRING สาย';
+  }
+
+  // 6. If adding a new task in Private Project and DATE COMPLETED is empty, default to today
+  const achvIdVal = document.getElementById('achvId') ? document.getElementById('achvId').value : '';
+  const compDateInput = document.getElementById('achvCompletionDate');
+  if (isPrivate && !achvIdVal && compDateInput && !compDateInput.value) {
+    compDateInput.value = new Date().toISOString().split('T')[0];
+  }
 }
 
 /**
@@ -15652,6 +15784,37 @@ if (document.readyState === 'loading') {
 
 // --- Data Loading & Persistence ---
 function loadData() {
+  const savedWorkspaces = localStorage.getItem(STORAGE_KEY_WORKSPACES);
+  if (savedWorkspaces) {
+    try {
+      const parsedWs = JSON.parse(savedWorkspaces);
+      if (Array.isArray(parsedWs) && parsedWs.length > 0) {
+        workspaces = parsedWs;
+      } else {
+        workspaces = DEFAULT_WORKSPACES.map(w => ({ ...w }));
+      }
+      if (!workspaces.some(w => w.id === 'ws_orbray')) {
+        workspaces.unshift({ ...DEFAULT_WORKSPACES[0] });
+      }
+      // If ORBRAY still has the legacy initial red (#E60012), migrate it to Orbray Blue (#005bac)
+      const orbrayWs = workspaces.find(w => w.id === 'ws_orbray');
+      if (orbrayWs && (!orbrayWs.color || orbrayWs.color.toUpperCase() === '#E60012')) {
+        orbrayWs.color = '#005bac';
+        localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+      }
+    } catch (e) {
+      workspaces = DEFAULT_WORKSPACES.map(w => ({ ...w }));
+    }
+  } else {
+    workspaces = DEFAULT_WORKSPACES.map(w => ({ ...w }));
+    localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+  }
+
+  if (currentWorkspaceId !== 'all' && !workspaces.some(w => w.id === currentWorkspaceId)) {
+    currentWorkspaceId = 'ws_orbray';
+    localStorage.setItem(STORAGE_KEY_CURRENT_WORKSPACE, currentWorkspaceId);
+  }
+
   const savedCategories = localStorage.getItem(STORAGE_KEY_CATEGORIES);
   if (savedCategories) {
     try {
@@ -15850,13 +16013,29 @@ function saveCategories() {
   }
 }
 
+function saveWorkspaces() {
+  localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+  if (firebaseDb) {
+    try {
+      firebaseDb.collection('settings').doc('workspaces').set({
+        list: cleanFirestoreObject(workspaces),
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).catch(() => {});
+    } catch (e) {}
+  }
+}
+
 // --- Render Everything ---
 function renderAll() {
+  renderWorkspaceSwitcher();
+  updateWorkspaceBrandingUI();
+  populateWorkspaceDropdowns();
   populateCategoryDropdowns();
   populateAssigneeDropdown();
   resetAssigneeDropdown();
   renderStats();
   renderCharts();
+  renderEngineeringInsightsDashboard();
   renderRequesterRanking();
   renderContent();
 }
@@ -16232,6 +16411,33 @@ async function initFirebase(config, showToasts = false) {
         }
       }, () => {});
     } catch (catErr) {}
+
+    // Real-time subscribe to workspaces (multi-company pages) settings
+    try {
+      firebaseDb.collection('settings').doc('workspaces').onSnapshot(docSnap => {
+        if (docSnap && docSnap.exists) {
+          const data = docSnap.data();
+          if (data && Array.isArray(data.list) && data.list.length > 0) {
+            workspaces = data.list;
+            if (!workspaces.some(w => w.id === 'ws_orbray')) {
+              workspaces.unshift({ ...DEFAULT_WORKSPACES[0] });
+            }
+            localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+            if (currentWorkspaceId !== 'all' && !workspaces.some(w => w.id === currentWorkspaceId)) {
+              currentWorkspaceId = 'ws_orbray';
+              localStorage.setItem(STORAGE_KEY_CURRENT_WORKSPACE, currentWorkspaceId);
+            }
+            renderWorkspaceSwitcher();
+            updateWorkspaceBrandingUI();
+            populateWorkspaceDropdowns();
+            const wsModal = document.getElementById('workspaceModal');
+            if (wsModal && wsModal.classList.contains('active')) {
+              renderWorkspaceManagerList();
+            }
+          }
+        }
+      }, () => {});
+    } catch (wsErr) {}
 
     // Real-time subscribe to team accounts & pins settings
     try {
@@ -18580,6 +18786,626 @@ function setupEventListeners() {
   }
 }
 
+// --- Multi-Company / Workspace UI & Switching ---
+function populateWorkspaceDropdowns() {
+  const modalWsSelect = document.getElementById('achvWorkspace');
+  if (!modalWsSelect) return;
+
+  const currentVal = modalWsSelect.value;
+  modalWsSelect.innerHTML = '';
+  workspaces.forEach(ws => {
+    const opt = document.createElement('option');
+    opt.value = ws.id;
+    const subText = ws.subtitle ? ` — ${uppercaseEnglish(ws.subtitle)}` : '';
+    opt.textContent = `${ws.icon || '🏢'} ${uppercaseEnglish(ws.name)}${subText}`;
+    modalWsSelect.appendChild(opt);
+  });
+
+  if (currentVal && workspaces.some(w => w.id === currentVal)) {
+    modalWsSelect.value = currentVal;
+  } else if (currentWorkspaceId && currentWorkspaceId !== 'all' && workspaces.some(w => w.id === currentWorkspaceId)) {
+    modalWsSelect.value = currentWorkspaceId;
+  } else if (workspaces.length > 0) {
+    modalWsSelect.value = workspaces[0].id;
+  }
+}
+
+const WORKSPACE_THEME_PRESETS = [
+  { color: '#005bac', label: 'ORBRAY BLUE' },
+  { color: '#0284c7', label: 'OCEAN SKY' },
+  { color: '#0d9488', label: 'INDUSTRIAL TEAL' },
+  { color: '#059669', label: 'EMERALD GREEN' },
+  { color: '#4f46e5', label: 'ROYAL INDIGO' },
+  { color: '#e60012', label: 'CRIMSON RED' },
+  { color: '#334155', label: 'EXECUTIVE SLATE' }
+];
+
+function parseHexToRgb(hex) {
+  let clean = String(hex || '#005bac').replace('#', '').trim();
+  if (clean.length === 3) {
+    clean = clean[0] + clean[0] + clean[1] + clean[1] + clean[2] + clean[2];
+  }
+  const num = parseInt(clean, 16);
+  if (isNaN(num)) return { r: 0, g: 91, b: 172 };
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  };
+}
+
+function darkenHexColor(hex, factor = 0.82) {
+  const { r, g, b } = parseHexToRgb(hex);
+  const dr = Math.max(0, Math.min(255, Math.round(r * factor)));
+  const dg = Math.max(0, Math.min(255, Math.round(g * factor)));
+  const db = Math.max(0, Math.min(255, Math.round(b * factor)));
+  return '#' + [dr, dg, db].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+function applyWorkspaceThemeColor(hexColor) {
+  const primaryHex = (hexColor && /^#[0-9a-fA-F]{3,6}$/.test(hexColor.trim())) ? hexColor.trim() : '#005bac';
+  const hoverHex = darkenHexColor(primaryHex, 0.82);
+  const { r, g, b } = parseHexToRgb(primaryHex);
+  const root = document.documentElement;
+
+  root.style.setProperty('--primary', primaryHex);
+  root.style.setProperty('--primary-hover', hoverHex);
+  root.style.setProperty('--primary-light', `rgba(${r}, ${g}, ${b}, 0.08)`);
+  root.style.setProperty('--primary-soft', `rgba(${r}, ${g}, ${b}, 0.14)`);
+  root.style.setProperty('--primary-border', `rgba(${r}, ${g}, ${b}, 0.30)`);
+  root.style.setProperty('--primary-glow', `rgba(${r}, ${g}, ${b}, 0.24)`);
+  root.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+  root.style.setProperty('--murata-red', primaryHex);
+  root.style.setProperty('--murata-red-hover', hoverHex);
+  root.style.setProperty('--orbray-accent', primaryHex);
+  root.style.setProperty('--border-focus', primaryHex);
+  root.style.setProperty('--shadow-glow', `0 4px 16px rgba(${r}, ${g}, ${b}, 0.25)`);
+
+  // Update mobile browser theme-color & SVG favicon dynamically
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.setAttribute('content', primaryHex);
+
+  const encodedHex = encodeURIComponent(primaryHex);
+  const svgFavicon = document.querySelector('link[rel="icon"][ href^="data:image/svg+xml"]');
+  if (svgFavicon) {
+    svgFavicon.setAttribute(
+      'href',
+      `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='${encodedHex}'/%3E%3Crect x='11' y='11' width='42' height='42' rx='5' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M25 11v42M11 25h42' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E`
+    );
+  }
+}
+
+function quickChangeActiveWorkspaceColor(newColor) {
+  if (!newColor) return;
+  if (currentWorkspaceId === 'all') {
+    applyWorkspaceThemeColor(newColor);
+    renderWorkspaceSwitcher();
+    showToast(`เปลี่ยนสีธีมมุมมองรวมเป็น ${newColor.toUpperCase()}`);
+    return;
+  }
+  const wsIndex = workspaces.findIndex(w => w.id === currentWorkspaceId);
+  if (wsIndex !== -1) {
+    workspaces[wsIndex].color = newColor;
+    saveWorkspaces();
+    renderAll();
+    showToast(`อัปเดตสีประจำหน้า "${uppercaseEnglish(workspaces[wsIndex].name)}" เรียบร้อยแล้ว`);
+  }
+}
+
+function updateWorkspaceBrandingUI() {
+  const activeWs = getWorkspaceById(currentWorkspaceId);
+  const themeColor = currentWorkspaceId === 'all' ? '#334155' : (activeWs.color || '#005bac');
+
+  // 1. Apply full-page dynamic color theme
+  applyWorkspaceThemeColor(themeColor);
+
+  // 2. Update Top Strip & Header Brand Badges
+  const topStripName = document.getElementById('topStripWorkspaceName');
+  const topStripSub = document.getElementById('topStripWorkspaceSub');
+  const headerWsBadge = document.getElementById('headerWorkspaceBadge');
+  const headerSub = document.getElementById('headerBrandSubtitle');
+  const heroBadge = document.getElementById('murataHeroBadge');
+  const heroTitle = document.getElementById('murataHeroTitle');
+  const heroDesc = document.getElementById('murataHeroDesc');
+  const dashSecTitle = document.getElementById('dashboardSectionTitle');
+  const printSubtitle = document.querySelector('.print-subtitle');
+  const mobileTitleEl = document.getElementById('mobileHeaderTitle');
+
+  if (currentWorkspaceId === 'all') {
+    if (topStripName) topStripName.textContent = 'ALL WORKSPACES';
+    if (topStripSub) topStripSub.textContent = `COMBINED VIEW (${workspaces.length} PAGES) • ACHIEVEMENT RECORD`;
+    if (headerWsBadge) headerWsBadge.textContent = 'ALL PAGES';
+    if (headerSub) headerSub.textContent = 'MULTI-COMPANY ENGINEERING ARCHIVE';
+    if (heroBadge) heroBadge.textContent = `ALL COMPANIES & WORKSPACES • ${workspaces.length} PAGES`;
+    if (heroTitle) heroTitle.innerHTML = `ALL WORKSPACES <span>/ COMBINED ARCHIVE</span>`;
+    if (mobileTitleEl) mobileTitleEl.innerHTML = `ALL <span style="color: var(--primary);">WORKSPACES</span>`;
+    if (heroDesc) {
+      heroDesc.textContent = 'มุมมองรวมผลงานและเอกสารโครงการทั้งหมดจากทุกบริษัทและพื้นที่งานส่วนตัวในระบบเดียว';
+    }
+    if (dashSecTitle) {
+      dashSecTitle.textContent = 'สถิติและแดชบอร์ดภาพรวมทุกบริษัท (ALL WORKSPACES ANALYTICS)';
+    }
+    if (printSubtitle) {
+      printSubtitle.textContent = 'รายงานสรุปผลการปฏิบัติงานรวมทุกบริษัทและพื้นที่ทำงาน (ALL WORKSPACES)';
+    }
+  } else {
+    const wsNameUpper = uppercaseEnglish(activeWs.name || 'ORBRAY');
+    const wsSubUpper = uppercaseEnglish(activeWs.subtitle || 'ENGINEERING & OPERATIONS');
+
+    if (topStripName) topStripName.textContent = wsNameUpper;
+    if (topStripSub) topStripSub.textContent = `${wsSubUpper} • ACHIEVEMENT RECORD`;
+    if (headerWsBadge) headerWsBadge.textContent = wsNameUpper;
+    if (headerSub) headerSub.textContent = `${wsNameUpper} — ${wsSubUpper}`;
+    if (heroBadge) heroBadge.textContent = `ACTIVE WORKSPACE • ${wsSubUpper}`;
+    if (heroTitle) heroTitle.innerHTML = `${escapeHtml(wsNameUpper)} <span>/ ACHIEVEMENT RECORD</span>`;
+    if (mobileTitleEl) mobileTitleEl.innerHTML = `<span style="color: var(--primary);">${escapeHtml(wsNameUpper)}</span>`;
+
+    if (heroDesc) {
+      if (activeWs.id === 'ws_orbray') {
+        heroDesc.textContent = 'ระบบฐานข้อมูลบันทึกผลงานวิศวกรรม ติดตามความคืบหน้างวดงาน และจัดเก็บเอกสาร Job Request / Drawing';
+      } else if (activeWs.id === 'ws_personal' || activeWs.type === 'personal') {
+        heroDesc.textContent = `คลังจัดเก็บข้อมูลโปรเจกต์ส่วนตัว งานออกแบบอิสระ และเอกสารอ้างอิงประจำหน้า ${wsNameUpper}`;
+      } else {
+        heroDesc.textContent = `ระบบติดตามโครงการ บันทึกผลการปฏิบัติงาน และคลังเอกสารวิศวกรรมประจำหน้า ${wsNameUpper}`;
+      }
+    }
+    if (dashSecTitle) {
+      dashSecTitle.textContent = `สถิติและแดชบอร์ดภาพรวมงาน — ${wsNameUpper}`;
+    }
+    if (printSubtitle) {
+      printSubtitle.textContent = `รายงานสรุปผลการปฏิบัติงาน — ${wsNameUpper} (${wsSubUpper})`;
+    }
+  }
+
+  // 3. Update Live Workspace Telemetry Readout on Right Side of Header
+  const wsItems = getWorkspaceAchievements();
+  const totalCount = wsItems.length;
+  const doneCount = wsItems.filter(a => a.status === 'done').length;
+  const activeCount = wsItems.filter(a => a.status === 'in_progress' || a.status === 'wait' || a.status === 'pending').length;
+  const completionPct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+  let totalScore = 0;
+  wsItems.forEach(item => {
+    const xl = getTaskExcelTracking(item);
+    totalScore += (typeof xl.achievement === 'number' ? xl.achievement : 0);
+  });
+  const avgScorePct = totalCount > 0 ? Math.round((totalScore / totalCount) * 100) : 0;
+
+  const rateEl = document.getElementById('heroCompletionRate');
+  const scoreEl = document.getElementById('heroAvgAchvScore');
+  const barEl = document.getElementById('heroCompletionBar');
+  const statTotEl = document.getElementById('heroStatTotal');
+  const statDoneEl = document.getElementById('heroStatDone');
+  const statActEl = document.getElementById('heroStatActive');
+
+  if (rateEl) rateEl.textContent = `${completionPct}%`;
+  if (scoreEl) scoreEl.textContent = `ACHV ${avgScorePct}%`;
+  if (barEl) barEl.style.width = `${completionPct}%`;
+  if (statTotEl) statTotEl.textContent = String(totalCount);
+  if (statDoneEl) statDoneEl.textContent = String(doneCount);
+  if (statActEl) statActEl.textContent = String(activeCount);
+
+  // 4. Toggle streamlined Private Project workspace UI state
+  const isPrivateWs = isPrivateProjectWorkspace(currentWorkspaceId);
+  document.body.classList.toggle('is-private-workspace', isPrivateWs);
+
+  const searchInputEl = document.getElementById('searchInput');
+  if (searchInputEl) {
+    searchInputEl.placeholder = isPrivateWs
+      ? 'ค้นหา DETAIL (รายละเอียดงาน), NOTE (หมายเหตุ), หรือ ASSIGN (เจ้าของงาน)...'
+      : 'ค้นหา TASK NAME, REQUEST NUMBER, QUOTATION, REQUEST NAME, หรือ NOTE...';
+  }
+  const mobileSearchInputEl = document.getElementById('mobileSearchInput');
+  if (mobileSearchInputEl) {
+    mobileSearchInputEl.placeholder = isPrivateWs
+      ? 'ค้นหารายละเอียดงาน, หมายเหตุ, เจ้าของงาน...'
+      : 'ค้นหางาน, รหัสงาน, ผู้ร้องขอ...';
+  }
+}
+
+// --- Workspace Tab Ordering & Drag-and-Drop Management ---
+let draggedWorkspaceTabId = null;
+
+function getWorkspaceTabOrder() {
+  const allKnownIds = ['all', ...workspaces.map(w => w.id)];
+  let saved = [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_WORKSPACE_ORDER);
+    if (raw) saved = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!Array.isArray(saved) || saved.length === 0) {
+    return allKnownIds;
+  }
+
+  // Filter out any IDs that no longer exist
+  const validOrder = saved.filter(id => allKnownIds.includes(id));
+
+  // Add any new IDs that were not in saved order
+  allKnownIds.forEach(id => {
+    if (!validOrder.includes(id)) {
+      validOrder.push(id);
+    }
+  });
+
+  return validOrder;
+}
+
+function saveWorkspaceTabOrder(newOrder) {
+  if (!Array.isArray(newOrder)) return;
+  localStorage.setItem(STORAGE_KEY_WORKSPACE_ORDER, JSON.stringify(newOrder));
+
+  // Sync relative order of workspaces array in memory
+  const wsIdsInOrder = newOrder.filter(id => id !== 'all');
+  workspaces.sort((a, b) => {
+    const idxA = wsIdsInOrder.indexOf(a.id);
+    const idxB = wsIdsInOrder.indexOf(b.id);
+    if (idxA === -1 && idxB === -1) return 0;
+    if (idxA === -1) return 1;
+    if (idxB === -1) return -1;
+    return idxA - idxB;
+  });
+  try {
+    localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(workspaces));
+  } catch (e) {}
+
+  populateWorkspaceDropdowns();
+
+  if (firebaseDb) {
+    try {
+      firebaseDb.collection('settings').doc('workspaces').set({
+        list: cleanFirestoreObject(workspaces),
+        tabOrder: newOrder,
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).catch(() => {});
+    } catch (e) {}
+  }
+}
+
+function moveWorkspaceTabToFront(targetId) {
+  const currentOrder = getWorkspaceTabOrder();
+  const filtered = currentOrder.filter(id => id !== targetId);
+  const newOrder = [targetId, ...filtered];
+  saveWorkspaceTabOrder(newOrder);
+  renderWorkspaceSwitcher();
+  if (document.getElementById('workspaceModal')?.classList.contains('active')) {
+    renderWorkspaceManagerList();
+  }
+  const name = targetId === 'all' ? 'ALL WORKSPACES' : (getWorkspaceById(targetId)?.name || targetId);
+  showToast(`ย้าย "${uppercaseEnglish(name)}" มาไว้ด้านหน้าสุดเรียบร้อยแล้ว ⭐`);
+}
+
+function moveWorkspaceTabStep(targetId, direction) {
+  const currentOrder = [...getWorkspaceTabOrder()];
+  const idx = currentOrder.indexOf(targetId);
+  if (idx === -1) return;
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= currentOrder.length) return;
+
+  const temp = currentOrder[idx];
+  currentOrder[idx] = currentOrder[newIdx];
+  currentOrder[newIdx] = temp;
+
+  saveWorkspaceTabOrder(currentOrder);
+  renderWorkspaceSwitcher();
+  if (document.getElementById('workspaceModal')?.classList.contains('active')) {
+    renderWorkspaceManagerList();
+  }
+  const name = targetId === 'all' ? 'ALL WORKSPACES' : (getWorkspaceById(targetId)?.name || targetId);
+  showToast(`เลื่อนตำแหน่ง "${uppercaseEnglish(name)}" เรียบร้อยแล้ว`);
+}
+
+function moveWorkspaceTabToBack(targetId) {
+  const currentOrder = getWorkspaceTabOrder();
+  const filtered = currentOrder.filter(id => id !== targetId);
+  const newOrder = [...filtered, targetId];
+  saveWorkspaceTabOrder(newOrder);
+  renderWorkspaceSwitcher();
+  if (document.getElementById('workspaceModal')?.classList.contains('active')) {
+    renderWorkspaceManagerList();
+  }
+  const name = targetId === 'all' ? 'ALL WORKSPACES' : (getWorkspaceById(targetId)?.name || targetId);
+  showToast(`ย้าย "${uppercaseEnglish(name)}" ไปไว้ท้ายสุดเรียบร้อยแล้ว`);
+}
+
+function reorderWorkspaceTabs(sourceId, targetId, insertAfter = false) {
+  if (!sourceId || !targetId || sourceId === targetId) return;
+  const currentOrder = getWorkspaceTabOrder();
+  const filtered = currentOrder.filter(id => id !== sourceId);
+  const targetIdx = filtered.indexOf(targetId);
+  if (targetIdx === -1) {
+    filtered.push(sourceId);
+  } else {
+    const insertIdx = insertAfter ? targetIdx + 1 : targetIdx;
+    filtered.splice(insertIdx, 0, sourceId);
+  }
+  saveWorkspaceTabOrder(filtered);
+  renderWorkspaceSwitcher();
+  if (document.getElementById('workspaceModal')?.classList.contains('active')) {
+    renderWorkspaceManagerList();
+  }
+  const name = sourceId === 'all' ? 'ALL WORKSPACES' : (getWorkspaceById(sourceId)?.name || sourceId);
+  showToast(`จัดเรียงตำแหน่ง "${uppercaseEnglish(name)}" สำเร็จแล้ว ✨`);
+}
+
+function resetWorkspaceTabOrder() {
+  const defaultOrder = ['all', 'ws_orbray', 'ws_personal', 'ws_murata'];
+  const allKnownIds = ['all', ...workspaces.map(w => w.id)];
+  const cleanOrder = [];
+  defaultOrder.forEach(id => {
+    if (allKnownIds.includes(id)) cleanOrder.push(id);
+  });
+  allKnownIds.forEach(id => {
+    if (!cleanOrder.includes(id)) cleanOrder.push(id);
+  });
+  saveWorkspaceTabOrder(cleanOrder);
+  renderWorkspaceSwitcher();
+  renderWorkspaceManagerList();
+  showToast('รีเซ็ตลำดับแถบหน้างานเป็นค่าเริ่มต้นเรียบร้อยแล้ว');
+}
+
+// Drag & Drop Handlers for Workspace Tabs
+function handleTabDragStart(e, tabId) {
+  draggedWorkspaceTabId = tabId;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', tabId);
+  const wrapper = e.target.closest('.workspace-tab-wrapper');
+  if (wrapper) wrapper.classList.add('is-dragging');
+}
+
+function handleTabDragOver(e, tabId) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const wrapper = e.target.closest('.workspace-tab-wrapper');
+  if (wrapper && draggedWorkspaceTabId && draggedWorkspaceTabId !== tabId) {
+    const rect = wrapper.getBoundingClientRect();
+    const isRightHalf = (e.clientX - rect.left) > (rect.width / 2);
+    wrapper.classList.toggle('drag-over-right', isRightHalf);
+    wrapper.classList.toggle('drag-over-left', !isRightHalf);
+  }
+}
+
+function handleTabDragLeave(e) {
+  const wrapper = e.target.closest('.workspace-tab-wrapper');
+  if (wrapper) {
+    wrapper.classList.remove('drag-over-left', 'drag-over-right');
+  }
+}
+
+function handleTabDrop(e, targetTabId) {
+  e.preventDefault();
+  const wrapper = e.target.closest('.workspace-tab-wrapper');
+  let insertAfter = false;
+  if (wrapper) {
+    insertAfter = wrapper.classList.contains('drag-over-right');
+    wrapper.classList.remove('drag-over-left', 'drag-over-right');
+  }
+  const sourceTabId = e.dataTransfer.getData('text/plain') || draggedWorkspaceTabId;
+  if (sourceTabId && targetTabId && sourceTabId !== targetTabId) {
+    reorderWorkspaceTabs(sourceTabId, targetTabId, insertAfter);
+  }
+  draggedWorkspaceTabId = null;
+}
+
+function handleTabDragEnd(e) {
+  document.querySelectorAll('.workspace-tab-wrapper').forEach(w => {
+    w.classList.remove('is-dragging', 'drag-over-left', 'drag-over-right');
+  });
+  draggedWorkspaceTabId = null;
+}
+
+// Horizontal Scroll Helper
+function scrollWorkspaceTabs(offset) {
+  const list = document.getElementById('workspaceTabsList');
+  if (list) {
+    list.scrollBy({ left: offset, behavior: 'smooth' });
+    setTimeout(updateWorkspaceScrollButtons, 350);
+  }
+}
+
+function updateWorkspaceScrollButtons() {
+  const list = document.getElementById('workspaceTabsList');
+  const prevBtn = document.getElementById('btnWsScrollPrev');
+  const nextBtn = document.getElementById('btnWsScrollNext');
+  if (!list || !prevBtn || !nextBtn) return;
+
+  const canScrollLeft = list.scrollLeft > 6;
+  const canScrollRight = (list.scrollWidth - list.clientWidth - list.scrollLeft) > 6;
+  const hasOverflow = list.scrollWidth > list.clientWidth + 6;
+
+  prevBtn.style.display = hasOverflow ? 'inline-flex' : 'none';
+  nextBtn.style.display = hasOverflow ? 'inline-flex' : 'none';
+  prevBtn.disabled = !canScrollLeft;
+  nextBtn.disabled = !canScrollRight;
+  prevBtn.style.opacity = canScrollLeft ? '1' : '0.35';
+  nextBtn.style.opacity = canScrollRight ? '1' : '0.35';
+}
+
+function renderWorkspaceSwitcher() {
+  const desktopList = document.getElementById('workspaceTabsList');
+  const mobileList = document.getElementById('mobileWorkspaceScroll');
+  const quickThemeBar = document.getElementById('workspaceThemeQuickbar');
+
+  // Count tasks per workspace
+  const countsMap = {};
+  workspaces.forEach(w => { countsMap[w.id] = 0; });
+  if (Array.isArray(achievements)) {
+    achievements.forEach(item => {
+      const wsId = getItemWorkspaceId(item);
+      countsMap[wsId] = (countsMap[wsId] || 0) + 1;
+    });
+  }
+  const totalAll = Array.isArray(achievements) ? achievements.length : 0;
+  const activeWs = getWorkspaceById(currentWorkspaceId);
+  const activeColor = (currentWorkspaceId === 'all' ? '#334155' : (activeWs.color || '#005bac')).toLowerCase();
+
+  const tabOrder = getWorkspaceTabOrder();
+
+  if (desktopList) {
+    let html = '';
+
+    tabOrder.forEach((tabId, idx) => {
+      const isFirst = idx === 0;
+      const isLast = idx === tabOrder.length - 1;
+
+      if (tabId === 'all') {
+        const isAllActive = currentWorkspaceId === 'all';
+        html += `
+          <div class="workspace-tab-wrapper" data-tab-id="all" draggable="true"
+               ondragstart="handleTabDragStart(event, 'all')"
+               ondragover="handleTabDragOver(event, 'all')"
+               ondragleave="handleTabDragLeave(event)"
+               ondrop="handleTabDrop(event, 'all')"
+               ondragend="handleTabDragEnd(event)">
+            <button type="button" class="workspace-tab-btn ${isAllActive ? 'active' : ''}"
+              style="--ws-color: #334155; --ws-active-bg: rgba(51, 65, 85, 0.08);"
+              onclick="switchWorkspace('all')"
+              title="ดูผลงานรวมจากทุกบริษัทและทุกหน้า (${totalAll} รายการ) • ลากหรือกดปุ่มเพื่อเปลี่ยนลำดับ">
+              <span class="workspace-tab-grip" title="คลิกลากเพื่อจัดลำดับ">⠿</span>
+              <span class="workspace-tab-indicator"></span>
+              <span class="workspace-tab-info">
+                <span class="workspace-tab-name">ALL WORKSPACES</span>
+                <span class="workspace-tab-sub">รวมทุกหน้า (${workspaces.length} หน้า)</span>
+              </span>
+              <span class="workspace-tab-count">${totalAll}</span>
+            </button>
+            <div class="tab-quick-reorder-bar" onclick="event.stopPropagation()">
+              ${!isFirst ? `<button type="button" class="tab-reorder-btn tab-btn-front" onclick="moveWorkspaceTabToFront('all')" title="ย้ายมาไว้หน้าสุด (Move to Front)">⏮</button>` : `<span class="tab-front-badge" title="หน้านี้อยู่ตำแหน่งหน้าสุดแล้ว (Front)">⭐</span>`}
+              ${!isFirst ? `<button type="button" class="tab-reorder-btn" onclick="moveWorkspaceTabStep('all', -1)" title="เลื่อนไปทางซ้าย (Move Left)">◀</button>` : ''}
+              ${!isLast ? `<button type="button" class="tab-reorder-btn" onclick="moveWorkspaceTabStep('all', 1)" title="เลื่อนไปทางขวา (Move Right)">▶</button>` : ''}
+            </div>
+          </div>
+        `;
+      } else {
+        const ws = workspaces.find(w => w.id === tabId);
+        if (!ws) return;
+        const isActive = currentWorkspaceId === ws.id;
+        const count = countsMap[ws.id] || 0;
+        const color = ws.color || '#005bac';
+        const { r, g, b } = parseHexToRgb(color);
+
+        html += `
+          <div class="workspace-tab-wrapper" data-tab-id="${escapeHtml(ws.id)}" draggable="true"
+               ondragstart="handleTabDragStart(event, '${escapeHtml(ws.id)}')"
+               ondragover="handleTabDragOver(event, '${escapeHtml(ws.id)}')"
+               ondragleave="handleTabDragLeave(event)"
+               ondrop="handleTabDrop(event, '${escapeHtml(ws.id)}')"
+               ondragend="handleTabDragEnd(event)">
+            <button type="button" class="workspace-tab-btn ${isActive ? 'active' : ''}"
+              style="--ws-color: ${color}; --ws-active-bg: rgba(${r}, ${g}, ${b}, 0.08);"
+              onclick="switchWorkspace('${escapeHtml(ws.id)}')"
+              title="${escapeHtml(ws.name)}${ws.subtitle ? ' — ' + escapeHtml(ws.subtitle) : ''} (${count} รายการ) • ลากหรือกดปุ่มเพื่อเปลี่ยนลำดับ">
+              <span class="workspace-tab-grip" title="คลิกลากเพื่อจัดลำดับ">⠿</span>
+              <span class="workspace-tab-indicator"></span>
+              <span class="workspace-tab-info">
+                <span class="workspace-tab-name">${escapeHtml(uppercaseEnglish(ws.name))}</span>
+                ${ws.subtitle ? `<span class="workspace-tab-sub">${escapeHtml(uppercaseEnglish(ws.subtitle))}</span>` : ''}
+              </span>
+              <span class="workspace-tab-count">${count}</span>
+            </button>
+            <div class="tab-quick-reorder-bar" onclick="event.stopPropagation()">
+              ${!isFirst ? `<button type="button" class="tab-reorder-btn tab-btn-front" onclick="moveWorkspaceTabToFront('${escapeHtml(ws.id)}')" title="ย้ายมาไว้หน้าสุด (Move to Front)">⏮</button>` : `<span class="tab-front-badge" title="หน้านี้อยู่ตำแหน่งหน้าสุดแล้ว (Front)">⭐</span>`}
+              ${!isFirst ? `<button type="button" class="tab-reorder-btn" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', -1)" title="เลื่อนไปทางซ้าย (Move Left)">◀</button>` : ''}
+              ${!isLast ? `<button type="button" class="tab-reorder-btn" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', 1)" title="เลื่อนไปทางขวา (Move Right)">▶</button>` : ''}
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    desktopList.innerHTML = html;
+
+    // Attach horizontal scroll wheel listener once
+    if (!desktopList.dataset.wheelAttached) {
+      desktopList.dataset.wheelAttached = 'true';
+      desktopList.addEventListener('wheel', (e) => {
+        if (e.deltaY && !e.deltaX) {
+          e.preventDefault();
+          desktopList.scrollLeft += e.deltaY;
+          updateWorkspaceScrollButtons();
+        }
+      }, { passive: false });
+      desktopList.addEventListener('scroll', updateWorkspaceScrollButtons, { passive: true });
+    }
+
+    setTimeout(updateWorkspaceScrollButtons, 50);
+  }
+
+  // Render 1-Click Theme Color Swatch Bar for the Active Page
+  if (quickThemeBar) {
+    const swatchesHtml = WORKSPACE_THEME_PRESETS.map(p => {
+      const isMatch = p.color.toLowerCase() === activeColor;
+      return `<button type="button" class="ws-quick-swatch ${isMatch ? 'active' : ''}" style="background: ${p.color};" onclick="quickChangeActiveWorkspaceColor('${p.color}')" title="เปลี่ยนสีธีมหน้านี้เป็น ${p.label} (${p.color})"></button>`;
+    }).join('');
+
+    quickThemeBar.innerHTML = `
+      <span class="ws-theme-quick-label">THEME</span>
+      ${swatchesHtml}
+      <input type="color" class="ws-quick-color-input" value="${escapeHtml(activeColor)}" onchange="quickChangeActiveWorkspaceColor(this.value)" title="เลือกสีธีมประจำหน้านี้แบบกำหนดเอง">
+    `;
+  }
+
+  if (mobileList) {
+    let mHtml = '';
+
+    tabOrder.forEach(tabId => {
+      if (tabId === 'all') {
+        const isAllActive = currentWorkspaceId === 'all';
+        mHtml += `
+          <button type="button" class="mobile-ws-chip ${isAllActive ? 'active' : ''}"
+            style="--ws-color: #334155; --ws-active-bg: rgba(51, 65, 85, 0.10);"
+            onclick="switchWorkspace('all')">
+            <span class="mobile-ws-chip-dot"></span>
+            <span>ALL</span>
+            <span class="mobile-ws-chip-count">${totalAll}</span>
+          </button>
+        `;
+      } else {
+        const ws = workspaces.find(w => w.id === tabId);
+        if (!ws) return;
+        const isActive = currentWorkspaceId === ws.id;
+        const count = countsMap[ws.id] || 0;
+        const color = ws.color || '#005bac';
+        const { r, g, b } = parseHexToRgb(color);
+        mHtml += `
+          <button type="button" class="mobile-ws-chip ${isActive ? 'active' : ''}"
+            style="--ws-color: ${color}; --ws-active-bg: rgba(${r}, ${g}, ${b}, 0.10);"
+            onclick="switchWorkspace('${escapeHtml(ws.id)}')">
+            <span class="mobile-ws-chip-dot"></span>
+            <span>${escapeHtml(uppercaseEnglish(ws.name))}</span>
+            <span class="mobile-ws-chip-count">${count}</span>
+          </button>
+        `;
+      }
+    });
+
+    // 3. Mobile Action Chips (Reorder, Theme, Manager)
+    mHtml += `
+      <button type="button" class="mobile-ws-chip mobile-ws-reorder-chip" onclick="openWorkspaceModal(false, true)" title="จัดเรียงลำดับหน้า หรือเลือกว่าจะเอาตัวเลือกไหนไว้ด้านหน้า">
+        <span>⇄ จัดลำดับ</span>
+      </button>
+      <label class="mobile-ws-chip mobile-ws-theme-chip" title="เปลี่ยนสีธีมประจำหน้านี้">
+        <span class="mobile-ws-theme-swatch" style="background: ${escapeHtml(activeColor)};"></span>
+        <span>สีธีม</span>
+        <input type="color" class="mobile-ws-color-input" value="${escapeHtml(activeColor)}" onchange="quickChangeActiveWorkspaceColor(this.value)">
+      </label>
+      <button type="button" class="mobile-ws-chip mobile-ws-manage-chip" onclick="openWorkspaceModal(false)" title="ตั้งค่าหน้า / เพิ่มหน้าใหม่">
+        <span>⚙ ตั้งค่าหน้า</span>
+      </button>
+    `;
+    mobileList.innerHTML = mHtml;
+  }
+}
+
+function switchWorkspace(wsId) {
+  if (!wsId) return;
+  currentWorkspaceId = wsId;
+  localStorage.setItem(STORAGE_KEY_CURRENT_WORKSPACE, currentWorkspaceId);
+  renderAll();
+  const ws = getWorkspaceById(wsId);
+  showToast(`สลับไปยังหน้า: ${uppercaseEnglish(ws.name)}`);
+}
+
 // --- Populate Category Dropdowns ---
 function populateCategoryDropdowns() {
   const filterSelect = document.getElementById('categoryFilter');
@@ -18617,8 +19443,9 @@ function populateAssigneeDropdown() {
 
   const currentVal = currentAssigneeFilter || filterSelect.value || 'all';
   const assigneeCounts = {};
+  const wsAchievements = getWorkspaceAchievements();
 
-  achievements.forEach(a => {
+  wsAchievements.forEach(a => {
     if (a.assignee && a.assignee.trim()) {
       let name = a.assignee.trim().toUpperCase();
       if (name === 'NUY') name = 'JITTRAKAN K.';
@@ -18728,11 +19555,13 @@ function updateResetFilterButtonVisibility() {
 
 // --- KPI Statistics ---
 function renderStats() {
-  const total = achievements.length;
-  const done = achievements.filter(a => a.status === 'done').length;
-  const inProgress = achievements.filter(a => a.status === 'in_progress').length;
-  const wait = achievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
-  const cancel = achievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
+  renderWorkspaceSwitcher();
+  const wsAchievements = getWorkspaceAchievements();
+  const total = wsAchievements.length;
+  const done = wsAchievements.filter(a => a.status === 'done').length;
+  const inProgress = wsAchievements.filter(a => a.status === 'in_progress').length;
+  const wait = wsAchievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
+  const cancel = wsAchievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
 
   const setElText = (id, val) => {
     const el = document.getElementById(id);
@@ -18764,11 +19593,12 @@ function renderStats() {
 function renderCharts() {
   if (typeof Chart === 'undefined') return;
 
-  const totalTasks = achievements.length;
+  const wsAchievements = getWorkspaceAchievements();
+  const totalTasks = wsAchievements.length;
 
   const categoryCounts = {};
   categories.forEach(c => categoryCounts[c.id] = 0);
-  achievements.forEach(a => {
+  wsAchievements.forEach(a => {
     if (categoryCounts[a.categoryId] !== undefined) {
       categoryCounts[a.categoryId]++;
     } else {
@@ -18805,38 +19635,28 @@ function renderCharts() {
 
       const isMobile = window.innerWidth <= 768;
 
-      if (isMobile) {
-        // On Mobile: Clean, elegant single total count centered perfectly in donut hole without 'งานทั้งหมด'
-        const numSize = Math.round(Math.min(28, Math.max(20, innerRadius * 0.52)));
-        ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#0f172a';
-        ctx.fillText(`${total}`, centerX, centerY);
-      } else {
-        // On Desktop: Number + "งานทั้งหมด" label
-        const numSize = 26;
-        const labelSize = 12;
-        const gap = Math.max(3, Math.round(innerRadius * 0.08));
+      const numSize = isMobile ? 25 : 30;
+      const labelSize = isMobile ? 10 : 11;
+      const gap = isMobile ? 5 : 6;
 
-        const totalBlockHeight = numSize + gap + labelSize;
-        const numY = centerY - (totalBlockHeight / 2) + (numSize / 2);
-        const labelY = centerY + (totalBlockHeight / 2) - (labelSize / 2);
+      const totalBlockHeight = numSize + gap + labelSize;
+      const numY = Math.round(centerY - (totalBlockHeight / 2) + (numSize / 2));
+      const labelY = Math.round(centerY + (totalBlockHeight / 2) - (labelSize / 2));
 
-        // 1. Draw Total Number
-        ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#0f172a';
-        ctx.fillText(`${total}`, centerX, numY);
+      // 1. Draw Total Number
+      ctx.font = `800 ${numSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText(`${total}`, Math.round(centerX), numY);
 
-        // 2. Draw Thai Label "งานทั้งหมด"
-        ctx.font = `600 ${labelSize}px 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#64748b';
-        ctx.fillText("งานทั้งหมด", centerX, labelY);
-      }
+      // 2. Draw Short English Label "TOTAL"
+      ctx.font = `700 ${labelSize}px 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#64748b';
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '1.2px';
+      ctx.fillText("TOTAL", Math.round(centerX), labelY);
 
       ctx.restore();
     }
@@ -18915,7 +19735,7 @@ function renderCharts() {
             }
           }
         },
-        cutout: window.innerWidth <= 768 ? '69%' : '66%'
+        cutout: window.innerWidth <= 768 ? '70%' : '70%'
       },
       plugins: [doughnutCenterTextPlugin]
     });
@@ -18927,10 +19747,10 @@ function renderCharts() {
     }
   }
 
-  const doneCount = achievements.filter(a => a.status === 'done').length;
-  const inProgCount = achievements.filter(a => a.status === 'in_progress').length;
-  const waitCount = achievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
-  const cancelCount = achievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
+  const doneCount = wsAchievements.filter(a => a.status === 'done').length;
+  const inProgCount = wsAchievements.filter(a => a.status === 'in_progress').length;
+  const waitCount = wsAchievements.filter(a => a.status === 'wait' || a.status === 'pending').length;
+  const cancelCount = wsAchievements.filter(a => a.status === 'cancel' || a.status === 'cancle').length;
 
   // Update Status Summary Pills in Chart Header
   const pillDone = document.getElementById('pillDoneCount');
@@ -19203,33 +20023,45 @@ function filterFromInsightsField(fieldType, rawValue, displayLabel) {
   }
 }
 
-function createMiniCenterTextPlugin(labelSubtext) {
+function setMiniDonutCenterOverlay(overlayId, countVal, labelText, accentColor) {
+  const el = document.getElementById(overlayId);
+  if (!el) return;
+  const numEl = el.querySelector('.eng-donut-center-num');
+  const lblEl = el.querySelector('.eng-donut-center-lbl');
+  if (numEl) {
+    numEl.textContent = `${countVal}`;
+    numEl.style.color = accentColor || '#0f172a';
+  }
+  if (lblEl) {
+    lblEl.textContent = labelText || 'TOTAL';
+    lblEl.style.color = accentColor ? accentColor : '#64748b';
+  }
+}
+
+function createMiniCenterTextPlugin(labelSubtext, overlayId) {
   return {
     id: 'miniDoughnutCenter',
     afterDatasetsDraw(chart) {
+      // If a native HTML center overlay exists, keep canvas 100% clean (no blurry double text!)
+      if (overlayId && document.getElementById(overlayId)) {
+        return;
+      }
       const meta = chart.getDatasetMeta(0);
       if (!meta || !meta.data || !meta.data.length || !meta.data[0]) return;
       const firstArc = meta.data[0];
-      const cx = typeof firstArc.x === 'number' ? firstArc.x : chart.width / 2;
-      const cy = typeof firstArc.y === 'number' ? firstArc.y : chart.height / 2;
+      const cx = Math.round(typeof firstArc.x === 'number' ? firstArc.x : chart.width / 2);
+      const cy = Math.round(typeof firstArc.y === 'number' ? firstArc.y : chart.height / 2);
       const total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
-      const isMobile = window.innerWidth <= 768;
       const { ctx } = chart;
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      if (isMobile) {
-        ctx.font = "800 24px 'Inter', 'Sarabun', sans-serif";
-        ctx.fillStyle = '#0f172a';
-        ctx.fillText(`${total}`, cx, cy + 1);
-      } else {
-        ctx.font = "800 18px 'Inter', 'Sarabun', sans-serif";
-        ctx.fillStyle = '#0f172a';
-        ctx.fillText(`${total}`, cx, cy - 5);
-        ctx.font = "600 10px 'Sarabun', 'Inter', sans-serif";
-        ctx.fillStyle = '#64748b';
-        ctx.fillText(labelSubtext || 'งานทั้งหมด', cx, cy + 10);
-      }
+      ctx.font = "800 22px 'Inter', sans-serif";
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText(`${total}`, cx, cy - 6);
+      ctx.font = "700 10px 'Inter', sans-serif";
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(labelSubtext || 'TOTAL', cx, cy + 11);
       ctx.restore();
     }
   };
@@ -19241,20 +20073,21 @@ function renderEngineeringInsightsDashboard() {
   const section = document.getElementById('engInsightsSection');
   if (!section || !isEngInsightsVisible) return;
 
-  const totalTasks = achievements.length;
+  const wsAchievements = getWorkspaceAchievements();
+  const totalTasks = wsAchievements.length;
 
   // Data aggregation maps
   const priMap = {
-    'Super High': { key: 'Super High', label: 'SUPER HIGH', sub: 'ด่วนพิเศษ', count: 0, color: '#7c3aed' },
-    'High':       { key: 'High',       label: 'HIGH',       sub: 'สูง', count: 0, color: '#dc2626' },
-    'Medium':     { key: 'Medium',     label: 'MEDIUM',     sub: 'ปานกลาง', count: 0, color: '#2563eb' },
-    'Low':        { key: 'Low',        label: 'LOW',        sub: 'ทั่วไป', count: 0, color: '#10b981' }
+    'Super High': { key: 'Super High', label: 'SUPER HIGH', shortLabel: 'S. HIGH', sub: 'ด่วนพิเศษ', count: 0, color: '#7c3aed' },
+    'High':       { key: 'High',       label: 'HIGH',       shortLabel: 'HIGH',    sub: 'สูง', count: 0, color: '#dc2626' },
+    'Medium':     { key: 'Medium',     label: 'MEDIUM',     shortLabel: 'MEDIUM',  sub: 'ปานกลาง', count: 0, color: '#2563eb' },
+    'Low':        { key: 'Low',        label: 'LOW',        shortLabel: 'LOW',     sub: 'ทั่วไป', count: 0, color: '#10b981' }
   };
 
   const subJobMap = {
-    '01 In-house':  { key: '01 In-house',  label: 'IN-HOUSE',  sub: 'ทำเองภายใน', count: 0, color: '#0284c7' },
-    '02 Outsource': { key: '02 Outsource', label: 'OUTSOURCE', sub: 'สั่งทำภายนอก', count: 0, color: '#d97706' },
-    'All':          { key: 'All',          label: 'ALL (BOTH)', sub: 'ทำเอง + สั่งนอก', count: 0, color: '#6366f1' }
+    '01 In-house':  { key: '01 In-house',  label: 'IN-HOUSE',  shortLabel: 'IN-HOUSE',  sub: 'ทำเองภายใน', count: 0, color: '#0284c7' },
+    '02 Outsource': { key: '02 Outsource', label: 'OUTSOURCE', shortLabel: 'OUTSOURCE', sub: 'สั่งทำนอก', count: 0, color: '#d97706' },
+    'All':          { key: 'All',          label: 'ALL (BOTH)', shortLabel: 'BOTH',     sub: 'ทำเอง+สั่งนอก', count: 0, color: '#6366f1' }
   };
 
   const factoryMap = {};
@@ -19281,7 +20114,7 @@ function renderEngineeringInsightsDashboard() {
   let tasksWithDesignSup = 0;
   let tasksWithMaintSup = 0;
 
-  achievements.forEach(item => {
+  wsAchievements.forEach(item => {
     const xl = getTaskExcelTracking(item);
     const st = item.status || 'wait';
     totalAchvScore += (Number(xl.achievement) || 0);
@@ -19381,13 +20214,18 @@ function renderEngineeringInsightsDashboard() {
 
   // --- PANEL 1: PRIORITY / JOB LV. ---
   const priItems = Object.values(priMap);
+  setMiniDonutCenterOverlay('engPriorityCenter', totalTasks, 'TOTAL', null);
   const priListEl = document.getElementById('engPriorityList');
   if (priListEl) {
     priListEl.innerHTML = priItems.map(p => {
       const pct = totalTasks > 0 ? ((p.count / totalTasks) * 100).toFixed(1) : '0.0';
       const isAct = currentPriorityFilter === p.key;
       return `
-        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('priority', '${p.key}', 'PRIORITY: ${p.label}')" title="คลิกเพื่อกรองความสำคัญ: ${p.label}">
+        <div class="eng-flat-row ${isAct ? 'active' : ''}"
+          onclick="filterFromInsightsExcel('priority', '${p.key}', 'PRIORITY: ${p.label}')"
+          onmouseenter="setMiniDonutCenterOverlay('engPriorityCenter', ${p.count}, '${p.shortLabel || p.label}', '${p.color}')"
+          onmouseleave="setMiniDonutCenterOverlay('engPriorityCenter', ${totalTasks}, 'TOTAL', null)"
+          title="คลิกเพื่อกรองความสำคัญ: ${p.label}">
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${p.color};"></span>
@@ -19408,6 +20246,7 @@ function renderEngineeringInsightsDashboard() {
   const ctxPri = document.getElementById('engPriorityChart');
   if (ctxPri && typeof Chart !== 'undefined') {
     if (engPriorityChartInstance) engPriorityChartInstance.destroy();
+    ctxPri.onmouseleave = () => setMiniDonutCenterOverlay('engPriorityCenter', totalTasks, 'TOTAL', null);
     engPriorityChartInstance = new Chart(ctxPri, {
       type: 'doughnut',
       data: {
@@ -19416,28 +20255,43 @@ function renderEngineeringInsightsDashboard() {
           data: priItems.map(p => p.count),
           backgroundColor: priItems.map(p => p.color),
           borderWidth: 2,
-          borderColor: '#ffffff'
+          borderColor: '#ffffff',
+          hoverOffset: 3
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: { legend: { display: false } }
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        onHover: (event, elements) => {
+          if (elements && elements.length > 0) {
+            const idx = elements[0].index;
+            const item = priItems[idx];
+            if (item) setMiniDonutCenterOverlay('engPriorityCenter', item.count, item.shortLabel || item.label, item.color);
+          } else {
+            setMiniDonutCenterOverlay('engPriorityCenter', totalTasks, 'TOTAL', null);
+          }
+        }
       },
-      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+      plugins: [createMiniCenterTextPlugin('TOTAL', 'engPriorityCenter')]
     });
   }
 
   // --- PANEL 2: SUB JOB TYPE ---
   const sjItems = Object.values(subJobMap);
+  setMiniDonutCenterOverlay('engSubJobCenter', totalTasks, 'TOTAL', null);
   const sjListEl = document.getElementById('engSubJobList');
   if (sjListEl) {
     sjListEl.innerHTML = sjItems.map(sj => {
       const pct = totalTasks > 0 ? ((sj.count / totalTasks) * 100).toFixed(1) : '0.0';
       const isAct = currentSubJobTypeFilter === sj.key;
       return `
-        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsExcel('subJobType', '${sj.key}', 'SUB JOB: ${sj.label}')" title="คลิกเพื่อกรองรูปแบบ: ${sj.label} (${sj.sub})">
+        <div class="eng-flat-row ${isAct ? 'active' : ''}"
+          onclick="filterFromInsightsExcel('subJobType', '${sj.key}', 'SUB JOB: ${sj.label}')"
+          onmouseenter="setMiniDonutCenterOverlay('engSubJobCenter', ${sj.count}, '${sj.shortLabel || sj.label}', '${sj.color}')"
+          onmouseleave="setMiniDonutCenterOverlay('engSubJobCenter', ${totalTasks}, 'TOTAL', null)"
+          title="คลิกเพื่อกรองรูปแบบ: ${sj.label} (${sj.sub})">
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${sj.color};"></span>
@@ -19458,6 +20312,7 @@ function renderEngineeringInsightsDashboard() {
   const ctxSj = document.getElementById('engSubJobChart');
   if (ctxSj && typeof Chart !== 'undefined') {
     if (engSubJobChartInstance) engSubJobChartInstance.destroy();
+    ctxSj.onmouseleave = () => setMiniDonutCenterOverlay('engSubJobCenter', totalTasks, 'TOTAL', null);
     engSubJobChartInstance = new Chart(ctxSj, {
       type: 'doughnut',
       data: {
@@ -19466,16 +20321,26 @@ function renderEngineeringInsightsDashboard() {
           data: sjItems.map(s => s.count),
           backgroundColor: sjItems.map(s => s.color),
           borderWidth: 2,
-          borderColor: '#ffffff'
+          borderColor: '#ffffff',
+          hoverOffset: 3
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: { legend: { display: false } }
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        onHover: (event, elements) => {
+          if (elements && elements.length > 0) {
+            const idx = elements[0].index;
+            const item = sjItems[idx];
+            if (item) setMiniDonutCenterOverlay('engSubJobCenter', item.count, item.shortLabel || item.label, item.color);
+          } else {
+            setMiniDonutCenterOverlay('engSubJobCenter', totalTasks, 'TOTAL', null);
+          }
+        }
       },
-      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+      plugins: [createMiniCenterTextPlugin('TOTAL', 'engSubJobCenter')]
     });
   }
 
@@ -19486,6 +20351,7 @@ function renderEngineeringInsightsDashboard() {
     if (b.rawKey === '__UNSPECIFIED__') return -1;
     return b.count - a.count || a.name.localeCompare(b.name);
   });
+  setMiniDonutCenterOverlay('engFactoryCenter', totalTasks, 'TOTAL', null);
   const facBadge = document.getElementById('engFactoryBadge');
   if (facBadge) facBadge.textContent = `${facItems.length} รายการ`;
 
@@ -19496,8 +20362,13 @@ function renderEngineeringInsightsDashboard() {
       const color = f.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : facPalette[idx % facPalette.length];
       const pct = totalTasks > 0 ? ((f.count / totalTasks) * 100).toFixed(1) : '0.0';
       const isAct = currentFactoryFilter === f.rawKey;
+      const shortFacLabel = f.rawKey === '__UNSPECIFIED__' ? 'OTHER' : f.name;
       return `
-        <div class="eng-flat-row ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('factory', '${escapeHtml(f.rawKey).replace(/'/g, "\\'")}', 'FACTORY: ${escapeHtml(f.name).replace(/'/g, "\\'")}')" title="คลิกเพื่อกรองโรงงาน: ${escapeHtml(f.name)}">
+        <div class="eng-flat-row ${isAct ? 'active' : ''}"
+          onclick="filterFromInsightsField('factory', '${escapeHtml(f.rawKey).replace(/'/g, "\\'")}', 'FACTORY: ${escapeHtml(f.name).replace(/'/g, "\\'")}')"
+          onmouseenter="setMiniDonutCenterOverlay('engFactoryCenter', ${f.count}, '${escapeHtml(shortFacLabel).replace(/'/g, "\\'")}', '${color}')"
+          onmouseleave="setMiniDonutCenterOverlay('engFactoryCenter', ${totalTasks}, 'TOTAL', null)"
+          title="คลิกเพื่อกรองโรงงาน: ${escapeHtml(f.name)}">
           <div class="eng-flat-row-top">
             <span class="eng-flat-name">
               <span class="eng-dot" style="background:${color};"></span>
@@ -19518,6 +20389,7 @@ function renderEngineeringInsightsDashboard() {
   const ctxFac = document.getElementById('engFactoryChart');
   if (ctxFac && typeof Chart !== 'undefined') {
     if (engFactoryChartInstance) engFactoryChartInstance.destroy();
+    ctxFac.onmouseleave = () => setMiniDonutCenterOverlay('engFactoryCenter', totalTasks, 'TOTAL', null);
     engFactoryChartInstance = new Chart(ctxFac, {
       type: 'doughnut',
       data: {
@@ -19526,16 +20398,30 @@ function renderEngineeringInsightsDashboard() {
           data: facItems.map(f => f.count),
           backgroundColor: facItems.map((f, idx) => f.rawKey === '__UNSPECIFIED__' ? '#94a3b8' : facPalette[idx % facPalette.length]),
           borderWidth: 2,
-          borderColor: '#ffffff'
+          borderColor: '#ffffff',
+          hoverOffset: 3
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: { legend: { display: false } }
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        onHover: (event, elements) => {
+          if (elements && elements.length > 0) {
+            const idx = elements[0].index;
+            const item = facItems[idx];
+            if (item) {
+              const c = item.rawKey === '__UNSPECIFIED__' ? '#64748b' : facPalette[idx % facPalette.length];
+              const lbl = item.rawKey === '__UNSPECIFIED__' ? 'OTHER' : item.name;
+              setMiniDonutCenterOverlay('engFactoryCenter', item.count, lbl, c);
+            }
+          } else {
+            setMiniDonutCenterOverlay('engFactoryCenter', totalTasks, 'TOTAL', null);
+          }
+        }
       },
-      plugins: [createMiniCenterTextPlugin('งานทั้งหมด')]
+      plugins: [createMiniCenterTextPlugin('TOTAL', 'engFactoryCenter')]
     });
   }
 
@@ -19873,9 +20759,10 @@ function renderRequesterRanking() {
   const container = document.getElementById('requesterRankingContainer');
   if (!container) return;
 
-  const totalTasks = achievements.length;
+  const wsAchievements = getWorkspaceAchievements();
+  const totalTasks = wsAchievements.length;
   if (totalTasks === 0) {
-    container.innerHTML = '<div class="ranking-empty">ยังไม่มีข้อมูลคำร้องของาน</div>';
+    container.innerHTML = '<div class="ranking-empty">ยังไม่มีข้อมูลคำร้องของานในหน้านี้</div>';
     const badge = document.getElementById('rankingBadgeCount');
     if (badge) badge.textContent = '0 คน';
     return;
@@ -19883,7 +20770,7 @@ function renderRequesterRanking() {
 
   // Aggregate by requester name
   const map = {};
-  achievements.forEach(item => {
+  wsAchievements.forEach(item => {
     let raw = (item.requestName || '').trim();
     if (!raw) raw = 'ไม่ระบุชื่อ (UNSPECIFIED)';
     const name = uppercaseEnglish(raw);
@@ -20619,7 +21506,8 @@ function setExcelFilter(filterType, value) {
 
 // --- Filtering Logic ---
 function getFilteredAchievements() {
-  return achievements.filter(item => {
+  const wsAchievements = getWorkspaceAchievements();
+  return wsAchievements.filter(item => {
     const xl = getTaskExcelTracking(item);
 
     // Search Query (Matches title, request number, quotation, requestName, assignee, department, factory, process, desc, note, and Excel fields)
@@ -20755,14 +21643,17 @@ function renderContent() {
   const container = document.getElementById('viewContainer');
   if (!container) return;
 
+  const wsAchievements = getWorkspaceAchievements();
   const filtered = getFilteredAchievements();
+  const activeWs = getWorkspaceById(currentWorkspaceId);
 
   const countEl = document.getElementById('filterCount');
   if (countEl) {
-    if (filtered.length === achievements.length) {
-      countEl.innerHTML = `📊 ทั้งหมด <b>${achievements.length}</b> งาน (TASKS)`;
+    const wsLabel = currentWorkspaceId === 'all' ? 'รวมทุกหน้า' : uppercaseEnglish(activeWs.name);
+    if (filtered.length === wsAchievements.length) {
+      countEl.innerHTML = `${activeWs.icon || '📊'} ${escapeHtml(wsLabel)}: ทั้งหมด <b>${wsAchievements.length}</b> งาน`;
     } else {
-      countEl.innerHTML = `📊 พบ <b>${filtered.length}</b> จาก <b>${achievements.length}</b> งาน (TASKS)`;
+      countEl.innerHTML = `${activeWs.icon || '📊'} ${escapeHtml(wsLabel)}: พบ <b>${filtered.length}</b> จาก <b>${wsAchievements.length}</b> งาน`;
     }
   }
 
@@ -20778,17 +21669,39 @@ function renderContent() {
   updateResetFilterButtonVisibility();
 
   if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📂</div>
-        <h3 class="empty-title">ไม่พบงานที่ตรงกับเงื่อนไขการค้นหา</h3>
-        <p class="empty-subtitle">ลองปรับคำค้นหา หรือกดปุ่ม "เพิ่มงานใหม่" เพื่อบันทึกงานใหม่เข้าสู่ระบบฝ่ายเทคโนโลยี</p>
-        <button class="btn btn-primary" onclick="openAchievementModal()">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          เพิ่มงานใหม่ (ADD TASK)
-        </button>
-      </div>
-    `;
+    if (wsAchievements.length === 0 && currentWorkspaceId !== 'all') {
+      const wsColor = activeWs.color || '#2563eb';
+      container.innerHTML = `
+        <div class="empty-state" style="border: 2px dashed ${wsColor}50; background: ${wsColor}06;">
+          <div class="empty-icon" style="font-size: 46px;">${activeWs.icon || '🏢'}</div>
+          <h3 class="empty-title" style="color: ${wsColor};">หน้า "${escapeHtml(uppercaseEnglish(activeWs.name))}" พร้อมใช้งานแล้ว!</h3>
+          <p class="empty-subtitle" style="max-width: 540px; margin-left: auto; margin-right: auto;">
+            หน้านี้แยกข้อมูลเป็นอิสระจากหน้าอื่น 100% — กดปุ่ม <b>"เพิ่มงานใหม่ในหน้า ${escapeHtml(uppercaseEnglish(activeWs.name))}"</b> ด้านล่างเพื่อเริ่มบันทึกผลงานชิ้นแรกในหน้านี้ได้เลย
+          </p>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+            <button class="btn btn-primary" style="background: ${wsColor}; border-color: ${wsColor}; font-weight: 800; padding: 10px 20px;" onclick="openAchievementModal()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              เพิ่มงานใหม่ในหน้า ${escapeHtml(uppercaseEnglish(activeWs.name))} (ADD TASK)
+            </button>
+            <button class="btn btn-secondary" onclick="switchWorkspace('ws_orbray')" style="font-weight: 700;">
+              🏢 กลับไปดูหน้า ORBRAY
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <h3 class="empty-title">ไม่พบงานที่ตรงกับเงื่อนไขการค้นหา</h3>
+          <p class="empty-subtitle">ลองปรับคำค้นหา หรือกดปุ่ม "เพิ่มงานใหม่" เพื่อบันทึกงานใหม่เข้าสู่หน้า ${escapeHtml(uppercaseEnglish(activeWs.name))}</p>
+          <button class="btn btn-primary" onclick="openAchievementModal()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            เพิ่มงานใหม่ (ADD TASK)
+          </button>
+        </div>
+      `;
+    }
     return;
   }
 
@@ -20808,14 +21721,20 @@ function renderCardsView(container, items) {
     const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#2563eb' };
     const statusHtml = getStatusPillHtml(item.status);
     const displayDate = item.completionDate || item.requestDate || '-';
+    const itemWsId = getItemWorkspaceId(item);
+    const isItemPrivate = isPrivateProjectWorkspace(itemWsId);
+    const pdfLabel = getWorkspacePdfLabel(itemWsId);
 
     html += `
       <div class="ios-task-card ${item.status === 'done' ? 'card-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'card-status-cancel' : '')}" id="ios-card-${item.id}">
         <!-- Top bar: Category Badge + Status Pill + Mobile More Button -->
         <div class="ios-card-header-bar">
-          <div class="ios-card-cat-badge" style="background-color: ${cat.color}12; color: ${cat.color}; border: 1px solid ${cat.color}30;">
-            <span class="cat-icon">${cat.icon || '📁'}</span>
-            <span class="cat-name">${escapeHtml(uppercaseEnglish(cat.name))}</span>
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            ${getWorkspaceBadgeHtml(item)}
+            <div class="ios-card-cat-badge" style="background-color: ${cat.color}12; color: ${cat.color}; border: 1px solid ${cat.color}30;">
+              <span class="cat-icon">${cat.icon || '📁'}</span>
+              <span class="cat-name">${escapeHtml(uppercaseEnglish(cat.name))}</span>
+            </div>
           </div>
           <div class="ios-card-header-right">
             ${statusHtml}
@@ -20832,31 +21751,44 @@ function renderCardsView(container, items) {
             <span>${escapeHtml(uppercaseEnglish(item.title))}</span>
           </div>
 
-          <!-- Clean 2x2 Key-Value Metadata Grid -->
-          <div class="webull-data-grid">
-            <div class="data-item">
-              <span class="data-label">REQUEST &amp; QUOTATION</span>
-              <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
-                ${item.code ? `<span class="badge-code" style="font-size: 10.5px; padding: 1.5px 6px;">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span class="data-val">-</span>'}
-                ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" style="font-size: 10.5px; padding: 1.5px 6px;">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
+          <!-- Key-Value Metadata Grid (Streamlined 2-col for Private Project vs 2x2 for Factory) -->
+          ${isItemPrivate ? `
+            <div class="webull-data-grid">
+              <div class="data-item">
+                <span class="data-label">DATE COMPLETED</span>
+                <span class="data-val">${escapeHtml(displayDate)}</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">ASSIGN (เจ้าของงานหลัก)</span>
+                <span class="data-val assignee-val">${item.assignee ? `😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : '-'}</span>
               </div>
             </div>
-            <div class="data-item">
-              <span class="data-label">DATE</span>
-              <span class="data-val">${escapeHtml(displayDate)}</span>
+          ` : `
+            <div class="webull-data-grid">
+              <div class="data-item">
+                <span class="data-label">REQUEST &amp; QUOTATION</span>
+                <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                  ${item.code ? `<span class="badge-code" style="font-size: 10.5px; padding: 1.5px 6px;">${escapeHtml(uppercaseEnglish(item.code))}</span>` : '<span class="data-val">-</span>'}
+                  ${item.quotation && item.quotation !== '-' ? `<span class="badge-quotation" style="font-size: 10.5px; padding: 1.5px 6px;">Q: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
+                </div>
+              </div>
+              <div class="data-item">
+                <span class="data-label">DATE</span>
+                <span class="data-val">${escapeHtml(displayDate)}</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">REQUESTER</span>
+                <span class="data-val">${item.requestName ? `👤 ${escapeHtml(uppercaseEnglish(item.requestName))}` : '-'}</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">ASSIGNEE</span>
+                <span class="data-val assignee-val">${item.assignee ? `😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : '-'}</span>
+              </div>
             </div>
-            <div class="data-item">
-              <span class="data-label">REQUESTER</span>
-              <span class="data-val">${item.requestName ? `👤 ${escapeHtml(uppercaseEnglish(item.requestName))}` : '-'}</span>
-            </div>
-            <div class="data-item">
-              <span class="data-label">ASSIGNEE</span>
-              <span class="data-val assignee-val">${item.assignee ? `😎 ${escapeHtml(uppercaseEnglish(item.assignee))}` : '-'}</span>
-            </div>
-          </div>
+          `}
 
           <!-- Location Tags (Factory / Dept / Process) -->
-          ${(item.factory || item.department || item.process) ? `
+          ${(!isItemPrivate && (item.factory || item.department || item.process)) ? `
             <div class="card-location-tags">
               ${item.factory ? `<span class="badge-dept" style="font-size: 10px; padding: 2px 6px;">🏢 ${escapeHtml(uppercaseEnglish(item.factory))}</span>` : ''}
               ${item.department ? `<span class="badge-dept" style="font-size: 10px; padding: 2px 6px;">👥 ${escapeHtml(uppercaseEnglish(item.department))}</span>` : ''}
@@ -20885,7 +21817,7 @@ function renderCardsView(container, items) {
             <div class="ios-card-file-chips">
               ${item.pdfAttachment ? `
                 <div class="table-badge-group">
-                  <button type="button" class="badge-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู JOB REQUEST PDF" style="font-size: 10px; padding: 2px 6px;">📄 PDF</button>
+                  <button type="button" class="badge-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู ${escapeHtml(pdfLabel)}" style="font-size: 10px; padding: 2px 6px;">📄 PDF</button>
                   <button type="button" class="badge-pdf badge-dl" onclick="downloadPdfAttachment('${item.id}')" title="ดาวน์โหลดไฟล์ PDF" style="font-size: 10px; padding: 2px 4px; border-left: none; font-weight: bold;">⬇️</button>
                 </div>` : ''}
               ${item.workFolder ? `
@@ -21059,6 +21991,11 @@ function switchMobileNavTab(tabName) {
   const searchRow = document.querySelector('.mobile-search-sort-bar');
   const filterRow = document.querySelector('.mobile-quick-filter-scroll');
 
+  const activeWs = getWorkspaceById(currentWorkspaceId);
+  const wsTitleHtml = currentWorkspaceId === 'all'
+    ? `ALL <span style="color: var(--primary);">WORKSPACES</span>`
+    : `<span style="color: var(--primary);">${escapeHtml(uppercaseEnglish(activeWs.name || 'ORBRAY'))}</span>`;
+
   if (normalizedTab === 'dashboard') {
     if (viewContainer) viewContainer.style.display = 'none';
     if (statsSection) statsSection.style.display = 'grid';
@@ -21068,9 +22005,10 @@ function switchMobileNavTab(tabName) {
     if (searchRow) searchRow.style.display = 'flex';
     if (filterRow) filterRow.style.display = 'none';
     if (navTitle) navTitle.textContent = 'DASHBOARD';
-    if (headerTitle) headerTitle.innerHTML = 'DASHBOARD';
+    if (headerTitle) headerTitle.innerHTML = wsTitleHtml;
     renderStats();
     renderCharts();
+    renderEngineeringInsightsDashboard();
     renderRequesterRanking();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (normalizedTab === 'tasks') {
@@ -21083,7 +22021,7 @@ function switchMobileNavTab(tabName) {
     if (searchRow) searchRow.style.display = 'flex';
     if (filterRow) filterRow.style.display = 'flex';
     if (navTitle) navTitle.textContent = 'TASKS';
-    if (headerTitle) headerTitle.innerHTML = 'ACHIEVEMENT <span class="brand-red">RECORD</span>';
+    if (headerTitle) headerTitle.innerHTML = wsTitleHtml;
     renderContent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (normalizedTab === 'timeline') {
@@ -21096,7 +22034,7 @@ function switchMobileNavTab(tabName) {
     if (searchRow) searchRow.style.display = 'flex';
     if (filterRow) filterRow.style.display = 'none';
     if (navTitle) navTitle.textContent = 'TIMELINE';
-    if (headerTitle) headerTitle.innerHTML = 'ACTIVITY <span class="brand-red">TIMELINE</span>';
+    if (headerTitle) headerTitle.innerHTML = `ACTIVITY <span style="color: var(--primary);">TIMELINE</span>`;
     renderContent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -21165,9 +22103,12 @@ function renderTimelineView(container, items) {
           <div class="timeline-dot" style="border-color: ${cat.color};"></div>
           <div class="timeline-card ${item.status === 'done' ? 'card-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'card-status-cancel' : '')}">
             <div class="card-header-meta">
-              <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
-                ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
-              </span>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                ${getWorkspaceBadgeHtml(item)}
+                <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
+                  ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
+                </span>
+              </div>
               <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 ${item.code ? `<span class="badge-code">REQ: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
                 ${statusHtml}
@@ -21300,8 +22241,106 @@ function initFullTableHorizontalScrollHelpers() {
   });
 }
 
-// 3. Table View (Dual Mode: Fit Screen / Full Columns)
+// 3. Table View (Dual Mode: Fit Screen / Full Columns, plus Streamlined Private Project Table)
 function renderTableView(container, items) {
+  if (isPrivateProjectWorkspace(currentWorkspaceId)) {
+    const wsPdfLabel = getWorkspacePdfLabel(currentWorkspaceId);
+    let pvtHtml = `
+      <div class="table-container" id="tableScrollContainer">
+        <table class="data-table table-compact">
+          <thead>
+            <tr>
+              <th class="col-no" style="width: 48px; min-width: 48px; text-align: center; white-space: nowrap;">#</th>
+              <th class="col-status" style="width: 135px; min-width: 125px; text-align: center; white-space: nowrap;">STATUS (สถานะหลัก)</th>
+              <th style="width: 135px; white-space: nowrap;">DATE COMPLETED</th>
+              <th style="width: 155px;">ASSIGN (เจ้าของงานหลัก)</th>
+              <th style="width: 28%;">DETAIL (รายละเอียดงาน)</th>
+              <th style="width: 24%;">NOTE (หมายเหตุ / ความคืบหน้า)</th>
+              <th style="width: 165px;">${escapeHtml(wsPdfLabel)} / FILES</th>
+              <th style="width: 90px; text-align: right; white-space: nowrap;">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    items.forEach((item, index) => {
+      const statusHtml = getStatusPillHtml(item.status);
+      const dateDisplay = item.completionDate || item.requestDate || '-';
+      const detailText = item.description ? uppercaseEnglish(item.description) : uppercaseEnglish(item.title || '-');
+
+      pvtHtml += `
+        <tr class="${item.status === 'done' ? 'row-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'row-status-cancel' : '')}">
+          <td class="col-no" style="text-align: center; color: var(--text-light); font-weight: 600; font-size: 12px; white-space: nowrap;">${index + 1}</td>
+          <td class="col-status" style="text-align: center;">${statusHtml}</td>
+          <td style="font-size: 12px; font-weight: 700; color: #047857; white-space: nowrap;">${escapeHtml(dateDisplay)}</td>
+          <td>
+            ${item.assignee ? `<span class="badge-assignee" onclick="filterByAssignee('${escapeHtml(uppercaseEnglish(item.assignee))}')" style="font-size: 11px; cursor: pointer;" title="คลิกเพื่อกรองเฉพาะงานของ: ${escapeHtml(uppercaseEnglish(item.assignee))}">😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : '<span style="color:#cbd5e1; font-size: 11px;">-</span>'}
+          </td>
+          <td>
+            <div style="font-weight: 700; cursor: pointer; color: var(--text-main); line-height: 1.4;" onclick="viewAchievementDetail('${item.id}')" title="คลิกเพื่อดูรายละเอียด">
+              ${escapeHtml(detailText)}
+            </div>
+          </td>
+          <td>
+            ${item.note && item.note !== '-' ? `
+              <div style="background: #fefce8; border-left: 3px solid #eab308; padding: 4px 8px; border-radius: 4px; font-size: 11.5px; color: #854d0e; font-weight: 600; line-height: 1.35;">
+                📌 ${escapeHtml(uppercaseEnglish(item.note))}
+              </div>
+            ` : '<span style="color: #cbd5e1; font-size: 11px;">-</span>'}
+          </td>
+          <td>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              ${item.pdfAttachment ? `
+                <div class="table-badge-group">
+                  <button class="badge-pdf" onclick="openPdfAttachment('${item.id}')" title="เปิดดู ${escapeHtml(wsPdfLabel)}" style="font-size: 10px; padding: 2px 6px;">📄 PDF</button>
+                  <button class="badge-pdf badge-dl" onclick="downloadPdfAttachment('${item.id}')" title="ดาวน์โหลดไฟล์ PDF" style="font-size: 10px; padding: 2px 4px; border-left: none; font-weight: bold;">⬇️</button>
+                </div>
+              ` : ''}
+              ${item.workFolder ? `
+                <div class="table-badge-group">
+                  <button class="badge-folder" onclick="openWorkFolderModal('${item.id}')" title="ดูข้อมูลโฟลเดอร์ผลงาน" style="font-size: 10px; padding: 2px 6px;">📁 ${escapeHtml(getFolderBadgeText(item.workFolder))}</button>
+                  <button class="badge-folder badge-dl" onclick="downloadWorkFolderAttachment('${item.id}')" title="ดาวน์โหลดโฟลเดอร์เป็น ZIP" style="font-size: 10px; padding: 2px 4px; border-left: none; font-weight: bold;">📥</button>
+                </div>
+              ` : ''}
+              ${item.imageData ? (
+                isDrawingPdf(item.imageData) ? `
+                  <div class="table-badge-group">
+                    <button class="badge-pdf" onclick="openDrawingAttachment('${item.id}')" title="เปิดดู DRAWING (PDF)" style="font-size: 10px; padding: 2px 6px; background:#ecfdf5; color:#065f46; border-color:#a7f3d0;">📄 DWG</button>
+                    <button class="badge-pdf badge-dl" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลด DRAWING (PDF)" style="font-size: 10px; padding: 2px 4px; background:#ecfdf5; color:#065f46; border-color:#a7f3d0; border-left: none; font-weight: bold;">⬇️</button>
+                  </div>
+                ` : `
+                  <div class="table-badge-group">
+                    <button class="badge-code" onclick="openDrawingAttachment('${item.id}')" title="ดูรูปภาพ DRAWING" style="font-size: 10px; padding: 2px 6px; cursor: pointer;">🖼️ IMG</button>
+                    <button class="badge-code badge-dl" onclick="downloadImageAttachment('${item.id}')" title="ดาวน์โหลดรูปภาพ" style="font-size: 10px; padding: 2px 4px; cursor: pointer; border-left: none; font-weight: bold;">⬇️</button>
+                  </div>
+                `
+              ) : ''}
+              ${(!item.pdfAttachment && !item.workFolder && !item.imageData) ? '<span style="color: #cbd5e1; font-size: 11px;">-</span>' : ''}
+            </div>
+          </td>
+          <td style="text-align: right;">
+            <div class="card-actions" style="justify-content: flex-end;">
+              <button class="btn btn-outline btn-sm btn-icon" onclick="openAchievementModal('${item.id}')" title="แก้ไข">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn btn-outline btn-sm btn-icon text-danger" onclick="deleteAchievement('${item.id}')" title="ลบ">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    pvtHtml += `
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.innerHTML = pvtHtml;
+    return;
+  }
+
   const isCompact = tableMode === 'compact';
 
   // Calculate Excel Achievement Summary across current filtered items
@@ -21479,8 +22518,9 @@ function renderTableView(container, items) {
               <span style="font-size: 13px;">📄</span>
               <span style="word-break: break-word;">${escapeHtml(uppercaseEnglish(item.title))}</span>
             </div>
-            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600;">
-              ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
+            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+              <span>${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}</span>
+              ${getWorkspaceBadgeHtml(item)}
             </div>
           </td>
           <td class="col-status" style="text-align: center;">${statusHtml}</td>
@@ -21645,8 +22685,9 @@ function renderTableView(container, items) {
               <span style="font-size: 13px; flex-shrink: 0;">📄</span>
               <span style="word-break: break-word;">${escapeHtml(uppercaseEnglish(item.title))}</span>
             </div>
-            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600;">
-              ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
+            <div style="font-size: 11px; color: ${cat.color}; margin-top: 3px; font-weight: 600; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+              <span>${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}</span>
+              ${getWorkspaceBadgeHtml(item)}
             </div>
           </td>
 
@@ -21945,6 +22986,7 @@ function openAchievementModal(id = null) {
   updateFolderPreview();
 
   populateCategoryDropdowns();
+  populateWorkspaceDropdowns();
 
   if (id) {
     const item = achievements.find(a => a.id === id);
@@ -21966,6 +23008,9 @@ function openAchievementModal(id = null) {
     const xl = getTaskExcelTracking(item);
 
     document.getElementById('achvId').value = item.id;
+    if (document.getElementById('achvWorkspace')) {
+      document.getElementById('achvWorkspace').value = getItemWorkspaceId(item);
+    }
     document.getElementById('achvTitle').value = uppercaseEnglish(item.title);
     document.getElementById('achvCategory').value = item.categoryId;
     document.getElementById('achvCode').value = uppercaseEnglish(item.code || '');
@@ -22084,6 +23129,9 @@ function openAchievementModal(id = null) {
   } else {
     modalTitle.textContent = 'เพิ่มงานใหม่ (ADD TASK / ACHIEVEMENT)';
     document.getElementById('achvId').value = '';
+    if (document.getElementById('achvWorkspace')) {
+      document.getElementById('achvWorkspace').value = (currentWorkspaceId && currentWorkspaceId !== 'all') ? currentWorkspaceId : 'ws_orbray';
+    }
     document.getElementById('achvFactory').value = '';
     document.getElementById('achvDepartment').value = '';
     setSelectValueWithFallback(document.getElementById('achvAssignee'), currentUser.name || '');
@@ -22118,11 +23166,17 @@ function openAchievementModal(id = null) {
     updatePdfPreview();
   }
 
+  const activeModalWsId = document.getElementById('achvWorkspace')
+    ? document.getElementById('achvWorkspace').value
+    : ((currentWorkspaceId && currentWorkspaceId !== 'all') ? currentWorkspaceId : 'ws_orbray');
+  handleModalWorkspaceChange(activeModalWsId);
+
   modal.classList.add('active');
 
   setTimeout(() => {
-    const titleInput = document.getElementById('achvTitle');
-    if (titleInput && !window.location.hash.includes('scroll_att')) titleInput.focus();
+    const isPrivateModal = isPrivateProjectWorkspace(activeModalWsId);
+    const focusInput = isPrivateModal ? document.getElementById('achvDescription') : document.getElementById('achvTitle');
+    if (focusInput && !window.location.hash.includes('scroll_att')) focusInput.focus();
     if (window.location.hash.includes('scroll_att')) {
       const modalBody = document.querySelector('#achievementModal .modal-body');
       if (modalBody) modalBody.scrollTop = 9999;
@@ -22144,8 +23198,11 @@ function handleSaveAchievement(e) {
   }
 
   const id = document.getElementById('achvId').value;
-  const title = uppercaseEnglish(document.getElementById('achvTitle').value.trim());
-  const categoryId = document.getElementById('achvCategory').value;
+  const workspaceEl = document.getElementById('achvWorkspace');
+  const workspaceId = (workspaceEl && workspaceEl.value) ? workspaceEl.value : ((currentWorkspaceId && currentWorkspaceId !== 'all') ? currentWorkspaceId : 'ws_orbray');
+  const isPrivateWs = isPrivateProjectWorkspace(workspaceId);
+  let title = uppercaseEnglish(document.getElementById('achvTitle').value.trim());
+  let categoryId = document.getElementById('achvCategory').value;
   const code = uppercaseEnglish(document.getElementById('achvCode').value.trim());
   const quotation = uppercaseEnglish(document.getElementById('achvQuotation').value.trim());
   const requestName = uppercaseEnglish(document.getElementById('achvRequestName').value.trim());
@@ -22158,6 +23215,30 @@ function handleSaveAchievement(e) {
   const completionDate = document.getElementById('achvCompletionDate').value;
   const description = uppercaseEnglish(document.getElementById('achvDescription').value.trim());
   const note = uppercaseEnglish(document.getElementById('achvNote').value.trim());
+
+  // Auto-derive Category and Title when saving in PRIVATE PROJECT streamlined mode
+  if (isPrivateWs) {
+    const pvtCat = categories.find(c => c.id === 'cat_pvt' || (c.name && c.name.toUpperCase().includes('PRIVATE')));
+    categoryId = pvtCat ? pvtCat.id : (categoryId || (categories[0] ? categories[0].id : 'cat_pvt'));
+
+    const firstLineDesc = description ? description.split(/\r?\n/)[0].trim() : '';
+    if (firstLineDesc) {
+      title = firstLineDesc.length > 90 ? firstLineDesc.substring(0, 90) + '...' : firstLineDesc;
+    } else if (note) {
+      title = note.length > 90 ? note.substring(0, 90) + '...' : note;
+    } else if (currentModalPdf && currentModalPdf.name) {
+      title = uppercaseEnglish(currentModalPdf.name.replace(/\.pdf$/i, ''));
+    } else if (currentModalFolder && currentModalFolder.name) {
+      title = uppercaseEnglish(currentModalFolder.name);
+    } else if (currentModalImageData) {
+      title = uppercaseEnglish(getDrawingName(currentModalImageData, 'PRIVATE PROJECT'));
+    } else if (!title) {
+      alert('กรุณากรอก DETAIL (รายละเอียดงาน) หรือ NOTE (หมายเหตุ) อย่างน้อย 1 ช่อง');
+      const descEl = document.getElementById('achvDescription');
+      if (descEl) descEl.focus();
+      return;
+    }
+  }
 
   // Read Excel Engineering Tracking fields
   const subStatus = document.getElementById('achvSubStatus') ? document.getElementById('achvSubStatus').value : (status === 'done' ? '10 Finished' : '02 Concept Design');
@@ -22230,6 +23311,7 @@ function handleSaveAchievement(e) {
 
       savedItem = {
         ...existing,
+        workspaceId,
         title,
         categoryId,
         code,
@@ -22273,12 +23355,14 @@ function handleSaveAchievement(e) {
         updatedAt: new Date().toISOString()
       };
       achievements[index] = savedItem;
-      showToast('แก้ไขข้อมูลงานสำเร็จ (SUCCESS)');
+      const targetWs = getWorkspaceById(workspaceId);
+      showToast(`แก้ไขข้อมูลงานในหน้า "${targetWs.name}" สำเร็จ (SUCCESS)`);
     }
   } else {
     const newId = 'achv_' + Date.now();
     savedItem = {
       id: newId,
+      workspaceId,
       title,
       categoryId,
       code,
@@ -22323,7 +23407,8 @@ function handleSaveAchievement(e) {
       updatedAt: new Date().toISOString()
     };
     achievements.unshift(savedItem);
-    showToast('เพิ่มงานใหม่สำเร็จ (SUCCESS)');
+    const targetWs = getWorkspaceById(workspaceId);
+    showToast(`เพิ่มงานใหม่ในหน้า "${targetWs.name}" สำเร็จ (SUCCESS)`);
   }
 
   saveAchievements();
@@ -22380,73 +23465,95 @@ function viewAchievementDetail(id) {
   const modal = document.getElementById('detailModal');
   const titleEl = document.getElementById('detailTitle');
   const bodyEl = document.getElementById('detailBody');
+  const itemWsId = getItemWorkspaceId(item);
+  const isItemPrivate = isPrivateProjectWorkspace(itemWsId);
+  const pdfLabelTitle = getWorkspacePdfLabel(itemWsId);
 
   titleEl.innerHTML = `<span>📄</span> ${escapeHtml(uppercaseEnglish(item.title))}`;
   const statusHtml = getStatusPillHtml(item.status);
 
   bodyEl.innerHTML = `
     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center;">
+      ${getWorkspaceBadgeHtml(item, true)}
       <span class="category-badge" style="background-color: ${cat.color}15; color: ${cat.color};">
         ${cat.icon} ${escapeHtml(uppercaseEnglish(cat.name))}
       </span>
       ${statusHtml}
-      <span class="sub-status-pill" style="font-size: 11px; padding: 3px 8px;">📊 ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subStatus)))} (${xl.achievementPct}%)</span>
-      ${item.code ? `<span class="badge-code">REQUEST NO: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
-      ${item.quotation ? `<span class="badge-quotation">QUOTATION: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
+      ${!isItemPrivate ? `<span class="sub-status-pill" style="font-size: 11px; padding: 3px 8px;">📊 ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subStatus)))} (${xl.achievementPct}%)</span>` : ''}
+      ${(!isItemPrivate && item.code) ? `<span class="badge-code">REQUEST NO: ${escapeHtml(uppercaseEnglish(item.code))}</span>` : ''}
+      ${(!isItemPrivate && item.quotation) ? `<span class="badge-quotation">QUOTATION: ${escapeHtml(uppercaseEnglish(item.quotation))}</span>` : ''}
       ${item.assignee ? `<span class="badge-assignee">ASSIGN: 😎 ${escapeHtml(uppercaseEnglish(item.assignee))}</span>` : ''}
     </div>
 
-    <!-- Request & Excel Engineering Metadata Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 12.5px;">
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">REQUEST NAME:</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.requestName || '-'))}</div>
+    ${isItemPrivate ? `
+      <!-- Streamlined Private Project Metadata Grid (STATUS, DATE COMPLETED, ASSIGN) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; background: #f8fafc; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 12.5px;">
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">STATUS (สถานะหลัก):</span>
+          <div style="margin-top: 3px;">${statusHtml}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">DATE COMPLETED (วันที่บันทึก / วันที่สำเร็จ):</span>
+          <div style="font-weight: 700; color: #047857; margin-top: 3px;">${escapeHtml(item.completionDate || item.requestDate || '-')}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">ASSIGN (เจ้าของงานหลัก):</span>
+          <div style="font-weight: 700; margin-top: 3px;">${escapeHtml(uppercaseEnglish(item.assignee || '-'))}</div>
+        </div>
       </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">REQUEST DATE:</span>
-        <div style="font-weight: 700;">${item.requestDate || '-'}</div>
+    ` : `
+      <!-- Request & Excel Engineering Metadata Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 12.5px;">
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">REQUEST NAME:</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.requestName || '-'))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">REQUEST DATE:</span>
+          <div style="font-weight: 700;">${item.requestDate || '-'}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">FACTORY:</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.factory || '-'))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">DEPARTMENT:</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.department || '-'))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">PROCESS:</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.process || '-'))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">JOB TYPE / SUB JOB:</span>
+          <div style="font-weight: 700; color: #1e40af;">${escapeHtml(getJobTypeTitle(xl.jobType))} • ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subJobType)))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">PRIORITY (JOB LEVEL):</span>
+          <div style="font-weight: 700; color: #b91c1c;">${escapeHtml(uppercaseEnglish(xl.priority))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">TOOLING TEAM (1-2):</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.toolingTeam))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">DESIGN SUPPORT (1-2):</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.designSupport))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">MANTENANCE SUPPORT (1-5):</span>
+          <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.maintenanceSupport))}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">DATE COMPLETED:</span>
+          <div style="font-weight: 700; color: #047857;">${item.completionDate || '-'}${xl.finishedMonth ? ` (${escapeHtml(uppercaseEnglish(xl.finishedMonth))})` : ''}</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); font-size: 11px;">ACHIEVEMENT SCORE:</span>
+          <div style="font-weight: 800; color: #059669;">${xl.achievement} (${xl.achievementPct}%)</div>
+        </div>
       </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">FACTORY:</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.factory || '-'))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">DEPARTMENT:</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.department || '-'))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">PROCESS:</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(item.process || '-'))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">JOB TYPE / SUB JOB:</span>
-        <div style="font-weight: 700; color: #1e40af;">${escapeHtml(getJobTypeTitle(xl.jobType))} • ${escapeHtml(uppercaseEnglish(stripLeadingNumberCode(xl.subJobType)))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">PRIORITY (JOB LEVEL):</span>
-        <div style="font-weight: 700; color: #b91c1c;">${escapeHtml(uppercaseEnglish(xl.priority))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">TOOLING TEAM (1-2):</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.toolingTeam))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">DESIGN SUPPORT (1-2):</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.designSupport))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">MANTENANCE SUPPORT (1-5):</span>
-        <div style="font-weight: 700;">${escapeHtml(uppercaseEnglish(xl.maintenanceSupport))}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">DATE COMPLETED:</span>
-        <div style="font-weight: 700; color: #047857;">${item.completionDate || '-'}${xl.finishedMonth ? ` (${escapeHtml(uppercaseEnglish(xl.finishedMonth))})` : ''}</div>
-      </div>
-      <div>
-        <span style="color: var(--text-muted); font-size: 11px;">ACHIEVEMENT SCORE:</span>
-        <div style="font-weight: 800; color: #059669;">${xl.achievement} (${xl.achievementPct}%)</div>
-      </div>
-    </div>
+    `}
 
     ${item.imageData ? (
       isDrawingPdf(item.imageData) ? `
@@ -22489,7 +23596,7 @@ function viewAchievementDetail(id) {
           <div style="display: flex; align-items: center; justify-content: space-between; background: #f0f4fc; border: 1px solid #c8d8f6; padding: 10px 14px; border-radius: 4px; gap: 8px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #163282; min-width: 0; flex: 1;">
               <span>📄</span>
-              <span style="word-break: break-all;">JOB REQUEST: ${escapeHtml(item.pdfAttachment.name)} ${item.pdfAttachment.size ? `<span style="font-weight: normal; font-size: 11.5px; opacity: 0.85;">(${formatFileSize(item.pdfAttachment.size)})</span>` : ''}</span>
+              <span style="word-break: break-all;">${escapeHtml(pdfLabelTitle)}: ${escapeHtml(item.pdfAttachment.name)} ${item.pdfAttachment.size ? `<span style="font-weight: normal; font-size: 11.5px; opacity: 0.85;">(${formatFileSize(item.pdfAttachment.size)})</span>` : ''}</span>
             </div>
             <div style="display: flex; gap: 6px; align-items: center;">
               <button class="btn btn-outline btn-sm" onclick="openPdfAttachment('${item.id}')" style="background: #fff; color: #163282; border-color: #c8d8f6; font-weight: 600;">
@@ -22760,6 +23867,362 @@ function handleDeleteCategory(catId) {
   renderCharts();
   renderContent();
   showToast(`ลบหมวดหมู่ "${cat.name}" เรียบร้อยแล้ว`);
+}
+
+// --- Multi-Company / Workspace Page Manager (Add, Edit, Switch, Delete, Reorder) ---
+function openWorkspaceModal(focusInput = false, scrollToReorder = false) {
+  editingWorkspaceId = null;
+  renderWorkspaceManagerList();
+  const modal = document.getElementById('workspaceModal');
+  if (modal) modal.classList.add('active');
+  if (focusInput) {
+    setTimeout(() => {
+      const nameInput = document.getElementById('newWorkspaceName');
+      if (nameInput) nameInput.focus();
+    }, 100);
+  } else if (scrollToReorder) {
+    setTimeout(() => {
+      const reorderSec = document.getElementById('workspaceOrderSection');
+      if (reorderSec) reorderSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  }
+}
+
+function closeWorkspaceModal() {
+  editingWorkspaceId = null;
+  const modal = document.getElementById('workspaceModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function selectNewWorkspaceIcon(icon, btnEl) {
+  const iconInput = document.getElementById('newWorkspaceIcon');
+  if (iconInput) iconInput.value = icon;
+  document.querySelectorAll('#workspaceIconPresets .ws-icon-preset').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  if (btnEl) btnEl.classList.add('active');
+}
+
+function selectNewWorkspaceColor(color) {
+  const colorInput = document.getElementById('newWorkspaceColor');
+  if (colorInput) colorInput.value = color;
+}
+
+function renderWorkspaceManagerList() {
+  const container = document.getElementById('workspaceManagerList');
+  if (!container) return;
+
+  const countsMap = {};
+  workspaces.forEach(w => { countsMap[w.id] = 0; });
+  achievements.forEach(a => {
+    const wId = getItemWorkspaceId(a);
+    countsMap[wId] = (countsMap[wId] || 0) + 1;
+  });
+
+  const totalAll = achievements.length;
+  const tabOrder = getWorkspaceTabOrder();
+
+  const totalBadge = document.getElementById('workspaceTotalCountBadge');
+  if (totalBadge) {
+    totalBadge.textContent = `${tabOrder.length} แถบตัวเลือก (รวม ALL)`;
+  }
+
+  let html = '';
+
+  tabOrder.forEach((tabId, idx) => {
+    const isFirst = idx === 0;
+    const isLast = idx === tabOrder.length - 1;
+
+    if (tabId === 'all') {
+      const isCurrent = currentWorkspaceId === 'all';
+      html += `
+        <div class="category-manage-item" style="${isCurrent ? 'border-color: #334155; background: rgba(51, 65, 85, 0.05);' : ''}">
+          <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 28px; flex-shrink: 0;">
+              <span style="font-size: 11px; font-weight: 800; color: #64748b; font-family: monospace;">#${idx + 1}</span>
+              ${isFirst ? '<span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 800; margin-top: 1px;">FRONT</span>' : ''}
+            </div>
+            <span style="font-size: 22px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: rgba(51, 65, 85, 0.12); border-radius: 8px; flex-shrink: 0;">🌐</span>
+            <div style="min-width: 0; flex: 1;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ALL WORKSPACES</span>
+                <span style="font-size: 10.5px; background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 600;">🌐 รวมทุกหน้า</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--text-main); background: #e2e8f0; padding: 1px 7px; border-radius: 999px;">${totalAll} งาน</span>
+                ${isFirst ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">⭐ อยู่หน้าสุด</span>' : ''}
+                ${isCurrent ? '<span style="font-size: 10px; background: #e0e7ff; color: #3730a3; padding: 1px 7px; border-radius: 999px; font-weight: 800;">● กำลังเปิดดู</span>' : ''}
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">รวมผลงานและสถิติจากทุกบริษัทและพื้นที่งานส่วนตัว</div>
+            </div>
+          </div>
+          <div class="category-manage-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+            <div style="display: inline-flex; align-items: center; gap: 3px; background: #f1f5f9; padding: 2px 4px; border-radius: 6px; border: 1px solid #e2e8f0;">
+              ${!isFirst ? `
+                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabToFront('all')" title="ย้ายมาไว้หน้าสุด (Move to Front)" style="font-size: 11px; padding: 3px 7px; font-weight: 700; color: #0284c7; background: #fff;">
+                  ⏮ ไว้หน้าสุด
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('all', -1)" title="เลื่อนขึ้น / ไปข้างหน้า" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                  ⬆️
+                </button>
+              ` : `
+                <span style="font-size: 11px; font-weight: 800; color: #16a34a; padding: 2px 6px;">⭐ หน้าสุด</span>
+              `}
+              ${!isLast ? `
+                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('all', 1)" title="เลื่อนลง / ไปข้างหลัง" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                  ⬇️
+                </button>
+              ` : ''}
+            </div>
+            ${!isCurrent ? `
+              <button type="button" class="btn btn-outline btn-sm" onclick="switchWorkspace('all'); closeWorkspaceModal();" title="เปิดดูมุมมองรวม">
+                📂 เปิดหน้านี้
+              </button>
+            ` : ''}
+            <span style="font-size: 11px; color: #94a3b8; padding: 0 4px;" title="แท็บระบบหลัก">🔒 ระบบรวม</span>
+          </div>
+        </div>
+      `;
+    } else {
+      const ws = workspaces.find(w => w.id === tabId);
+      if (!ws) return;
+      const count = countsMap[ws.id] || 0;
+      const isEditing = editingWorkspaceId === ws.id;
+      const isCurrent = currentWorkspaceId === ws.id;
+      const isDefaultOrbray = ws.id === 'ws_orbray';
+      const typeLabel = ws.type === 'personal' ? '🏠 งานส่วนตัว (PERSONAL)' : (ws.type === 'project' ? '🚀 โปรเจกต์พิเศษ (PROJECT)' : '🏢 บริษัท / โรงงาน (COMPANY)');
+
+      if (isEditing) {
+        html += `
+          <div class="category-manage-item" style="background: #eff6ff; border-color: #3b82f6; padding: 12px;">
+            <form onsubmit="handleSaveEditWorkspace(event, '${escapeHtml(ws.id)}')" style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="editWsIcon_${escapeHtml(ws.id)}" class="form-control" style="width: 48px; text-align: center; padding: 4px; font-size: 16px;" value="${escapeHtml(ws.icon || '🏢')}" title="ไอคอนอิโมจิ">
+                <input type="text" id="editWsName_${escapeHtml(ws.id)}" class="form-control" style="flex: 1; min-width: 150px; padding: 6px 10px; font-weight: 700;" value="${escapeHtml(uppercaseEnglish(ws.name))}" placeholder="ชื่อบริษัท / หน้างาน" required>
+                <select id="editWsType_${escapeHtml(ws.id)}" class="form-control" style="width: 170px; padding: 6px 8px; font-size: 12px;">
+                  <option value="company" ${ws.type === 'company' ? 'selected' : ''}>🏢 บริษัท / โรงงาน</option>
+                  <option value="personal" ${ws.type === 'personal' ? 'selected' : ''}>🏠 งานส่วนตัว</option>
+                  <option value="project" ${ws.type === 'project' ? 'selected' : ''}>🚀 โปรเจกต์พิเศษ</option>
+                </select>
+                <input type="color" id="editWsColor_${escapeHtml(ws.id)}" class="form-control" style="width: 42px; padding: 2px; height: 34px; cursor: pointer;" value="${ws.color || '#005bac'}" title="สีประจำหน้า">
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="editWsSubtitle_${escapeHtml(ws.id)}" class="form-control" style="flex: 1; min-width: 180px; padding: 6px 10px; font-size: 12px;" value="${escapeHtml(ws.subtitle || '')}" placeholder="คำอธิบายย่อย / แผนก / ตำแหน่ง">
+                <button type="submit" class="btn btn-primary btn-sm">💾 บันทึก (SAVE)</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditWorkspace()">ยกเลิก</button>
+              </div>
+            </form>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="category-manage-item" style="${isCurrent ? `border-color: ${ws.color || '#005bac'}; background: ${(ws.color || '#005bac')}08;` : ''}">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 28px; flex-shrink: 0;">
+                <span style="font-size: 11px; font-weight: 800; color: #64748b; font-family: monospace;">#${idx + 1}</span>
+                ${isFirst ? '<span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 800; margin-top: 1px;">FRONT</span>' : ''}
+              </div>
+              <span style="font-size: 22px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: ${(ws.color || '#005bac')}15; border-radius: 8px; flex-shrink: 0;">${ws.icon || '🏢'}</span>
+              <div style="min-width: 0; flex: 1;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span style="font-weight: 800; font-size: 14px; color: ${ws.color || '#005bac'};">${escapeHtml(uppercaseEnglish(ws.name))}</span>
+                  <span style="font-size: 10.5px; background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 600;">${typeLabel}</span>
+                  <span style="font-size: 11px; font-weight: 700; color: var(--text-main); background: #e2e8f0; padding: 1px 7px; border-radius: 999px;">${count} งาน</span>
+                  ${isFirst ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">⭐ อยู่หน้าสุด</span>' : ''}
+                  ${isCurrent ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">● กำลังเปิดใช้งาน</span>' : ''}
+                </div>
+                ${ws.subtitle ? `<div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">${escapeHtml(ws.subtitle)}</div>` : ''}
+              </div>
+            </div>
+            <div class="category-manage-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+              <div style="display: inline-flex; align-items: center; gap: 3px; background: #f1f5f9; padding: 2px 4px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                ${!isFirst ? `
+                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabToFront('${escapeHtml(ws.id)}')" title="ย้ายมาไว้หน้าสุด (Move to Front)" style="font-size: 11px; padding: 3px 7px; font-weight: 700; color: #0284c7; background: #fff;">
+                    ⏮ ไว้หน้าสุด
+                  </button>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', -1)" title="เลื่อนขึ้น / ไปข้างหน้า" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                    ⬆️
+                  </button>
+                ` : `
+                  <span style="font-size: 11px; font-weight: 800; color: #16a34a; padding: 2px 6px;">⭐ หน้าสุด</span>
+                `}
+                ${!isLast ? `
+                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', 1)" title="เลื่อนลง / ไปข้างหลัง" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                    ⬇️
+                  </button>
+                ` : ''}
+              </div>
+              ${!isCurrent ? `
+                <button type="button" class="btn btn-primary btn-sm" onclick="switchWorkspace('${escapeHtml(ws.id)}'); closeWorkspaceModal();" style="background: ${ws.color || '#005bac'}; border-color: ${ws.color || '#005bac'};" title="เปิดดูหน้านี้">
+                  📂 เปิดหน้านี้
+                </button>
+              ` : ''}
+              <button type="button" class="btn btn-outline btn-sm" onclick="startEditWorkspace('${escapeHtml(ws.id)}')" title="แก้ไขชื่อ/ไอคอน/สี">
+                ✏️ แก้ไข
+              </button>
+              ${!isDefaultOrbray ? `
+                <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteWorkspace('${escapeHtml(ws.id)}')" title="ลบหน้านี้">
+                  🗑️ ลบ
+                </button>
+              ` : `
+                <button type="button" class="btn btn-outline btn-sm" disabled style="opacity: 0.45; cursor: not-allowed;" title="หน้าหลัก ORBRAY ไม่สามารถลบได้">
+                  🔒 หน้าหลัก
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+function handleAddWorkspace(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('newWorkspaceName');
+  const subtitleInput = document.getElementById('newWorkspaceSubtitle');
+  const typeInput = document.getElementById('newWorkspaceType');
+  const iconInput = document.getElementById('newWorkspaceIcon');
+  const colorInput = document.getElementById('newWorkspaceColor');
+
+  const name = uppercaseEnglish((nameInput ? nameInput.value : '').trim());
+  const subtitle = (subtitleInput ? subtitleInput.value : '').trim();
+  const type = typeInput ? typeInput.value : 'company';
+  const icon = (iconInput ? iconInput.value : '').trim() || (type === 'personal' ? '🏠' : '🏢');
+  const color = (colorInput ? colorInput.value : '') || '#005bac';
+
+  if (!name) {
+    alert('กรุณากรอกชื่อบริษัท หรือ ชื่อหน้าพื้นที่ทำงาน');
+    return;
+  }
+
+  if (workspaces.some(w => w.name.toLowerCase() === name.toLowerCase())) {
+    alert(`มีหน้า "${name}" อยู่ในระบบแล้ว`);
+    return;
+  }
+
+  const newWs = {
+    id: 'ws_' + Date.now(),
+    name,
+    subtitle: subtitle || (type === 'personal' ? 'PERSONAL PROJECT & FREELANCE' : `${name} WORKSPACE`),
+    icon,
+    color,
+    type
+  };
+
+  workspaces.push(newWs);
+  saveWorkspaces();
+
+  if (nameInput) nameInput.value = '';
+  if (subtitleInput) subtitleInput.value = '';
+
+  renderWorkspaceManagerList();
+  renderWorkspaceSwitcher();
+  populateWorkspaceDropdowns();
+
+  // Automatically switch to the newly created workspace page so the user sees it right away
+  switchWorkspace(newWs.id);
+  showToast(`สร้างและสลับไปยังหน้า "${newWs.icon} ${newWs.name}" สำเร็จ!`);
+}
+
+function startEditWorkspace(wsId) {
+  editingWorkspaceId = wsId;
+  renderWorkspaceManagerList();
+  setTimeout(() => {
+    const nameInput = document.getElementById(`editWsName_${wsId}`);
+    if (nameInput) nameInput.focus();
+  }, 50);
+}
+
+function cancelEditWorkspace() {
+  editingWorkspaceId = null;
+  renderWorkspaceManagerList();
+}
+
+function handleSaveEditWorkspace(e, wsId) {
+  e.preventDefault();
+  const nameInput = document.getElementById(`editWsName_${wsId}`);
+  const subtitleInput = document.getElementById(`editWsSubtitle_${wsId}`);
+  const typeInput = document.getElementById(`editWsType_${wsId}`);
+  const iconInput = document.getElementById(`editWsIcon_${wsId}`);
+  const colorInput = document.getElementById(`editWsColor_${wsId}`);
+
+  const newName = uppercaseEnglish((nameInput ? nameInput.value : '').trim());
+  const newSubtitle = (subtitleInput ? subtitleInput.value : '').trim();
+  const newType = typeInput ? typeInput.value : 'company';
+  const newIcon = (iconInput ? iconInput.value : '').trim() || '🏢';
+  const newColor = (colorInput ? colorInput.value : '') || '#005bac';
+
+  if (!newName) {
+    alert('กรุณาระบุชื่อบริษัทหรือหน้างาน');
+    return;
+  }
+
+  const wsIndex = workspaces.findIndex(w => w.id === wsId);
+  if (wsIndex !== -1) {
+    workspaces[wsIndex].name = newName;
+    workspaces[wsIndex].subtitle = newSubtitle;
+    workspaces[wsIndex].type = newType;
+    workspaces[wsIndex].icon = newIcon;
+    workspaces[wsIndex].color = newColor;
+
+    saveWorkspaces();
+    editingWorkspaceId = null;
+
+    renderWorkspaceManagerList();
+    renderAll();
+    showToast(`แก้ไขหน้า "${newName}" สำเร็จ (SUCCESS)`);
+  }
+}
+
+function handleDeleteWorkspace(wsId) {
+  if (wsId === 'ws_orbray') {
+    alert('หน้าหลัก ORBRAY ไม่สามารถลบได้ (แต่สามารถแก้ไขชื่อหรือสีได้)');
+    return;
+  }
+  if (workspaces.length <= 1) {
+    alert('ไม่สามารถลบได้ เนื่องจากระบบต้องมีหน้าพื้นที่ทำงานอย่างน้อย 1 หน้า');
+    return;
+  }
+
+  const ws = workspaces.find(w => w.id === wsId);
+  if (!ws) return;
+
+  const count = achievements.filter(a => getItemWorkspaceId(a) === wsId).length;
+  const fallbackWs = workspaces.find(w => w.id === 'ws_orbray') || workspaces.find(w => w.id !== wsId);
+
+  if (count > 0) {
+    const confirmed = confirm(
+      `หน้า "${ws.icon} ${ws.name}" มีข้อมูลงานอยู่ทั้งหมด ${count} รายการ\n\n` +
+      `หากคุณลบหน้านี้ ระบบจะย้ายงานทั้ง ${count} รายการไปยังหน้า "${fallbackWs.icon} ${fallbackWs.name}" โดยอัตโนมัติเพื่อป้องกันข้อมูลสูญหาย\n\n` +
+      `คุณต้องการดำเนินการต่อใช่หรือไม่?`
+    );
+    if (!confirmed) return;
+
+    achievements.forEach(a => {
+      if (getItemWorkspaceId(a) === wsId) {
+        a.workspaceId = fallbackWs.id;
+      }
+    });
+    saveAchievements();
+  } else {
+    const confirmed = confirm(`คุณต้องการลบหน้า "${ws.icon} ${ws.name}" ใช่หรือไม่?`);
+    if (!confirmed) return;
+  }
+
+  workspaces = workspaces.filter(w => w.id !== wsId);
+  saveWorkspaces();
+
+  if (currentWorkspaceId === wsId) {
+    currentWorkspaceId = fallbackWs.id;
+    try {
+      localStorage.setItem(STORAGE_KEY_CURRENT_WORKSPACE, currentWorkspaceId);
+    } catch (e) {}
+  }
+
+  renderWorkspaceManagerList();
+  renderAll();
+  showToast(`ลบหน้า "${ws.name}" เรียบร้อยแล้ว`);
 }
 
 // --- Image & Drawing Attachment Handling (Image & PDF, Unlimited Size) ---
@@ -24038,6 +25501,7 @@ function exportDataAsJson() {
   const exportData = {
     system: 'ACHIEVEMENT RECORD',
     exportDate: new Date().toISOString(),
+    workspaces,
     categories,
     achievements
   };
@@ -24064,6 +25528,7 @@ function handleImportJson(e) {
       if (confirm(`พบข้อมูล ${data.achievements.length} รายการ ต้องการนำเข้าข้อมูลใช่หรือไม่?`)) {
         achievements = data.achievements;
         achievements.forEach(a => {
+          if (!a.workspaceId) a.workspaceId = 'ws_orbray';
           if (a.title) a.title = uppercaseEnglish(a.title);
           if (a.code) a.code = uppercaseEnglish(a.code);
           if (a.assignee) a.assignee = uppercaseEnglish(a.assignee);
@@ -24071,6 +25536,15 @@ function handleImportJson(e) {
           if (a.department) a.department = uppercaseEnglish(a.department);
           if (a.process) a.process = uppercaseEnglish(a.process);
         });
+        if (data.workspaces && Array.isArray(data.workspaces) && data.workspaces.length > 0) {
+          workspaces = data.workspaces;
+          DEFAULT_WORKSPACES.forEach(defWs => {
+            if (!workspaces.some(w => w.id === defWs.id)) {
+              workspaces.push({ ...defWs });
+            }
+          });
+          saveWorkspaces();
+        }
         if (data.categories && Array.isArray(data.categories)) {
           categories = data.categories;
           categories.forEach(c => { c.name = uppercaseEnglish(c.name); });
@@ -24090,7 +25564,7 @@ function handleImportJson(e) {
 
 function exportDataAsCsv() {
   const headers = [
-    'TASK NAME', 'REQUEST NUMBER', 'QUOTATION', 'REQUEST NAME', 'REQUEST DATE',
+    'COMPANY / WORKSPACE', 'TASK NAME', 'REQUEST NUMBER', 'QUOTATION', 'REQUEST NAME', 'REQUEST DATE',
     'DEPARTMENT', 'FACTORY', 'PROCESS', 'JOB TYPE', 'SUB JOB TYPE', 'PRIORITY',
     'TOOLING TEAM 1', 'TOOLING TEAM 2',
     'DESIGN SUPPORT 1', 'DESIGN SUPPORT 2',
@@ -24100,10 +25574,13 @@ function exportDataAsCsv() {
     'DETAIL', 'NOTE', 'DATE COMPLETED', 'FINISHED MONTH', 'WORK FOLDER', 'CATEGORY'
   ];
 
-  const rows = achievements.map(a => {
+  const sourceList = getWorkspaceAchievements();
+  const rows = sourceList.map(a => {
+    const ws = getWorkspaceById(getItemWorkspaceId(a));
     const cat = categories.find(c => c.id === a.categoryId) || { name: 'ทั่วไป' };
     const xl = getTaskExcelTracking(a);
     return [
+      uppercaseEnglish(ws.name || 'ORBRAY'),
       uppercaseEnglish(a.title),
       uppercaseEnglish(a.code || ''),
       uppercaseEnglish(a.quotation || ''),
@@ -24145,7 +25622,8 @@ function exportDataAsCsv() {
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const dateStr = new Date().toISOString().split('T')[0];
-  downloadFile(blob, `ACHIEVEMENT_RECORD_REPORT_${dateStr}.csv`);
+  const wsSuffix = (!currentWorkspaceId || currentWorkspaceId === 'all') ? 'ALL' : uppercaseEnglish(getWorkspaceById(currentWorkspaceId).name).replace(/[^A-Z0-9_-]/gi, '_');
+  downloadFile(blob, `ACHIEVEMENT_RECORD_${wsSuffix}_${dateStr}.csv`);
   showToast('ส่งออกไฟล์ EXCEL (CSV) สำเร็จ (SUCCESS)');
 }
 
@@ -24371,9 +25849,9 @@ function clearMurataKeywordSearch() {
 }
 
 function initMurataComponents() {
-  // Initialize carousel slide
-  updateMurataSlide(currentMurataSlideIndex);
-  startMurataCarouselTimer();
+  // Ensure active workspace branding & theme colors are applied (disable legacy marketing slide rotator)
+  clearInterval(murataCarouselTimer);
+  updateWorkspaceBrandingUI();
 
   // Floating scroll-to-top visibility toggle
   const btnScrollTop = document.getElementById('btnScrollTop');

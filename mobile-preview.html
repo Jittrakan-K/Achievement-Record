@@ -383,7 +383,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 48px;
+      height: 44px;
       z-index: 999;
       display: flex;
       align-items: center;
@@ -393,7 +393,7 @@
       font-weight: 700;
       color: #0f172a;
       pointer-events: none;
-      background: transparent;
+      background: #ffffff;
     }
 
     .ios-status-time {
@@ -411,11 +411,11 @@
     /* Dynamic Island (iPhone 14 Pro, 15, 16) */
     .dynamic-island-container {
       position: absolute;
-      top: 10px;
+      top: 8px;
       left: 50%;
       transform: translateX(-50%);
-      width: 122px;
-      height: 33px;
+      width: 120px;
+      height: 30px;
       background: #000000;
       border-radius: 20px;
       z-index: 1000;
@@ -574,7 +574,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 36px;
+      height: 34px;
       z-index: 999;
       display: none;
       align-items: center;
@@ -584,7 +584,7 @@
       font-weight: 600;
       color: #1e293b;
       pointer-events: none;
-      background: transparent;
+      background: #ffffff;
     }
 
     .android-status-left {
@@ -917,7 +917,7 @@
           <div class="punch-hole-camera" id="punchHole"></div>
 
           <!-- Embedded Local Webpage (index.html) -->
-          <iframe id="previewIframe" class="phone-viewport-iframe" src="index.html?v=20261012_v12"></iframe>
+          <iframe id="previewIframe" class="phone-viewport-iframe" src="index.html?v=20261013_v25"></iframe>
 
           <!-- Bottom Navigation Affordances -->
           <div class="ios-home-indicator-bar" id="iosHomeBar"></div>
@@ -1147,6 +1147,8 @@
       iphoneSeTop.style.display = 'none';
       iphoneSeBottom.style.display = 'none';
 
+      let topSafePadding = 0;
+
       if (isApple) {
         iosStatusBar.style.display = (isBezelVisible && !isLandscape) ? 'flex' : 'none';
         iosHomeBar.style.display = (isBezelVisible && dev.cutType !== 'home-button') ? 'block' : 'none';
@@ -1155,6 +1157,7 @@
         androidNavBar.style.display = 'none';
 
         if (isBezelVisible && !isLandscape) {
+          topSafePadding = 44;
           if (dev.cutType === 'island') {
             dynamicIsland.style.display = 'flex';
           } else if (dev.cutType === 'notch') {
@@ -1174,10 +1177,15 @@
         androidStatusBar.style.display = (isBezelVisible && !isLandscape) ? 'flex' : 'none';
         androidNavBar.style.display = isBezelVisible ? 'flex' : 'none';
 
-        if (isBezelVisible && !isLandscape && dev.cutType === 'punch') {
-          punchHole.style.display = 'block';
+        if (isBezelVisible && !isLandscape) {
+          topSafePadding = 34;
+          if (dev.cutType === 'punch') {
+            punchHole.style.display = 'block';
+          }
         }
       }
+
+      screenEl.style.paddingTop = topSafePadding + 'px';
 
       calculateScale();
     }

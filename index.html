@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>ACHIEVEMENT RECORD | TASK TRACKER</title>
   <!-- Favicon: Official Brand Badge (Matching Website Header Logo) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%23E60012'/%3E%3Crect x='11' y='11' width='42' height='42' rx='5' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M25 11v42M11 25h42' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261012_v12">
+  <link rel="stylesheet" href="styles.css?v=20261013_v25">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -44,16 +44,16 @@
   <div class="system-top-strip">
     <div class="container system-top-strip-inner">
       <div class="system-top-strip-left">
-        <span class="system-top-corp">ACHIEVEMENT RECORD</span>
-        <span class="system-top-sep">•</span>
-        <span class="system-top-dept">TASK TRACKER SYSTEM</span>
+        <span class="system-top-corp" id="topStripWorkspaceName">ORBRAY (THAILAND)</span>
+        <span class="system-top-sep">/</span>
+        <span class="system-top-dept" id="topStripWorkspaceSub">PRODUCTION TECHNOLOGY • ACHIEVEMENT RECORD</span>
       </div>
       <div class="system-top-strip-right">
         <span class="status-indicator-dot"></span>
-        <span class="system-top-status-text">SYSTEM ONLINE • REAL-TIME RECORD</span>
+        <span class="system-top-status-text">LIVE WORKSPACE • AUTO-SYNC</span>
         <button type="button" class="system-top-sim-btn" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
-          <span>📱</span>
-          <span>จำลองมือถือ (SIMULATOR)</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>MOBILE SIMULATOR</span>
         </button>
       </div>
     </div>
@@ -96,13 +96,18 @@
         </div>
       </div>
 
+      <!-- Row 1.5: Mobile Workspace / Company Switcher Tabs -->
+      <div class="mobile-workspace-scroll" id="mobileWorkspaceScroll">
+        <!-- Populated dynamically by JS -->
+      </div>
+
       <!-- Row 2: Search Bar Pill with Integrated Tune/Sort Icon (Matching User Mockup) -->
       <div class="mobile-search-sort-bar">
         <div class="mobile-search-pill-box">
           <span class="mobile-search-icon">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </span>
-          <input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="Looking for something? ค้นหางาน, Request..." oninput="handleMobileSearch(this.value)">
+          <input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="ค้นหางาน, รหัสงาน, ผู้ร้องขอ..." oninput="handleMobileSearch(this.value)">
           <button type="button" class="mobile-search-clear" id="mobileSearchClear" onclick="clearMobileSearch()" style="display: none;" title="ล้างการค้นหา">✕</button>
           <button type="button" class="mobile-tune-btn" onclick="openMobileSortSheet()" title="จัดเรียงและตัวกรอง" aria-label="ตัวกรอง">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -146,17 +151,17 @@
         </div>
         <div>
           <h1 class="brand-title">
-            <span style="color: #E60012; font-weight: 900; letter-spacing: -0.5px;">ACHIEVEMENT</span> RECORD
-            <span class="brand-badge">JITTRAKAN K.</span>
+            <span class="brand-title-accent" id="headerBrandAccent">ACHIEVEMENT</span> <span id="headerBrandMain">RECORD</span>
+            <span class="brand-badge" id="headerWorkspaceBadge">ORBRAY</span>
           </h1>
-          <p class="brand-subtitle">DOCUMENT SYSTEM VERSION 1.0.0</p>
+          <p class="brand-subtitle" id="headerBrandSubtitle">ENGINEERING ARCHIVE &amp; TASK MANAGEMENT</p>
         </div>
       </div>
 
-      <!-- Desktop Main Clean Navigation (Good UX Principle: Simple, Clean Navigation) -->
+      <!-- Desktop Main Clean Navigation -->
       <nav class="desktop-main-nav">
         <button type="button" class="desktop-nav-link active" onclick="desktopNavigateTo('dashboard')" id="deskNavDashboard">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>DASHBOARD</span>
         </button>
         <button type="button" class="desktop-nav-link" onclick="desktopNavigateTo('tasks')" id="deskNavTasks">
@@ -170,14 +175,21 @@
       </nav>
 
       <div class="header-actions">
-        <!-- Tools & Utilities Dropdown (Good UX Principle: Consolidate secondary actions into Clean Dropdown) -->
+        <!-- Tools & Utilities Dropdown -->
         <div class="header-tools-dropdown-wrapper">
           <button type="button" id="btnHeaderTools" class="btn btn-tools-dropdown" onclick="toggleHeaderToolsDropdown(event)" title="เมนูเครื่องมือและการจัดการ">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <span>เครื่องมือ (TOOLS)</span>
+            <span>TOOLS</span>
             <span class="dropdown-chevron">▾</span>
           </button>
           <div id="headerToolsDropdown" class="header-tools-menu">
+            <button type="button" id="btnManageWorkspaces" class="tools-menu-item" onclick="closeHeaderToolsDropdown(); openWorkspaceModal();" title="จัดการหน้าบริษัท / พื้นที่ทำงาน (Workspaces)">
+              <span class="menu-icon">🏢</span>
+              <div class="menu-text">
+                <span class="menu-title">จัดการหน้าบริษัท / งานส่วนตัว (WORKSPACES)</span>
+                <span class="menu-sub">เพิ่มหน้าบริษัทใหม่ กำหนดสีประจำหน้า และสลับพื้นที่ทำงาน</span>
+              </div>
+            </button>
             <button type="button" id="btnManageCategories" class="tools-menu-item" title="จัดการหมวดหมู่">
               <span class="menu-icon">📁</span>
               <div class="menu-text">
@@ -218,7 +230,7 @@
             <button type="button" class="tools-menu-item" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
               <span class="menu-icon">📱</span>
               <div class="menu-text">
-                <span class="menu-title" style="color: #0284c7;">จำลองจอมือถือ (MOBILE SIMULATOR)</span>
+                <span class="menu-title" style="color: var(--primary);">จำลองจอมือถือ (MOBILE SIMULATOR)</span>
                 <span class="menu-sub">พรีวิวและทดสอบจอ iOS (iPhone) และ Android ทันที</span>
               </div>
             </button>
@@ -237,7 +249,7 @@
         <div style="position: relative; display: inline-block;">
           <button id="btnHeaderAuth" class="auth-header-btn unauthenticated" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วยรหัส PIN เพื่อเพิ่มหรือแก้ไขงาน">
             <span id="headerAuthIcon">🔑</span>
-            <span id="headerAuthText">เข้าสู่ระบบ (LOGIN)</span>
+            <span id="headerAuthText">LOGIN</span>
           </button>
           <div id="authUserDropdown" class="auth-user-dropdown">
             <div class="auth-dropdown-header">
@@ -271,69 +283,118 @@
   <!-- Main Container -->
   <main class="container">
 
-    <!-- Showcase Hero Banner (Good UX: Balanced Layout & Strong Visual Hierarchy) -->
+    <!-- Architectural Multi-Company / Workspace Bar -->
+    <section class="workspace-switcher-section" id="workspaceSwitcherSection" aria-label="Company and Workspace Pages">
+      <div class="workspace-switcher-left">
+        <button type="button" class="ws-tabs-scroll-arrow ws-tabs-scroll-prev" id="btnWsScrollPrev" onclick="scrollWorkspaceTabs(-240)" title="เลื่อนแถบไปทางซ้าย" aria-label="Scroll Left">‹</button>
+        <div class="workspace-tabs-list" id="workspaceTabsList">
+          <!-- Populated dynamically by JS (Supports Drag & Drop + 1-Click Move to Front) -->
+        </div>
+        <button type="button" class="ws-tabs-scroll-arrow ws-tabs-scroll-next" id="btnWsScrollNext" onclick="scrollWorkspaceTabs(240)" title="เลื่อนแถบไปทางขวา" aria-label="Scroll Right">›</button>
+      </div>
+      <div class="workspace-switcher-actions">
+        <div class="workspace-theme-quickbar" id="workspaceThemeQuickbar" title="คลิกเพื่อเปลี่ยนสีธีมของหน้าปัจจุบันทันที">
+          <!-- Populated dynamically by JS with quick color dots + custom color picker -->
+        </div>
+        <button type="button" class="workspace-reorder-btn" onclick="openWorkspaceModal(false, true)" title="จัดเรียงลำดับหน้า หรือเลือกว่าจะเอาตัวเลือกไหนไว้ด้านหน้าสุด">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
+          <span>จัดลำดับหน้า</span>
+        </button>
+        <button type="button" class="workspace-quick-add-btn" onclick="openWorkspaceModal(true)" title="สร้างหน้าบริษัทใหม่ หรือพื้นที่เก็บงานส่วนตัว">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>เพิ่มหน้าใหม่</span>
+        </button>
+        <button type="button" class="workspace-manage-btn" onclick="openWorkspaceModal(false)" title="ตั้งค่า แก้ไขชื่อ สี หรือจัดการหน้าทั้งหมด">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          <span>ตั้งค่าหน้า</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Executive Workspace Command Header (Replaces generic AI landing banner) -->
     <section class="murata-hero-section">
       <div class="murata-hero-card">
         <div class="murata-hero-content">
-          <div class="murata-hero-badge" id="murataHeroBadge">ORBRAY PRODUCTION TECHNOLOGY</div>
-          <h2 class="murata-hero-title" id="murataHeroTitle">ACHIEVEMENT <span>RECORD</span></h2>
-          <p class="murata-hero-desc" id="murataHeroDesc">
-            ศูนย์รวมบันทึกผลงาน ติดตามความคืบหน้างวดงาน ออกแบบระบบ และจัดเก็บเอกสาร Job Request
-          </p>
-          <div class="murata-hero-feature-pills">
-            <span class="hero-feat-pill">📄 แนบ Job Request (PDF) &amp; งาน (.ZIP)</span>
-            <span class="hero-feat-pill">⚡ Real-time Analytics &amp; KPIs 100%</span>
-            <span class="hero-feat-pill">☁️ Multi-Device Cloud Sync</span>
+          <div class="workspace-eyebrow-row">
+            <span class="workspace-eyebrow-dot"></span>
+            <span class="murata-hero-badge" id="murataHeroBadge">ACTIVE WORKSPACE • PRODUCTION TECHNOLOGY</span>
           </div>
+          <h2 class="murata-hero-title" id="murataHeroTitle">ORBRAY (THAILAND) <span>ACHIEVEMENT RECORD</span></h2>
+          <p class="murata-hero-desc" id="murataHeroDesc">
+            ศูนย์รวมบันทึกผลงานวิศวกรรม ติดตามความคืบหน้างวดงาน และจัดเก็บเอกสาร Job Request / Drawing
+          </p>
           <div class="murata-hero-actions">
             <button type="button" id="btnAddAchievement" class="btn-murata-red btn-hero-cta" onclick="openAchievementModal()">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-              <span>เพิ่มงานใหม่ (ADD TASK)</span>
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span>เพิ่มงานใหม่ (ADD RECORD)</span>
             </button>
             <button type="button" class="btn-murata-outline" onclick="desktopNavigateTo('tasks')">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <span>ดูรายการผลงานทั้งหมด (EXPLORE TASKS)</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>ดูตารางงาน (VIEW RECORDS)</span>
             </button>
           </div>
         </div>
-        <div class="murata-hero-visual">
-          <svg width="220" height="160" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="15" width="200" height="130" rx="10" fill="#242A31" stroke="#434D57" stroke-width="2"/>
-            <rect x="25" y="32" width="170" height="14" rx="3" fill="#E60012" fill-opacity="0.9"/>
-            <rect x="25" y="56" width="100" height="8" rx="2" fill="#94A3B8"/>
-            <rect x="25" y="72" width="140" height="8" rx="2" fill="#64748B"/>
-            <rect x="25" y="88" width="80" height="8" rx="2" fill="#64748B"/>
-            <circle cx="170" cy="100" r="22" fill="#333E48" stroke="#E60012" stroke-width="3"/>
-            <path d="M162 100l6 6 12-12" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+
+        <!-- Live Workspace Telemetry Panel -->
+        <div class="workspace-telemetry-panel" id="workspaceTelemetryPanel">
+          <div class="telemetry-top-row">
+            <div class="telemetry-rate-block">
+              <span class="telemetry-label">COMPLETION RATE</span>
+              <div class="telemetry-rate-val" id="heroCompletionRate">0%</div>
+            </div>
+            <div class="telemetry-score-pill" id="heroAvgAchvScore">AVG SCORE 0%</div>
+          </div>
+          <div class="telemetry-progress-track">
+            <div class="telemetry-progress-fill" id="heroCompletionBar" style="width: 0%;"></div>
+          </div>
+          <div class="telemetry-metrics-grid">
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('all')" title="คลิกเพื่อดูงานทั้งหมดในหน้านี้">
+              <span class="tm-num" id="heroStatTotal">0</span>
+              <span class="tm-lbl">TOTAL RECORDS</span>
+            </div>
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('done')" title="คลิกเพื่อกรองเฉพาะงานที่เสร็จแล้ว (DONE)">
+              <span class="tm-num tm-done" id="heroStatDone">0</span>
+              <span class="tm-lbl">DONE</span>
+            </div>
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('in_progress')" title="คลิกเพื่อกรองเฉพาะงานที่กำลังดำเนินการ">
+              <span class="tm-num tm-active" id="heroStatActive">0</span>
+              <span class="tm-lbl">ACTIVE / WAIT</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Top Stats Row (5 Compact Cards) -->
+    <!-- Top Stats Row (5 Precision KPI Cards) -->
     <section class="stats-grid" id="statsGrid">
       <div class="stat-card stat-card-total" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="VIEW ALL TASKS">
-        <div class="stat-icon stat-blue">📊</div>
+        <div class="stat-icon stat-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-label-wrap">
-            <span class="stat-main-label">TOTAL</span>
+            <span class="stat-main-label">TOTAL RECORDS</span>
           </div>
           <span class="stat-value" id="statTotalCount">0</span>
         </div>
       </div>
 
       <div class="stat-card stat-card-done" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="FILTER DONE TASKS">
-        <div class="stat-icon stat-green">✅</div>
+        <div class="stat-icon stat-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-label-wrap">
-            <span class="stat-main-label">DONE</span>
+            <span class="stat-main-label">COMPLETED (DONE)</span>
           </div>
           <span class="stat-value" id="statCompletedCount">0</span>
         </div>
       </div>
 
       <div class="stat-card stat-card-inprog" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="FILTER IN PROGRESS TASKS">
-        <div class="stat-icon stat-sky">🛠️</div>
+        <div class="stat-icon stat-sky">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-label-wrap">
             <span class="stat-main-label">IN PROGRESS</span>
@@ -343,20 +404,24 @@
       </div>
 
       <div class="stat-card stat-card-wait" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="FILTER PENDING TASKS">
-        <div class="stat-icon stat-rose">🔴</div>
+        <div class="stat-icon stat-rose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-label-wrap">
-            <span class="stat-main-label">PENDING</span>
+            <span class="stat-main-label">PENDING / HOLD</span>
           </div>
           <span class="stat-value" id="statWaitCount">0</span>
         </div>
       </div>
 
       <div class="stat-card stat-card-cancel" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="FILTER CANCELLED TASKS">
-        <div class="stat-icon stat-slate">🚫</div>
+        <div class="stat-icon stat-slate">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-label-wrap">
-            <span class="stat-main-label">CANCEL</span>
+            <span class="stat-main-label">CANCELLED</span>
           </div>
           <span class="stat-value" id="statCancelCount">0</span>
         </div>
@@ -368,7 +433,7 @@
       <div class="section-header">
         <h2 class="section-title">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          สถิติและแดชบอร์ดภาพรวมงาน (REAL-TIME DASHBOARD)
+          <span id="dashboardSectionTitle">สถิติและแดชบอร์ดภาพรวมงาน (REAL-TIME ANALYTICS)</span>
         </h2>
         <div class="section-header-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
           <button type="button" id="btnToggleEngInsights" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleEngInsights()" title="สลับการแสดงผลแดชบอร์ดข้อมูลเชิงลึกวิศวกรรม (ENGINEERING INSIGHTS)">
@@ -442,6 +507,10 @@
             <div class="eng-donut-layout">
               <div class="eng-donut-canvas-box">
                 <canvas id="engPriorityChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engPriorityCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
               </div>
               <div class="eng-flat-list" id="engPriorityList"></div>
             </div>
@@ -455,6 +524,10 @@
             <div class="eng-donut-layout">
               <div class="eng-donut-canvas-box">
                 <canvas id="engSubJobChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engSubJobCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
               </div>
               <div class="eng-flat-list" id="engSubJobList"></div>
             </div>
@@ -468,6 +541,10 @@
             <div class="eng-donut-layout">
               <div class="eng-donut-canvas-box">
                 <canvas id="engFactoryChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engFactoryCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
               </div>
               <div class="eng-flat-list" id="engFactoryList"></div>
             </div>
@@ -661,22 +738,40 @@
         <div class="modal-body">
           <input type="hidden" id="achvId">
 
+          <!-- 0. Company / Workspace Page Selector -->
+          <div class="form-group" id="fgWorkspaceSelector" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
+            <div class="ws-selector-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+              <label class="form-label" for="achvWorkspace" style="margin: 0; color: #0f172a; font-weight: 800;">
+                🏢 หน้าบริษัท / พื้นที่เก็บงาน (COMPANY / WORKSPACE PAGE) <span style="color: red;">*</span>
+              </label>
+              <button type="button" class="btn btn-secondary" onclick="openWorkspaceModal(true)" style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-color: #93c5fd; background: #eff6ff; color: #1d4ed8;">
+                ＋ เพิ่มหน้าบริษัท / พื้นที่ใหม่
+              </button>
+            </div>
+            <select id="achvWorkspace" class="form-control" style="font-weight: 700;" onchange="handleModalWorkspaceChange(this.value)" required>
+              <!-- Populated dynamically by JS -->
+            </select>
+            <div class="ws-selector-hint" style="font-size: 11px; color: #64748b; margin-top: 4px;">
+              เลือกหน้าบริษัทหรือพื้นที่ส่วนตัวที่ต้องการบันทึกงานนี้ (สามารถย้ายงานข้ามหน้าได้ตลอดเวลา)
+            </div>
+          </div>
+
           <!-- 1. Task Name -->
-          <div class="form-group">
+          <div class="form-group" id="fgTaskName">
             <label class="form-label" for="achvTitle">TASK NAME (ชื่องาน / กิจกรรม / รหัส PR) <span style="color: red;">*</span></label>
             <input type="text" id="achvTitle" class="form-control" placeholder="เช่น (PR) MAKITA 766004-9 HP457 หรือ JIG-QC003 CLAMP STAND" required>
           </div>
 
           <!-- 2. Category, Status & Sub-Status (Excel 10-Step Progress) -->
-          <div class="form-grid-3">
-            <div class="form-group">
+          <div class="form-grid-3" id="fgRowStatusCategory">
+            <div class="form-group" id="fgCategory">
               <label class="form-label" for="achvCategory">หมวดหมู่งาน (CATEGORY) <span style="color: red;">*</span></label>
               <select id="achvCategory" class="form-control" required>
                 <!-- Populated by JS -->
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="fgStatus">
               <label class="form-label" for="achvStatus">STATUS (สถานะหลัก)</label>
               <select id="achvStatus" class="form-control" onchange="handleModalStatusChange(this.value)">
                 <option value="in_progress">IN PROGRESS (กำลังดำเนินการ)</option>
@@ -686,7 +781,7 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="fgSubStatus">
               <label class="form-label" for="achvSubStatus">
                 <span>SUB STATUS (ขั้นตอนย่อย)</span>
                 <small id="achvAchievementBadge" class="achv-label-badge">ACHV: 0.2 (20%)</small>
@@ -710,7 +805,7 @@
           </div>
 
           <!-- 3. Request Number & Quotation -->
-          <div class="form-grid">
+          <div class="form-grid" id="fgRowRequestQuotation">
             <div class="form-group">
               <label class="form-label" for="achvCode">REQUEST NUMBER <small>(รหัสงาน / รหัส DRAWING)</small></label>
               <input type="text" id="achvCode" class="form-control" placeholder="เช่น FOR TECHNO, FR-J26-076, GM-J26-024">
@@ -723,7 +818,7 @@
           </div>
 
           <!-- 4. Request Info: Request Name & Request Date -->
-          <div class="form-grid">
+          <div class="form-grid" id="fgRowRequestNameDate">
             <div class="form-group">
               <label class="form-label" for="achvRequestName">REQUEST NAME (ชื่อผู้ร้องขอ)</label>
               <input type="text" id="achvRequestName" class="form-control" placeholder="เช่น พี่เบิ้ม, แผนก FERRULE, ฝ่าย MOTOR">
@@ -736,7 +831,7 @@
           </div>
 
           <!-- 5. Factory, Department, Process -->
-          <div class="form-grid-3">
+          <div class="form-grid-3" id="fgRowFactoryDeptProcess">
             <div class="form-group">
               <label class="form-label" for="achvFactory">FACTORY (โรงงาน)</label>
               <select id="achvFactory" class="form-control">
@@ -775,8 +870,8 @@
           </div>
 
           <!-- 6. Assign & Completion Date -->
-          <div class="form-grid">
-            <div class="form-group">
+          <div class="form-grid" id="fgRowAssignDate">
+            <div class="form-group" id="fgAssignee">
               <label class="form-label" for="achvAssignee">ASSIGN (เจ้าของงานหลัก)</label>
               <select id="achvAssignee" class="form-control">
                 <option value="">-- เลือกผู้รับผิดชอบ (SELECT ASSIGNEE) --</option>
@@ -788,13 +883,14 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="fgCompletionDate">
               <label class="form-label" for="achvCompletionDate">DATE COMPLETED (วันที่บันทึก / วันที่สำเร็จ)</label>
               <input type="date" id="achvCompletionDate" class="form-control">
             </div>
           </div>
 
           <!-- 6.5 Excel Engineering Classification & Team Breakdown -->
+          <div id="fgExcelTrackingWrap">
           <div class="form-section-divider" style="margin-top: 8px; margin-bottom: 12px;">
             📊 ข้อมูลตารางวิศวกรรม (EXCEL TRACKING: JOB TYPE / PRIORITY / TEAM &amp; SUPPORT)
           </div>
@@ -959,15 +1055,16 @@
               </select>
             </div>
           </div>
+          </div>
 
           <!-- 7. Detail -->
-          <div class="form-group">
+          <div class="form-group" id="fgDescription">
             <label class="form-label" for="achvDescription">DETAIL (รายละเอียดงาน)</label>
             <textarea id="achvDescription" class="form-control" rows="2" placeholder="เช่น ร้องขอให้ฝ่ายเทคโนโลยีจัดทำ JIG, สั่งซื้ออะไหล่..."></textarea>
           </div>
 
           <!-- 8. Note -->
-          <div class="form-group">
+          <div class="form-group" id="fgNote">
             <label class="form-label" for="achvNote">NOTE (หมายเหตุ / สิ่งที่กำลังรอ / ความคืบหน้า)</label>
             <input type="text" id="achvNote" class="form-control" placeholder="เช่น (รอ) รอถอดออกได้ค่อยสั่ง, รอปริ้นงาน, กำลังจะ WIRING สาย">
           </div>
@@ -978,9 +1075,9 @@
           </div>
 
           <!-- 9.1 PDF Job Request Attachment -->
-          <div class="form-group">
+          <div class="form-group" id="fgPdfAttachment">
             <label class="form-label" for="achvPdfInput">
-              <span>ใบ PRODUCTION TECHNOLOGY DEPARTMENT JOB REQUEST (ไฟล์ PDF)</span>
+              <span id="achvPdfLabelTitle">ORBRAY (THAILAND) (PDF)</span>
               <small>(อัพโหลดไฟล์ .PDF เก็บลงระบบ - สามารถดาวน์โหลดกลับได้)</small>
             </label>
 
@@ -1122,6 +1219,98 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">ปิด (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Multi-Company / Workspace Page Manager -->
+  <div id="workspaceModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 จัดการหน้าบริษัท / พื้นที่เก็บผลงาน (COMPANY &amp; WORKSPACE PAGES)</h3>
+        <button class="modal-close" onclick="closeWorkspaceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #1e3a8a; line-height: 1.55;">
+          <strong>💡 ระบบแยกหน้าบริษัท &amp; พื้นที่ทำงานอิสระ (Multi-Company Workspace):</strong><br>
+          คุณสามารถสร้างหน้าแยกสำหรับแต่ละบริษัท (เช่น <strong>ORBRAY</strong>, <strong>MURATA</strong>, บริษัทในอนาคต) หรือแยกหน้าสำหรับ <strong>งานส่วนตัว (Personal Projects / Freelance)</strong> ได้ไม่จำกัด แต่ละหน้าจะมี Dashboard, กราฟ KPI และรายการงานแยกกันอย่างชัดเจน หรือกดดูรวมทุกหน้า (ALL) ได้ตลอดเวลา
+        </div>
+
+        <form id="newWorkspaceForm" onsubmit="handleAddWorkspace(event)" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+          <h4 style="font-size: 13.5px; font-weight: 800; margin-bottom: 12px; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+            <span>➕ เพิ่มหน้าบริษัท / พื้นที่เก็บงานใหม่ (CREATE NEW PAGE)</span>
+          </h4>
+
+          <div class="form-grid-2" style="margin-bottom: 10px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="newWorkspaceName">ชื่อบริษัท / ชื่อหน้า (PAGE / COMPANY NAME) <span style="color: red;">*</span></label>
+              <input type="text" id="newWorkspaceName" class="form-control" placeholder="เช่น MURATA, งานส่วนตัว, FREELANCE, TOYOTA..." required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="newWorkspaceSubtitle">คำอธิบาย / แผนก (SUBTITLE / DEPARTMENT)</label>
+              <input type="text" id="newWorkspaceSubtitle" class="form-control" placeholder="เช่น PRODUCTION ENGINEERING หรือ PERSONAL PORTFOLIO">
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <div>
+              <label class="form-label" style="margin-bottom: 6px; display: block;">ไอคอน (ICON)</label>
+              <div class="ws-icon-picker" id="newWorkspaceIconPicker">
+                <input type="text" id="newWorkspaceIcon" class="form-control" style="width: 52px; height: 36px; text-align: center; font-size: 18px; padding: 2px;" value="🏭" title="พิมพ์อิโมจิหรือเลือกด้านข้าง">
+                <button type="button" class="ws-icon-opt active" onclick="selectNewWorkspaceIcon('🏭', this)">🏭</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🏢', this)">🏢</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('💻', this)">💻</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🚀', this)">🚀</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('⚙️', this)">⚙️</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🛠️', this)">🛠️</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🔬', this)">🔬</button>
+                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🌟', this)">🌟</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label" style="margin-bottom: 6px; display: block;">สีประจำหน้า (THEME COLOR)</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="color" id="newWorkspaceColor" class="form-control" style="width: 44px; height: 36px; padding: 3px; cursor: pointer;" value="#059669" title="เลือกสีประจำหน้า">
+                <div class="ws-color-picker">
+                  <button type="button" class="ws-color-opt" style="background: #E60012;" onclick="selectNewWorkspaceColor('#E60012')" title="Red"></button>
+                  <button type="button" class="ws-color-opt" style="background: #2563eb;" onclick="selectNewWorkspaceColor('#2563eb')" title="Blue"></button>
+                  <button type="button" class="ws-color-opt" style="background: #059669;" onclick="selectNewWorkspaceColor('#059669')" title="Emerald"></button>
+                  <button type="button" class="ws-color-opt" style="background: #7c3aed;" onclick="selectNewWorkspaceColor('#7c3aed')" title="Purple"></button>
+                  <button type="button" class="ws-color-opt" style="background: #ea580c;" onclick="selectNewWorkspaceColor('#ea580c')" title="Orange"></button>
+                  <button type="button" class="ws-color-opt" style="background: #0284c7;" onclick="selectNewWorkspaceColor('#0284c7')" title="Cyan"></button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 18px; font-weight: 800;">
+              ＋ สร้างหน้าใหม่ (ADD PAGE)
+            </button>
+          </div>
+        </form>
+
+        <div id="workspaceOrderSection" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+          <div>
+            <h4 style="font-size: 13.5px; font-weight: 800; margin: 0; color: #0f172a;">
+              🔄 จัดลำดับและจัดการหน้าทั้งหมด (REORDER &amp; MANAGE WORKSPACES)
+            </h4>
+            <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
+              คลิกปุ่ม <strong>⏮ ไว้หน้าสุด</strong> หรือ <strong>⬆️ / ⬇️</strong> เพื่อเลือกว่าจะเอาตัวเลือกไหนไว้ด้านหน้า (หรือลากปุ่มบนแถบหน้าเว็บได้โดยตรง)
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="workspaceTotalCountBadge" style="font-size: 11px; font-weight: 700; color: #64748b;"></span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="resetWorkspaceTabOrder()" title="รีเซ็ตลำดับแถบกลับเป็นค่าเริ่มต้น">
+              ↺ คืนค่าลำดับเดิม
+            </button>
+          </div>
+        </div>
+        <div id="workspaceManagerList" style="display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; padding-right: 4px;">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeWorkspaceModal()">ปิดหน้าต่าง (CLOSE)</button>
       </div>
     </div>
   </div>
@@ -1678,7 +1867,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20261012_v12"></script>
+  <script src="app.js?v=20261013_v23"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
@@ -1741,6 +1930,9 @@
         </button>
         <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCloudModal();">
           ☁️ CLOUD SYNC (คลาวด์ซิงค์)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openWorkspaceModal();">
+          🏢 จัดการหน้าบริษัท / งานส่วนตัว (WORKSPACES)
         </button>
         <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCategoryModal();">
           📁 หมวดหมู่ (CATEGORIES)
