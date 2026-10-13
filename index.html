@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261013_v25">
+  <link rel="stylesheet" href="styles.css?v=20261013_v29">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
@@ -303,10 +303,6 @@
         <button type="button" class="workspace-quick-add-btn" onclick="openWorkspaceModal(true)" title="สร้างหน้าบริษัทใหม่ หรือพื้นที่เก็บงานส่วนตัว">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           <span>เพิ่มหน้าใหม่</span>
-        </button>
-        <button type="button" class="workspace-manage-btn" onclick="openWorkspaceModal(false)" title="ตั้งค่า แก้ไขชื่อ สี หรือจัดการหน้าทั้งหมด">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
-          <span>ตั้งค่าหน้า</span>
         </button>
       </div>
     </section>
@@ -1231,48 +1227,86 @@
         <button class="modal-close" onclick="closeWorkspaceModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #1e3a8a; line-height: 1.55;">
-          <strong>💡 ระบบแยกหน้าบริษัท &amp; พื้นที่ทำงานอิสระ (Multi-Company Workspace):</strong><br>
-          คุณสามารถสร้างหน้าแยกสำหรับแต่ละบริษัท (เช่น <strong>ORBRAY</strong>, <strong>MURATA</strong>, บริษัทในอนาคต) หรือแยกหน้าสำหรับ <strong>งานส่วนตัว (Personal Projects / Freelance)</strong> ได้ไม่จำกัด แต่ละหน้าจะมี Dashboard, กราฟ KPI และรายการงานแยกกันอย่างชัดเจน หรือกดดูรวมทุกหน้า (ALL) ได้ตลอดเวลา
+        <!-- Segmented Tab Switcher (Reorder vs Add Page) -->
+        <div class="ws-modal-tab-bar" id="wsModalTabBar">
+          <button type="button" class="ws-modal-tab-btn active" id="btnWsTabReorder" onclick="switchWorkspaceModalTab('reorder')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
+            <span>จัดลำดับหน้า</span>
+            <span class="ws-tab-count" id="wsModalCountPill">2</span>
+          </button>
+          <button type="button" class="ws-modal-tab-btn" id="btnWsTabAdd" onclick="switchWorkspaceModalTab('add')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            <span>สร้างหน้าใหม่</span>
+          </button>
         </div>
 
-        <form id="newWorkspaceForm" onsubmit="handleAddWorkspace(event)" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 18px;">
-          <h4 style="font-size: 13.5px; font-weight: 800; margin-bottom: 12px; color: #0f172a; display: flex; align-items: center; gap: 6px;">
-            <span>➕ เพิ่มหน้าบริษัท / พื้นที่เก็บงานใหม่ (CREATE NEW PAGE)</span>
-          </h4>
-
-          <div class="form-grid-2" style="margin-bottom: 10px;">
-            <div class="form-group" style="margin-bottom: 0;">
-              <label class="form-label" for="newWorkspaceName">ชื่อบริษัท / ชื่อหน้า (PAGE / COMPANY NAME) <span style="color: red;">*</span></label>
-              <input type="text" id="newWorkspaceName" class="form-control" placeholder="เช่น MURATA, งานส่วนตัว, FREELANCE, TOYOTA..." required>
+        <!-- Section 1: Reorder & Manage Workspaces -->
+        <div id="wsTabPaneReorder" class="ws-tab-pane">
+          <div class="ws-modal-tip-box">
+            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+              <span style="font-size: 13px; flex-shrink: 0; line-height: 1;">💡</span>
+              <div style="line-height: 1.35; font-size: 11px;">
+                <strong>จัดลำดับแถบหน้า:</strong> กด <strong>⏮ หน้าสุด</strong> หรือ <strong>⬆️ ⬇️</strong> เพื่อเลือกหน้าเริ่มต้น
+              </div>
             </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label class="form-label" for="newWorkspaceSubtitle">คำอธิบาย / แผนก (SUBTITLE / DEPARTMENT)</label>
-              <input type="text" id="newWorkspaceSubtitle" class="form-control" placeholder="เช่น PRODUCTION ENGINEERING หรือ PERSONAL PORTFOLIO">
-            </div>
+            <button type="button" class="btn-ws-reset" onclick="resetWorkspaceTabOrder()" title="คืนค่าลำดับเริ่มต้น">↺ คืนค่าเดิม</button>
           </div>
 
-          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
-            <div>
-              <label class="form-label" style="margin-bottom: 6px; display: block;">ไอคอน (ICON)</label>
-              <div class="ws-icon-picker" id="newWorkspaceIconPicker">
-                <input type="text" id="newWorkspaceIcon" class="form-control" style="width: 52px; height: 36px; text-align: center; font-size: 18px; padding: 2px;" value="🏭" title="พิมพ์อิโมจิหรือเลือกด้านข้าง">
-                <button type="button" class="ws-icon-opt active" onclick="selectNewWorkspaceIcon('🏭', this)">🏭</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🏢', this)">🏢</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('💻', this)">💻</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🚀', this)">🚀</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('⚙️', this)">⚙️</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🛠️', this)">🛠️</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🔬', this)">🔬</button>
-                <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🌟', this)">🌟</button>
+          <div id="workspaceManagerList">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <div style="margin-top: 10px; text-align: center;">
+            <button type="button" class="ws-btn-switch-to-add" onclick="switchWorkspaceModalTab('add')">
+              ＋ เพิ่มหน้าบริษัทใหม่ หรือพื้นที่งานส่วนตัว
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Create New Workspace Page Form -->
+        <div id="wsTabPaneAdd" class="ws-tab-pane" style="display: none;">
+          <form id="newWorkspaceForm" onsubmit="handleAddWorkspace(event)">
+            <div class="ws-add-header">
+              <span style="font-size: 13px;">➕</span>
+              <span style="font-weight: 800; font-size: 12px; color: #0f172a;">สร้างหน้าบริษัท / พื้นที่เก็บผลงานใหม่</span>
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label" for="newWorkspaceName">
+                ชื่อบริษัท / ชื่อหน้า <span style="color: #ef4444; font-weight: 800;">*</span>
+              </label>
+              <input type="text" id="newWorkspaceName" class="form-control" placeholder="เช่น MURATA, งานส่วนตัว, FREELANCE, TOYOTA..." required>
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label" for="newWorkspaceSubtitle">
+                คำอธิบาย / แผนก (SUBTITLE)
+              </label>
+              <input type="text" id="newWorkspaceSubtitle" class="form-control" placeholder="เช่น PRODUCTION ENGINEERING หรือ PORTFOLIO">
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label">ไอคอนประจำหน้า (ICON)</label>
+              <div class="ws-icon-picker-bar">
+                <input type="text" id="newWorkspaceIcon" class="form-control ws-icon-input" value="🏢" title="พิมพ์เปลี่ยนอิโมจิได้">
+                <div class="ws-icon-presets">
+                  <button type="button" class="ws-icon-opt active" onclick="selectNewWorkspaceIcon('🏢', this)">🏢</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🏭', this)">🏭</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('💻', this)">💻</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🚀', this)">🚀</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('⚙️', this)">⚙️</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🛠️', this)">🛠️</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🔬', this)">🔬</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🌟', this)">🌟</button>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label class="form-label" style="margin-bottom: 6px; display: block;">สีประจำหน้า (THEME COLOR)</label>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <input type="color" id="newWorkspaceColor" class="form-control" style="width: 44px; height: 36px; padding: 3px; cursor: pointer;" value="#059669" title="เลือกสีประจำหน้า">
-                <div class="ws-color-picker">
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label">สีธีมประจำหน้า (COLOR)</label>
+              <div class="ws-color-picker-bar">
+                <input type="color" id="newWorkspaceColor" class="ws-color-native-input" value="#059669" title="เลือกสีประจำหน้า">
+                <div class="ws-color-presets">
                   <button type="button" class="ws-color-opt" style="background: #E60012;" onclick="selectNewWorkspaceColor('#E60012')" title="Red"></button>
                   <button type="button" class="ws-color-opt" style="background: #2563eb;" onclick="selectNewWorkspaceColor('#2563eb')" title="Blue"></button>
                   <button type="button" class="ws-color-opt" style="background: #059669;" onclick="selectNewWorkspaceColor('#059669')" title="Emerald"></button>
@@ -1283,30 +1317,16 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 18px; font-weight: 800;">
-              ＋ สร้างหน้าใหม่ (ADD PAGE)
+            <button type="submit" class="btn btn-primary ws-btn-submit-add">
+              ＋ สร้างหน้าใหม่ (CREATE PAGE)
             </button>
-          </div>
-        </form>
 
-        <div id="workspaceOrderSection" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
-          <div>
-            <h4 style="font-size: 13.5px; font-weight: 800; margin: 0; color: #0f172a;">
-              🔄 จัดลำดับและจัดการหน้าทั้งหมด (REORDER &amp; MANAGE WORKSPACES)
-            </h4>
-            <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
-              คลิกปุ่ม <strong>⏮ ไว้หน้าสุด</strong> หรือ <strong>⬆️ / ⬇️</strong> เพื่อเลือกว่าจะเอาตัวเลือกไหนไว้ด้านหน้า (หรือลากปุ่มบนแถบหน้าเว็บได้โดยตรง)
+            <div style="margin-top: 8px; text-align: center;">
+              <button type="button" class="ws-btn-switch-to-reorder" onclick="switchWorkspaceModalTab('reorder')">
+                ← กลับไปดูและจัดลำดับหน้าทั้งหมด
+              </button>
             </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span id="workspaceTotalCountBadge" style="font-size: 11px; font-weight: 700; color: #64748b;"></span>
-            <button type="button" class="btn btn-outline btn-sm" onclick="resetWorkspaceTabOrder()" title="รีเซ็ตลำดับแถบกลับเป็นค่าเริ่มต้น">
-              ↺ คืนค่าลำดับเดิม
-            </button>
-          </div>
-        </div>
-        <div id="workspaceManagerList" style="display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; padding-right: 4px;">
-          <!-- Populated dynamically by JS -->
+          </form>
         </div>
       </div>
       <div class="modal-footer">
@@ -1867,7 +1887,7 @@
   <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
-  <script src="app.js?v=20261013_v23"></script>
+  <script src="app.js?v=20261013_v29"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">

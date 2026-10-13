@@ -15,8 +15,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'cat_acc', name: 'ACCESSORIES', icon: '🔩', color: '#059669' },
   { id: 'cat_pr', name: 'PR / PURCHASING', icon: '📦', color: '#ea580c' },
   { id: 'cat_imp', name: 'IMPROVEMENT / KAIZEN', icon: '💡', color: '#7c3aed' },
-  { id: 'cat_prj', name: 'SPECIAL PROJECT', icon: '🚀', color: '#0284c7' },
-  { id: 'cat_pvt', name: 'PRIVATE PROJECT', icon: '🔒', color: '#e11d48' }
+  { id: 'cat_prj', name: 'SPECIAL PROJECT', icon: '🚀', color: '#0284c7' }
 ];
 
 // --- Sample Data Matching Orbray Production Technology ---
@@ -15820,7 +15819,7 @@ function loadData() {
     try {
       categories = JSON.parse(savedCategories);
       const catCountBefore = categories.length;
-      categories = categories.filter(c => c.id !== 'cat_sys' && !c.name.includes('CMMS') && !c.name.includes('SUPPORT'));
+      categories = categories.filter(c => c.id !== 'cat_sys' && !c.name.includes('CMMS') && !c.name.includes('SUPPORT') && c.id !== 'cat_pvt' && !c.name.toUpperCase().includes('PRIVATE'));
       let updated = (categories.length !== catCountBefore);
       categories.forEach(c => {
         if (c.id === 'cat_jig' || c.name.includes('JIG & FIXTURE')) {
@@ -15833,16 +15832,9 @@ function loadData() {
           if (c.name !== 'IMPROVEMENT / KAIZEN') { c.name = 'IMPROVEMENT / KAIZEN'; updated = true; }
         } else if (c.id === 'cat_prj' || c.name.includes('โปรเจกต์พิเศษ')) {
           if (c.name !== 'SPECIAL PROJECT') { c.name = 'SPECIAL PROJECT'; updated = true; }
-        } else if (c.id === 'cat_pvt' || c.name.includes('PRIVATE')) {
-          if (c.name !== 'PRIVATE PROJECT') { c.name = 'PRIVATE PROJECT'; updated = true; }
         }
         c.name = uppercaseEnglish(c.name);
       });
-      // Ensure PRIVATE PROJECT category exists in saved categories
-      if (!categories.some(c => c.id === 'cat_pvt' || c.name.toUpperCase().includes('PRIVATE'))) {
-        categories.push({ id: 'cat_pvt', name: 'PRIVATE PROJECT', icon: '🔒', color: '#e11d48' });
-        updated = true;
-      }
       if (updated) {
         saveCategories();
       }
@@ -16402,7 +16394,7 @@ async function initFirebase(config, showToasts = false) {
         if (docSnap && docSnap.exists) {
           const data = docSnap.data();
           if (data && Array.isArray(data.list) && data.list.length > 0) {
-            categories = data.list;
+            categories = data.list.filter(c => c.id !== 'cat_pvt' && !c.name.toUpperCase().includes('PRIVATE'));
             localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
             populateCategoryDropdowns();
             renderCharts();
@@ -19611,6 +19603,7 @@ function renderCharts() {
   const catColors = [];
 
   categories.forEach(c => {
+    if (c.id === 'cat_pvt' || (c.name && c.name.toUpperCase().includes('PRIVATE'))) return;
     const count = categoryCounts[c.id] || 0;
     catLabels.push(c.icon + ' ' + uppercaseEnglish(c.name.split(' (')[0]));
     catData.push(count);
@@ -21729,7 +21722,7 @@ function renderCardsView(container, items) {
       <div class="ios-task-card ${item.status === 'done' ? 'card-status-done' : ((item.status === 'cancel' || item.status === 'cancle') ? 'card-status-cancel' : '')}" id="ios-card-${item.id}">
         <!-- Top bar: Category Badge + Status Pill + Mobile More Button -->
         <div class="ios-card-header-bar">
-          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0;">
             ${getWorkspaceBadgeHtml(item)}
             <div class="ios-card-cat-badge" style="background-color: ${cat.color}12; color: ${cat.color}; border: 1px solid ${cat.color}30;">
               <span class="cat-icon">${cat.icon || '📁'}</span>
@@ -23218,8 +23211,8 @@ function handleSaveAchievement(e) {
 
   // Auto-derive Category and Title when saving in PRIVATE PROJECT streamlined mode
   if (isPrivateWs) {
-    const pvtCat = categories.find(c => c.id === 'cat_pvt' || (c.name && c.name.toUpperCase().includes('PRIVATE')));
-    categoryId = pvtCat ? pvtCat.id : (categoryId || (categories[0] ? categories[0].id : 'cat_pvt'));
+    const defaultCat = categories.find(c => c.id === 'cat_prj') || categories[0];
+    categoryId = defaultCat ? defaultCat.id : 'cat_prj';
 
     const firstLineDesc = description ? description.split(/\r?\n/)[0].trim() : '';
     if (firstLineDesc) {
@@ -23870,21 +23863,38 @@ function handleDeleteCategory(catId) {
 }
 
 // --- Multi-Company / Workspace Page Manager (Add, Edit, Switch, Delete, Reorder) ---
+function switchWorkspaceModalTab(tab) {
+  const btnReorder = document.getElementById('btnWsTabReorder');
+  const btnAdd = document.getElementById('btnWsTabAdd');
+  const paneReorder = document.getElementById('wsTabPaneReorder');
+  const paneAdd = document.getElementById('wsTabPaneAdd');
+
+  if (tab === 'add') {
+    if (btnReorder) btnReorder.classList.remove('active');
+    if (btnAdd) btnAdd.classList.add('active');
+    if (paneReorder) paneReorder.style.display = 'none';
+    if (paneAdd) paneAdd.style.display = 'block';
+    setTimeout(() => {
+      const nameInput = document.getElementById('newWorkspaceName');
+      if (nameInput) nameInput.focus();
+    }, 80);
+  } else {
+    if (btnReorder) btnReorder.classList.add('active');
+    if (btnAdd) btnAdd.classList.remove('active');
+    if (paneReorder) paneReorder.style.display = 'block';
+    if (paneAdd) paneAdd.style.display = 'none';
+  }
+}
+
 function openWorkspaceModal(focusInput = false, scrollToReorder = false) {
   editingWorkspaceId = null;
   renderWorkspaceManagerList();
   const modal = document.getElementById('workspaceModal');
   if (modal) modal.classList.add('active');
   if (focusInput) {
-    setTimeout(() => {
-      const nameInput = document.getElementById('newWorkspaceName');
-      if (nameInput) nameInput.focus();
-    }, 100);
-  } else if (scrollToReorder) {
-    setTimeout(() => {
-      const reorderSec = document.getElementById('workspaceOrderSection');
-      if (reorderSec) reorderSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 120);
+    switchWorkspaceModalTab('add');
+  } else {
+    switchWorkspaceModalTab('reorder');
   }
 }
 
@@ -23897,7 +23907,7 @@ function closeWorkspaceModal() {
 function selectNewWorkspaceIcon(icon, btnEl) {
   const iconInput = document.getElementById('newWorkspaceIcon');
   if (iconInput) iconInput.value = icon;
-  document.querySelectorAll('#workspaceIconPresets .ws-icon-preset').forEach(btn => {
+  document.querySelectorAll('#newWorkspaceForm .ws-icon-opt').forEach(btn => {
     btn.classList.remove('active');
   });
   if (btnEl) btnEl.classList.add('active');
@@ -23926,6 +23936,10 @@ function renderWorkspaceManagerList() {
   if (totalBadge) {
     totalBadge.textContent = `${tabOrder.length} แถบตัวเลือก (รวม ALL)`;
   }
+  const modalCountPill = document.getElementById('wsModalCountPill');
+  if (modalCountPill) {
+    modalCountPill.textContent = String(tabOrder.length);
+  }
 
   let html = '';
 
@@ -23936,48 +23950,56 @@ function renderWorkspaceManagerList() {
     if (tabId === 'all') {
       const isCurrent = currentWorkspaceId === 'all';
       html += `
-        <div class="category-manage-item" style="${isCurrent ? 'border-color: #334155; background: rgba(51, 65, 85, 0.05);' : ''}">
-          <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 28px; flex-shrink: 0;">
-              <span style="font-size: 11px; font-weight: 800; color: #64748b; font-family: monospace;">#${idx + 1}</span>
-              ${isFirst ? '<span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 800; margin-top: 1px;">FRONT</span>' : ''}
-            </div>
-            <span style="font-size: 22px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: rgba(51, 65, 85, 0.12); border-radius: 8px; flex-shrink: 0;">🌐</span>
-            <div style="min-width: 0; flex: 1;">
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span style="font-weight: 800; font-size: 14px; color: #1e293b;">ALL WORKSPACES</span>
-                <span style="font-size: 10.5px; background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 600;">🌐 รวมทุกหน้า</span>
-                <span style="font-size: 11px; font-weight: 700; color: var(--text-main); background: #e2e8f0; padding: 1px 7px; border-radius: 999px;">${totalAll} งาน</span>
-                ${isFirst ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">⭐ อยู่หน้าสุด</span>' : ''}
-                ${isCurrent ? '<span style="font-size: 10px; background: #e0e7ff; color: #3730a3; padding: 1px 7px; border-radius: 999px; font-weight: 800;">● กำลังเปิดดู</span>' : ''}
+        <div class="ws-mgr-card ${isCurrent ? 'ws-mgr-current' : ''}">
+          <div class="ws-mgr-top">
+            <div class="ws-mgr-identity">
+              <div class="ws-mgr-rank ${isFirst ? 'ws-mgr-rank-first' : ''}">
+                <span class="ws-mgr-num">${isFirst ? '#1 ⭐' : `#${idx + 1}`}</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">รวมผลงานและสถิติจากทุกบริษัทและพื้นที่งานส่วนตัว</div>
+              <div class="ws-mgr-icon-box" style="background: rgba(51, 65, 85, 0.1); color: #1e293b;">
+                🌐
+              </div>
+              <div class="ws-mgr-name-group">
+                <div class="ws-mgr-name-row">
+                  <span class="ws-mgr-name" style="color: #1e293b;">ALL WORKSPACES</span>
+                  <span class="ws-mgr-count-badge">${totalAll} งาน</span>
+                </div>
+                <div class="ws-mgr-sub-row">
+                  <span class="ws-mgr-type-pill">🌐 รวมทุกหน้า</span>
+                  <span class="ws-mgr-subtitle">รวมผลงานและสถิติจากทุกบริษัท</span>
+                </div>
+              </div>
+            </div>
+            <div class="ws-mgr-status-badges">
+              ${isCurrent ? '<span class="ws-mgr-active-badge">● เปิดดูอยู่</span>' : ''}
             </div>
           </div>
-          <div class="category-manage-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-            <div style="display: inline-flex; align-items: center; gap: 3px; background: #f1f5f9; padding: 2px 4px; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <div class="ws-mgr-actions">
+            <div class="ws-mgr-reorder-group">
               ${!isFirst ? `
-                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabToFront('all')" title="ย้ายมาไว้หน้าสุด (Move to Front)" style="font-size: 11px; padding: 3px 7px; font-weight: 700; color: #0284c7; background: #fff;">
+                <button type="button" class="ws-btn-reorder-front" onclick="moveWorkspaceTabToFront('all')" title="ย้ายมาไว้หน้าสุด">
                   ⏮ ไว้หน้าสุด
                 </button>
-                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('all', -1)" title="เลื่อนขึ้น / ไปข้างหน้า" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('all', -1)" title="เลื่อนขึ้น / ไปข้างหน้า">
                   ⬆️
                 </button>
               ` : `
-                <span style="font-size: 11px; font-weight: 800; color: #16a34a; padding: 2px 6px;">⭐ หน้าสุด</span>
+                <span class="ws-mgr-is-front">ตำแหน่งที่ 1 (หน้าสุด)</span>
               `}
               ${!isLast ? `
-                <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('all', 1)" title="เลื่อนลง / ไปข้างหลัง" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('all', 1)" title="เลื่อนลง / ไปข้างหลัง">
                   ⬇️
                 </button>
               ` : ''}
             </div>
-            ${!isCurrent ? `
-              <button type="button" class="btn btn-outline btn-sm" onclick="switchWorkspace('all'); closeWorkspaceModal();" title="เปิดดูมุมมองรวม">
-                📂 เปิดหน้านี้
-              </button>
-            ` : ''}
-            <span style="font-size: 11px; color: #94a3b8; padding: 0 4px;" title="แท็บระบบหลัก">🔒 ระบบรวม</span>
+            <div class="ws-mgr-btn-group">
+              ${!isCurrent ? `
+                <button type="button" class="ws-btn-open" onclick="switchWorkspace('all'); closeWorkspaceModal();" title="เปิดดูมุมมองรวม" style="background: #334155;">
+                  📂 เปิด
+                </button>
+              ` : ''}
+              <span class="ws-mgr-locked" title="แท็บระบบหลัก">🔒 ระบบรวม</span>
+            </div>
           </div>
         </div>
       `;
@@ -23988,85 +24010,96 @@ function renderWorkspaceManagerList() {
       const isEditing = editingWorkspaceId === ws.id;
       const isCurrent = currentWorkspaceId === ws.id;
       const isDefaultOrbray = ws.id === 'ws_orbray';
-      const typeLabel = ws.type === 'personal' ? '🏠 งานส่วนตัว (PERSONAL)' : (ws.type === 'project' ? '🚀 โปรเจกต์พิเศษ (PROJECT)' : '🏢 บริษัท / โรงงาน (COMPANY)');
+      const typeLabel = ws.type === 'personal' ? '🏠 งานส่วนตัว' : (ws.type === 'project' ? '🚀 โปรเจกต์พิเศษ' : '🏢 บริษัท / โรงงาน');
 
       if (isEditing) {
         html += `
-          <div class="category-manage-item" style="background: #eff6ff; border-color: #3b82f6; padding: 12px;">
-            <form onsubmit="handleSaveEditWorkspace(event, '${escapeHtml(ws.id)}')" style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="editWsIcon_${escapeHtml(ws.id)}" class="form-control" style="width: 48px; text-align: center; padding: 4px; font-size: 16px;" value="${escapeHtml(ws.icon || '🏢')}" title="ไอคอนอิโมจิ">
-                <input type="text" id="editWsName_${escapeHtml(ws.id)}" class="form-control" style="flex: 1; min-width: 150px; padding: 6px 10px; font-weight: 700;" value="${escapeHtml(uppercaseEnglish(ws.name))}" placeholder="ชื่อบริษัท / หน้างาน" required>
-                <select id="editWsType_${escapeHtml(ws.id)}" class="form-control" style="width: 170px; padding: 6px 8px; font-size: 12px;">
+          <div class="ws-mgr-card ws-mgr-editing">
+            <form onsubmit="handleSaveEditWorkspace(event, '${escapeHtml(ws.id)}')" class="ws-mgr-edit-form">
+              <div class="ws-mgr-edit-title">
+                ✏️ แก้ไขข้อมูลหน้า: <strong>${escapeHtml(uppercaseEnglish(ws.name))}</strong>
+              </div>
+              <div class="ws-mgr-edit-row-1">
+                <input type="text" id="editWsIcon_${escapeHtml(ws.id)}" class="form-control ws-edit-icon" value="${escapeHtml(ws.icon || '🏢')}" title="ไอคอนอิโมจิ">
+                <input type="text" id="editWsName_${escapeHtml(ws.id)}" class="form-control ws-edit-name" value="${escapeHtml(uppercaseEnglish(ws.name))}" placeholder="ชื่อบริษัท / หน้างาน" required>
+                <select id="editWsType_${escapeHtml(ws.id)}" class="form-control ws-edit-type">
                   <option value="company" ${ws.type === 'company' ? 'selected' : ''}>🏢 บริษัท / โรงงาน</option>
                   <option value="personal" ${ws.type === 'personal' ? 'selected' : ''}>🏠 งานส่วนตัว</option>
                   <option value="project" ${ws.type === 'project' ? 'selected' : ''}>🚀 โปรเจกต์พิเศษ</option>
                 </select>
-                <input type="color" id="editWsColor_${escapeHtml(ws.id)}" class="form-control" style="width: 42px; padding: 2px; height: 34px; cursor: pointer;" value="${ws.color || '#005bac'}" title="สีประจำหน้า">
+                <input type="color" id="editWsColor_${escapeHtml(ws.id)}" class="form-control ws-edit-color" value="${ws.color || '#005bac'}" title="สีประจำหน้า">
               </div>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="editWsSubtitle_${escapeHtml(ws.id)}" class="form-control" style="flex: 1; min-width: 180px; padding: 6px 10px; font-size: 12px;" value="${escapeHtml(ws.subtitle || '')}" placeholder="คำอธิบายย่อย / แผนก / ตำแหน่ง">
-                <button type="submit" class="btn btn-primary btn-sm">💾 บันทึก (SAVE)</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditWorkspace()">ยกเลิก</button>
+              <div class="ws-mgr-edit-row-2">
+                <input type="text" id="editWsSubtitle_${escapeHtml(ws.id)}" class="form-control ws-edit-sub" value="${escapeHtml(ws.subtitle || '')}" placeholder="คำอธิบายย่อย / แผนก / ตำแหน่ง">
+                <div class="ws-mgr-edit-btns">
+                  <button type="submit" class="btn btn-primary btn-sm">💾 บันทึก</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEditWorkspace()">ยกเลิก</button>
+                </div>
               </div>
             </form>
           </div>
         `;
       } else {
         html += `
-          <div class="category-manage-item" style="${isCurrent ? `border-color: ${ws.color || '#005bac'}; background: ${(ws.color || '#005bac')}08;` : ''}">
-            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 28px; flex-shrink: 0;">
-                <span style="font-size: 11px; font-weight: 800; color: #64748b; font-family: monospace;">#${idx + 1}</span>
-                ${isFirst ? '<span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 800; margin-top: 1px;">FRONT</span>' : ''}
-              </div>
-              <span style="font-size: 22px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: ${(ws.color || '#005bac')}15; border-radius: 8px; flex-shrink: 0;">${ws.icon || '🏢'}</span>
-              <div style="min-width: 0; flex: 1;">
-                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span style="font-weight: 800; font-size: 14px; color: ${ws.color || '#005bac'};">${escapeHtml(uppercaseEnglish(ws.name))}</span>
-                  <span style="font-size: 10.5px; background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 999px; font-weight: 600;">${typeLabel}</span>
-                  <span style="font-size: 11px; font-weight: 700; color: var(--text-main); background: #e2e8f0; padding: 1px 7px; border-radius: 999px;">${count} งาน</span>
-                  ${isFirst ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">⭐ อยู่หน้าสุด</span>' : ''}
-                  ${isCurrent ? '<span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 1px 7px; border-radius: 999px; font-weight: 800;">● กำลังเปิดใช้งาน</span>' : ''}
+          <div class="ws-mgr-card ${isCurrent ? 'ws-mgr-current' : ''}" style="${isCurrent ? `border-color: ${ws.color || '#005bac'}40; background: ${(ws.color || '#005bac')}06;` : ''}">
+            <div class="ws-mgr-top">
+              <div class="ws-mgr-identity">
+                <div class="ws-mgr-rank ${isFirst ? 'ws-mgr-rank-first' : ''}">
+                  <span class="ws-mgr-num">${isFirst ? '#1 ⭐' : `#${idx + 1}`}</span>
                 </div>
-                ${ws.subtitle ? `<div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">${escapeHtml(ws.subtitle)}</div>` : ''}
+                <div class="ws-mgr-icon-box" style="background: ${(ws.color || '#005bac')}15; color: ${ws.color || '#005bac'};">
+                  ${ws.icon || '🏢'}
+                </div>
+                <div class="ws-mgr-name-group">
+                  <div class="ws-mgr-name-row">
+                    <span class="ws-mgr-name" style="color: ${ws.color || '#005bac'};">${escapeHtml(uppercaseEnglish(ws.name))}</span>
+                    <span class="ws-mgr-count-badge">${count} งาน</span>
+                  </div>
+                  <div class="ws-mgr-sub-row">
+                    <span class="ws-mgr-type-pill">${typeLabel}</span>
+                    ${ws.subtitle ? `<span class="ws-mgr-subtitle">${escapeHtml(ws.subtitle)}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="ws-mgr-status-badges">
+                ${isCurrent ? '<span class="ws-mgr-active-badge">● กำลังใช้งาน</span>' : ''}
               </div>
             </div>
-            <div class="category-manage-actions" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-              <div style="display: inline-flex; align-items: center; gap: 3px; background: #f1f5f9; padding: 2px 4px; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <div class="ws-mgr-actions">
+              <div class="ws-mgr-reorder-group">
                 ${!isFirst ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabToFront('${escapeHtml(ws.id)}')" title="ย้ายมาไว้หน้าสุด (Move to Front)" style="font-size: 11px; padding: 3px 7px; font-weight: 700; color: #0284c7; background: #fff;">
+                  <button type="button" class="ws-btn-reorder-front" onclick="moveWorkspaceTabToFront('${escapeHtml(ws.id)}')" title="ย้ายมาไว้หน้าสุด">
                     ⏮ ไว้หน้าสุด
                   </button>
-                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', -1)" title="เลื่อนขึ้น / ไปข้างหน้า" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                  <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', -1)" title="เลื่อนขึ้น / ไปข้างหน้า">
                     ⬆️
                   </button>
                 ` : `
-                  <span style="font-size: 11px; font-weight: 800; color: #16a34a; padding: 2px 6px;">⭐ หน้าสุด</span>
+                  <span class="ws-mgr-is-front">ตำแหน่งที่ 1 (หน้าสุด)</span>
                 `}
                 ${!isLast ? `
-                  <button type="button" class="btn btn-outline btn-sm" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', 1)" title="เลื่อนลง / ไปข้างหลัง" style="font-size: 11px; padding: 3px 6px; background: #fff;">
+                  <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', 1)" title="เลื่อนลง / ไปข้างหลัง">
                     ⬇️
                   </button>
                 ` : ''}
               </div>
-              ${!isCurrent ? `
-                <button type="button" class="btn btn-primary btn-sm" onclick="switchWorkspace('${escapeHtml(ws.id)}'); closeWorkspaceModal();" style="background: ${ws.color || '#005bac'}; border-color: ${ws.color || '#005bac'};" title="เปิดดูหน้านี้">
-                  📂 เปิดหน้านี้
+              <div class="ws-mgr-btn-group">
+                ${!isCurrent ? `
+                  <button type="button" class="ws-btn-open" onclick="switchWorkspace('${escapeHtml(ws.id)}'); closeWorkspaceModal();" style="background: ${ws.color || '#005bac'};" title="เปิดดูหน้านี้">
+                    📂 เปิด
+                  </button>
+                ` : ''}
+                <button type="button" class="ws-btn-edit" onclick="startEditWorkspace('${escapeHtml(ws.id)}')" title="แก้ไขชื่อ/ไอคอน/สี">
+                  ✏️ แก้ไข
                 </button>
-              ` : ''}
-              <button type="button" class="btn btn-outline btn-sm" onclick="startEditWorkspace('${escapeHtml(ws.id)}')" title="แก้ไขชื่อ/ไอคอน/สี">
-                ✏️ แก้ไข
-              </button>
-              ${!isDefaultOrbray ? `
-                <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteWorkspace('${escapeHtml(ws.id)}')" title="ลบหน้านี้">
-                  🗑️ ลบ
-                </button>
-              ` : `
-                <button type="button" class="btn btn-outline btn-sm" disabled style="opacity: 0.45; cursor: not-allowed;" title="หน้าหลัก ORBRAY ไม่สามารถลบได้">
-                  🔒 หน้าหลัก
-                </button>
-              `}
+                ${!isDefaultOrbray ? `
+                  <button type="button" class="ws-btn-delete" onclick="handleDeleteWorkspace('${escapeHtml(ws.id)}')" title="ลบหน้านี้">
+                    🗑️ ลบ
+                  </button>
+                ` : `
+                  <span class="ws-mgr-locked" title="หน้าหลัก ORBRAY ไม่สามารถลบได้">🔒 หน้าหลัก</span>
+                `}
+              </div>
             </div>
           </div>
         `;
@@ -24514,11 +24547,6 @@ function inferJobRequestCategory(data) {
   // IMPROVEMENT / KAIZEN
   if (title.includes('IMP') || title.includes('KAIZEN') || title.includes('IMPROVE') || title.includes('ปรับปรุง') || desc.includes('KAIZEN')) {
     return 'cat_imp';
-  }
-
-  // PRIVATE PROJECT
-  if (code.includes('PVT') || title.includes('PRIVATE') || desc.includes('PRIVATE') || quot.includes('PRIVATE')) {
-    return 'cat_pvt';
   }
 
   // Default to Special Project
