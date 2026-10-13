@@ -23984,7 +23984,7 @@ function renderWorkspaceManagerList() {
                   ⬆️
                 </button>
               ` : `
-                <span class="ws-mgr-is-front">ตำแหน่งที่ 1 (หน้าสุด)</span>
+                <span class="ws-mgr-is-front">⭐ หน้าแรก</span>
               `}
               ${!isLast ? `
                 <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('all', 1)" title="เลื่อนลง / ไปข้างหลัง">
@@ -23994,7 +23994,7 @@ function renderWorkspaceManagerList() {
             </div>
             <div class="ws-mgr-btn-group">
               ${!isCurrent ? `
-                <button type="button" class="ws-btn-open" onclick="switchWorkspace('all'); closeWorkspaceModal();" title="เปิดดูมุมมองรวม" style="background: #334155;">
+                <button type="button" class="ws-btn-open" onclick="switchWorkspace('all'); closeWorkspaceModal();" title="เปิดดูมุมมองรวม">
                   📂 เปิด
                 </button>
               ` : ''}
@@ -24075,7 +24075,7 @@ function renderWorkspaceManagerList() {
                     ⬆️
                   </button>
                 ` : `
-                  <span class="ws-mgr-is-front">ตำแหน่งที่ 1 (หน้าสุด)</span>
+                  <span class="ws-mgr-is-front">⭐ หน้าแรก</span>
                 `}
                 ${!isLast ? `
                   <button type="button" class="ws-btn-reorder-step" onclick="moveWorkspaceTabStep('${escapeHtml(ws.id)}', 1)" title="เลื่อนลง / ไปข้างหลัง">
@@ -25934,5 +25934,28 @@ function scrollToSearchAndControls() {
     }, 450);
   }
 }
+
+// Automatically lock/unlock body scroll when any modal or iOS action sheet opens/closes to prevent mobile background wobbling
+(function initModalBodyScrollLock() {
+  function checkModalActive() {
+    const isAnyActive = !!document.querySelector('.modal-overlay.active, .ios-action-sheet-overlay.active');
+    if (isAnyActive) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+  }
+
+  const observer = new MutationObserver(checkModalActive);
+  document.querySelectorAll('.modal-overlay, .ios-action-sheet-overlay').forEach(el => {
+    observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkModalActive);
+  } else {
+    checkModalActive();
+  }
+})();
 
 

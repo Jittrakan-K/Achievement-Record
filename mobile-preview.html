@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📱 Mobile Device Simulator — iOS (iPhone 11–16) & Android (Orbray)</title>
+  <title>Mobile Device Simulator — iOS & Android</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%23E60012'/%3E%3Crect x='11' y='11' width='42' height='42' rx='5' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M25 11v42M11 25h42' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261003_v1">
   <link rel="alternate icon" type="image/png" href="favicon.png?v=20261003_v1">
@@ -12,17 +12,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-studio: #0b0f17;
-      --bg-toolbar: rgba(18, 24, 38, 0.94);
-      --border-toolbar: rgba(255, 255, 255, 0.12);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-ios: #007aff;
-      --accent-android: #3ddc84;
-      --accent-orbray: #E60012;
+      --bg-studio: #0d1117;
+      --bg-toolbar: #161b22;
+      --border-toolbar: #30363d;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent-active: #58a6ff;
       --font-ui: 'Inter', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
       --device-scale: 0.90;
-      --titanium-edge: #384252;
+      --titanium-edge: #2d333b;
     }
 
     * {
@@ -35,11 +33,9 @@
       font-family: var(--font-ui);
       background-color: var(--bg-studio);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.16), transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(230, 0, 18, 0.08), transparent 40%),
         linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      background-size: 24px 24px;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -48,7 +44,7 @@
       user-select: none;
     }
 
-    /* --- Top Control Toolbar --- */
+    /* --- Top Control Toolbar (2D Flat, Sleek & Clean) --- */
     .simulator-toolbar {
       position: sticky;
       top: 0;
@@ -57,12 +53,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 9px 18px;
+      padding: 8px 16px;
+      height: 48px;
       background: var(--bg-toolbar);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-toolbar);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
     }
 
     .toolbar-left, .toolbar-center, .toolbar-right {
@@ -76,83 +70,65 @@
       align-items: center;
       gap: 8px;
       padding-right: 12px;
-      border-right: 1px solid rgba(255, 255, 255, 0.12);
+      border-right: 1px solid var(--border-toolbar);
     }
 
     .brand-logo-orbray {
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      background: var(--accent-orbray);
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: #21262d;
+      border: 1px solid var(--border-toolbar);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 13px;
-      color: #fff;
+      color: #c9d1d9;
     }
 
     .brand-title {
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: #f0f6fc;
+      line-height: 1;
     }
 
-    .brand-subtitle {
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    /* OS Toggle Segmented Control */
+    /* OS Toggle Segmented Control (Pure 2D Flat) */
     .os-segmented-control {
       display: flex;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 3px;
+      background: #0d1117;
+      border: 1px solid var(--border-toolbar);
+      border-radius: 6px;
+      padding: 2px;
       gap: 2px;
     }
 
     .os-tab-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 7px;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 4px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       color: var(--text-muted);
       background: transparent;
       border: none;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: background 0.15s ease, color 0.15s ease;
     }
 
     .os-tab-btn:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.05);
+      color: #f0f6fc;
     }
 
-    .os-tab-btn.active[data-os="ios"] {
-      background: #007aff;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+    .os-tab-btn.active {
+      background: #21262d;
+      color: #58a6ff;
+      font-weight: 600;
     }
 
-    .os-tab-btn.active[data-os="android"] {
-      background: #0d904f;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(13, 144, 79, 0.4);
-    }
-
-    /* Device Dropdown */
+    /* Device Dropdown (2D Flat) */
     .toolbar-select-wrapper {
       position: relative;
       display: flex;
@@ -160,148 +136,91 @@
     }
 
     .toolbar-select {
-      background: rgba(0, 0, 0, 0.5);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 7px 28px 7px 12px;
-      font-size: 12.5px;
-      font-weight: 600;
+      background: #0d1117;
+      color: #f0f6fc;
+      border: 1px solid var(--border-toolbar);
+      border-radius: 6px;
+      padding: 5px 24px 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
       outline: none;
       cursor: pointer;
       appearance: none;
-      transition: all 0.15s ease;
-      max-width: 250px;
+      height: 30px;
+      transition: border-color 0.15s ease;
+      max-width: 230px;
     }
 
     .toolbar-select optgroup {
-      background: #111827;
-      color: #38bdf8;
-      font-weight: 700;
+      background: #161b22;
+      color: #58a6ff;
+      font-weight: 600;
     }
 
     .toolbar-select option {
-      background: #1e293b;
-      color: #f8fafc;
-      font-weight: 500;
+      background: #0d1117;
+      color: #f0f6fc;
+      font-weight: 400;
     }
 
-    .toolbar-select:hover {
-      border-color: rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.08);
+    .toolbar-select:hover, .toolbar-select:focus {
+      border-color: #58a6ff;
     }
 
     .toolbar-select-icon {
       position: absolute;
-      right: 10px;
+      right: 8px;
       pointer-events: none;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
     }
 
-    /* Standard Toolbar Buttons */
+    /* Standard Toolbar Buttons (2D Flat) */
     .tool-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 12px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      color: #e2e8f0;
+      padding: 0 10px;
+      height: 30px;
+      background: #21262d;
+      border: 1px solid var(--border-toolbar);
+      border-radius: 6px;
+      color: #c9d1d9;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .tool-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.25);
+      background: #30363d;
+      color: #f0f6fc;
+      border-color: #8b949e;
     }
 
     .tool-btn:active {
-      transform: scale(0.96);
+      background: #161b22;
     }
 
     .tool-btn.active {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.4);
-      color: #fff;
+      background: #1f2937;
+      border-color: #388bfd;
+      color: #58a6ff;
     }
 
-    .tool-btn-primary {
-      background: var(--accent-orbray);
-      border-color: #ff3344;
-      color: #fff;
-    }
-
-    .tool-btn-primary:hover {
-      background: #ff1a2e;
-      box-shadow: 0 0 12px rgba(230, 0, 18, 0.4);
-    }
-
-    /* Dimension & Scale pill */
+    /* Dimension Pill (2D Flat Subtle Badge) */
     .status-pill {
       font-size: 11px;
-      font-family: monospace;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+      color: #8b949e;
+      background: #0d1117;
+      border: 1px solid var(--border-toolbar);
       padding: 4px 8px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    /* Quick Generation Pill Bar (Under Toolbar) */
-    .gen-quick-bar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 18px;
-      background: rgba(15, 23, 42, 0.7);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .gen-quick-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .gen-tag-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-right: 4px;
+      border-radius: 4px;
+      font-weight: 500;
       white-space: nowrap;
-    }
-
-    .gen-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      color: #cbd5e1;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-
-    .gen-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    .gen-btn.active {
-      background: #0284c7;
-      color: #fff;
-      border-color: #38bdf8;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
     }
 
     /* --- Simulator Stage Area --- */
@@ -631,57 +550,55 @@
       display: block;
     }
 
-    /* Floating Shortcuts Bar */
+    /* Floating Shortcuts Bar (2D Flat) */
     .shortcuts-bar {
       position: fixed;
-      bottom: 14px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
       display: flex;
       align-items: center;
-      gap: 14px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 30px;
-      padding: 6px 18px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(16px);
-      font-size: 11.5px;
-      color: #94a3b8;
+      gap: 12px;
+      background: #161b22;
+      border: 1px solid var(--border-toolbar);
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 11px;
+      color: #8b949e;
     }
 
     .shortcut-tag {
-      color: #fff;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.12);
-      padding: 2px 6px;
-      border-radius: 4px;
+      color: #f0f6fc;
+      font-weight: 600;
+      background: #21262d;
+      border: 1px solid var(--border-toolbar);
+      padding: 1px 5px;
+      border-radius: 3px;
       margin-right: 4px;
       font-family: monospace;
     }
 
-    /* Toast Notification */
+    /* Toast Notification (2D Flat) */
     .simulator-toast {
       position: fixed;
-      top: 100px;
+      top: 58px;
       left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: #0f172a;
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transform: translateX(-50%) translateY(-8px);
+      background: #161b22;
+      color: #f0f6fc;
+      border: 1px solid var(--border-toolbar);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 500;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       z-index: 2000;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .simulator-toast.show {
@@ -690,102 +607,94 @@
     }
 
     @media (max-width: 900px) {
-      .brand-subtitle, .shortcuts-bar {
-        display: none;
+      .brand-title, .status-pill, .shortcuts-bar {
+        display: none !important;
+      }
+      .toolbar-select {
+        max-width: 170px !important;
+      }
+    }
+
+    @media (max-width: 650px) {
+      #rotateBtn span, #bezelBtn span, a.tool-btn span, button.tool-btn span {
+        display: none !important;
+      }
+      .tool-btn {
+        padding: 0 8px !important;
       }
     }
   </style>
 </head>
 <body class="os-ios">
 
-  <!-- Top Toolbar -->
+  <!-- Top Toolbar (Pure 2D Flat & Clean) -->
   <header class="simulator-toolbar">
     <div class="toolbar-left">
       <div class="brand-badge">
-        <div class="brand-logo-orbray">O</div>
-        <div class="brand-title">
-          <span>DEVICE SIMULATOR</span>
-          <span class="brand-subtitle">iOS 11–16 & Android Live Preview</span>
+        <div class="brand-logo-orbray" title="Orbray Mobile Simulator">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
         </div>
+        <span class="brand-title">Simulator</span>
       </div>
 
-      <!-- OS Switcher -->
+      <!-- OS Switcher (Flat 2D Segmented) -->
       <div class="os-segmented-control">
-        <button type="button" class="os-tab-btn active" data-os="ios" onclick="switchOS('ios')">
-          <span>🍎 Apple iOS</span>
-        </button>
-        <button type="button" class="os-tab-btn" data-os="android" onclick="switchOS('android')">
-          <span>🤖 Android</span>
-        </button>
+        <button type="button" class="os-tab-btn active" data-os="ios" onclick="switchOS('ios')">iOS</button>
+        <button type="button" class="os-tab-btn" data-os="android" onclick="switchOS('android')">Android</button>
       </div>
 
-      <!-- Model Dropdown (With iPhone 11 to 16 Series) -->
+      <!-- Device Dropdown -->
       <div class="toolbar-select-wrapper">
         <select id="deviceSelector" class="toolbar-select" onchange="changeDevice(this.value)">
-          <!-- iPhone 16 -->
-          <optgroup label="🍎 iPhone 16 Series (Latest 2024–2026)">
+          <optgroup label="iPhone 16 Series">
             <option value="iphone16pro" selected>iPhone 16 Pro (393 × 852)</option>
             <option value="iphone16promax">iPhone 16 Pro Max (440 × 956)</option>
             <option value="iphone16plus">iPhone 16 Plus (430 × 932)</option>
             <option value="iphone16">iPhone 16 (393 × 852)</option>
           </optgroup>
-
-          <!-- iPhone 15 -->
-          <optgroup label="🍎 iPhone 15 Series">
+          <optgroup label="iPhone 15 Series">
             <option value="iphone15pro">iPhone 15 Pro (393 × 852)</option>
             <option value="iphone15promax">iPhone 15 Pro Max (430 × 932)</option>
             <option value="iphone15">iPhone 15 (393 × 852)</option>
             <option value="iphone15plus">iPhone 15 Plus (430 × 932)</option>
           </optgroup>
-
-          <!-- iPhone 14 -->
-          <optgroup label="🍎 iPhone 14 Series">
+          <optgroup label="iPhone 14 Series">
             <option value="iphone14pro">iPhone 14 Pro (393 × 852)</option>
             <option value="iphone14promax">iPhone 14 Pro Max (430 × 932)</option>
             <option value="iphone14">iPhone 14 (390 × 844)</option>
             <option value="iphone14plus">iPhone 14 Plus (428 × 926)</option>
           </optgroup>
-
-          <!-- iPhone 13 -->
-          <optgroup label="🍎 iPhone 13 Series">
+          <optgroup label="iPhone 13 Series">
             <option value="iphone13pro">iPhone 13 Pro (390 × 844)</option>
             <option value="iphone13promax">iPhone 13 Pro Max (428 × 926)</option>
             <option value="iphone13">iPhone 13 (390 × 844)</option>
             <option value="iphone13mini">iPhone 13 mini (375 × 812)</option>
           </optgroup>
-
-          <!-- iPhone 12 -->
-          <optgroup label="🍎 iPhone 12 Series">
+          <optgroup label="iPhone 12 Series">
             <option value="iphone12pro">iPhone 12 Pro (390 × 844)</option>
             <option value="iphone12promax">iPhone 12 Pro Max (428 × 926)</option>
             <option value="iphone12">iPhone 12 (390 × 844)</option>
             <option value="iphone12mini">iPhone 12 mini (375 × 812)</option>
           </optgroup>
-
-          <!-- iPhone 11 -->
-          <optgroup label="🍎 iPhone 11 Series">
+          <optgroup label="iPhone 11 Series">
             <option value="iphone11">iPhone 11 (414 × 896)</option>
             <option value="iphone11pro">iPhone 11 Pro (375 × 812)</option>
             <option value="iphone11promax">iPhone 11 Pro Max (414 × 896)</option>
           </optgroup>
-
-          <!-- iPhone SE & iPads -->
-          <optgroup label="🍎 iPhone SE & iPad Tablets">
-            <option value="iphonese">iPhone SE (3rd / 2nd Gen) (375 × 667)</option>
+          <optgroup label="iPhone SE & Tablets">
+            <option value="iphonese">iPhone SE (375 × 667)</option>
             <option value="ipadmini">iPad Mini / Air (768 × 1024)</option>
             <option value="ipadpro11">iPad Pro 11" (834 × 1194)</option>
           </optgroup>
-
-          <!-- Android Devices -->
-          <optgroup label="🤖 Android Devices">
-            <option value="galaxy24ultra">Samsung Galaxy S24 Ultra (412 × 915)</option>
-            <option value="galaxy24">Samsung Galaxy S24 (360 × 780)</option>
-            <option value="pixel9pro">Google Pixel 9 Pro (412 × 915)</option>
-            <option value="pixel9">Google Pixel 9 / 8 (412 × 892)</option>
+          <optgroup label="Android Devices">
+            <option value="galaxy24ultra">Galaxy S24 Ultra (412 × 915)</option>
+            <option value="galaxy24">Galaxy S24 (360 × 780)</option>
+            <option value="pixel9pro">Pixel 9 Pro (412 × 915)</option>
+            <option value="pixel9">Pixel 9 / 8 (412 × 892)</option>
             <option value="compactandroid">Compact Android (360 × 640)</option>
           </optgroup>
         </select>
-        <span class="toolbar-select-icon">▼</span>
+        <span class="toolbar-select-icon">▾</span>
       </div>
 
       <!-- Dimension Badge -->
@@ -794,21 +703,22 @@
 
     <!-- Center Quick Actions -->
     <div class="toolbar-center">
-      <!-- Fast Reload Button -->
-      <button type="button" class="tool-btn tool-btn-primary" onclick="reloadPreview()" title="รีเฟรชหน้าเว็บทันที (กดปุ่ม R บนคีย์บอร์ด)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-        <span>รีเฟรช (RELOAD)</span>
+      <!-- Reload Button -->
+      <button type="button" class="tool-btn" onclick="reloadPreview()" title="รีเฟรชหน้าเว็บ (R)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        <span>รีเฟรช</span>
       </button>
 
       <!-- Rotate Orientation Button -->
-      <button type="button" id="rotateBtn" class="tool-btn" onclick="toggleOrientation()" title="สลับแนวตั้ง / แนวนอน (กดปุ่ม P บนคีย์บอร์ด)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
-        <span id="orientationLabel">แนวตั้ง (Portrait)</span>
+      <button type="button" id="rotateBtn" class="tool-btn" onclick="toggleOrientation()" title="สลับแนวตั้ง / แนวนอน (P)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+        <span id="orientationLabel">แนวตั้ง</span>
       </button>
 
       <!-- Toggle Bezel Frame -->
-      <button type="button" id="bezelBtn" class="tool-btn active" onclick="toggleBezel()" title="เปิด/ปิด กรอบตัวเครื่อง (กดปุ่ม B บนคีย์บอร์ด)">
-        <span>📱 กรอบเครื่อง: เปิด</span>
+      <button type="button" id="bezelBtn" class="tool-btn active" onclick="toggleBezel()" title="เปิด/ปิด กรอบตัวเครื่อง (B)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+        <span>กรอบเครื่อง: เปิด</span>
       </button>
     </div>
 
@@ -816,41 +726,22 @@
     <div class="toolbar-right">
       <div class="toolbar-select-wrapper">
         <select id="scaleSelector" class="toolbar-select" onchange="changeScale(this.value)">
-          <option value="fit" selected>🔍 พอดีจอ (Auto Fit)</option>
-          <option value="1.0">100% (ขนาดจริง)</option>
+          <option value="fit" selected>พอดีจอ (Fit)</option>
+          <option value="1.0">100%</option>
           <option value="0.9">90%</option>
           <option value="0.8">80%</option>
           <option value="0.7">70%</option>
           <option value="0.5">50%</option>
         </select>
-        <span class="toolbar-select-icon">▼</span>
+        <span class="toolbar-select-icon">▾</span>
       </div>
 
-      <a href="index.html" target="_blank" class="tool-btn" title="เปิดหน้าเว็บ index.html แยกต่างหากในแท็บใหม่">
+      <a href="index.html" target="_blank" class="tool-btn" title="เปิดหน้าเว็บในแท็บใหม่">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
         <span>เปิดแท็บใหม่</span>
       </a>
     </div>
   </header>
-
-  <!-- Quick Model Generation Bar -->
-  <nav class="gen-quick-bar">
-    <span class="gen-tag-title">เลือกรุ่นด่วน:</span>
-    <button type="button" class="gen-btn active" onclick="quickSelectDevice('iphone16pro')">iPhone 16 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone16promax')">iPhone 16 Pro Max</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone15pro')">iPhone 15 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone14pro')">iPhone 14 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone14')">iPhone 14</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone13pro')">iPhone 13 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone12pro')">iPhone 12 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11')">iPhone 11 (6.1")</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11pro')">iPhone 11 Pro</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphone11promax')">iPhone 11 Pro Max</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('iphonese')">iPhone SE</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('galaxy24')">Galaxy S24</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('pixel9')">Pixel 9</button>
-    <button type="button" class="gen-btn" onclick="quickSelectDevice('ipadmini')">iPad Mini</button>
-  </nav>
 
   <!-- Simulator Main Stage Area -->
   <main class="simulator-stage" id="simulatorStage">
@@ -917,7 +808,7 @@
           <div class="punch-hole-camera" id="punchHole"></div>
 
           <!-- Embedded Local Webpage (index.html) -->
-          <iframe id="previewIframe" class="phone-viewport-iframe" src="index.html?v=20261013_v29"></iframe>
+          <iframe id="previewIframe" class="phone-viewport-iframe" src="index.html?v=20261013_v33"></iframe>
 
           <!-- Bottom Navigation Affordances -->
           <div class="ios-home-indicator-bar" id="iosHomeBar"></div>
@@ -945,10 +836,9 @@
     <div><span class="shortcut-tag">F</span> ปรับขนาดพอดีจอ</div>
   </footer>
 
-  <!-- Toast Notification -->
+  <!-- Toast Notification (2D Flat) -->
   <div id="toast" class="simulator-toast">
-    <span id="toastIcon">✨</span>
-    <span id="toastMsg">รีเฟรชหน้าจอสำเร็จ</span>
+    <span id="toastMsg">รีเฟรชสำเร็จ</span>
   </div>
 
   <script>
@@ -1052,12 +942,12 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Show Toast
-    function showToast(msg, icon = '✨') {
+    // Show Toast (2D Flat)
+    function showToast(msg) {
+      if (!toastMsg) return;
       toastMsg.textContent = msg;
-      toastIcon.textContent = icon;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
+      setTimeout(() => toast.classList.remove('show'), 1800);
     }
 
     // Switch OS (iOS vs Android)
@@ -1083,12 +973,11 @@
         }
       }
 
-      updateQuickBarActive();
       applyDeviceSpecs();
-      showToast(`สลับเป็นโหมด ${os === 'ios' ? 'Apple iOS' : 'Google Android'}`, os === 'ios' ? '🍎' : '🤖');
+      showToast('สลับโหมด: ' + (os === 'ios' ? 'iOS' : 'Android'));
     }
 
-    // Quick Select Device from Pill Bar
+    // Quick Select Device
     function quickSelectDevice(key) {
       if (!DEVICES[key]) return;
       deviceSelector.value = key;
@@ -1111,17 +1000,8 @@
         body.classList.toggle('os-android', currentOS === 'android');
       }
 
-      updateQuickBarActive();
       applyDeviceSpecs();
-      showToast(`เลือกรุ่น: ${dev.name}`, dev.os === 'ios' ? '🍎' : '🤖');
-    }
-
-    // Update Quick Bar active button highlight
-    function updateQuickBarActive() {
-      document.querySelectorAll('.gen-btn').forEach(btn => {
-        const onclickAttr = btn.getAttribute('onclick') || '';
-        btn.classList.toggle('active', onclickAttr.includes(`'${currentDeviceKey}'`));
-      });
+      showToast('เลือกรุ่น: ' + dev.name);
     }
 
     // Apply Dimensions & Cutout Hardware Chrome
@@ -1134,7 +1014,7 @@
       screenEl.style.height = height + 'px';
       screenEl.style.borderRadius = isBezelVisible ? (dev.radius + 'px') : '12px';
 
-      dimensionPill.textContent = `${width} × ${height} px (${dev.name})`;
+      dimensionPill.textContent = `${width} × ${height} px`;
       if (networkBadge) networkBadge.textContent = dev.network || '5G';
 
       const isApple = dev.os === 'ios';
@@ -1193,10 +1073,10 @@
     // Toggle Orientation (Portrait / Landscape)
     function toggleOrientation() {
       isLandscape = !isLandscape;
-      orientationLabel.textContent = isLandscape ? 'แนวนอน (Landscape)' : 'แนวตั้ง (Portrait)';
+      orientationLabel.textContent = isLandscape ? 'แนวนอน' : 'แนวตั้ง';
       document.getElementById('rotateBtn').classList.toggle('active', isLandscape);
       applyDeviceSpecs();
-      showToast(`เปลี่ยนเป็น ${isLandscape ? 'แนวนอน (Landscape)' : 'แนวตั้ง (Portrait)'}`, '🔄');
+      showToast('หมุนหน้าจอ: ' + (isLandscape ? 'แนวนอน' : 'แนวตั้ง'));
     }
 
     // Toggle Bezel
@@ -1204,9 +1084,9 @@
       isBezelVisible = !isBezelVisible;
       chassis.classList.toggle('frameless', !isBezelVisible);
       bezelBtn.classList.toggle('active', isBezelVisible);
-      bezelBtn.innerHTML = `<span>📱 กรอบเครื่อง: ${isBezelVisible ? 'เปิด' : 'ปิด'}</span>`;
+      bezelBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg><span>กรอบเครื่อง: ${isBezelVisible ? 'เปิด' : 'ปิด'}</span>`;
       applyDeviceSpecs();
-      showToast(`กรอบตัวเครื่อง: ${isBezelVisible ? 'เปิดใช้งาน' : 'ปิด (ไร้ขอบ)'}`, '📱');
+      showToast('กรอบเครื่อง: ' + (isBezelVisible ? 'เปิด' : 'ปิด'));
     }
 
     // Dynamic Island Click Pulse
@@ -1215,13 +1095,13 @@
       setTimeout(() => {
         dynamicIsland.style.transform = 'translateX(-50%) scale(1)';
       }, 250);
-      showToast('Dynamic Island Activated ✨', '🏝️');
+      showToast('Dynamic Island');
     }
 
     // Fast Reload Iframe
     function reloadPreview() {
       iframe.src = 'index.html?t=' + Date.now();
-      showToast('รีโหลดหน้าจอเว็บล่าสุดเรียบร้อย', '⚡');
+      showToast('รีโหลดหน้าจอเรียบร้อย');
     }
 
     // Change Scale
@@ -1237,7 +1117,7 @@
         return;
       }
 
-      const availableHeight = stage.clientHeight - 90;
+      const availableHeight = stage.clientHeight - 60;
       const dev = DEVICES[currentDeviceKey];
       const targetHeight = isLandscape ? dev.w : dev.h;
       const totalBoxHeight = isBezelVisible ? (targetHeight + (dev.cutType === 'home-button' ? 140 : 24)) : targetHeight;
@@ -1275,7 +1155,7 @@
         e.preventDefault();
         scaleSelector.value = 'fit';
         changeScale('fit');
-        showToast('ปรับขนาดพอดีหน้าจอ (Auto Fit)', '🔍');
+        showToast('ปรับขนาดพอดีหน้าจอ');
       }
     });
 

@@ -3939,6 +3939,12 @@ body {
 }
 
 /* Modals - Robust Non-overflow Flex Layout */
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -3951,11 +3957,14 @@ body {
   padding: 16px;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
+  overflow-x: hidden !important;
+  touch-action: pan-y !important;
+  overscroll-behavior: contain !important;
 }
 
 .modal-overlay.active {
-  display: flex;
-  opacity: 1;
+  display: flex !important;
+  opacity: 1 !important;
 }
 
 .modal-card {
@@ -6118,33 +6127,48 @@ textarea.form-control {
     height: 50px;
   }
 
-  /* 9.5 Dime iOS Floating Action Button (FAB) */
+  /* 9.5 Dime iOS Floating Action Button (FAB) - Matching Website Theme Color */
   .mobile-dime-fab {
     display: inline-flex !important;
     position: fixed;
-    right: 16px;
-    bottom: calc(82px + env(safe-area-inset-bottom, 22px));
-    height: 48px;
-    padding: 0 18px 0 14px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, #E60012 0%, #B91C1C 100%);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 24px rgba(230, 0, 18, 0.42), 0 2px 6px rgba(0, 0, 0, 0.08);
-    font-size: 14px;
+    right: 14px;
+    bottom: calc(68px + env(safe-area-inset-bottom, 16px));
+    height: 40px;
+    padding: 0 16px 0 13px;
+    border-radius: 999px;
+    background: var(--primary, #005BAC) !important;
+    background: linear-gradient(135deg, var(--primary, #005BAC) 0%, var(--primary-hover, #004687) 100%) !important;
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 4px 16px var(--primary-glow, rgba(0, 91, 172, 0.38)), 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: -0.2px;
+    letter-spacing: -0.1px;
     align-items: center;
-    gap: 7px;
+    justify-content: center;
+    gap: 5.5px;
     cursor: pointer;
     z-index: 98;
     transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
+  .mobile-dime-fab svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    color: #ffffff !important;
+  }
+
+  .mobile-dime-fab .dime-fab-text {
+    line-height: 1;
+    display: inline-block;
+    color: #ffffff !important;
+  }
+
   .mobile-dime-fab:active {
-    transform: scale(0.93);
-    box-shadow: 0 4px 12px rgba(230, 0, 18, 0.35);
+    transform: scale(0.94);
+    box-shadow: 0 2px 8px var(--primary-glow, rgba(0, 91, 172, 0.3)) !important;
   }
 
   /* 10. Fixed iOS Bottom Navigation Bar */
@@ -6258,16 +6282,10 @@ textarea.form-control {
     display: none !important;
   }
 
-  /* 13. Floating Murata Scroll-to-Top Button (Lift above iOS bottom nav) */
-  .murata-floating-scroll-top {
-    bottom: calc(82px + env(safe-area-inset-bottom, 22px)) !important;
-    right: 16px !important;
-    width: 40px !important;
-    height: 40px !important;
-    font-size: 18px !important;
-    border-radius: 50% !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(230, 0, 18, 0.4) !important;
-    z-index: 90 !important;
+  /* 13. Floating Scroll-to-Top Button (Hidden on mobile to eliminate overlap behind FAB) */
+  .murata-floating-scroll-top,
+  #btnScrollTop {
+    display: none !important;
   }
 
   /* 14. Hide redundant Keyword Search Section on mobile (iOS header search is active) */
@@ -8510,16 +8528,6 @@ textarea.form-control {
   margin-top: 6px;
 }
 
-.ws-mgr-rank-first {
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  border-radius: 6px;
-  padding: 2px 4px;
-}
-
-.ws-mgr-rank-first .ws-mgr-num {
-  color: #b45309 !important;
-}
 
 .btn-ws-reset {
   margin-left: auto;
@@ -8606,18 +8614,37 @@ textarea.form-control {
 
 .ws-mgr-rank {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
   flex-shrink: 0;
 }
 
 .ws-mgr-num {
-  font-size: 11.5px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   color: #64748b;
-  font-family: monospace;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 2.5px 6px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.ws-mgr-rank.ws-mgr-rank-first .ws-mgr-num {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 800 !important;
 }
 
 .ws-mgr-front-pill {
@@ -8787,11 +8814,18 @@ textarea.form-control {
 }
 
 .ws-mgr-is-front {
-  font-size: 11px;
-  font-weight: 800;
-  color: #16a34a;
-  padding: 3px 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 5px;
+  padding: 2.5px 7px;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.2;
 }
 
 .ws-mgr-btn-group {
@@ -8803,13 +8837,17 @@ textarea.form-control {
 
 .ws-btn-open {
   font-size: 11px;
-  padding: 3.5px 8px;
+  padding: 3px 9px;
   font-weight: 700;
   color: #ffffff;
+  background: var(--primary, #005bac);
   border-radius: 5px;
   border: none;
   cursor: pointer;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   transition: opacity 0.15s ease;
 }
 
@@ -9058,13 +9096,33 @@ body.dark-mode .btn-ws-reset {
   color: #93c5fd;
 }
 
-body.dark-mode .ws-mgr-rank-first {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.35);
+body.dark-mode .ws-mgr-num {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
 }
 
 body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
   color: #fbbf24 !important;
+}
+
+body.dark-mode .ws-mgr-is-front {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+
+body.dark-mode .ws-mgr-locked {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+body.dark-mode .mobile-dime-fab {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 18px var(--primary-glow, rgba(0, 91, 172, 0.5)), 0 2px 6px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* ==========================================================================
@@ -9265,11 +9323,30 @@ body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
      MOBILE-ONLY: Sleek, Compact & Organized "ADD TASK / ACHIEVEMENT" Modal
      Fixes oversized typography, awkward multiline label wrapping, and clutter.
      ========================================================================== */
+  #achievementModal {
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+  }
+
   #achievementModal .modal-card,
   #achievementModal .modal-card-lg {
     max-height: 94vh !important;
     height: 94vh !important;
     border-radius: 18px 18px 0 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+    box-sizing: border-box !important;
+  }
+
+  #achievementModal form#achievementForm {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    touch-action: pan-y !important;
+    box-sizing: border-box !important;
   }
 
   #achievementModal .modal-header {
@@ -9310,11 +9387,28 @@ body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
   #achievementModal .modal-body {
     padding: 7px 11px !important;
     background: #ffffff !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    overscroll-behavior-x: none !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent any child element from spilling horizontally */
+  #achievementModal .modal-body * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* Compact, clean form groups */
   #achievementModal .form-group {
     margin-bottom: 6px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   #achievementModal .form-grid,
@@ -9322,28 +9416,31 @@ body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
     grid-template-columns: 1fr !important;
     gap: 6px !important;
     margin-bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  /* Mobile Label: Single column to prevent awkward 3-line word wrapping */
+  /* Mobile Label: Inline row wrapping so the red asterisk stays beside text without dropping down */
   #achievementModal .form-label {
     display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
     justify-content: flex-start !important;
-    gap: 1px !important;
+    gap: 3px !important;
     height: auto !important;
     min-height: 0 !important;
     font-size: 10px !important;
     font-weight: 750 !important;
     color: #1e293b !important;
     margin-bottom: 2.5px !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
     white-space: normal !important;
     letter-spacing: 0.1px !important;
   }
 
   #achievementModal .form-label small {
-    display: block !important;
+    display: inline !important;
     font-size: 8.5px !important;
     font-weight: 500 !important;
     color: #64748b !important;
@@ -9355,9 +9452,11 @@ body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
 
   /* Exception: SUB STATUS row keeps its badge neatly on the right */
   #achievementModal #fgSubStatus .form-label {
+    display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
+    width: 100% !important;
   }
 
   #achievementModal .achv-label-badge {
@@ -9422,6 +9521,9 @@ body.dark-mode .ws-mgr-rank-first .ws-mgr-num {
     font-weight: 800 !important;
     color: #0f172a !important;
     line-height: 1.15 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
   }
 
   #achievementModal #fgWorkspaceSelector .ws-selector-header button {
@@ -9807,9 +9909,12 @@ body.is-private-workspace #categoryFilter {
   }
 
   #workspaceModal .modal-title {
-    font-size: 12.5px !important;
-    line-height: 1.3 !important;
+    font-size: 12px !important;
+    line-height: 1.25 !important;
     font-weight: 800 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   #workspaceModal .modal-close {
@@ -9968,11 +10073,16 @@ body.is-private-workspace #categoryFilter {
   }
 
   .ws-mgr-rank {
-    min-width: 22px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    flex-shrink: 0 !important;
   }
 
   .ws-mgr-num {
     font-size: 10px !important;
+    padding: 1.5px 4px !important;
+    border-radius: 5px !important;
   }
 
   .ws-mgr-front-pill {
@@ -10025,9 +10135,6 @@ body.is-private-workspace #categoryFilter {
     padding-top: 5px !important;
   }
 
-  .ws-mgr-rank-first {
-    padding: 1px 3px !important;
-  }
 
   .ws-btn-reorder-front,
   .ws-btn-reorder-step,
