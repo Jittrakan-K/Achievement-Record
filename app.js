@@ -15775,11 +15775,7 @@ function initApp() {
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
-} else {
-  initApp();
-}
+// initApp will be invoked at the end of the script after all modules and maps are defined.
 
 // --- Data Loading & Persistence ---
 function loadData() {
@@ -19916,7 +19912,7 @@ function updateEngActiveFilterBanner() {
   if (currentFactoryFilter !== 'all') activeParts.push(`FACTORY: ${currentFactoryFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentFactoryFilter}`);
   if (currentDeptFilter !== 'all') activeParts.push(`DEPARTMENT: ${currentDeptFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentDeptFilter}`);
   if (currentProcessFilter !== 'all') activeParts.push(`PROCESS: ${currentProcessFilter === '__UNSPECIFIED__' ? 'ไม่ระบุ (UNSPECIFIED)' : currentProcessFilter}`);
-  if (currentDesignSupportFilter !== 'all') activeParts.push(`DESIGN SUPPORT: ${currentDesignSupportFilter}`);
+  if (currentDesignSupportFilter !== 'all') activeParts.push(`TOOLING & DESIGN: ${currentDesignSupportFilter}`);
   if (currentMaintSupportFilter !== 'all') activeParts.push(`MANTENANCE SUPPORT: ${currentMaintSupportFilter}`);
 
   if (activeParts.length > 0) {
@@ -20089,22 +20085,26 @@ function renderEngineeringInsightsDashboard() {
   const subStatusMap = {};
   const jobTypeMap = {};
 
-  // Pre-seed Design Support & Maintenance Support members
+  // Pre-seed Tooling, Design Support & Maintenance Support members
+  const toolingMembers = ['KITTISAK P.', 'TANIN P.'];
   const designSupMembers = ['SUTTHIPONG M.', 'NARUEBODEE C.'];
   const maintSupMembers = ['NANTHAPONG S.', 'NAWAPON M.', 'SARAWUT I.', 'SUTTHINAN K.', 'VORAVIT C.'];
 
-  const designSupMap = {};
+  const toolingDesignSupMap = {};
+  toolingMembers.forEach(m => {
+    toolingDesignSupMap[m] = { name: m, role: 'TOOL', team: 'TOOLING', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+  });
   designSupMembers.forEach(m => {
-    designSupMap[m] = { name: m, role: 'DSN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    toolingDesignSupMap[m] = { name: m, role: 'DSN', team: 'DESIGN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
   });
 
   const maintSupMap = {};
   maintSupMembers.forEach(m => {
-    maintSupMap[m] = { name: m, role: 'MTN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    maintSupMap[m] = { name: m, role: 'MTN', team: 'MAINTENANCE', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
   });
 
   let totalAchvScore = 0;
-  let tasksWithDesignSup = 0;
+  let tasksWithToolingDesignSup = 0;
   let tasksWithMaintSup = 0;
 
   wsAchievements.forEach(item => {
@@ -20170,18 +20170,31 @@ function renderEngineeringInsightsDashboard() {
     }
     jobTypeMap[jtCode].count++;
 
-    // 8. Design Support (slots 1-2)
-    const dList = [xl.designSupport1, xl.designSupport2].filter(Boolean);
-    if (dList.length > 0) tasksWithDesignSup++;
-    dList.forEach(name => {
-      if (!designSupMap[name]) {
-        designSupMap[name] = { name, role: 'DSN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+    // 8. Tooling Team & Design Support (Combined in Panel 4)
+    const tList = Array.from(new Set([xl.toolingTeam1, xl.toolingTeam2].filter(Boolean)));
+    const dList = Array.from(new Set([xl.designSupport1, xl.designSupport2].filter(Boolean)));
+    if (tList.length > 0 || dList.length > 0) tasksWithToolingDesignSup++;
+
+    tList.forEach(name => {
+      if (!toolingDesignSupMap[name]) {
+        toolingDesignSupMap[name] = { name, role: 'TOOL', team: 'TOOLING', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
       }
-      designSupMap[name].count++;
-      if (st === 'done') designSupMap[name].done++;
-      else if (st === 'in_progress') designSupMap[name].in_progress++;
-      else if (st === 'cancel' || st === 'cancle') designSupMap[name].cancel++;
-      else designSupMap[name].wait++;
+      toolingDesignSupMap[name].count++;
+      if (st === 'done') toolingDesignSupMap[name].done++;
+      else if (st === 'in_progress') toolingDesignSupMap[name].in_progress++;
+      else if (st === 'cancel' || st === 'cancle') toolingDesignSupMap[name].cancel++;
+      else toolingDesignSupMap[name].wait++;
+    });
+
+    dList.forEach(name => {
+      if (!toolingDesignSupMap[name]) {
+        toolingDesignSupMap[name] = { name, role: 'DSN', team: 'DESIGN', count: 0, done: 0, in_progress: 0, wait: 0, cancel: 0 };
+      }
+      toolingDesignSupMap[name].count++;
+      if (st === 'done') toolingDesignSupMap[name].done++;
+      else if (st === 'in_progress') toolingDesignSupMap[name].in_progress++;
+      else if (st === 'cancel' || st === 'cancle') toolingDesignSupMap[name].cancel++;
+      else toolingDesignSupMap[name].wait++;
     });
 
     // 9. Maintenance Support (slots 1-5)
@@ -20418,14 +20431,15 @@ function renderEngineeringInsightsDashboard() {
     });
   }
 
-  // --- PANEL 4 & 5: DESIGN SUPPORT (%) & MAINTENANCE SUPPORT (%) (Clean Corporate Data Table) ---
-  const renderSupportTeamTable = (itemsMap, containerId, badgeId, totalTasksSupported, fieldType, accentColor) => {
+  // --- PANEL 4 & 5: TOOLING & DESIGN SUPPORT (%) & MAINTENANCE SUPPORT (%) (Clean Corporate Data Table) ---
+  const renderSupportTeamTable = (itemsMap, containerId, badgeId, totalTasksSupported, fieldType, defaultAccentColor) => {
     const list = Object.values(itemsMap).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
     const totalParticipations = list.reduce((sum, m) => sum + m.count, 0);
     const badgeEl = document.getElementById(badgeId);
     if (badgeEl) {
       const taskCoveragePct = totalTasks > 0 ? ((totalTasksSupported / totalTasks) * 100).toFixed(1) : '0.0';
-      badgeEl.textContent = `ซัพพอร์ตรวม ${totalParticipations} งาน (${taskCoveragePct}% ของทั้งหมด)`;
+      const badgePrefix = fieldType === 'designSupport' ? 'ทีมรวม' : 'ซัพพอร์ตรวม';
+      badgeEl.textContent = `${badgePrefix} ${totalParticipations} งาน (${taskCoveragePct}% ของทั้งหมด)`;
     }
 
     const containerEl = document.getElementById(containerId);
@@ -20437,11 +20451,26 @@ function renderEngineeringInsightsDashboard() {
       const isAct = (fieldType === 'designSupport' && currentDesignSupportFilter === m.name) ||
                     (fieldType === 'maintSupport' && currentMaintSupportFilter === m.name);
 
+      let itemAccent = defaultAccentColor;
+      let teamBadgeHtml = '';
+      if (m.team === 'TOOLING' || m.role === 'TOOL') {
+        itemAccent = '#d97706';
+        teamBadgeHtml = `<span class="sup-role-tag role-tooling">TOOLING</span>`;
+      } else if (m.team === 'DESIGN' || m.role === 'DSN') {
+        itemAccent = '#1d4ed8';
+        teamBadgeHtml = `<span class="sup-role-tag role-design">DESIGN</span>`;
+      } else if (fieldType === 'maintSupport' || m.role === 'MTN') {
+        itemAccent = '#0f766e';
+      }
+
+      const filterTitle = m.team ? `${m.team}: ${m.name}` : (fieldType === 'designSupport' ? `TOOLING & DESIGN: ${m.name}` : `MAINTENANCE SUPPORT: ${m.name}`);
+
       return `
-        <tr class="eng-sup-tr ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('${fieldType}', '${escapeHtml(m.name).replace(/'/g, "\\'")}', '${fieldType === 'designSupport' ? 'DESIGN SUPPORT' : 'MANTENANCE SUPPORT'}: ${escapeHtml(m.name)}')" title="คลิกเพื่อกรองงานที่ซัพพอร์ตโดย: ${escapeHtml(m.name)}">
+        <tr class="eng-sup-tr ${isAct ? 'active' : ''}" onclick="filterFromInsightsField('${fieldType}', '${escapeHtml(m.name).replace(/'/g, "\\'")}', '${escapeHtml(filterTitle).replace(/'/g, "\\'")}')" title="คลิกเพื่อกรองงานของ: ${escapeHtml(m.name)}">
           <td class="sup-td-name">
-            <span class="sup-color-bar" style="background:${accentColor};"></span>
+            <span class="sup-color-bar" style="background:${itemAccent};"></span>
             <span class="sup-member-name">${escapeHtml(m.name)}</span>
+            ${teamBadgeHtml}
           </td>
           <td class="sup-td-status">
             <span class="sup-tag tag-done">DONE ${m.done}</span>
@@ -20454,9 +20483,9 @@ function renderEngineeringInsightsDashboard() {
           <td class="sup-td-bar">
             <div class="sup-inline-bar-wrap">
               <div class="sup-inline-bar-track">
-                <div class="sup-inline-bar-fill" style="width:${shareOfTeamPct}%; background:${accentColor};"></div>
+                <div class="sup-inline-bar-fill" style="width:${shareOfTeamPct}%; background:${itemAccent};"></div>
               </div>
-              <span class="sup-team-pct" style="color:${m.count > 0 ? accentColor : '#94a3b8'};">${shareOfTeamPct}%</span>
+              <span class="sup-team-pct" style="color:${m.count > 0 ? itemAccent : '#94a3b8'};">${shareOfTeamPct}%</span>
             </div>
           </td>
         </tr>
@@ -20467,7 +20496,7 @@ function renderEngineeringInsightsDashboard() {
       <table class="eng-support-table">
         <thead>
           <tr>
-            <th>รายชื่อผู้สนับสนุน (MEMBER)</th>
+            <th>รายชื่อสมาชิก (MEMBER)</th>
             <th>สถานะงาน</th>
             <th style="text-align:right;">จำนวน (% ทั้งหมด)</th>
             <th style="text-align:right; width: 155px;">สัดส่วนในทีม (%)</th>
@@ -20480,7 +20509,7 @@ function renderEngineeringInsightsDashboard() {
     `;
   };
 
-  renderSupportTeamTable(designSupMap, 'engDesignSupportContainer', 'engDesignSupBadge', tasksWithDesignSup, 'designSupport', '#1d4ed8');
+  renderSupportTeamTable(toolingDesignSupMap, 'engDesignSupportContainer', 'engDesignSupBadge', tasksWithToolingDesignSup, 'designSupport', '#1d4ed8');
   renderSupportTeamTable(maintSupMap, 'engMaintSupportContainer', 'engMaintSupBadge', tasksWithMaintSup, 'maintSupport', '#0f766e');
 
   // --- PANEL 6: SUB STATUS (ขั้นตอนย่อย) ---
@@ -20926,7 +20955,7 @@ function stripLeadingNumberCode(val) {
 const MONTH_SHORT_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 // [regMonth, section, jobType, subJobType, priority, designTeam, toolingTeam, supportBy, subStatus, achievement, actionDate, finishPlanDate, finishedMonth]
-const EXCEL_MASTER_MAP = {
+var EXCEL_MASTER_MAP = {
   "3022026": ["Feb","S1","I-A","01 In-house","High","Sutthipong","Tanin","-","10 Finished",1,"2026-02-03","2026-02-03","Feb"],
   "5042026": ["Apr","S1","A","01 In-house","High","Sutthipong","-","Jittrakan","10 Finished",1,"2026-04-05","2026-04-05","Apr"],
   "7052026": ["May","S1","-","02 Outsource","Medium","Sutthipong","-","Naruebodee","10 Finished",1,"2026-05-07","2026-05-07","May"],
@@ -21588,12 +21617,26 @@ function getFilteredAchievements() {
       if (procKey.toUpperCase() !== currentProcessFilter.toUpperCase()) return false;
     }
     if (currentDesignSupportFilter !== 'all') {
-      const dSup = (xl.designTeam && xl.designTeam !== '-') ? xl.designTeam : ((item.assignee || 'UNASSIGNED').trim() || 'UNASSIGNED');
-      if (dSup.toUpperCase() !== currentDesignSupportFilter.toUpperCase()) return false;
+      const target = currentDesignSupportFilter.toUpperCase();
+      const inDsn = [xl.designSupport1, xl.designSupport2].some(n => n && n.toUpperCase() === target);
+      const inTool = [xl.toolingTeam1, xl.toolingTeam2].some(n => n && n.toUpperCase() === target);
+      const inAssignee = (item.assignee && item.assignee.trim().toUpperCase() === target);
+      const inSupportBy = (xl.supportBy && xl.supportBy.toUpperCase().includes(target));
+      const inToolingTeam = (xl.toolingTeam && xl.toolingTeam.toUpperCase().includes(target));
+      if (!inDsn && !inTool && !inAssignee && !inSupportBy && !inToolingTeam) return false;
     }
     if (currentMaintSupportFilter !== 'all') {
-      const mSup = (xl.supportBy && xl.supportBy !== '-') ? xl.supportBy : ((xl.toolingTeam && xl.toolingTeam !== '-') ? xl.toolingTeam : ((item.assignee || 'UNASSIGNED').trim() || 'UNASSIGNED'));
-      if (mSup.toUpperCase() !== currentMaintSupportFilter.toUpperCase()) return false;
+      const target = currentMaintSupportFilter.toUpperCase();
+      const inMaint = [
+        xl.maintenanceSupport1,
+        xl.maintenanceSupport2,
+        xl.maintenanceSupport3,
+        xl.maintenanceSupport4,
+        xl.maintenanceSupport5
+      ].some(n => n && n.toUpperCase() === target);
+      const inSupportBy = (xl.supportBy && xl.supportBy.toUpperCase().includes(target));
+      const inMaintField = (xl.maintenanceSupport && xl.maintenanceSupport.toUpperCase().includes(target));
+      if (!inMaint && !inSupportBy && !inMaintField) return false;
     }
 
     if (currentTimeFilter !== 'all') {
@@ -25957,5 +26000,15 @@ function scrollToSearchAndControls() {
     checkModalActive();
   }
 })();
+
+// --- App Bootstrap ---
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+}
+
 
 

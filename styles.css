@@ -1242,6 +1242,38 @@ body {
   color: #0f172a;
 }
 
+.sup-role-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.sup-role-tag.role-tooling {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.sup-role-tag.role-design {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.sup-role-tag.role-maint {
+  background: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+}
+
 .sup-td-status {
   white-space: nowrap;
 }
