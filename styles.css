@@ -2579,20 +2579,20 @@ body {
   background-color: #fbfcfe;
 }
 
-/* Light-Gray Background for Completed (DONE) & Cancelled (CANCEL) Tasks */
+/* Darker-Gray Background for Completed (DONE) & Cancelled (CANCEL) Tasks */
 .data-table tbody tr.row-status-done,
 .data-table tbody tr.row-status-done td,
 .data-table tbody tr.row-status-cancel,
 .data-table tbody tr.row-status-cancel td {
-  background-color: #f1f5f9 !important;
-  border-bottom-color: #e2e8f0 !important;
+  background-color: #cbd5e1 !important;
+  border-bottom-color: #94a3b8 !important;
 }
 
 .data-table tbody tr.row-status-done:hover,
 .data-table tbody tr.row-status-done:hover td,
 .data-table tbody tr.row-status-cancel:hover,
 .data-table tbody tr.row-status-cancel:hover td {
-  background-color: #e2e8f0 !important;
+  background-color: #b8c4d4 !important;
 }
 
 /* Full Table Mode (12 Balanced Columns with Identical Header & Cell Spacing to Compact Mode) */
@@ -2673,7 +2673,8 @@ body {
 .table-full tbody tr.row-status-cancel .sticky-col-no,
 .table-full tbody tr.row-status-cancel .sticky-col-task,
 .table-full tbody tr.row-status-cancel .sticky-col-action {
-  background-color: #f1f5f9 !important;
+  background-color: #cbd5e1 !important;
+  border-bottom-color: #94a3b8 !important;
 }
 
 .table-full tbody tr.row-status-done:hover .sticky-col-no,
@@ -2682,7 +2683,7 @@ body {
 .table-full tbody tr.row-status-cancel:hover .sticky-col-no,
 .table-full tbody tr.row-status-cancel:hover .sticky-col-task,
 .table-full tbody tr.row-status-cancel:hover .sticky-col-action {
-  background-color: #e2e8f0 !important;
+  background-color: #b8c4d4 !important;
 }
 
 .table-full th.sticky-col-no {
@@ -3912,30 +3913,30 @@ body {
   border-color: #93c5fd;
 }
 
-/* Light-Gray Background for Completed (DONE) & Cancelled (CANCEL) Cards & Timeline Items */
+/* Darker-Gray Background for Completed (DONE) & Cancelled (CANCEL) Cards & Timeline Items */
 .ios-task-card.card-status-done,
 .timeline-card.card-status-done,
 .ios-task-card.card-status-cancel,
 .timeline-card.card-status-cancel {
-  background-color: #f1f5f9 !important;
-  border-color: #cbd5e1 !important;
+  background-color: #cbd5e1 !important;
+  border-color: #94a3b8 !important;
 }
 
 .ios-task-card.card-status-done .ios-card-header-bar,
 .ios-task-card.card-status-cancel .ios-card-header-bar {
-  border-bottom-color: #e2e8f0 !important;
+  border-bottom-color: #94a3b8 !important;
 }
 
 .ios-task-card.card-status-done .webull-data-grid,
 .ios-task-card.card-status-cancel .webull-data-grid {
-  background-color: #e8eef5 !important;
-  border-color: #cbd5e1 !important;
+  background-color: #dde4ee !important;
+  border-color: #94a3b8 !important;
 }
 
 .ios-task-card.card-status-done .ios-card-accordion,
 .ios-task-card.card-status-cancel .ios-card-accordion {
-  background-color: #f8fafc !important;
-  border-top-color: #e2e8f0 !important;
+  background-color: #e2e8f0 !important;
+  border-top-color: #94a3b8 !important;
 }
 
 /* Empty State */

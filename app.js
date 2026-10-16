@@ -14166,34 +14166,43 @@ function openOrbrayDB() {
   });
 }
 
+function hasFilePayload(f) {
+  return !!(f && (f.data || f.blob));
+}
+
 function mergeSingleItemAttachments(incomingItem, existingItem) {
   if (!incomingItem || !existingItem) return incomingItem;
   const merged = { ...incomingItem };
 
-  // 1. Preserve PDF attachment data if stripped in incoming
-  if (merged.pdfAttachment && typeof merged.pdfAttachment === 'object' && !merged.pdfAttachment.data) {
-    if (existingItem.pdfAttachment && existingItem.pdfAttachment.data) {
+  // 1. Preserve PDF attachment data/blob if stripped in incoming
+  if (merged.pdfAttachment && typeof merged.pdfAttachment === 'object' && !merged.pdfAttachment.data && !merged.pdfAttachment.blob) {
+    if (existingItem.pdfAttachment && (existingItem.pdfAttachment.data || existingItem.pdfAttachment.blob)) {
       merged.pdfAttachment = {
         ...merged.pdfAttachment,
-        data: existingItem.pdfAttachment.data
+        data: existingItem.pdfAttachment.data || '',
+        blob: existingItem.pdfAttachment.blob || null
       };
     }
   }
 
-  // 2. Preserve Image / Drawing data if stripped in incoming
-  if (merged.imageData && typeof merged.imageData === 'object' && !merged.imageData.data) {
+  // 2. Preserve Image / Drawing data/blob if stripped in incoming
+  if (merged.imageData && typeof merged.imageData === 'object' && !merged.imageData.data && !merged.imageData.blob) {
     const existingImgData = typeof existingItem.imageData === 'string'
       ? existingItem.imageData
       : (existingItem.imageData && existingItem.imageData.data ? existingItem.imageData.data : '');
-    if (existingImgData) {
+    const existingImgBlob = (existingItem.imageData && typeof existingItem.imageData === 'object' && existingItem.imageData.blob)
+      ? existingItem.imageData.blob
+      : null;
+    if (existingImgData || existingImgBlob) {
       merged.imageData = {
         ...merged.imageData,
-        data: existingImgData
+        data: existingImgData,
+        blob: existingImgBlob
       };
     }
   }
 
-  // 3. Preserve WorkFolder file data / zipData if stripped in incoming
+  // 3. Preserve WorkFolder file data/blob / zipData if stripped in incoming
   if (merged.workFolder && typeof merged.workFolder === 'object' && existingItem.workFolder && typeof existingItem.workFolder === 'object') {
     const wf = { ...merged.workFolder };
     const exWf = existingItem.workFolder;
@@ -14202,19 +14211,19 @@ function mergeSingleItemAttachments(incomingItem, existingItem) {
       wf.zipData = exWf.zipData;
     }
 
-    if (Array.isArray(wf.files) && Array.isArray(exWf.files) && exWf.files.some(ef => !!ef.data)) {
+    if (Array.isArray(wf.files) && Array.isArray(exWf.files) && exWf.files.some(hasFilePayload)) {
       if (wf.files.length === 0) {
         wf.files = exWf.files;
       } else {
         wf.files = wf.files.map((f, idx) => {
-          if (f && f.data) return f;
+          if (hasFilePayload(f)) return f;
           const matchByIndex = exWf.files[idx];
-          if (matchByIndex && matchByIndex.data && (matchByIndex.name === f.name || matchByIndex.relPath === f.relPath)) {
-            return { ...f, data: matchByIndex.data };
+          if (hasFilePayload(matchByIndex) && (matchByIndex.name === f.name || matchByIndex.relPath === f.relPath)) {
+            return { ...f, data: matchByIndex.data || '', blob: matchByIndex.blob || null };
           }
-          const matchByPath = exWf.files.find(ef => ef && ef.data && ((ef.relPath && ef.relPath === f.relPath) || (ef.name && ef.name === f.name)));
+          const matchByPath = exWf.files.find(ef => hasFilePayload(ef) && ((ef.relPath && ef.relPath === f.relPath) || (ef.name && ef.name === f.name)));
           if (matchByPath) {
-            return { ...f, data: matchByPath.data };
+            return { ...f, data: matchByPath.data || '', blob: matchByPath.blob || null };
           }
           return f;
         });
@@ -14599,8 +14608,8 @@ const ZipGenerator = (function() {
   }
 
   /**
-   * Creates a standard uncompressed PKZIP Blob
-   * @param {Array<{name: string, relPath?: string, data: string | Uint8Array | ArrayBuffer}>} files
+   * Creates a standard uncompressed PKZIP Blob (synchronous for in-memory data)
+   * @param {Array<{name: string, relPath?: string, data?: string | Uint8Array | ArrayBuffer}>} files
    * @param {string} [rootFolderName] - Top-level folder name inside ZIP
    * @returns {Blob}
    */
@@ -14717,7 +14726,132 @@ const ZipGenerator = (function() {
     return new Blob(parts, { type: 'application/zip' });
   }
 
-  return { createZip };
+  /**
+   * Async PKZIP generator that supports native File/Blob references with minimal memory footprint
+   */
+  async function createZipAsync(files, rootFolderName = '') {
+    const encoder = new TextEncoder();
+    const parts = [];
+    const centralEntries = [];
+    let currentOffset = 0;
+    const now = new Date();
+    const { time: dosTime, dt: dosDate } = getDosTimeAndDate(now);
+
+    const safeRoot = (rootFolderName || '').trim().replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+
+    for (const f of files) {
+      let rawPath = (f.relPath || f.name || 'file').replace(/\\/g, '/').replace(/^\/+/, '');
+      if (safeRoot && !rawPath.startsWith(safeRoot + '/')) {
+        rawPath = safeRoot + '/' + rawPath;
+      }
+      const nameBytes = encoder.encode(rawPath);
+
+      let crc = 0;
+      let size = 0;
+      let payloadPart = null;
+
+      if (f.blob instanceof Blob) {
+        const ab = await f.blob.arrayBuffer();
+        const u8 = new Uint8Array(ab);
+        crc = calculateCrc32(u8);
+        size = u8.length;
+        payloadPart = f.blob;
+      } else {
+        let dataBytes;
+        if (f.data instanceof Uint8Array) {
+          dataBytes = f.data;
+        } else if (f.data instanceof ArrayBuffer) {
+          dataBytes = new Uint8Array(f.data);
+        } else if (typeof f.data === 'string') {
+          if (f.data.startsWith('data:')) {
+            const commaIdx = f.data.indexOf(',');
+            const base64 = commaIdx !== -1 ? f.data.slice(commaIdx + 1) : f.data;
+            try {
+              const binary = atob(base64);
+              dataBytes = new Uint8Array(binary.length);
+              for (let i = 0; i < binary.length; i++) dataBytes[i] = binary.charCodeAt(i);
+            } catch (e) {
+              dataBytes = encoder.encode(f.data);
+            }
+          } else {
+            dataBytes = encoder.encode(f.data);
+          }
+        } else {
+          dataBytes = new Uint8Array(0);
+        }
+        crc = calculateCrc32(dataBytes);
+        size = dataBytes.length;
+        payloadPart = new Blob([dataBytes]);
+      }
+
+      const localOffset = currentOffset;
+
+      const localHeader = new Uint8Array(30 + nameBytes.length);
+      const lv = new DataView(localHeader.buffer);
+      lv.setUint32(0, 0x04034b50, true);
+      lv.setUint16(4, 20, true);
+      lv.setUint16(6, 0x0800, true);
+      lv.setUint16(8, 0, true);
+      lv.setUint16(10, dosTime, true);
+      lv.setUint16(12, dosDate, true);
+      lv.setUint32(14, crc, true);
+      lv.setUint32(18, size, true);
+      lv.setUint32(22, size, true);
+      lv.setUint16(26, nameBytes.length, true);
+      lv.setUint16(28, 0, true);
+      localHeader.set(nameBytes, 30);
+
+      parts.push(localHeader);
+      parts.push(payloadPart);
+      currentOffset += localHeader.length + size;
+
+      const cdEntry = new Uint8Array(46 + nameBytes.length);
+      const cv = new DataView(cdEntry.buffer);
+      cv.setUint32(0, 0x02014b50, true);
+      cv.setUint16(4, 20, true);
+      cv.setUint16(6, 20, true);
+      cv.setUint16(8, 0x0800, true);
+      cv.setUint16(10, 0, true);
+      cv.setUint16(12, dosTime, true);
+      cv.setUint16(14, dosDate, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, size, true);
+      cv.setUint32(24, size, true);
+      cv.setUint16(28, nameBytes.length, true);
+      cv.setUint16(30, 0, true);
+      cv.setUint16(32, 0, true);
+      cv.setUint16(34, 0, true);
+      cv.setUint16(36, 0, true);
+      cv.setUint32(38, 0, true);
+      cv.setUint32(42, localOffset, true);
+      cdEntry.set(nameBytes, 46);
+
+      centralEntries.push(cdEntry);
+    }
+
+    const cdOffset = currentOffset;
+    let cdSize = 0;
+    for (const cde of centralEntries) {
+      parts.push(cde);
+      cdSize += cde.length;
+    }
+
+    const eocd = new Uint8Array(22);
+    const ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, files.length, true);
+    ev.setUint16(10, files.length, true);
+    ev.setUint32(12, cdSize, true);
+    ev.setUint32(16, cdOffset, true);
+    ev.setUint16(20, 0, true);
+    parts.push(eocd);
+
+    return new Blob(parts, { type: 'application/zip' });
+  }
+
+  return { createZip, createZipAsync };
 })();
 
 // --- Work Folder Download Utilities ---
@@ -14796,7 +14930,7 @@ function downloadBase64File(fileData, filename, defaultMime = 'application/octet
 function hasLocalFolderFileData(folder) {
   if (!folder || typeof folder === 'string') return false;
   if (folder.zipData) return true;
-  if (Array.isArray(folder.files) && folder.files.some(f => !!f.data)) return true;
+  if (Array.isArray(folder.files) && folder.files.some(f => !!(f && (f.data || f.blob)))) return true;
   return false;
 }
 
@@ -14805,7 +14939,7 @@ function hasFolderDownloadableData(folder) {
   if (typeof folder === 'string') return false;
   if (folder.zipData) return true;
   if (folder.hasCloudFiles) return true;
-  if (Array.isArray(folder.files) && folder.files.some(f => !!f.data)) return true;
+  if (Array.isArray(folder.files) && folder.files.some(f => !!(f && (f.data || f.blob)))) return true;
   if (Array.isArray(folder.files) && folder.files.length > 0) return true;
   return false;
 }
@@ -14836,22 +14970,95 @@ function alertFirestorePermissionHelp() {
 }
 
 const FIRESTORE_CHUNK_SIZE = 600000; // 600 KB safe chunk for Firestore 1MB document limit
+const BINARY_SLICE_BYTES = 450000;   // 450 KB binary (divisible by 3) -> exactly 600,000 base64 chars per slice!
+
+function uint8ToBase64(u8) {
+  let binary = '';
+  const step = 0x8000;
+  for (let i = 0; i < u8.length; i += step) {
+    binary += String.fromCharCode.apply(null, u8.subarray(i, Math.min(i + step, u8.length)));
+  }
+  return btoa(binary);
+}
+
+async function readBlobSliceAsDataUrlChunk(blob, sliceIndex, defaultMime = 'application/octet-stream') {
+  const start = sliceIndex * BINARY_SLICE_BYTES;
+  const end = Math.min(start + BINARY_SLICE_BYTES, blob.size);
+  const sliceBlob = blob.slice(start, end);
+  const ab = await sliceBlob.arrayBuffer();
+  const b64 = uint8ToBase64(new Uint8Array(ab));
+  if (sliceIndex === 0) {
+    const mime = blob.type || defaultMime;
+    return `data:${mime};base64,${b64}`;
+  }
+  return b64;
+}
 
 async function uploadFolderFilesToFirestore(db, achvId, files) {
   if (!db || !achvId || !Array.isArray(files) || files.length === 0) return false;
   try {
     const colRef = db.collection('achievements').doc(achvId).collection('folderFiles');
-    const filesWithData = files.filter(f => f && f.data);
+    const filesWithData = files.filter(f => f && (f.data || f.blob));
     if (filesWithData.length === 0) return false;
 
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
-      const data = (f && f.data) ? f.data : '';
-      if (!data) continue;
+      if (!f || (!f.data && !(f.blob instanceof Blob))) continue;
 
       if (files.length > 1) {
         showToast(`☁️ กำลังอัปโหลดไฟล์โฟลเดอร์ขึ้นคลาวด์ (${i + 1}/${files.length}): ${f.name || ''}`);
       }
+
+      if (f.blob instanceof Blob && !f.data) {
+        const blob = f.blob;
+        const totalChunks = Math.max(1, Math.ceil(blob.size / BINARY_SLICE_BYTES));
+        if (totalChunks === 1) {
+          const singleDataUrl = await readBlobSliceAsDataUrlChunk(blob, 0);
+          await colRef.doc(`file_${i}`).set({
+            fileIndex: i,
+            name: f.name || '',
+            relPath: f.relPath || f.name || '',
+            size: f.size || '',
+            sizeBytes: f.sizeBytes || blob.size || 0,
+            type: f.type || '',
+            data: singleDataUrl,
+            isChunked: false,
+            uploadedAt: new Date().toISOString()
+          });
+        } else {
+          await colRef.doc(`file_${i}`).set({
+            fileIndex: i,
+            name: f.name || '',
+            relPath: f.relPath || f.name || '',
+            size: f.size || '',
+            sizeBytes: f.sizeBytes || blob.size || 0,
+            type: f.type || '',
+            isChunked: true,
+            totalChunks: totalChunks,
+            uploadedAt: new Date().toISOString()
+          });
+          const BATCH_SIZE = 4;
+          for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+            const batchPromises = [];
+            for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+              batchPromises.push(
+                readBlobSliceAsDataUrlChunk(blob, b).then(chunkStr =>
+                  colRef.doc(`file_${i}_chunk_${b}`).set({
+                    fileIndex: i,
+                    chunkIndex: b,
+                    data: chunkStr
+                  })
+                )
+              );
+            }
+            await Promise.all(batchPromises);
+          }
+        }
+        continue;
+      }
+
+      const data = f.data || '';
+      if (!data) continue;
 
       if (data.length <= FIRESTORE_CHUNK_SIZE) {
         await colRef.doc(`file_${i}`).set({
@@ -14966,7 +15173,7 @@ async function downloadFolderFilesFromFirestore(db, achvId, filesMeta) {
           showToast(`☁️ กำลังดาวน์โหลดไฟล์จากคลาวด์ (${i + 1}/${knownCount})...`);
         }
         const existingMeta = filesMeta[i] || {};
-        if (existingMeta.data) {
+        if (existingMeta.data || existingMeta.blob) {
           files.push(existingMeta);
           anyLoaded = true;
           continue;
@@ -15048,14 +15255,50 @@ async function downloadFolderFilesFromFirestore(db, achvId, filesMeta) {
 async function uploadPdfFileToFirestore(db, achvId, pdfObj) {
   if (!db || !achvId || !pdfObj) return;
   try {
-    const rawData = pdfObj.data || '';
-    if (!rawData) return;
-
     const colRef = db.collection('achievements').doc(achvId).collection('pdfFiles');
     const name = pdfObj.name || 'JOB_REQUEST.PDF';
     const size = pdfObj.size || '';
     const type = pdfObj.type || 'application/pdf';
     const path = pdfObj.path || '';
+
+    if (pdfObj.blob instanceof Blob && !pdfObj.data) {
+      const blob = pdfObj.blob;
+      const totalChunks = Math.max(1, Math.ceil(blob.size / BINARY_SLICE_BYTES));
+      if (totalChunks === 1) {
+        const singleDataUrl = await readBlobSliceAsDataUrlChunk(blob, 0, 'application/pdf');
+        await colRef.doc('main').set({
+          name, size, type, path,
+          data: singleDataUrl,
+          isChunked: false,
+          uploadedAt: new Date().toISOString()
+        });
+      } else {
+        await colRef.doc('main').set({
+          name, size, type, path,
+          isChunked: true,
+          totalChunks,
+          uploadedAt: new Date().toISOString()
+        });
+        const BATCH_SIZE = 4;
+        for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+          const batchPromises = [];
+          for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+            batchPromises.push(
+              readBlobSliceAsDataUrlChunk(blob, b, 'application/pdf').then(chunkStr =>
+                colRef.doc(`chunk_${b}`).set({ chunkIndex: b, data: chunkStr })
+              )
+            );
+          }
+          await Promise.all(batchPromises);
+        }
+      }
+      console.log(`Cloud PDF uploaded for achievement ${achvId} (${name})`);
+      showToast(`☁️ อัปโหลดไฟล์ PDF "${name}" ขึ้นคลาวด์เรียบร้อยแล้ว`);
+      return;
+    }
+
+    const rawData = pdfObj.data || '';
+    if (!rawData) return;
 
     if (rawData.length <= FIRESTORE_CHUNK_SIZE) {
       await colRef.doc('main').set({
@@ -15166,12 +15409,48 @@ async function downloadPdfFileFromFirestore(db, achvId) {
 async function uploadImageFileToFirestore(db, achvId, imgObj) {
   if (!db || !achvId || !imgObj) return;
   try {
-    const rawData = typeof imgObj === 'object' ? (imgObj.data || '') : (typeof imgObj === 'string' ? imgObj : '');
-    if (!rawData) return;
-
     const colRef = db.collection('achievements').doc(achvId).collection('imageFiles');
     const name = (typeof imgObj === 'object' && imgObj.name) ? imgObj.name : 'IMAGE';
     const type = (typeof imgObj === 'object' && imgObj.type) ? imgObj.type : 'image/png';
+
+    if (typeof imgObj === 'object' && imgObj.blob instanceof Blob && !imgObj.data) {
+      const blob = imgObj.blob;
+      const defaultMime = type === 'pdf' ? 'application/pdf' : 'image/png';
+      const totalChunks = Math.max(1, Math.ceil(blob.size / BINARY_SLICE_BYTES));
+      if (totalChunks === 1) {
+        const singleDataUrl = await readBlobSliceAsDataUrlChunk(blob, 0, defaultMime);
+        await colRef.doc('main').set({
+          name, type,
+          data: singleDataUrl,
+          isChunked: false,
+          uploadedAt: new Date().toISOString()
+        });
+      } else {
+        await colRef.doc('main').set({
+          name, type,
+          isChunked: true,
+          totalChunks,
+          uploadedAt: new Date().toISOString()
+        });
+        const BATCH_SIZE = 4;
+        for (let c = 0; c < totalChunks; c += BATCH_SIZE) {
+          const batchPromises = [];
+          for (let b = c; b < Math.min(c + BATCH_SIZE, totalChunks); b++) {
+            batchPromises.push(
+              readBlobSliceAsDataUrlChunk(blob, b, defaultMime).then(chunkStr =>
+                colRef.doc(`chunk_${b}`).set({ chunkIndex: b, data: chunkStr })
+              )
+            );
+          }
+          await Promise.all(batchPromises);
+        }
+      }
+      console.log(`Cloud Image uploaded for achievement ${achvId} (${name})`);
+      return;
+    }
+
+    const rawData = typeof imgObj === 'object' ? (imgObj.data || '') : (typeof imgObj === 'string' ? imgObj : '');
+    if (!rawData) return;
 
     if (rawData.length <= FIRESTORE_CHUNK_SIZE) {
       await colRef.doc('main').set({
@@ -15287,7 +15566,7 @@ async function downloadFolderObject(folder, achvId) {
         const fullItem = idbData.find(a => a && a.id === targetAchvId);
         if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
           folder.zipData = fullItem.workFolder.zipData || folder.zipData;
-          if (Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files.some(f => !!f.data)) {
+          if (Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files.some(f => !!(f && (f.data || f.blob)))) {
             folder.files = fullItem.workFolder.files;
           }
           const memItem = achievements.find(a => a.id === targetAchvId);
@@ -15306,12 +15585,12 @@ async function downloadFolderObject(folder, achvId) {
     return;
   }
 
-  // 2. If files array already has data in memory
-  if (Array.isArray(folder.files) && folder.files.some(f => !!f.data)) {
-    const filesWithData = folder.files.filter(f => !!f.data);
+  // 2. If files array already has data or Blob in memory
+  if (Array.isArray(folder.files) && folder.files.some(f => !!(f && (f.data || f.blob)))) {
+    const filesWithData = folder.files.filter(f => !!(f && (f.data || f.blob)));
     showToast('📦 กำลังสร้างไฟล์ ZIP และเตรียมดาวน์โหลด...');
     try {
-      const zipBlob = ZipGenerator.createZip(filesWithData, folderName);
+      const zipBlob = await ZipGenerator.createZipAsync(filesWithData, folderName);
       downloadBlob(zipBlob, `${folderName}.zip`);
       showToast(`✅ ดาวน์โหลดโฟลเดอร์ "${folderName}.zip" เรียบร้อยแล้ว`);
       return;
@@ -15328,7 +15607,7 @@ async function downloadFolderObject(folder, achvId) {
     showToast('☁️ กำลังดาวน์โหลดไฟล์โฟลเดอร์จากระบบคลาวด์...');
     try {
       const cloudFiles = await downloadFolderFilesFromFirestore(firebaseDb, targetAchvId, folder.files);
-      if (cloudFiles && cloudFiles.length > 0 && cloudFiles.some(f => !!f.data)) {
+      if (cloudFiles && cloudFiles.length > 0 && cloudFiles.some(f => !!(f && (f.data || f.blob)))) {
         folder.files = cloudFiles;
         folder.hasCloudFiles = true;
 
@@ -15345,7 +15624,7 @@ async function downloadFolderObject(folder, achvId) {
         }
 
         showToast('📦 ดาวน์โหลดจากคลาวด์สำเร็จ! กำลังสร้างไฟล์ ZIP...');
-        const zipBlob = ZipGenerator.createZip(cloudFiles.filter(f => !!f.data), folderName);
+        const zipBlob = await ZipGenerator.createZipAsync(cloudFiles.filter(f => !!(f && (f.data || f.blob))), folderName);
         downloadBlob(zipBlob, `${folderName}.zip`);
         showToast(`✅ ดาวน์โหลดโฟลเดอร์ "${folderName}.zip" เรียบร้อยแล้ว`);
         return;
@@ -15413,13 +15692,13 @@ async function downloadSingleFolderFile(fileIndex) {
   if (!currentDetailFolderData || !currentDetailFolderData.files || !currentDetailFolderData.files[fileIndex]) return;
   let file = currentDetailFolderData.files[fileIndex];
 
-  // 1. Check local IndexedDB first if file.data is missing in memory
-  if (!file.data && currentDetailAchvId) {
+  // 1. Check local IndexedDB first if file.data and file.blob are missing in memory
+  if (!file.data && !file.blob && currentDetailAchvId) {
     try {
       const idbData = await loadAchievementsFromIndexedDB();
       if (idbData) {
         const fullItem = idbData.find(a => a && a.id === currentDetailAchvId);
-        if (fullItem && fullItem.workFolder && Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files[fileIndex] && fullItem.workFolder.files[fileIndex].data) {
+        if (fullItem && fullItem.workFolder && Array.isArray(fullItem.workFolder.files) && fullItem.workFolder.files[fileIndex] && (fullItem.workFolder.files[fileIndex].data || fullItem.workFolder.files[fileIndex].blob)) {
           currentDetailFolderData.files = fullItem.workFolder.files;
           file = fullItem.workFolder.files[fileIndex];
           const item = achievements.find(a => a.id === currentDetailAchvId);
@@ -15433,7 +15712,7 @@ async function downloadSingleFolderFile(fileIndex) {
 
   // 2. Fetch just this single file from Cloud Firestore (fast! No need to download the entire folder)
   let permissionDeniedOccurred = false;
-  if (!file.data && currentDetailAchvId && firebaseDb) {
+  if (!file.data && !file.blob && currentDetailAchvId && firebaseDb) {
     showToast(`☁️ กำลังดึงไฟล์ "${file.name}" จากระบบคลาวด์...`);
     try {
       const singleCloudFile = await downloadSingleFileFromFirestore(firebaseDb, currentDetailAchvId, fileIndex, file);
@@ -15448,7 +15727,7 @@ async function downloadSingleFolderFile(fileIndex) {
       } else {
         // Fallback: try full folder download in case doc IDs differed
         const cloudFiles = await downloadFolderFilesFromFirestore(firebaseDb, currentDetailAchvId, currentDetailFolderData.files);
-        if (cloudFiles && cloudFiles[fileIndex] && cloudFiles[fileIndex].data) {
+        if (cloudFiles && cloudFiles[fileIndex] && (cloudFiles[fileIndex].data || cloudFiles[fileIndex].blob)) {
           currentDetailFolderData.files = cloudFiles;
           file = cloudFiles[fileIndex];
           const item = achievements.find(a => a.id === currentDetailAchvId);
@@ -15468,6 +15747,12 @@ async function downloadSingleFolderFile(fileIndex) {
 
   if (permissionDeniedOccurred) {
     alertFirestorePermissionHelp();
+    return;
+  }
+
+  if (file.blob instanceof Blob) {
+    downloadBlob(file.blob, file.name);
+    showToast(`ดาวน์โหลดไฟล์ "${file.name}" สำเร็จ`);
     return;
   }
 
@@ -15579,7 +15864,16 @@ function isDrawingImage(imageData) {
 
 function getDrawingDataUrl(imageData) {
   if (!imageData) return null;
-  if (typeof imageData === 'object') return imageData.data;
+  if (typeof imageData === 'object') {
+    if (imageData.data) return imageData.data;
+    if (imageData.blob instanceof Blob) {
+      if (!imageData._blobUrl) {
+        imageData._blobUrl = URL.createObjectURL(imageData.blob);
+      }
+      return imageData._blobUrl;
+    }
+    return null;
+  }
   return imageData;
 }
 
@@ -15630,7 +15924,11 @@ async function openDrawingAttachment(achvId) {
   }
 
   if (isDrawingPdf(item.imageData)) {
-    openPdfData(dataUrl);
+    if (typeof item.imageData === 'object' && item.imageData.blob instanceof Blob) {
+      openPdfData(item.imageData.blob);
+    } else {
+      openPdfData(dataUrl);
+    }
   } else {
     const win = window.open('');
     if (win) {
@@ -15698,7 +15996,11 @@ async function downloadImageAttachment(achvId) {
   const filename = (typeof item.imageData === 'object' && item.imageData.name) ? item.imageData.name : defaultName;
   const mime = (typeof item.imageData === 'object' && item.imageData.type) ? item.imageData.type : (isPdf ? 'application/pdf' : 'image/png');
 
-  downloadBase64File(dataUrl, filename, mime);
+  if (typeof item.imageData === 'object' && item.imageData.blob instanceof Blob) {
+    downloadBlob(item.imageData.blob, filename);
+  } else {
+    downloadBase64File(dataUrl, filename, mime);
+  }
   showToast(`ดาวน์โหลดไฟล์: "${uppercaseEnglish(filename)}" สำเร็จ`);
 }
 
@@ -15920,11 +16222,11 @@ function loadData() {
         }
         const fullItem = idbData.find(i => i && i.id === a.id);
         if (fullItem) {
-          if (fullItem.pdfAttachment && fullItem.pdfAttachment.data && (!a.pdfAttachment || !a.pdfAttachment.data)) {
+          if (fullItem.pdfAttachment && (fullItem.pdfAttachment.data || fullItem.pdfAttachment.blob) && (!a.pdfAttachment || (!a.pdfAttachment.data && !a.pdfAttachment.blob))) {
             a.pdfAttachment = fullItem.pdfAttachment;
             restoredCount++;
           }
-          if (fullItem.imageData && fullItem.imageData.data && (!a.imageData || !a.imageData.data)) {
+          if (fullItem.imageData && (fullItem.imageData.data || fullItem.imageData.blob) && (!a.imageData || (!a.imageData.data && !a.imageData.blob))) {
             a.imageData = fullItem.imageData;
             restoredCount++;
           }
@@ -15946,46 +16248,63 @@ function loadData() {
   });
 }
 
+function buildLightweightAchievementCopy(item) {
+  const copy = { ...item };
+  if (copy.pdfAttachment && typeof copy.pdfAttachment === 'object') {
+    const pdf = { ...copy.pdfAttachment };
+    delete pdf.blob;
+    delete pdf._blobUrl;
+    if (pdf.data && pdf.data.length > 150000) {
+      pdf.data = '';
+      pdf.isStoredInIDB = true;
+    } else if (item.pdfAttachment && item.pdfAttachment.blob) {
+      pdf.isStoredInIDB = true;
+    }
+    copy.pdfAttachment = pdf;
+  }
+  if (copy.imageData && typeof copy.imageData === 'object') {
+    const img = { ...copy.imageData };
+    delete img.blob;
+    delete img._blobUrl;
+    if (img.data && img.data.length > 150000) {
+      img.data = '';
+      img.isStoredInIDB = true;
+    } else if (item.imageData && item.imageData.blob) {
+      img.isStoredInIDB = true;
+    }
+    copy.imageData = img;
+  } else if (typeof copy.imageData === 'string' && copy.imageData.length > 150000) {
+    copy.imageData = { name: 'IMAGE', type: 'image', data: '', isStoredInIDB: true };
+  }
+  if (copy.workFolder && typeof copy.workFolder === 'object') {
+    const wf = { ...copy.workFolder };
+    if (wf.zipData) {
+      wf.zipData = '';
+      wf.isStoredInIDB = true;
+    }
+    if (Array.isArray(wf.files)) {
+      wf.files = wf.files.map(f => {
+        if (!f) return f;
+        const { data, blob, _blobUrl, ...rest } = f;
+        return rest;
+      });
+      wf.isStoredInIDB = true;
+    }
+    copy.workFolder = wf;
+  }
+  return copy;
+}
+
 function saveAchievements() {
-  // Always persist full achievements (including unlimited size PDFs & Drawings & Folder attachments) to IndexedDB
+  // Always persist full achievements (including unlimited size PDFs, Drawings & Folder Blobs) to IndexedDB
   saveAchievementsToIndexedDB(achievements);
 
-  // Safely persist to localStorage with quota-exceeded fallback
+  // Always strip heavy binary / base64 payloads BEFORE JSON.stringify so V8 heap never runs Out of Memory!
   try {
-    localStorage.setItem(STORAGE_KEY_ACHIEVEMENTS, JSON.stringify(achievements));
+    const lightweight = achievements.map(buildLightweightAchievementCopy);
+    localStorage.setItem(STORAGE_KEY_ACHIEVEMENTS, JSON.stringify(lightweight));
   } catch (err) {
-    console.warn('localStorage quota exceeded. Saving lightweight copy to localStorage:', err);
-    try {
-      // Save lightweight copy without massive data URLs so localStorage never crashes
-      const lightweight = achievements.map(item => {
-        const copy = { ...item };
-        if (copy.pdfAttachment && copy.pdfAttachment.data && copy.pdfAttachment.data.length > 200000) {
-          copy.pdfAttachment = { ...copy.pdfAttachment, data: '', isStoredInIDB: true };
-        }
-        if (copy.imageData && copy.imageData.data && copy.imageData.data.length > 200000) {
-          copy.imageData = { ...copy.imageData, data: '', isStoredInIDB: true };
-        }
-        if (copy.workFolder && typeof copy.workFolder === 'object') {
-          const wf = { ...copy.workFolder };
-          if (wf.zipData && wf.zipData.length > 200000) {
-            wf.zipData = '';
-            wf.isStoredInIDB = true;
-          }
-          if (Array.isArray(wf.files)) {
-            wf.files = wf.files.map(f => {
-              const { data, ...rest } = f;
-              return rest;
-            });
-            wf.isStoredInIDB = true;
-          }
-          copy.workFolder = wf;
-        }
-        return copy;
-      });
-      localStorage.setItem(STORAGE_KEY_ACHIEVEMENTS, JSON.stringify(lightweight));
-    } catch (err2) {
-      console.error('Cannot save even lightweight copy to localStorage:', err2);
-    }
+    console.warn('localStorage save notice:', err);
   }
 }
 
@@ -16479,12 +16798,14 @@ async function initFirebase(config, showToasts = false) {
 
 function cleanFirestoreObject(obj) {
   if (obj === null || typeof obj !== 'object') return obj;
+  if (obj instanceof Blob) return undefined;
   if (Array.isArray(obj)) {
-    return obj.map(item => cleanFirestoreObject(item));
+    return obj.map(item => cleanFirestoreObject(item)).filter(item => item !== undefined);
   }
   const clean = {};
   for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined) {
+    if (key === 'blob' || key === '_blobUrl') continue;
+    if (value !== undefined && !(value instanceof Blob)) {
       clean[key] = cleanFirestoreObject(value);
     }
   }
@@ -16495,43 +16816,47 @@ async function saveAchievementToCloud(item) {
   if (!firebaseDb || !item || !item.id) return;
   try {
     const docRef = firebaseDb.collection('achievements').doc(item.id);
-    const itemToSave = cleanFirestoreObject({ ...item });
-    delete itemToSave._pendingSync;
+    const rawCopy = { ...item };
+    delete rawCopy._pendingSync;
 
     let pendingFolderFilesToUpload = null;
 
-    // Handle PDF Attachment upload to subcollection & guard 1MB Firestore limit
-    if (itemToSave.pdfAttachment && typeof itemToSave.pdfAttachment === 'object') {
-      const pdf = { ...itemToSave.pdfAttachment };
-      if (pdf.data) {
+    // Handle PDF Attachment upload to subcollection & guard 1MB Firestore limit BEFORE cleanFirestoreObject
+    if (rawCopy.pdfAttachment && typeof rawCopy.pdfAttachment === 'object') {
+      const pdf = { ...rawCopy.pdfAttachment };
+      if (pdf.data || pdf.blob) {
         pdf.hasCloudPdf = true;
         uploadPdfFileToFirestore(firebaseDb, item.id, { ...pdf });
       } else if (item.pdfAttachment && item.pdfAttachment.hasCloudPdf) {
         pdf.hasCloudPdf = true;
       }
+      delete pdf.blob;
+      delete pdf._blobUrl;
       if (pdf.data && pdf.data.length > 300000) {
         pdf.data = '';
       }
-      itemToSave.pdfAttachment = pdf;
+      rawCopy.pdfAttachment = pdf;
     }
 
     // Handle Image Data upload to subcollection & guard 1MB Firestore limit
-    if (itemToSave.imageData && typeof itemToSave.imageData === 'object') {
-      const img = { ...itemToSave.imageData };
-      if (img.data) {
+    if (rawCopy.imageData && typeof rawCopy.imageData === 'object') {
+      const img = { ...rawCopy.imageData };
+      if (img.data || img.blob) {
         img.hasCloudImage = true;
         uploadImageFileToFirestore(firebaseDb, item.id, { ...img });
       } else if (item.imageData && item.imageData.hasCloudImage) {
         img.hasCloudImage = true;
       }
+      delete img.blob;
+      delete img._blobUrl;
       if (img.data && img.data.length > 300000) {
         img.data = '';
       }
-      itemToSave.imageData = img;
-    } else if (itemToSave.imageData && typeof itemToSave.imageData === 'string') {
-      if (itemToSave.imageData.length > 300000) {
-        uploadImageFileToFirestore(firebaseDb, item.id, itemToSave.imageData);
-        itemToSave.imageData = {
+      rawCopy.imageData = img;
+    } else if (rawCopy.imageData && typeof rawCopy.imageData === 'string') {
+      if (rawCopy.imageData.length > 300000) {
+        uploadImageFileToFirestore(firebaseDb, item.id, rawCopy.imageData);
+        rawCopy.imageData = {
           name: 'IMAGE',
           type: 'image/png',
           data: '',
@@ -16541,16 +16866,16 @@ async function saveAchievementToCloud(item) {
     }
 
     // Handle Work Folder upload to subcollection
-    if (itemToSave.workFolder && typeof itemToSave.workFolder === 'object') {
-      const wf = { ...itemToSave.workFolder };
+    if (rawCopy.workFolder && typeof rawCopy.workFolder === 'object') {
+      const wf = { ...rawCopy.workFolder };
       let hasData = false;
       if (Array.isArray(wf.files)) {
-        hasData = wf.files.some(f => !!f.data);
+        hasData = wf.files.some(f => !!(f && (f.data || f.blob)));
       }
 
       if (hasData) {
         wf.hasCloudFiles = true;
-        pendingFolderFilesToUpload = wf.files.map(f => ({ ...f }));
+        pendingFolderFilesToUpload = wf.files;
       } else if (item.workFolder && item.workFolder.hasCloudFiles) {
         wf.hasCloudFiles = true;
       }
@@ -16558,14 +16883,16 @@ async function saveAchievementToCloud(item) {
       // In main doc, sanitize files to avoid hitting Firestore 1MB document limit
       if (Array.isArray(wf.files)) {
         wf.files = wf.files.map(f => {
-          const { data, ...rest } = f;
+          if (!f) return f;
+          const { data, blob, _blobUrl, ...rest } = f;
           return rest;
         });
       }
       wf.zipData = '';
-      itemToSave.workFolder = wf;
+      rawCopy.workFolder = wf;
     }
 
+    const itemToSave = cleanFirestoreObject(rawCopy);
     await docRef.set(itemToSave, { merge: true });
     if (pendingFolderFilesToUpload) {
       const uploadedOk = await uploadFolderFilesToFirestore(firebaseDb, item.id, pendingFolderFilesToUpload);
@@ -16635,44 +16962,17 @@ async function migrateLocalDataToFirebase() {
       const batch = firebaseDb.batch();
       chunk.forEach(item => {
         const docRef = colRef.doc(item.id);
-        const itemToSave = cleanFirestoreObject({ ...item });
-        if (itemToSave.pdfAttachment && typeof itemToSave.pdfAttachment === 'object') {
-          if (itemToSave.pdfAttachment.data) {
-            itemToSave.pdfAttachment.hasCloudPdf = true;
-          }
-          if (itemToSave.pdfAttachment.data && itemToSave.pdfAttachment.data.length > 300000) {
-            itemToSave.pdfAttachment.data = '';
-          }
+        const rawCopy = buildLightweightAchievementCopy(item);
+        if (item.pdfAttachment && (item.pdfAttachment.data || item.pdfAttachment.blob) && rawCopy.pdfAttachment) {
+          rawCopy.pdfAttachment.hasCloudPdf = true;
         }
-        if (itemToSave.imageData && typeof itemToSave.imageData === 'object') {
-          if (itemToSave.imageData.data) {
-            itemToSave.imageData.hasCloudImage = true;
-          }
-          if (itemToSave.imageData.data && itemToSave.imageData.data.length > 300000) {
-            itemToSave.imageData.data = '';
-          }
-        } else if (itemToSave.imageData && typeof itemToSave.imageData === 'string' && itemToSave.imageData.length > 300000) {
-          itemToSave.imageData = {
-            name: 'IMAGE',
-            type: 'image/png',
-            data: '',
-            hasCloudImage: true
-          };
+        if (item.imageData && (typeof item.imageData === 'string' || item.imageData.data || item.imageData.blob) && rawCopy.imageData && typeof rawCopy.imageData === 'object') {
+          rawCopy.imageData.hasCloudImage = true;
         }
-        if (itemToSave.workFolder && typeof itemToSave.workFolder === 'object') {
-          const wf = { ...itemToSave.workFolder };
-          if (Array.isArray(wf.files) && wf.files.some(f => !!f.data)) {
-            wf.hasCloudFiles = true;
-          }
-          if (Array.isArray(wf.files)) {
-            wf.files = wf.files.map(f => {
-              const { data, ...rest } = f;
-              return rest;
-            });
-          }
-          wf.zipData = '';
-          itemToSave.workFolder = wf;
+        if (item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!(f && (f.data || f.blob))) && rawCopy.workFolder) {
+          rawCopy.workFolder.hasCloudFiles = true;
         }
+        const itemToSave = cleanFirestoreObject(rawCopy);
         batch.set(docRef, itemToSave, { merge: true });
       });
       await batch.commit();
@@ -16681,7 +16981,10 @@ async function migrateLocalDataToFirebase() {
     showToast(`ซิงค์ข้อมูล ${achievements.length} รายการขึ้นคลาวด์สำเร็จ! 🎉`);
     
     // Check if user also wants to sync heavy attachments
-    const hasAttachments = achievements.some(a => (a.pdfAttachment && a.pdfAttachment.data) || (a.workFolder && Array.isArray(a.workFolder.files) && a.workFolder.files.some(f => !!f.data)));
+    const hasAttachments = achievements.some(a =>
+      (a.pdfAttachment && (a.pdfAttachment.data || a.pdfAttachment.blob)) ||
+      (a.workFolder && Array.isArray(a.workFolder.files) && a.workFolder.files.some(f => !!(f && (f.data || f.blob))))
+    );
     if (hasAttachments) {
       if (confirm(`ซิงค์ข้อมูลงาน ${achievements.length} รายการขึ้น Google Firebase Firestore สำเร็จเรียบร้อยแล้ว!\n\nตรวจพบว่ามีไฟล์แนบ (PDF / โฟลเดอร์) ในเครื่องนี้\nต้องการเริ่มอัปโหลดไฟล์แนบทั้งหมดขึ้นคลาวด์ต่อทันทีเลยหรือไม่?\n(เพื่อให้คอมพิวเตอร์เครื่องอื่นและมือถือเปิดไฟล์แนบได้ทุกไฟล์)`)) {
         syncAllAttachmentsToCloud();
@@ -16723,9 +17026,9 @@ async function autoSyncLocalAttachmentsToCloud(db) {
 
     // Filter items with actual file data attached
     const itemsToUpload = itemsToScan.filter(item => {
-      const hasPdfData = item.pdfAttachment && item.pdfAttachment.data;
-      const hasImageData = item.imageData && (typeof item.imageData === 'string' || (item.imageData && item.imageData.data));
-      const hasFolderData = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!f.data);
+      const hasPdfData = item.pdfAttachment && (item.pdfAttachment.data || item.pdfAttachment.blob);
+      const hasImageData = item.imageData && (typeof item.imageData === 'string' || item.imageData.data || item.imageData.blob);
+      const hasFolderData = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!(f && (f.data || f.blob)));
       return hasPdfData || hasImageData || hasFolderData;
     });
 
@@ -16743,7 +17046,7 @@ async function autoSyncLocalAttachmentsToCloud(db) {
         const mainDocRef = db.collection('achievements').doc(item.id);
 
         // 1. Upload PDF Attachment
-        if (item.pdfAttachment && item.pdfAttachment.data) {
+        if (item.pdfAttachment && (item.pdfAttachment.data || item.pdfAttachment.blob)) {
           await uploadPdfFileToFirestore(db, item.id, item.pdfAttachment);
           item.pdfAttachment.hasCloudPdf = true;
           hasUpdatedMeta = true;
@@ -16751,8 +17054,8 @@ async function autoSyncLocalAttachmentsToCloud(db) {
 
         // 2. Upload Image / Drawing
         if (item.imageData) {
-          const imgData = typeof item.imageData === 'object' ? item.imageData.data : item.imageData;
-          if (imgData) {
+          const hasImg = typeof item.imageData === 'object' ? !!(item.imageData.data || item.imageData.blob) : !!item.imageData;
+          if (hasImg) {
             await uploadImageFileToFirestore(db, item.id, item.imageData);
             if (typeof item.imageData === 'object') item.imageData.hasCloudImage = true;
             hasUpdatedMeta = true;
@@ -16761,7 +17064,7 @@ async function autoSyncLocalAttachmentsToCloud(db) {
 
         // 3. Upload Work Folder files
         if (item.workFolder && Array.isArray(item.workFolder.files)) {
-          const filesWithData = item.workFolder.files.filter(f => !!f.data);
+          const filesWithData = item.workFolder.files.filter(f => !!(f && (f.data || f.blob)));
           if (filesWithData.length > 0) {
             await uploadFolderFilesToFirestore(db, item.id, item.workFolder.files);
             item.workFolder.hasCloudFiles = true;
@@ -16845,9 +17148,9 @@ async function syncAllAttachmentsToCloud() {
 
     // Filter items with actual file data attached
     const itemsWithAttachments = itemsToScan.filter(item => {
-      const hasPdf = item.pdfAttachment && item.pdfAttachment.data;
-      const hasImg = item.imageData && (typeof item.imageData === 'string' || (item.imageData && item.imageData.data));
-      const hasFolder = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!f.data);
+      const hasPdf = item.pdfAttachment && (item.pdfAttachment.data || item.pdfAttachment.blob);
+      const hasImg = item.imageData && (typeof item.imageData === 'string' || item.imageData.data || item.imageData.blob);
+      const hasFolder = item.workFolder && Array.isArray(item.workFolder.files) && item.workFolder.files.some(f => !!(f && (f.data || f.blob)));
       return hasPdf || hasImg || hasFolder;
     });
 
@@ -16876,7 +17179,7 @@ async function syncAllAttachmentsToCloud() {
         const mainDocRef = firebaseDb.collection('achievements').doc(item.id);
 
         // 1. Upload PDF Attachment
-        if (item.pdfAttachment && item.pdfAttachment.data) {
+        if (item.pdfAttachment && (item.pdfAttachment.data || item.pdfAttachment.blob)) {
           await uploadPdfFileToFirestore(firebaseDb, item.id, item.pdfAttachment);
           item.pdfAttachment.hasCloudPdf = true;
           hasUpdatedMeta = true;
@@ -16884,8 +17187,8 @@ async function syncAllAttachmentsToCloud() {
 
         // 2. Upload Image / Drawing
         if (item.imageData) {
-          const imgData = typeof item.imageData === 'object' ? item.imageData.data : item.imageData;
-          if (imgData) {
+          const hasImg = typeof item.imageData === 'object' ? !!(item.imageData.data || item.imageData.blob) : !!item.imageData;
+          if (hasImg) {
             await uploadImageFileToFirestore(firebaseDb, item.id, item.imageData);
             if (typeof item.imageData === 'object') item.imageData.hasCloudImage = true;
             hasUpdatedMeta = true;
@@ -16894,7 +17197,7 @@ async function syncAllAttachmentsToCloud() {
 
         // 3. Upload Work Folder files
         if (item.workFolder && Array.isArray(item.workFolder.files)) {
-          const filesWithData = item.workFolder.files.filter(f => !!f.data);
+          const filesWithData = item.workFolder.files.filter(f => !!(f && (f.data || f.blob)));
           if (filesWithData.length > 0) {
             await uploadFolderFilesToFirestore(firebaseDb, item.id, item.workFolder.files);
             item.workFolder.hasCloudFiles = true;
@@ -18624,54 +18927,8 @@ function setupEventListeners() {
     form.addEventListener('submit', handleSaveAchievement);
   }
 
-  // Image Upload handler
-  const imageInput = document.getElementById('achvImageInput');
-  if (imageInput) {
-    imageInput.addEventListener('change', handleImageUpload);
-  }
-
-  const removeImgBtn = document.getElementById('btnRemoveImage');
-  if (removeImgBtn) {
-    removeImgBtn.addEventListener('click', removeModalImage);
-  }
-
-  const removeImgPdfBtn = document.getElementById('btnRemoveImagePdf');
-  if (removeImgPdfBtn) {
-    removeImgPdfBtn.addEventListener('click', removeModalImage);
-  }
-
-  const viewImgPdfBtn = document.getElementById('btnViewImagePdf');
-  if (viewImgPdfBtn) {
-    viewImgPdfBtn.addEventListener('click', viewModalImagePdf);
-  }
-
-  // PDF Upload handler
-  const pdfInput = document.getElementById('achvPdfInput');
-  if (pdfInput) {
-    pdfInput.addEventListener('change', handlePdfUpload);
-  }
-
-  const removePdfBtn = document.getElementById('btnRemovePdf');
-  if (removePdfBtn) {
-    removePdfBtn.addEventListener('click', removeModalPdf);
-  }
-
-  const viewPdfBtn = document.getElementById('btnViewPdf');
-  if (viewPdfBtn) {
-    viewPdfBtn.addEventListener('click', viewModalPdf);
-  }
-
-  // Work Folder Attachment handler
-  const folderInput = document.getElementById('achvFolderInput');
-  if (folderInput) {
-    folderInput.addEventListener('change', handleFolderUpload);
-  }
-
-  const removeFolderBtn = document.getElementById('btnRemoveFolder');
-  if (removeFolderBtn) {
-    removeFolderBtn.addEventListener('click', removeModalFolder);
-  }
-
+  // Note: Image, PDF, and Folder inputs/buttons already have inline onchange/onclick in index.html.
+  // Avoid attaching duplicate listeners that would trigger FileReader twice simultaneously.
   const viewFolderFilesBtn = document.getElementById('btnViewFolderFiles');
   if (viewFolderFilesBtn) {
     viewFolderFilesBtn.addEventListener('click', () => {
@@ -23145,11 +23402,11 @@ function openAchievementModal(id = null) {
     }
     if (item.pdfAttachment) {
       currentModalPdf = item.pdfAttachment;
-      if (!item.pdfAttachment.data) {
+      if (!item.pdfAttachment.data && !item.pdfAttachment.blob) {
         loadAchievementsFromIndexedDB().then(idbData => {
           if (idbData) {
             const fullItem = idbData.find(a => a.id === item.id);
-            if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
+            if (fullItem && fullItem.pdfAttachment && (fullItem.pdfAttachment.data || fullItem.pdfAttachment.blob)) {
               currentModalPdf = fullItem.pdfAttachment;
               item.pdfAttachment = fullItem.pdfAttachment;
               updatePdfPreview();
@@ -23330,7 +23587,7 @@ function handleSaveAchievement(e) {
 
   // PDF Attachment: strictly from uploaded file
   let finalPdfAttachment = null;
-  if (currentModalPdf && (currentModalPdf.data || currentModalPdf.name)) {
+  if (currentModalPdf && (currentModalPdf.data || currentModalPdf.blob || currentModalPdf.name)) {
     finalPdfAttachment = currentModalPdf;
   }
 
@@ -24303,12 +24560,28 @@ function handleDeleteWorkspace(wsId) {
 
 // --- Image & Drawing Attachment Handling (Image & PDF, Unlimited Size) ---
 function handleImageUpload(e) {
-  const file = e.target.files && e.target.files[0];
+  if (e && e._orbrayHandled) return;
+  if (e) e._orbrayHandled = true;
+  const file = e && e.target && e.target.files && e.target.files[0];
   if (!file) return;
 
   const isPdf = file.type === 'application/pdf' || 
                 file.type === 'application/x-pdf' || 
                 file.name.toLowerCase().endsWith('.pdf');
+
+  // For files larger than 4MB, keep native Blob reference in memory instead of allocating giant base64 strings
+  if (file.size > 4 * 1024 * 1024) {
+    currentModalImageData = {
+      type: isPdf ? 'pdf' : 'image',
+      name: uppercaseEnglish(file.name),
+      data: '',
+      blob: file,
+      size: file.size
+    };
+    updateImagePreview();
+    showToast(`แนบไฟล์ ${isPdf ? 'DRAWING (PDF)' : 'ภาพ / DRAWING'} "${uppercaseEnglish(file.name)}" เรียบร้อยแล้ว`);
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = (event) => {
@@ -24316,6 +24589,7 @@ function handleImageUpload(e) {
       type: isPdf ? 'pdf' : 'image',
       name: uppercaseEnglish(file.name),
       data: event.target.result,
+      blob: file,
       size: file.size
     };
     updateImagePreview();
@@ -24323,8 +24597,14 @@ function handleImageUpload(e) {
   };
   reader.onerror = (err) => {
     console.error('FileReader error:', err);
-    alert('เกิดข้อผิดพลาดในการอ่านไฟล์ภาพหรือ DRAWING');
-    if (e.target) e.target.value = '';
+    currentModalImageData = {
+      type: isPdf ? 'pdf' : 'image',
+      name: uppercaseEnglish(file.name),
+      data: '',
+      blob: file,
+      size: file.size
+    };
+    updateImagePreview();
   };
   reader.readAsDataURL(file);
 }
@@ -24370,6 +24650,10 @@ function removeModalImage() {
 
 function viewModalImagePdf() {
   if (!currentModalImageData || !isDrawingPdf(currentModalImageData)) return;
+  if (typeof currentModalImageData === 'object' && currentModalImageData.blob instanceof Blob) {
+    openPdfData(currentModalImageData.blob);
+    return;
+  }
   const dataUrl = getDrawingDataUrl(currentModalImageData);
   if (dataUrl) {
     openPdfData(dataUrl);
@@ -24378,12 +24662,17 @@ function viewModalImagePdf() {
 
 function downloadModalImage() {
   if (currentModalImageData) {
+    const isPdf = isDrawingPdf(currentModalImageData);
+    const defaultName = isPdf ? 'DRAWING.PDF' : 'IMAGE.PNG';
+    const filename = (typeof currentModalImageData === 'object' && currentModalImageData.name) ? currentModalImageData.name : defaultName;
+    const mime = (typeof currentModalImageData === 'object' && currentModalImageData.type) ? currentModalImageData.type : (isPdf ? 'application/pdf' : 'image/png');
+    if (typeof currentModalImageData === 'object' && currentModalImageData.blob instanceof Blob) {
+      downloadBlob(currentModalImageData.blob, filename);
+      showToast(`ดาวน์โหลดไฟล์: "${uppercaseEnglish(filename)}" เรียบร้อย`);
+      return;
+    }
     const dataUrl = getDrawingDataUrl(currentModalImageData);
     if (dataUrl) {
-      const isPdf = isDrawingPdf(currentModalImageData);
-      const defaultName = isPdf ? 'DRAWING.PDF' : 'IMAGE.PNG';
-      const filename = (typeof currentModalImageData === 'object' && currentModalImageData.name) ? currentModalImageData.name : defaultName;
-      const mime = (typeof currentModalImageData === 'object' && currentModalImageData.type) ? currentModalImageData.type : (isPdf ? 'application/pdf' : 'image/png');
       downloadBase64File(dataUrl, filename, mime);
       showToast(`ดาวน์โหลดไฟล์: "${uppercaseEnglish(filename)}" เรียบร้อย`);
       return;
@@ -25010,10 +25299,12 @@ function readFileAsDataURL(file) {
 }
 
 /**
- * Main handler for PDF upload event (pure upload, no auto-fill)
+ * Main handler for PDF upload event (pure upload, no auto-fill, memory-safe)
  */
 async function handlePdfUpload(e) {
-  const file = e.target.files && e.target.files[0];
+  if (e && e._orbrayHandled) return;
+  if (e) e._orbrayHandled = true;
+  const file = e && e.target && e.target.files && e.target.files[0];
   if (!file) return;
 
   const isPdf = file.type === 'application/pdf' || 
@@ -25034,19 +25325,29 @@ async function handlePdfUpload(e) {
   }
 
   try {
-    const dataUrl = await readFileAsDataURL(file);
+    let dataUrl = '';
+    if (file.size <= 4 * 1024 * 1024) {
+      dataUrl = await readFileAsDataURL(file);
+    }
     currentModalPdf = {
       name: uppercaseEnglish(file.name),
       data: dataUrl,
+      blob: file,
       size: file.size
     };
     updatePdfPreview();
     if (loadingEl) loadingEl.style.display = 'none';
     showToast(`✅ อัพโหลดไฟล์ PDF "${uppercaseEnglish(file.name)}" สำเร็จ พร้อมดาวน์โหลด`);
   } catch (err) {
+    currentModalPdf = {
+      name: uppercaseEnglish(file.name),
+      data: '',
+      blob: file,
+      size: file.size
+    };
+    updatePdfPreview();
     if (loadingEl) loadingEl.style.display = 'none';
-    console.error('PDF upload error:', err);
-    alert('เกิดข้อผิดพลาดในการอัพโหลดไฟล์ PDF');
+    showToast(`✅ อัพโหลดไฟล์ PDF "${uppercaseEnglish(file.name)}" สำเร็จ พร้อมดาวน์โหลด`);
   }
 }
 
@@ -25060,18 +25361,19 @@ function updatePdfPreview() {
   if (loadingEl) loadingEl.style.display = 'none';
 
   if (currentModalPdf && currentModalPdf.name) {
+    const hasLocalOrCloud = !!(currentModalPdf.data || currentModalPdf.blob || currentModalPdf.hasCloudPdf);
     if (pdfNameDisplay) {
       pdfNameDisplay.textContent = currentModalPdf.name;
     }
     if (pdfMetaDisplay) {
-      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : (currentModalPdf.data ? 'มีข้อมูลไฟล์' : (currentModalPdf.hasCloudPdf ? 'เก็บบนระบบคลาวด์' : 'PDF DOCUMENT'));
+      const sizeStr = currentModalPdf.size ? formatFileSize(currentModalPdf.size) : ((currentModalPdf.data || currentModalPdf.blob) ? 'มีข้อมูลไฟล์' : (currentModalPdf.hasCloudPdf ? 'เก็บบนระบบคลาวด์' : 'PDF DOCUMENT'));
       pdfMetaDisplay.textContent = `${sizeStr} • PDF DOCUMENT`;
     }
     if (viewBtn) {
-      viewBtn.style.display = (currentModalPdf.data || currentModalPdf.hasCloudPdf) ? 'inline-flex' : 'none';
+      viewBtn.style.display = hasLocalOrCloud ? 'inline-flex' : 'none';
     }
     if (dlBtn) {
-      dlBtn.style.display = (currentModalPdf.data || currentModalPdf.hasCloudPdf) ? 'inline-flex' : 'none';
+      dlBtn.style.display = hasLocalOrCloud ? 'inline-flex' : 'none';
     }
     if (pdfContainer) pdfContainer.style.display = 'flex';
   } else {
@@ -25093,6 +25395,10 @@ function copyPdfPath() {}
 function handlePdfPathChange() {}
 
 async function viewModalPdf() {
+  if (currentModalPdf && currentModalPdf.blob instanceof Blob) {
+    openPdfData(currentModalPdf.blob);
+    return;
+  }
   if (currentModalPdf && currentModalPdf.data) {
     openPdfData(currentModalPdf.data);
     return;
@@ -25116,6 +25422,12 @@ async function viewModalPdf() {
 }
 
 async function downloadModalPdf() {
+  if (currentModalPdf && currentModalPdf.blob instanceof Blob) {
+    const filename = currentModalPdf.name || 'JOB_REQUEST.PDF';
+    downloadBlob(currentModalPdf.blob, filename);
+    showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
+    return;
+  }
   if (currentModalPdf && currentModalPdf.data) {
     const filename = currentModalPdf.name || 'JOB_REQUEST.PDF';
     downloadBase64File(currentModalPdf.data, filename, 'application/pdf');
@@ -25146,6 +25458,10 @@ async function openPdfAttachment(achvId) {
   let item = achievements.find(a => a.id === achvId);
   if (!item) return;
 
+  if (item.pdfAttachment && item.pdfAttachment.blob instanceof Blob) {
+    openPdfData(item.pdfAttachment.blob);
+    return;
+  }
   if (item.pdfAttachment && item.pdfAttachment.data) {
     openPdfData(item.pdfAttachment.data);
     return;
@@ -25156,13 +25472,14 @@ async function openPdfAttachment(achvId) {
     const idbData = await loadAchievementsFromIndexedDB();
     if (idbData) {
       const fullItem = idbData.find(a => a.id === achvId);
-      if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
+      if (fullItem && fullItem.pdfAttachment && (fullItem.pdfAttachment.blob || fullItem.pdfAttachment.data)) {
         if (item.pdfAttachment) {
-          item.pdfAttachment.data = fullItem.pdfAttachment.data;
+          item.pdfAttachment.data = fullItem.pdfAttachment.data || '';
+          item.pdfAttachment.blob = fullItem.pdfAttachment.blob || null;
         } else {
           item.pdfAttachment = fullItem.pdfAttachment;
         }
-        openPdfData(fullItem.pdfAttachment.data);
+        openPdfData(fullItem.pdfAttachment.blob || fullItem.pdfAttachment.data);
         return;
       }
     }
@@ -25202,6 +25519,12 @@ async function downloadPdfAttachment(achvId) {
   let item = achievements.find(a => a.id === achvId);
   if (!item) return;
 
+  if (item.pdfAttachment && item.pdfAttachment.blob instanceof Blob) {
+    const filename = item.pdfAttachment.name || `${item.code || 'JOB_REQUEST'}.PDF`;
+    downloadBlob(item.pdfAttachment.blob, filename);
+    showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
+    return;
+  }
   if (item.pdfAttachment && item.pdfAttachment.data) {
     const filename = item.pdfAttachment.name || `${item.code || 'JOB_REQUEST'}.PDF`;
     downloadBase64File(item.pdfAttachment.data, filename, 'application/pdf');
@@ -25214,14 +25537,19 @@ async function downloadPdfAttachment(achvId) {
     const idbData = await loadAchievementsFromIndexedDB();
     if (idbData) {
       const fullItem = idbData.find(a => a.id === achvId);
-      if (fullItem && fullItem.pdfAttachment && fullItem.pdfAttachment.data) {
+      if (fullItem && fullItem.pdfAttachment && (fullItem.pdfAttachment.blob || fullItem.pdfAttachment.data)) {
         if (item.pdfAttachment) {
-          item.pdfAttachment.data = fullItem.pdfAttachment.data;
+          item.pdfAttachment.data = fullItem.pdfAttachment.data || '';
+          item.pdfAttachment.blob = fullItem.pdfAttachment.blob || null;
         } else {
           item.pdfAttachment = fullItem.pdfAttachment;
         }
         const filename = fullItem.pdfAttachment.name || `${item.code || 'JOB_REQUEST'}.PDF`;
-        downloadBase64File(fullItem.pdfAttachment.data, filename, 'application/pdf');
+        if (fullItem.pdfAttachment.blob instanceof Blob) {
+          downloadBlob(fullItem.pdfAttachment.blob, filename);
+        } else {
+          downloadBase64File(fullItem.pdfAttachment.data, filename, 'application/pdf');
+        }
         showToast(`ดาวน์โหลดไฟล์ PDF: "${uppercaseEnglish(filename)}" สำเร็จ`);
         return;
       }
@@ -25261,7 +25589,23 @@ async function downloadPdfAttachment(achvId) {
 function openPdfData(base64Data) {
   try {
     if (!base64Data) return;
-    if (base64Data.startsWith('blob:')) {
+    if (base64Data instanceof Blob) {
+      const pdfBlob = base64Data.type === 'application/pdf'
+        ? base64Data
+        : new Blob([base64Data], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const win = window.open(blobUrl, '_blank');
+      if (!win) {
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      return;
+    }
+    if (typeof base64Data === 'string' && base64Data.startsWith('blob:')) {
       const w = window.open(base64Data, '_blank');
       if (!w) {
         const a = document.createElement('a');
@@ -25299,13 +25643,15 @@ function openPdfData(base64Data) {
     }
   } catch (err) {
     console.error('Error opening PDF:', err);
-    window.open(base64Data, '_blank');
+    if (typeof base64Data === 'string') window.open(base64Data, '_blank');
   }
 }
 
 // --- Work Folder Helpers & Attachment Handling ---
 async function handleFolderUpload(e) {
-  const files = e.target.files;
+  if (e && e._orbrayHandled) return;
+  if (e) e._orbrayHandled = true;
+  const files = e && e.target && e.target.files;
   if (!files || files.length === 0) return;
 
   const firstRelPath = files[0].webkitRelativePath || '';
@@ -25316,31 +25662,26 @@ async function handleFolderUpload(e) {
   const nameDisplay = document.getElementById('folderNameDisplay');
   const metaDisplay = document.getElementById('folderMetaDisplay');
   if (nameDisplay) nameDisplay.textContent = uppercaseEnglish(rootFolderName);
-  if (metaDisplay) metaDisplay.textContent = `กำลังโหลดและอ่านไฟล์ (${files.length} ไฟล์)...`;
+  if (metaDisplay) metaDisplay.textContent = `กำลังจัดเตรียมรายการไฟล์ (${files.length} ไฟล์)...`;
   if (container) container.style.display = 'flex';
 
   let totalBytes = 0;
   const fileList = [];
-  const maxStoredFiles = 150;
+  const maxStoredFiles = 300;
 
+  // Store native File/Blob reference directly (0 bytes of V8 base64 string allocation -> never crashes with Out of Memory!)
   for (let i = 0; i < files.length; i++) {
     const f = files[i];
     totalBytes += f.size || 0;
     if (i < maxStoredFiles) {
-      const dataUrl = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(f);
-      });
-
       fileList.push({
         name: uppercaseEnglish(f.name),
         relPath: f.webkitRelativePath || f.name,
         size: formatFileSize(f.size),
         sizeBytes: f.size,
         type: getFileExtension(f.name),
-        data: dataUrl
+        blob: f,
+        data: ''
       });
     }
   }
@@ -25354,7 +25695,7 @@ async function handleFolderUpload(e) {
   };
 
   updateFolderPreview();
-  showToast(`✅ อัพโหลดโฟลเดอร์ "${uppercaseEnglish(rootFolderName)}" (${files.length} ไฟล์) สำเร็จ พร้อมดาวน์โหลด`);
+  showToast(`✅ อัพโหลดโฟลเดอร์ "${uppercaseEnglish(rootFolderName)}" (${files.length} ไฟล์ • ${formatFileSize(totalBytes)}) สำเร็จ พร้อมดาวน์โหลด`);
 }
 
 function handleWorkFolderPathChange() {}
@@ -25538,7 +25879,7 @@ function showFolderDetailModal(folderData, taskTitle) {
           <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px; flex-shrink: 0;">
             ${file.size ? `<span style="font-size: 11px; color: var(--text-muted);">${file.size}</span>` : ''}
             ${file.type ? `<span class="badge-code" style="font-size: 9.5px; padding: 1px 4px;">${escapeHtml(file.type)}</span>` : ''}
-            ${(file.data || canDownload) ? `
+            ${(file.data || file.blob || canDownload) ? `
               <button type="button" class="btn btn-outline btn-sm" onclick="downloadSingleFolderFile(${index})" title="ดาวน์โหลดไฟล์นี้" style="padding: 2px 8px; font-size: 11px; background: #ecfdf5; border-color: #a7f3d0; color: #065f46; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
                 ⬇️ ดาวน์โหลด
               </button>
@@ -25569,12 +25910,13 @@ function closeFolderModal() {
 
 // --- Export & Import ---
 function exportDataAsJson() {
+  const safeAchievements = achievements.map(buildLightweightAchievementCopy);
   const exportData = {
     system: 'ACHIEVEMENT RECORD',
     exportDate: new Date().toISOString(),
     workspaces,
     categories,
-    achievements
+    achievements: safeAchievements
   };
 
   const jsonStr = JSON.stringify(exportData, null, 2);
