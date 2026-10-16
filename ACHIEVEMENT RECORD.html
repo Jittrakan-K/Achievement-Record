@@ -1119,7 +1119,7 @@
             </label>
 
             <!-- Hidden Folder Picker Input with webkitdirectory -->
-            <input type="file" id="achvFolderInput" webkitdirectory directory multiple style="display: none;">
+            <input type="file" id="achvFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleFolderUpload(event)">
 
             <!-- Button to browse and upload a folder -->
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
@@ -1145,7 +1145,7 @@
                 <button type="button" id="btnViewFolderFiles" class="btn btn-outline btn-sm" style="background: #ffffff; color: #92400e; border-color: #fde68a;">
                   📑 ดูรายชื่อไฟล์ (<span id="folderFileCountBadge">0</span>)
                 </button>
-                <button type="button" id="btnRemoveFolder" class="btn btn-danger btn-sm">ลบโฟลเดอร์</button>
+                <button type="button" id="btnRemoveFolder" onclick="removeModalFolder()" class="btn btn-danger btn-sm">ลบโฟลเดอร์</button>
               </div>
             </div>
           </div>

@@ -16890,6 +16890,18 @@ async function saveAchievementToCloud(item) {
       }
       wf.zipData = '';
       rawCopy.workFolder = wf;
+    } else {
+      rawCopy.workFolder = null;
+      try {
+        const folderDocs = await docRef.collection('folderFiles').get();
+        if (!folderDocs.empty) {
+          const batch = firebaseDb.batch();
+          folderDocs.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+        }
+      } catch (subErr) {
+        console.warn('Notice cleaning folderFiles on cloud:', subErr);
+      }
     }
 
     const itemToSave = cleanFirestoreObject(rawCopy);
@@ -18936,6 +18948,14 @@ function setupEventListeners() {
         showFolderDetailModal(currentModalFolder, document.getElementById('achvTitle').value || 'งานใหม่');
       }
     });
+  }
+  const removeFolderBtn = document.getElementById('btnRemoveFolder');
+  if (removeFolderBtn && !removeFolderBtn.getAttribute('onclick')) {
+    removeFolderBtn.addEventListener('click', removeModalFolder);
+  }
+  const folderInputEl = document.getElementById('achvFolderInput');
+  if (folderInputEl && !folderInputEl.getAttribute('onchange')) {
+    folderInputEl.addEventListener('change', handleFolderUpload);
   }
 
 
@@ -23370,7 +23390,7 @@ function openAchievementModal(id = null) {
         loadAchievementsFromIndexedDB().then(idbData => {
           if (idbData) {
             const fullItem = idbData.find(a => a.id === item.id);
-            if (fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
+            if (currentModalFolder && fullItem && fullItem.workFolder && hasLocalFolderFileData(fullItem.workFolder)) {
               currentModalFolder = { ...fullItem.workFolder };
               item.workFolder = fullItem.workFolder;
               updateFolderPreview();
@@ -25735,7 +25755,7 @@ function removeModalFolder() {
   const folderInput = document.getElementById('achvFolderInput');
   if (folderInput) folderInput.value = '';
   updateFolderPreview();
-  showToast('ลบโฟลเดอร์ผลงานเรียบร้อยแล้ว');
+  showToast('🗑️ ลบโฟลเดอร์ผลงานเรียบร้อยแล้ว (อย่าลืมกด "บันทึกข้อมูล" เพื่อยืนยัน)');
 }
 
 function copyWorkFolderPath() {}
