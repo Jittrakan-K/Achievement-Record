@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ACHIEVEMENT RECORD | TASK TRACKER</title>
+  <!-- Favicon: Official Brand Badge (Matching Website Header Logo) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%23E60012'/%3E%3Crect x='11' y='11' width='42' height='42' rx='5' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M25 11v42M11 25h42' fill='none' stroke='%23ffffff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261003_v1">
+  <link rel="alternate icon" type="image/png" href="favicon.png?v=20261003_v1">
+  <link rel="shortcut icon" href="favicon.ico?v=20261003_v1">
+  <!-- Mobile & PWA Optimization Meta Tags -->
+  <meta name="theme-color" content="#E60012">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Achievement Record">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="favicon.png?v=20261003_v1">
+  <!-- Anti-Cache Meta Tags to prevent stale mobile browser cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <!-- Google Fonts: Sarabun & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20261016_v34">
+  <!-- Chart.js CDN for Real-time Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- Print-only Header -->
+  <div class="print-header">
+    <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 4px;">รายงานผลงานและการปฏิบัติงาน (ACHIEVEMENT RECORD)</h1>
+    <p style="font-size: 12px; color: #555;">ข้อมูล ณ วันที่: <span id="printDate"></span></p>
+  </div>
+
+  <!-- System Top Status Strip -->
+  <div class="system-top-strip">
+    <div class="container system-top-strip-inner">
+      <div class="system-top-strip-left">
+        <span class="system-top-corp" id="topStripWorkspaceName">ORBRAY (THAILAND)</span>
+        <span class="system-top-sep">/</span>
+        <span class="system-top-dept" id="topStripWorkspaceSub">PRODUCTION TECHNOLOGY • ACHIEVEMENT RECORD</span>
+      </div>
+      <div class="system-top-strip-right">
+        <span class="status-indicator-dot"></span>
+        <span class="system-top-status-text">LIVE WORKSPACE • AUTO-SYNC</span>
+        <button type="button" class="system-top-sim-btn" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>MOBILE SIMULATOR</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <!-- Mobile Native iOS App Header Bar (Visible on <= 768px) -->
+    <div class="mobile-app-header-container">
+      <!-- Row 1: Balanced Centered Mobile Top Nav (Matching iOS Redesign) -->
+      <div class="mobile-top-nav">
+        <div class="mobile-nav-actions-left">
+          <button type="button" class="mobile-header-circle-btn" onclick="openMobileToolsSheet()" title="เมนูเครื่องมือ / ตั้งค่า" aria-label="เมนู">
+            <div class="mobile-brand-icon-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M9 3v18M3 9h18"/>
+              </svg>
+            </div>
+          </button>
+        </div>
+
+        <div class="mobile-brand-titles-centered" onclick="switchMobileNavTab('dashboard')">
+          <div class="mobile-brand-main" id="mobileHeaderTitle">DASHBOARD</div>
+          <div class="mobile-brand-sub" id="mobileHeaderSub">
+            <span id="mobileNavTitle" style="display:none;">DASHBOARD</span>
+            <span>JITTRAKAN K.</span>
+            <span class="dot-sep">•</span>
+            <span class="status-online-dot" id="mobileStatusInfo">ONLINE</span>
+          </div>
+        </div>
+
+        <div class="mobile-nav-actions-right">
+          <button type="button" class="mobile-header-circle-btn btn-auth" id="mobileAuthBtn" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วยรหัส PIN" aria-label="เข้าสู่ระบบ">
+            <span id="mobileAuthIcon">🔑</span>
+          </button>
+          <button type="button" class="mobile-header-circle-btn btn-primary-add-circle" onclick="openAchievementModal()" title="เพิ่มงานใหม่ (ADD TASK)" aria-label="เพิ่มงานใหม่">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 1.5: Mobile Workspace / Company Switcher Tabs -->
+      <div class="mobile-workspace-scroll" id="mobileWorkspaceScroll">
+        <!-- Populated dynamically by JS -->
+      </div>
+
+      <!-- Row 2: Search Bar Pill with Integrated Tune/Sort Icon (Matching User Mockup) -->
+      <div class="mobile-search-sort-bar">
+        <div class="mobile-search-pill-box">
+          <span class="mobile-search-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </span>
+          <input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="ค้นหางาน, รหัสงาน, ผู้ร้องขอ..." oninput="handleMobileSearch(this.value)">
+          <button type="button" class="mobile-search-clear" id="mobileSearchClear" onclick="clearMobileSearch()" style="display: none;" title="ล้างการค้นหา">✕</button>
+          <button type="button" class="mobile-tune-btn" onclick="openMobileSortSheet()" title="จัดเรียงและตัวกรอง" aria-label="ตัวกรอง">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 3: Horizontal Scrollable Status Quick Filter Tabs -->
+      <div class="mobile-quick-filter-scroll">
+        <button type="button" class="mobile-filter-pill active" data-status-filter="all" onclick="setMobileStatusFilter('all')">
+          ALL <span class="pill-badge" id="mobileFilterAllCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-inprog" data-status-filter="in_progress" onclick="setMobileStatusFilter('in_progress')">
+          <span class="pill-dot dot-inprog"></span> IN PROGRESS <span class="pill-badge" id="mobileFilterInProgCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-wait" data-status-filter="wait" onclick="setMobileStatusFilter('wait')">
+          <span class="pill-dot dot-wait"></span> PENDING <span class="pill-badge" id="mobileFilterWaitCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-done" data-status-filter="done" onclick="setMobileStatusFilter('done')">
+          <span class="pill-dot dot-done"></span> DONE <span class="pill-badge" id="mobileFilterDoneCount">0</span>
+        </button>
+        <button type="button" class="mobile-filter-pill pill-cancel" data-status-filter="cancel" onclick="setMobileStatusFilter('cancel')">
+          <span class="pill-dot dot-cancel"></span> CANCEL <span class="pill-badge" id="mobileFilterCancelCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="container header-inner">
+      <div class="brand-section">
+        <div class="brand-app-icon" title="ACHIEVEMENT RECORD">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 3v18M3 9h18"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">
+            <span class="brand-title-accent" id="headerBrandAccent">ACHIEVEMENT</span> <span id="headerBrandMain">RECORD</span>
+            <span class="brand-badge" id="headerWorkspaceBadge">ORBRAY</span>
+          </h1>
+          <p class="brand-subtitle" id="headerBrandSubtitle">ENGINEERING ARCHIVE &amp; TASK MANAGEMENT</p>
+        </div>
+      </div>
+
+      <!-- Desktop Main Clean Navigation -->
+      <nav class="desktop-main-nav">
+        <button type="button" class="desktop-nav-link active" onclick="desktopNavigateTo('dashboard')" id="deskNavDashboard">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>DASHBOARD</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="desktopNavigateTo('tasks')" id="deskNavTasks">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>TASKS</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="desktopNavigateTo('timeline')" id="deskNavTimeline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>TIMELINE</span>
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Tools & Utilities Dropdown -->
+        <div class="header-tools-dropdown-wrapper">
+          <button type="button" id="btnHeaderTools" class="btn btn-tools-dropdown" onclick="toggleHeaderToolsDropdown(event)" title="เมนูเครื่องมือและการจัดการ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>TOOLS</span>
+            <span class="dropdown-chevron">▾</span>
+          </button>
+          <div id="headerToolsDropdown" class="header-tools-menu">
+            <button type="button" id="btnManageWorkspaces" class="tools-menu-item" onclick="closeHeaderToolsDropdown(); openWorkspaceModal();" title="จัดการหน้าบริษัท / พื้นที่ทำงาน (Workspaces)">
+              <span class="menu-icon">🏢</span>
+              <div class="menu-text">
+                <span class="menu-title">จัดการหน้าบริษัท / งานส่วนตัว (WORKSPACES)</span>
+                <span class="menu-sub">เพิ่มหน้าบริษัทใหม่ กำหนดสีประจำหน้า และสลับพื้นที่ทำงาน</span>
+              </div>
+            </button>
+            <button type="button" id="btnManageCategories" class="tools-menu-item" title="จัดการหมวดหมู่">
+              <span class="menu-icon">📁</span>
+              <div class="menu-text">
+                <span class="menu-title">จัดการหมวดหมู่ (CATEGORIES)</span>
+                <span class="menu-sub">เพิ่ม แก้ไข กำหนดสีและไอคอนหมวดหมู่งาน</span>
+              </div>
+            </button>
+            <button type="button" id="btnExportCsv" class="tools-menu-item" title="ส่งออกเป็น Excel (CSV)">
+              <span class="menu-icon">📊</span>
+              <div class="menu-text">
+                <span class="menu-title">ส่งออก EXCEL (CSV)</span>
+                <span class="menu-sub">ดาวน์โหลดข้อมูลผลงานในรูปแบบ Excel Spreadsheet</span>
+              </div>
+            </button>
+            <button type="button" id="btnExportJson" class="tools-menu-item" title="สำรองข้อมูล (JSON Backup)">
+              <span class="menu-icon">💾</span>
+              <div class="menu-text">
+                <span class="menu-title">สำรองข้อมูล (BACKUP JSON)</span>
+                <span class="menu-sub">บันทึกฐานข้อมูลและไฟล์แนบเก็บไว้ในเครื่อง</span>
+              </div>
+            </button>
+            <button type="button" id="btnImportJson" class="tools-menu-item" title="นำเข้าข้อมูลสำรอง">
+              <span class="menu-icon">📥</span>
+              <div class="menu-text">
+                <span class="menu-title">นำเข้าข้อมูล (IMPORT JSON)</span>
+                <span class="menu-sub">กู้คืนข้อมูลหรือซิงค์จากไฟล์สำรอง</span>
+              </div>
+            </button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            <button type="button" id="btnPrintReport" class="tools-menu-item" title="พิมพ์รายงาน / บันทึกเป็น PDF">
+              <span class="menu-icon">🖨️</span>
+              <div class="menu-text">
+                <span class="menu-title">พิมพ์รายงาน / PDF</span>
+                <span class="menu-sub">จัดพิมพ์สรุปผลงานหรือบันทึกเป็นเอกสาร PDF</span>
+              </div>
+            </button>
+            <div class="tools-menu-divider"></div>
+            <button type="button" class="tools-menu-item" onclick="window.open('mobile-preview.html', 'MobileSimulator', 'width=1120,height=960')" title="เปิดโปรแกรมจำลองหน้าจอมือถือ (iOS & Android Simulator)">
+              <span class="menu-icon">📱</span>
+              <div class="menu-text">
+                <span class="menu-title" style="color: var(--primary);">จำลองจอมือถือ (MOBILE SIMULATOR)</span>
+                <span class="menu-sub">พรีวิวและทดสอบจอ iOS (iPhone) และ Android ทันที</span>
+              </div>
+            </button>
+            <div class="tools-menu-divider"></div>
+            <button type="button" id="btnCloudSettings" class="tools-menu-item cloud-item" onclick="openCloudModal()" title="ตั้งค่าเชื่อมต่อคลาวด์">
+              <span class="cloud-status-dot" id="cloudStatusDot"></span>
+              <div class="menu-text">
+                <span class="menu-title" id="cloudStatusText">CLOUD: LOCAL</span>
+                <span class="menu-sub">ตั้งค่า Firebase Cloud Sync เชื่อมต่อหลายอุปกรณ์</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Account / PIN Authentication Control -->
+        <div style="position: relative; display: inline-block;">
+          <button id="btnHeaderAuth" class="auth-header-btn unauthenticated" onclick="handleAuthHeaderClick()" title="เข้าสู่ระบบด้วยรหัส PIN เพื่อเพิ่มหรือแก้ไขงาน">
+            <span id="headerAuthIcon">🔑</span>
+            <span id="headerAuthText">LOGIN</span>
+          </button>
+          <div id="authUserDropdown" class="auth-user-dropdown">
+            <div class="auth-dropdown-header">
+              <div class="auth-dropdown-name" id="dropdownUserName">JITTRAKAN K.</div>
+              <div class="auth-dropdown-meta" id="dropdownUserMeta" style="font-size: 11px; color: #64748b; margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>รหัส: <strong id="dropdownEmpId" style="font-family: monospace; color: #0f172a;">20523</strong></span>
+                <span>&bull;</span>
+                <span id="dropdownCompany">🏢 ORBRAY</span>
+              </div>
+              <div class="auth-dropdown-pin" id="dropdownUserPin" style="margin-top: 4px;">รหัส PIN: •••••</div>
+            </div>
+            <div class="auth-dropdown-item" onclick="openUserProfileModal()">
+              <span>👤</span> ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
+            </div>
+            <div class="auth-dropdown-item" onclick="openChangePinModal()">
+              <span>🔑</span> เปลี่ยนรหัส PIN ของฉัน
+            </div>
+            <div class="auth-dropdown-item admin-only-item" id="adminViewTeamPinsDropdownItem" style="display: none;" onclick="openAdminTeamPinsModal()">
+              <span>🛡️</span> จัดการบัญชีและรหัส PIN (ADMIN)
+            </div>
+            <div class="auth-dropdown-item text-danger" onclick="logoutUser()">
+              <span>🚪</span> ออกจากระบบ (LOGOUT)
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Architectural Multi-Company / Workspace Bar -->
+    <section class="workspace-switcher-section" id="workspaceSwitcherSection" aria-label="Company and Workspace Pages">
+      <div class="workspace-switcher-left">
+        <button type="button" class="ws-tabs-scroll-arrow ws-tabs-scroll-prev" id="btnWsScrollPrev" onclick="scrollWorkspaceTabs(-240)" title="เลื่อนแถบไปทางซ้าย" aria-label="Scroll Left">‹</button>
+        <div class="workspace-tabs-list" id="workspaceTabsList">
+          <!-- Populated dynamically by JS (Supports Drag & Drop + 1-Click Move to Front) -->
+        </div>
+        <button type="button" class="ws-tabs-scroll-arrow ws-tabs-scroll-next" id="btnWsScrollNext" onclick="scrollWorkspaceTabs(240)" title="เลื่อนแถบไปทางขวา" aria-label="Scroll Right">›</button>
+      </div>
+      <div class="workspace-switcher-actions">
+        <div class="workspace-theme-quickbar" id="workspaceThemeQuickbar" title="คลิกเพื่อเปลี่ยนสีธีมของหน้าปัจจุบันทันที">
+          <!-- Populated dynamically by JS with quick color dots + custom color picker -->
+        </div>
+        <button type="button" class="workspace-reorder-btn" onclick="openWorkspaceModal(false, true)" title="จัดเรียงลำดับหน้า หรือเลือกว่าจะเอาตัวเลือกไหนไว้ด้านหน้าสุด">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
+          <span>จัดลำดับหน้า</span>
+        </button>
+        <button type="button" class="workspace-quick-add-btn" onclick="openWorkspaceModal(true)" title="สร้างหน้าบริษัทใหม่ หรือพื้นที่เก็บงานส่วนตัว">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>เพิ่มหน้าใหม่</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Executive Workspace Command Header (Replaces generic AI landing banner) -->
+    <section class="murata-hero-section">
+      <div class="murata-hero-card">
+        <div class="murata-hero-content">
+          <div class="workspace-eyebrow-row">
+            <span class="workspace-eyebrow-dot"></span>
+            <span class="murata-hero-badge" id="murataHeroBadge">ACTIVE WORKSPACE • PRODUCTION TECHNOLOGY</span>
+          </div>
+          <h2 class="murata-hero-title" id="murataHeroTitle">ORBRAY (THAILAND) <span>ACHIEVEMENT RECORD</span></h2>
+          <p class="murata-hero-desc" id="murataHeroDesc">
+            ศูนย์รวมบันทึกผลงานวิศวกรรม ติดตามความคืบหน้างวดงาน และจัดเก็บเอกสาร Job Request / Drawing
+          </p>
+          <div class="murata-hero-actions">
+            <button type="button" id="btnAddAchievement" class="btn-murata-red btn-hero-cta" onclick="openAchievementModal()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span>เพิ่มงานใหม่ (ADD RECORD)</span>
+            </button>
+            <button type="button" class="btn-murata-outline" onclick="desktopNavigateTo('tasks')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>ดูตารางงาน (VIEW RECORDS)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Workspace Telemetry Panel -->
+        <div class="workspace-telemetry-panel" id="workspaceTelemetryPanel">
+          <div class="telemetry-top-row">
+            <div class="telemetry-rate-block">
+              <span class="telemetry-label">COMPLETION RATE</span>
+              <div class="telemetry-rate-val" id="heroCompletionRate">0%</div>
+            </div>
+            <div class="telemetry-score-pill" id="heroAvgAchvScore">AVG SCORE 0%</div>
+          </div>
+          <div class="telemetry-progress-track">
+            <div class="telemetry-progress-fill" id="heroCompletionBar" style="width: 0%;"></div>
+          </div>
+          <div class="telemetry-metrics-grid">
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('all')" title="คลิกเพื่อดูงานทั้งหมดในหน้านี้">
+              <span class="tm-num" id="heroStatTotal">0</span>
+              <span class="tm-lbl">TOTAL RECORDS</span>
+            </div>
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('done')" title="คลิกเพื่อกรองเฉพาะงานที่เสร็จแล้ว (DONE)">
+              <span class="tm-num tm-done" id="heroStatDone">0</span>
+              <span class="tm-lbl">DONE</span>
+            </div>
+            <div class="telemetry-metric-item" onclick="filterByStatusPill('in_progress')" title="คลิกเพื่อกรองเฉพาะงานที่กำลังดำเนินการ">
+              <span class="tm-num tm-active" id="heroStatActive">0</span>
+              <span class="tm-lbl">ACTIVE / WAIT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Stats Row (5 Precision KPI Cards) -->
+    <section class="stats-grid" id="statsGrid">
+      <div class="stat-card stat-card-total" onclick="filterByStatusPill('all')" style="cursor: pointer;" title="VIEW ALL TASKS">
+        <div class="stat-icon stat-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">TOTAL RECORDS</span>
+          </div>
+          <span class="stat-value" id="statTotalCount">0</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-done" onclick="filterByStatusPill('done')" style="cursor: pointer;" title="FILTER DONE TASKS">
+        <div class="stat-icon stat-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">COMPLETED (DONE)</span>
+          </div>
+          <span class="stat-value" id="statCompletedCount">0</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-inprog" onclick="filterByStatusPill('in_progress')" style="cursor: pointer;" title="FILTER IN PROGRESS TASKS">
+        <div class="stat-icon stat-sky">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">IN PROGRESS</span>
+          </div>
+          <span class="stat-value" id="statInProgressCount">0</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-wait" onclick="filterByStatusPill('wait')" style="cursor: pointer;" title="FILTER PENDING TASKS">
+        <div class="stat-icon stat-rose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">PENDING / HOLD</span>
+          </div>
+          <span class="stat-value" id="statWaitCount">0</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-cancel" onclick="filterByStatusPill('cancel')" style="cursor: pointer;" title="FILTER CANCELLED TASKS">
+        <div class="stat-icon stat-slate">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label-wrap">
+            <span class="stat-main-label">CANCELLED</span>
+          </div>
+          <span class="stat-value" id="statCancelCount">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics Section (Charts & Ranking) -->
+    <section class="analytics-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span id="dashboardSectionTitle">สถิติและแดชบอร์ดภาพรวมงาน (REAL-TIME ANALYTICS)</span>
+        </h2>
+        <div class="section-header-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" id="btnToggleEngInsights" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleEngInsights()" title="สลับการแสดงผลแดชบอร์ดข้อมูลเชิงลึกวิศวกรรม (ENGINEERING INSIGHTS)">
+            <span id="engInsightsToggleIcon">📊</span>
+            <span id="engInsightsToggleText">แดชบอร์ดเชิงลึก: แสดง (ON)</span>
+          </button>
+          <button type="button" id="btnToggleRequesterRanking" class="btn btn-outline btn-sm ranking-toggle-btn btn-active-toggle" onclick="toggleRequesterRanking()" title="สลับการแสดงผลอันดับผู้ร้องขอ (REQUEST NAME)">
+            <span id="rankingToggleIcon">🏆</span>
+            <span id="rankingToggleText">อันดับผู้ร้องขอ: แสดง (ON)</span>
+          </button>
+        </div>
+      </div>
+      <div class="analytics-content">
+        <div class="chart-box">
+          <div class="chart-title">
+            <span>สัดส่วนงานตามประเภท (CATEGORIES)</span>
+          </div>
+          <div class="chart-wrapper category-chart-wrapper">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-title">
+            <span>สถานะงานปัจจุบัน (WORK STATUS)</span>
+          </div>
+          <!-- Status Summary Header Pills -->
+          <div class="status-summary-pills" id="statusSummaryPills">
+            <div class="status-summary-pill pill-done" onclick="filterByStatusPill('done')" title="คลิกเพื่อกรองงานที่สำเร็จแล้ว">
+              <span class="pill-dot dot-done"></span>
+              <span class="pill-label">DONE:</span>
+              <span class="pill-count" id="pillDoneCount">0 งาน</span>
+            </div>
+            <div class="status-summary-pill pill-inprog" onclick="filterByStatusPill('in_progress')" title="คลิกเพื่อกรองงานที่กำลังทำ">
+              <span class="pill-dot dot-inprog"></span>
+              <span class="pill-label">IN PROGRESS:</span>
+              <span class="pill-count" id="pillInProgCount">0 งาน</span>
+            </div>
+            <div class="status-summary-pill pill-wait" onclick="filterByStatusPill('wait')" title="คลิกเพื่อกรองงานที่รอดำเนินการ">
+              <span class="pill-dot dot-wait"></span>
+              <span class="pill-label">PENDING:</span>
+              <span class="pill-count" id="pillWaitCount">0 งาน</span>
+            </div>
+            <div class="status-summary-pill pill-cancel" onclick="filterByStatusPill('cancel')" title="คลิกเพื่อกรองงานที่ยกเลิก">
+              <span class="pill-dot dot-cancel"></span>
+              <span class="pill-label">CANCEL:</span>
+              <span class="pill-count" id="pillCancelCount">0 งาน</span>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engineering & Operations Deep-Dive Insights (Native Chart-Box Grid) -->
+      <div id="engInsightsSection" class="eng-insights-wrapper">
+        <!-- Active Insights Filter Banner (Only visible when filtering by Factory/Dept/Process/Support/Excel) -->
+        <div id="engActiveFilterBanner" class="eng-active-filter-banner" style="display: none;">
+          <span id="engActiveFilterText">กำลังกรองข้อมูล</span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="resetAllFilters()" style="padding: 2px 10px; font-size: 11.5px;">ล้างตัวกรอง (RESET)</button>
+        </div>
+
+        <!-- Row 1: 3-Column Overview (Priority, Sub Job Type, Factory) -->
+        <div class="eng-charts-grid-3">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ระดับความสำคัญ (PRIORITY / JOB LV.)</span>
+              <span class="eng-title-meta" id="engPriorityBadge">4 ระดับ</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engPriorityChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engPriorityCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
+              </div>
+              <div class="eng-flat-list" id="engPriorityList"></div>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>รูปแบบการดำเนินงาน (SUB JOB TYPE)</span>
+              <span class="eng-title-meta" id="engSubJobBadge">IN-HOUSE / OUTSOURCE</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engSubJobChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engSubJobCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
+              </div>
+              <div class="eng-flat-list" id="engSubJobList"></div>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>โรงงานที่ร้องขอ (FACTORY)</span>
+              <span class="eng-title-meta" id="engFactoryBadge">0 โรงงาน</span>
+            </div>
+            <div class="eng-donut-layout">
+              <div class="eng-donut-canvas-box">
+                <canvas id="engFactoryChart"></canvas>
+                <div class="eng-donut-center-overlay" id="engFactoryCenter">
+                  <span class="eng-donut-center-num">0</span>
+                  <span class="eng-donut-center-lbl">TOTAL</span>
+                </div>
+              </div>
+              <div class="eng-flat-list" id="engFactoryList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: 2-Column Team Support Contribution (Tooling & Design Support & Maintenance Support) -->
+        <div class="eng-charts-grid-2">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>สัดส่วนทีม TOOLING & ผู้สนับสนุนงานออกแบบ (DESIGN SUPPORT)</span>
+              <span class="eng-title-meta" id="engDesignSupBadge">0 งาน</span>
+            </div>
+            <div id="engDesignSupportContainer" class="eng-table-list"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>สัดส่วนผู้สนับสนุนงานซ่อมบำรุง (MANTENANCE SUPPORT)</span>
+              <span class="eng-title-meta" id="engMaintSupBadge">0 งาน</span>
+            </div>
+            <div id="engMaintSupportContainer" class="eng-table-list"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: 2x2 Breakdown (Sub Status, Job Type, Department, Process) -->
+        <div class="eng-charts-grid-2">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ขั้นตอนย่อยวิศวกรรม (SUB STATUS)</span>
+              <span class="eng-title-meta" id="engSubStatusBadge">AVG 0%</span>
+            </div>
+            <div class="eng-flat-scroll" id="engSubStatusContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>ประเภทงานวิศวกรรม (JOB TYPE)</span>
+              <span class="eng-title-meta" id="engJobTypeBadge">0 ประเภท</span>
+            </div>
+            <div class="eng-flat-scroll" id="engJobTypeContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>แผนกที่ร้องขอ (DEPARTMENT)</span>
+              <span class="eng-title-meta" id="engDeptBadge">0 แผนก</span>
+            </div>
+            <div class="eng-flat-scroll" id="engDeptContainer"></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>กระบวนการผลิต (PROCESS)</span>
+              <span class="eng-title-meta" id="engProcessBadge">0 กระบวนการ</span>
+            </div>
+            <div class="eng-flat-scroll" id="engProcessContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Requester Ranking Leaderboard Section -->
+      <div id="requesterRankingSection" class="requester-ranking-section">
+        <div class="ranking-header">
+          <div class="ranking-header-title">
+            <div class="ranking-icon-2d">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10M12 20V4M6 20v-6"/>
+              </svg>
+            </div>
+            <div>
+              <div class="ranking-main-title">
+                อันดับ REQUEST NAME (ชื่อผู้ร้องขอ)
+                <span class="ranking-badge-count" id="rankingBadgeCount">0 คน</span>
+              </div>
+              <div class="ranking-subtitle">จัดอันดับตามจำนวนคำร้องขอ (คลิกการ์ดเพื่อกรองงาน)</div>
+            </div>
+          </div>
+          <div class="ranking-header-controls">
+            <button type="button" id="btnToggleRankingExpand" class="btn btn-outline btn-sm ranking-expand-btn" onclick="toggleRankingExpand()">
+              <span id="rankingExpandText">ดูทั้งหมด (VIEW ALL)</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm ranking-close-btn" onclick="toggleRequesterRanking(false)" title="ซ่อนส่วนอันดับผู้ร้องขอนี้">
+              ✕ ซ่อน (HIDE)
+            </button>
+          </div>
+        </div>
+        <div id="requesterRankingContainer" class="ranking-cards-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls & Filter Bar -->
+    <section class="controls-bar" id="controlsBar">
+      <div class="controls-row-top">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="ค้นหา TASK NAME, REQUEST NUMBER, QUOTATION, REQUEST NAME, หรือ NOTE...">
+        </div>
+
+        <!-- View Switcher -->
+        <div class="view-tabs">
+          <button class="view-tab" data-view="cards">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            การ์ดผลงาน (CARDS)
+          </button>
+          <button class="view-tab" data-view="timeline">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ไทม์ไลน์ย้อนหลัง (TIMELINE)
+          </button>
+          <button class="view-tab active" data-view="table">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            ตารางสรุป (TABLE)
+          </button>
+        </div>
+      </div>
+
+      <!-- Secondary Filter Controls Section -->
+      <div class="controls-filters">
+        <!-- Main Filters Row -->
+        <div class="filters-row-main">
+          <div class="filters-left-group">
+            <span class="filter-label">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              ตัวกรอง (FILTERS):
+            </span>
+
+            <!-- Category Filter -->
+            <select id="categoryFilter" class="filter-select">
+              <option value="all">📁 ทุกหมวดหมู่ (ALL CATEGORIES)</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select id="statusFilter" class="filter-select">
+              <option value="all">⚡ ทุกสถานะ (ALL STATUS)</option>
+              <option value="done">✅ DONE (สำเร็จแล้ว)</option>
+              <option value="in_progress">⏳ IN PROGRESS (กำลังดำเนินการ)</option>
+              <option value="wait">⏱️ PENDING (รอดำเนินการ)</option>
+              <option value="cancel">❌ CANCEL (ยกเลิก)</option>
+            </select>
+
+            <!-- Assignee Filter -->
+            <select id="assigneeFilter" class="filter-select">
+              <option value="all">👤 ผู้รับผิดชอบทั้งหมด (ALL ASSIGNEES)</option>
+            </select>
+          </div>
+
+          <!-- Reset Filter Button (Appears when filter is active) -->
+          <button id="btnResetFilters" class="btn-reset-filters" onclick="resetAllFilters()" title="ล้างตัวกรองทั้งหมดกลับเป็นค่าเริ่มต้น" style="display: none;">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            ล้างตัวกรอง (RESET)
+          </button>
+        </div>
+
+        <!-- Sub-row: Time Period Range & Result Count Badge -->
+        <div class="filters-row-sub">
+          <div class="time-filter-wrapper">
+            <span class="filter-sublabel">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ช่วงเวลา (PERIOD):
+            </span>
+            <div class="filter-chip-group">
+              <button class="filter-chip active" data-time-filter="all">ทั้งหมด (ALL)</button>
+              <button class="filter-chip" data-time-filter="this_month">เดือนนี้ (THIS MONTH)</button>
+              <button class="filter-chip" data-time-filter="last_3_months">3 เดือนล่าสุด (LAST 3 MONTHS)</button>
+              <button class="filter-chip" data-time-filter="this_year">ปี 2026 (YEAR 2026)</button>
+            </div>
+          </div>
+
+          <div id="filterCount" class="filter-count-badge">
+            กำลังโหลด...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dynamic Content Area (Cards / Timeline / Table) -->
+    <div id="viewContainer" class="content-area"></div>
+
+  </main>
+
+  <!-- Modal: Add / Edit Task / Achievement -->
+  <div id="achievementModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalAchievementTitle">เพิ่มงานใหม่ (ADD TASK / ACHIEVEMENT)</h3>
+        <button class="modal-close" onclick="closeAchievementModal()">&times;</button>
+      </div>
+      <form id="achievementForm">
+        <div class="modal-body">
+          <input type="hidden" id="achvId">
+
+          <!-- 0. Company / Workspace Page Selector -->
+          <div class="form-group" id="fgWorkspaceSelector" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
+            <div class="ws-selector-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+              <label class="form-label" for="achvWorkspace" style="margin: 0; color: #0f172a; font-weight: 800;">
+                🏢 หน้าบริษัท / พื้นที่เก็บงาน (COMPANY / WORKSPACE PAGE) <span style="color: red;">*</span>
+              </label>
+              <button type="button" class="btn btn-secondary" onclick="openWorkspaceModal(true)" style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-color: #93c5fd; background: #eff6ff; color: #1d4ed8;">
+                ＋ เพิ่มหน้าบริษัท / พื้นที่ใหม่
+              </button>
+            </div>
+            <select id="achvWorkspace" class="form-control" style="font-weight: 700;" onchange="handleModalWorkspaceChange(this.value)" required>
+              <!-- Populated dynamically by JS -->
+            </select>
+            <div class="ws-selector-hint" style="font-size: 11px; color: #64748b; margin-top: 4px;">
+              เลือกหน้าบริษัทหรือพื้นที่ส่วนตัวที่ต้องการบันทึกงานนี้ (สามารถย้ายงานข้ามหน้าได้ตลอดเวลา)
+            </div>
+          </div>
+
+          <!-- 1. Task Name -->
+          <div class="form-group" id="fgTaskName">
+            <label class="form-label" for="achvTitle">TASK NAME (ชื่องาน / กิจกรรม / รหัส PR) <span style="color: red;">*</span></label>
+            <input type="text" id="achvTitle" class="form-control" placeholder="เช่น (PR) MAKITA 766004-9 HP457 หรือ JIG-QC003 CLAMP STAND" required>
+          </div>
+
+          <!-- 2. Category, Status & Sub-Status (Excel 10-Step Progress) -->
+          <div class="form-grid-3" id="fgRowStatusCategory">
+            <div class="form-group" id="fgCategory">
+              <label class="form-label" for="achvCategory">หมวดหมู่งาน (CATEGORY) <span style="color: red;">*</span></label>
+              <select id="achvCategory" class="form-control" required>
+                <!-- Populated by JS -->
+              </select>
+            </div>
+
+            <div class="form-group" id="fgStatus">
+              <label class="form-label" for="achvStatus">STATUS (สถานะหลัก)</label>
+              <select id="achvStatus" class="form-control" onchange="handleModalStatusChange(this.value)">
+                <option value="in_progress">IN PROGRESS (กำลังดำเนินการ)</option>
+                <option value="wait">PENDING (รอดำเนินการ)</option>
+                <option value="done">DONE (สำเร็จแล้ว / ส่งมอบ)</option>
+                <option value="cancel">CANCEL (ยกเลิก)</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="fgSubStatus">
+              <label class="form-label" for="achvSubStatus">
+                <span>SUB STATUS (ขั้นตอนย่อย)</span>
+                <small id="achvAchievementBadge" class="achv-label-badge">ACHV: 0.2 (20%)</small>
+              </label>
+              <select id="achvSubStatus" class="form-control" onchange="handleModalSubStatusChange(this.value)">
+                <option value="00 Not Start">NOT START (0%)</option>
+                <option value="01 Req. Analysis">REQ. ANALYSIS (10%)</option>
+                <option value="02 Concept Design">CONCEPT DESIGN (20%)</option>
+                <option value="03 User Approval 1">USER APPROVAL 1 (30%)</option>
+                <option value="04 Detailed Drawing">DETAILED DRAWING (40%)</option>
+                <option value="05 Quote Request">QUOTE REQUEST (50%)</option>
+                <option value="06 User Approval 2">USER APPROVAL 2 (60%)</option>
+                <option value="07 Supp. Proc.">SUPP. PROC. (70%)</option>
+                <option value="08 P.Techno. Proc.">P.TECHNO. PROC. (80%)</option>
+                <option value="09 Verification">VERIFICATION (90%)</option>
+                <option value="10 Finished">FINISHED (100%)</option>
+                <option value="Pending">PENDING (0%)</option>
+                <option value="Cancel">CANCEL (100%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. Request Number & Quotation -->
+          <div class="form-grid" id="fgRowRequestQuotation">
+            <div class="form-group">
+              <label class="form-label" for="achvCode">REQUEST NUMBER <small>(รหัสงาน / รหัส DRAWING)</small></label>
+              <input type="text" id="achvCode" class="form-control" placeholder="เช่น FOR TECHNO, FR-J26-076, GM-J26-024">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvQuotation">QUOTATION (เลขที่ใบเสนอราคา)</label>
+              <input type="text" id="achvQuotation" class="form-control" placeholder="เช่น 26-0508, 26-0585">
+            </div>
+          </div>
+
+          <!-- 4. Request Info: Request Name & Request Date -->
+          <div class="form-grid" id="fgRowRequestNameDate">
+            <div class="form-group">
+              <label class="form-label" for="achvRequestName">REQUEST NAME (ชื่อผู้ร้องขอ)</label>
+              <input type="text" id="achvRequestName" class="form-control" placeholder="เช่น พี่เบิ้ม, แผนก FERRULE, ฝ่าย MOTOR">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvRequestDate">REQUEST DATE (วันที่ร้องขอ)</label>
+              <input type="date" id="achvRequestDate" class="form-control">
+            </div>
+          </div>
+
+          <!-- 5. Factory, Department, Process -->
+          <div class="form-grid-3" id="fgRowFactoryDeptProcess">
+            <div class="form-group">
+              <label class="form-label" for="achvFactory">FACTORY (โรงงาน)</label>
+              <select id="achvFactory" class="form-control">
+                <option value="">-- เลือกโรงงาน (SELECT FACTORY) --</option>
+                <option value="FACTORY A">FACTORY A</option>
+                <option value="FACTORY B">FACTORY B</option>
+                <option value="FACTORY C">FACTORY C</option>
+                <option value="FACTORY D">FACTORY D</option>
+                <option value="FACTORY E">FACTORY E</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvDepartment">DEPARTMENT (แผนกที่ร้องขอ)</label>
+              <select id="achvDepartment" class="form-control">
+                <option value="">-- เลือกแผนก (SELECT DEPARTMENT) --</option>
+                <option value="FERRULE PRODUCTION">FERRULE PRODUCTION</option>
+                <option value="OPICAL PRODUCTION">OPTICAL PRODUCTION</option>
+                <option value="FIBER PRODUCTION">FIBER PRODUCTION</option>
+                <option value="MEDICAL PRODUCTION">MEDICAL PRODUCTION</option>
+                <option value="MOTOR PRODUCTION">MOTOR PRODUCTION</option>
+                <option value="INDIRECT">INDIRECT</option>
+                <option value="PRODUCTION TECHNOLOGY">PRO. TECHNOLOGY</option>
+                <option value="SPECIAL">SPECIAL</option>
+                <option value="QUALITY">QUALITY</option>
+                <option value="OFFICE">OFFICE</option>
+                <option value="FACILITIES">FACILITIES</option>
+                <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvProcess">PROCESS (กระบวนการ / ขั้นตอน)</label>
+              <input type="text" id="achvProcess" class="form-control" placeholder="เช่น GLUING, WIRING, ASSEMBLY">
+            </div>
+          </div>
+
+          <!-- 6. Assign & Completion Date -->
+          <div class="form-grid" id="fgRowAssignDate">
+            <div class="form-group" id="fgAssignee">
+              <label class="form-label" for="achvAssignee">ASSIGN (เจ้าของงานหลัก)</label>
+              <select id="achvAssignee" class="form-control">
+                <option value="">-- เลือกผู้รับผิดชอบ (SELECT ASSIGNEE) --</option>
+                <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
+                <option value="JITTRAKAN K.">JITTRAKAN K.</option>
+                <option value="TANIN P.">TANIN P.</option>
+                <option value="KITTISAK P.">KITTISAK P.</option>
+                <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="fgCompletionDate">
+              <label class="form-label" for="achvCompletionDate">DATE COMPLETED (วันที่บันทึก / วันที่สำเร็จ)</label>
+              <input type="date" id="achvCompletionDate" class="form-control">
+            </div>
+          </div>
+
+          <!-- 6.5 Excel Engineering Classification & Team Breakdown -->
+          <div id="fgExcelTrackingWrap">
+          <div class="form-section-divider" style="margin-top: 8px; margin-bottom: 12px;">
+            📊 ข้อมูลตารางวิศวกรรม (EXCEL TRACKING: JOB TYPE / PRIORITY / TEAM &amp; SUPPORT)
+          </div>
+
+          <!-- Row 1: Job Type, Sub Job Type, Priority (3 Equal Columns) -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="achvJobType">JOB TYPE (ประเภทงาน)</label>
+              <select id="achvJobType" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="D">D (DESIGN - ออกแบบ)</option>
+                <option value="R">R (REPAIR - ซ่อมแซม)</option>
+                <option value="M">M (MODIFY - ดัดแปลง/แก้ไข)</option>
+                <option value="I">I (INCREASE - สร้างเพิ่ม/สั่งซื้อ)</option>
+                <option value="A">A (ASSY/INSTALL - ประกอบ/ติดตั้ง)</option>
+                <option value="S">S (SIMULATION - จำลอง)</option>
+                <option value="D-A">D-A (DESIGN + ASSY/INSTALL)</option>
+                <option value="D-I">D-I (DESIGN + INCREASE)</option>
+                <option value="D-I-A">D-I-A (DESIGN + INC + ASSY)</option>
+                <option value="I-A">I-A (INCREASE + ASSY/INSTALL)</option>
+                <option value="R-A">R-A (REPAIR + ASSY/INSTALL)</option>
+                <option value="M-I">M-I (MODIFY + INCREASE)</option>
+                <option value="M-A">M-A (MODIFY + ASSY/INSTALL)</option>
+                <option value="D-M">D-M (DESIGN + MODIFY)</option>
+                <option value="D-M-I">D-M-I (DESIGN + MODIFY + INC)</option>
+                <option value="I-R">I-R (INCREASE + REPAIR)</option>
+                <option value="R-D">R-D (REPAIR + DESIGN)</option>
+                <option value="I-M">I-M (INCREASE + MODIFY)</option>
+                <option value="T">T (TRAINING - ฝึกอบรม)</option>
+                <option value="AC">AC (ACTIVITY - กิจกรรม 5ส.)</option>
+                <option value="Q">Q (QUOTATION - เสนอราคา)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvSubJobType">SUB JOB TYPE (รูปแบบ)</label>
+              <select id="achvSubJobType" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="01 In-house">IN-HOUSE (ทำเองภายใน)</option>
+                <option value="02 Outsource">OUTSOURCE (สั่งทำภายนอก)</option>
+                <option value="All">ALL (IN-HOUSE + OUTSOURCE)</option>
+                <option value="-">- (ไม่ระบุ)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvPriority">PRIORITY / JOB LV. (ความสำคัญ)</label>
+              <select id="achvPriority" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="Super High">SUPER HIGH (ด่วนพิเศษ)</option>
+                <option value="High">HIGH (สูง)</option>
+                <option value="Medium">MEDIUM (ปานกลาง)</option>
+                <option value="Low">LOW (ทั่วไป)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Tooling Team 1 & Tooling Team 2 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvToolingTeam1">TOOLING TEAM 1 (ทีมแมชชีน/สร้าง)</label>
+              <select id="achvToolingTeam1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="KITTISAK P.">KITTISAK P.</option>
+                <option value="TANIN P.">TANIN P.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvToolingTeam2">TOOLING TEAM 2 (ทีมแมชชีน/สร้าง)</label>
+              <select id="achvToolingTeam2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="KITTISAK P.">KITTISAK P.</option>
+                <option value="TANIN P.">TANIN P.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 3: Design Support 1 & Design Support 2 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvDesignSupport1">DESIGN SUPPORT 1 (ผู้สนับสนุน)</label>
+              <select id="achvDesignSupport1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
+                <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvDesignSupport2">DESIGN SUPPORT 2 (ผู้สนับสนุน)</label>
+              <select id="achvDesignSupport2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="SUTTHIPONG M.">SUTTHIPONG M.</option>
+                <option value="NARUEBODEE C.">NARUEBODEE C.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4: Maintenance Support 1 to 3 (3 Equal Columns) -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport1">MANTENANCE SUPPORT 1 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport1" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport2">MANTENANCE SUPPORT 2 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport2" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport3">MANTENANCE SUPPORT 3 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport3" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 5: Maintenance Support 4 to 5 (2 Equal Columns) -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport4">MANTENANCE SUPPORT 4 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport4" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="achvMaintenanceSupport5">MANTENANCE SUPPORT 5 (ผู้สนับสนุน)</label>
+              <select id="achvMaintenanceSupport5" class="form-control">
+                <option value="">-- อัตโนมัติ (AUTO) --</option>
+                <option value="NANTHAPONG S.">NANTHAPONG S.</option>
+                <option value="NAWAPON M.">NAWAPON M.</option>
+                <option value="SARAWUT I.">SARAWUT I.</option>
+                <option value="SUTTHINAN K.">SUTTHINAN K.</option>
+                <option value="VORAVIT C.">VORAVIT C.</option>
+              </select>
+            </div>
+          </div>
+          </div>
+
+          <!-- 7. Detail -->
+          <div class="form-group" id="fgDescription">
+            <label class="form-label" for="achvDescription">DETAIL (รายละเอียดงาน)</label>
+            <textarea id="achvDescription" class="form-control" rows="2" placeholder="เช่น ร้องขอให้ฝ่ายเทคโนโลยีจัดทำ JIG, สั่งซื้ออะไหล่..."></textarea>
+          </div>
+
+          <!-- 8. Note -->
+          <div class="form-group" id="fgNote">
+            <label class="form-label" for="achvNote">NOTE (หมายเหตุ / สิ่งที่กำลังรอ / ความคืบหน้า)</label>
+            <input type="text" id="achvNote" class="form-control" placeholder="เช่น (รอ) รอถอดออกได้ค่อยสั่ง, รอปริ้นงาน, กำลังจะ WIRING สาย">
+          </div>
+
+          <!-- 9. Attachments & Deliverables Section -->
+          <div class="form-section-divider">
+            📎 เอกสารแนบและผลงาน (ATTACHMENTS &amp; DELIVERABLES)
+          </div>
+
+          <!-- 9.1 PDF Job Request Attachment -->
+          <div class="form-group" id="fgPdfAttachment">
+            <label class="form-label" for="achvPdfInput">
+              <span id="achvPdfLabelTitle">ORBRAY (THAILAND) (PDF)</span>
+              <small>(อัพโหลดไฟล์ .PDF เก็บลงระบบ - สามารถดาวน์โหลดกลับได้)</small>
+            </label>
+
+            <!-- Hidden File Input with inline onchange and broad accept filter -->
+            <input type="file" id="achvPdfInput" style="display: none;" accept=".pdf,.PDF,application/pdf,application/x-pdf" onchange="handlePdfUpload(event)">
+
+            <!-- Button to browse and upload a PDF -->
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btnSelectPdf" onclick="document.getElementById('achvPdfInput').click()" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b; font-weight: 700;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                📄 อัพโหลดไฟล์ PDF (UPLOAD PDF)
+              </button>
+            </div>
+
+            <!-- Loading Indicator for large PDFs -->
+            <div id="pdfLoadingIndicator" style="display: none; align-items: center; gap: 8px; font-size: 12px; color: #991b1b; margin-top: 6px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; border: 1px dashed #fca5a5;">
+              <span>⏳</span>
+              <span id="pdfLoadingText">กำลังอ่านไฟล์ PDF...</span>
+            </div>
+
+            <!-- PDF Preview Bar when a PDF is attached -->
+            <div id="pdfPreviewContainer" style="display: none;" class="pdf-preview-bar">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+                <span style="font-size: 22px;">📄</span>
+                <div style="min-width: 0; flex: 1;">
+                  <div id="pdfFileNameDisplay" style="font-weight: 700; font-size: 13px; color: #991b1b; word-break: break-all;">JOB_REQUEST.PDF</div>
+                  <div id="pdfMetaDisplay" style="font-size: 11px; color: #b91c1c;">0 KB • PDF DOCUMENT</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button type="button" id="btnViewPdf" onclick="viewModalPdf()" class="btn btn-outline btn-sm" style="background:#fff; border-color: #fca5a5; color: #991b1b; font-weight: 600;">ดูไฟล์ PDF</button>
+                <button type="button" id="btnDownloadPdf" onclick="downloadModalPdf()" class="btn btn-outline btn-sm" style="background:#fef2f2; border-color: #fca5a5; color: #991b1b; font-weight: 700;">⬇️ ดาวน์โหลด</button>
+                <button type="button" id="btnRemovePdf" onclick="removeModalPdf()" class="btn btn-danger btn-sm">ลบไฟล์</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9.2 Work Folder Attachment -->
+          <div class="form-group">
+            <label class="form-label" for="achvFolderInput">
+              <span>โฟลเดอร์ผลงาน (WORK FOLDER ATTACHMENT)</span>
+              <small>(อัพโหลดโฟลเดอร์เก็บลงระบบ - ดาวน์โหลดเป็นไฟล์ .ZIP ได้)</small>
+            </label>
+
+            <!-- Hidden Folder Picker Input with webkitdirectory -->
+            <input type="file" id="achvFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleFolderUpload(event)">
+
+            <!-- Button to browse and upload a folder -->
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btnSelectFolder" onclick="document.getElementById('achvFolderInput').click()" style="background: #fffbeb; border-color: #fcd34d; color: #92400e; font-weight: 700;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                📁 อัพโหลดโฟลเดอร์ผลงาน (UPLOAD FOLDER)
+              </button>
+            </div>
+
+            <!-- Folder Preview Bar when a folder is attached -->
+            <div id="folderPreviewContainer" style="display: none;" class="folder-preview-bar">
+              <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+                <span style="font-size: 22px;">📁</span>
+                <div style="min-width: 0; flex: 1;">
+                  <div id="folderNameDisplay" style="font-weight: 700; font-size: 13px; color: #92400e; word-break: break-all;">FOLDER_NAME</div>
+                  <div id="folderMetaDisplay" style="font-size: 11px; color: #b45309;">0 ไฟล์ • 0 MB</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button type="button" id="btnDownloadFolder" class="btn btn-outline btn-sm" onclick="downloadCurrentModalFolder()" style="display: none; background: #ecfdf5; color: #065f46; border-color: #a7f3d0; font-weight: 700;">
+                  📥 ดาวน์โหลดโฟลเดอร์ (.ZIP)
+                </button>
+                <button type="button" id="btnViewFolderFiles" class="btn btn-outline btn-sm" style="background: #ffffff; color: #92400e; border-color: #fde68a;">
+                  📑 ดูรายชื่อไฟล์ (<span id="folderFileCountBadge">0</span>)
+                </button>
+                <button type="button" id="btnRemoveFolder" onclick="removeModalFolder()" class="btn btn-danger btn-sm">ลบโฟลเดอร์</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9.3 Image & Drawing Attachment (Image / PDF, Unlimited size) -->
+          <div class="form-group">
+            <label class="form-label" for="achvImageInput">
+              <span>แนบรูปภาพผลงาน / ชิ้นงาน / DRAWING (IMAGE / PDF)</span>
+              <small>(รองรับไฟล์ภาพทุกประเภท และไฟล์ PDF ไม่จำกัดขนาด)</small>
+            </label>
+            <input type="file" id="achvImageInput" class="form-control" accept="image/*,.pdf,.PDF,application/pdf,application/x-pdf" onchange="handleImageUpload(event)">
+
+            <!-- Image Preview Box -->
+            <div id="imagePreviewContainer" class="image-preview-container" style="display: none;">
+              <img id="imagePreview" src="" alt="ภาพตัวอย่าง">
+              <div class="image-preview-actions" style="display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end;">
+                <button type="button" id="btnDownloadImageModal" onclick="downloadModalImage()" class="btn btn-outline btn-sm" style="background:#fff; border-color: #c8d8f6; color: #163282; font-weight: 600;">⬇️ ดาวน์โหลดภาพ</button>
+                <button type="button" id="btnRemoveImage" onclick="removeModalImage()" class="btn btn-danger btn-sm">ลบภาพ</button>
+              </div>
+            </div>
+
+            <!-- PDF Drawing Preview Box -->
+            <div id="imagePdfPreviewContainer" class="pdf-preview-bar" style="display: none; background: #f0fdf4; border-color: #86efac;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #166534; min-width: 0; flex: 1;">
+                <span>📄</span>
+                <span id="imagePdfFileNameDisplay" style="word-break: break-all;">DRAWING.PDF</span>
+              </div>
+              <div style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
+                <button type="button" id="btnViewImagePdf" onclick="viewModalImagePdf()" class="btn btn-outline btn-sm" style="background: #fff; color: #166534; border-color: #86efac; font-weight: 600;">ดูไฟล์ PDF</button>
+                <button type="button" id="btnDownloadImagePdf" onclick="downloadModalImage()" class="btn btn-outline btn-sm" style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0; font-weight: 700;">⬇️ ดาวน์โหลด</button>
+                <button type="button" id="btnRemoveImagePdf" onclick="removeModalImage()" class="btn btn-danger btn-sm">ลบไฟล์</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAchievementModal()">ยกเลิก (CANCEL)</button>
+          <button type="submit" class="btn btn-primary">บันทึกข้อมูล (SAVE)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Category Manager -->
+  <div id="categoryModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">จัดการหมวดหมู่งานฝ่ายเทคโนโลยี (CATEGORY MANAGER)</h3>
+        <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="newCategoryForm" style="padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
+          <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase;">➕ เพิ่มหมวดหมู่ใหม่ (ADD NEW CATEGORY)</h4>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <input type="text" id="newCategoryIcon" class="form-control" style="width: 55px; text-align: center;" placeholder="🚀" value="⭐" title="อิโมจิไอคอน">
+            <input type="text" id="newCategoryName" class="form-control" style="flex: 1; min-width: 160px;" placeholder="ชื่อหมวดหมู่ เช่น งาน ROBOT & VISION" required>
+            <input type="color" id="newCategoryColor" class="form-control" style="width: 48px; padding: 4px; height: 38px; cursor: pointer;" value="#2563eb" title="เลือกสีประจำหมวด">
+            <button type="submit" class="btn btn-primary">เพิ่มหมวด (ADD)</button>
+          </div>
+        </form>
+
+        <h4 style="font-size: 14px; font-weight: 700; margin-top: 16px; margin-bottom: 8px; text-transform: uppercase;">หมวดหมู่ปัจจุบัน (CURRENT CATEGORIES)</h4>
+        <div id="categoryManagerList" class="category-manage-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">ปิด (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Multi-Company / Workspace Page Manager -->
+  <div id="workspaceModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 จัดการหน้าบริษัท (WORKSPACES)</h3>
+        <button class="modal-close" onclick="closeWorkspaceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Segmented Tab Switcher (Reorder vs Add Page) -->
+        <div class="ws-modal-tab-bar" id="wsModalTabBar">
+          <button type="button" class="ws-modal-tab-btn active" id="btnWsTabReorder" onclick="switchWorkspaceModalTab('reorder')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
+            <span>จัดลำดับหน้า</span>
+            <span class="ws-tab-count" id="wsModalCountPill">2</span>
+          </button>
+          <button type="button" class="ws-modal-tab-btn" id="btnWsTabAdd" onclick="switchWorkspaceModalTab('add')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            <span>สร้างหน้าใหม่</span>
+          </button>
+        </div>
+
+        <!-- Section 1: Reorder & Manage Workspaces -->
+        <div id="wsTabPaneReorder" class="ws-tab-pane">
+          <div class="ws-modal-tip-box">
+            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+              <span style="font-size: 13px; flex-shrink: 0; line-height: 1;">💡</span>
+              <div style="line-height: 1.35; font-size: 11px;">
+                <strong>จัดลำดับแถบหน้า:</strong> กด <strong>⏮ หน้าสุด</strong> หรือ <strong>⬆️ ⬇️</strong> เพื่อเลือกหน้าเริ่มต้น
+              </div>
+            </div>
+            <button type="button" class="btn-ws-reset" onclick="resetWorkspaceTabOrder()" title="คืนค่าลำดับเริ่มต้น">↺ คืนค่าเดิม</button>
+          </div>
+
+          <div id="workspaceManagerList">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <div style="margin-top: 10px; text-align: center;">
+            <button type="button" class="ws-btn-switch-to-add" onclick="switchWorkspaceModalTab('add')">
+              ＋ เพิ่มหน้าบริษัทใหม่ หรือพื้นที่งานส่วนตัว
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Create New Workspace Page Form -->
+        <div id="wsTabPaneAdd" class="ws-tab-pane" style="display: none;">
+          <form id="newWorkspaceForm" onsubmit="handleAddWorkspace(event)">
+            <div class="ws-add-header">
+              <span style="font-size: 13px;">➕</span>
+              <span style="font-weight: 800; font-size: 12px; color: #0f172a;">สร้างหน้าบริษัท / พื้นที่เก็บผลงานใหม่</span>
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label" for="newWorkspaceName">
+                ชื่อบริษัท / ชื่อหน้า <span style="color: #ef4444; font-weight: 800;">*</span>
+              </label>
+              <input type="text" id="newWorkspaceName" class="form-control" placeholder="เช่น MURATA, งานส่วนตัว, FREELANCE, TOYOTA..." required>
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label" for="newWorkspaceSubtitle">
+                คำอธิบาย / แผนก (SUBTITLE)
+              </label>
+              <input type="text" id="newWorkspaceSubtitle" class="form-control" placeholder="เช่น PRODUCTION ENGINEERING หรือ PORTFOLIO">
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label">ไอคอนประจำหน้า (ICON)</label>
+              <div class="ws-icon-picker-bar">
+                <input type="text" id="newWorkspaceIcon" class="form-control ws-icon-input" value="🏢" title="พิมพ์เปลี่ยนอิโมจิได้">
+                <div class="ws-icon-presets">
+                  <button type="button" class="ws-icon-opt active" onclick="selectNewWorkspaceIcon('🏢', this)">🏢</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🏭', this)">🏭</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('💻', this)">💻</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🚀', this)">🚀</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('⚙️', this)">⚙️</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🛠️', this)">🛠️</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🔬', this)">🔬</button>
+                  <button type="button" class="ws-icon-opt" onclick="selectNewWorkspaceIcon('🌟', this)">🌟</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group ws-form-group">
+              <label class="form-label ws-form-label">สีธีมประจำหน้า (COLOR)</label>
+              <div class="ws-color-picker-bar">
+                <input type="color" id="newWorkspaceColor" class="ws-color-native-input" value="#059669" title="เลือกสีประจำหน้า">
+                <div class="ws-color-presets">
+                  <button type="button" class="ws-color-opt" style="background: #E60012;" onclick="selectNewWorkspaceColor('#E60012')" title="Red"></button>
+                  <button type="button" class="ws-color-opt" style="background: #2563eb;" onclick="selectNewWorkspaceColor('#2563eb')" title="Blue"></button>
+                  <button type="button" class="ws-color-opt" style="background: #059669;" onclick="selectNewWorkspaceColor('#059669')" title="Emerald"></button>
+                  <button type="button" class="ws-color-opt" style="background: #7c3aed;" onclick="selectNewWorkspaceColor('#7c3aed')" title="Purple"></button>
+                  <button type="button" class="ws-color-opt" style="background: #ea580c;" onclick="selectNewWorkspaceColor('#ea580c')" title="Orange"></button>
+                  <button type="button" class="ws-color-opt" style="background: #0284c7;" onclick="selectNewWorkspaceColor('#0284c7')" title="Cyan"></button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary ws-btn-submit-add">
+              ＋ สร้างหน้าใหม่ (CREATE PAGE)
+            </button>
+
+            <div style="margin-top: 8px; text-align: center;">
+              <button type="button" class="ws-btn-switch-to-reorder" onclick="switchWorkspaceModalTab('reorder')">
+                ← กลับไปดูและจัดลำดับหน้าทั้งหมด
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeWorkspaceModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View Detail -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detailTitle">รายละเอียดงาน (TASK DETAILS)</h3>
+        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detailBody">
+        <!-- Injected by JS -->
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+        <button type="button" class="btn btn-primary" id="detailEditBtn" onclick="editFromDetailModal()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          แก้ไขข้อมูล (EDIT)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeDetailModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Folder Details & File List -->
+  <div id="folderDetailModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="folderModalTitle">📁 ข้อมูลโฟลเดอร์ผลงาน (WORK FOLDER DETAILS)</h3>
+        <button class="modal-close" onclick="closeFolderModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="folderModalBody">
+        <!-- Injected dynamically by JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeFolderModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cloud Database & Multi-device Sync Settings -->
+  <div id="cloudModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">☁️ ตั้งค่าคลาวด์และการใช้งานหลายอุปกรณ์ (CLOUD SYNC &amp; MULTI-DEVICE)</h3>
+        <button class="modal-close" onclick="closeCloudModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Current Connection Status Card -->
+        <div class="cloud-status-box" id="cloudStatusBox">
+          <div class="cloud-status-icon-large" id="cloudStatusIconLarge">☁️</div>
+          <div class="cloud-status-info">
+            <h4 class="cloud-status-heading" id="cloudStatusHeading">กำลังตรวจสอบสถานะ...</h4>
+            <p class="cloud-status-desc" id="cloudStatusDesc">รอการเชื่อมต่อกับ Google Firebase Firestore</p>
+          </div>
+          <div class="cloud-status-action" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-sm btn-primary" id="btnSyncLocalToCloud" onclick="migrateLocalDataToFirebase()" title="อัปโหลดข้อมูลงานทั้งหมดในเครื่องนี้ขึ้นฐานข้อมูลคลาวด์">
+              ⬆️ ซิงค์ข้อมูลเดิมขึ้นคลาวด์
+            </button>
+            <button type="button" class="btn btn-sm btn-outline" id="btnSyncAllAttachments" onclick="syncAllAttachmentsToCloud()" title="อัปโหลดไฟล์ PDF โฟลเดอร์ และรูปภาพทั้งหมดในเครื่องนี้ขึ้นคลาวด์ เพื่อให้เครื่องอื่นเปิดได้" style="background: #ffffff; color: #163282; border-color: #2563eb; font-weight: 600;">
+              ☁️ ซิงค์ไฟล์แนบทั้งหมด (PDF / โฟลเดอร์) ขึ้นคลาวด์
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Share Section: How to access on Mobile & other PCs -->
+        <div class="cloud-share-card">
+          <h4 class="cloud-card-title">📱 วิธีให้คนอื่นเปิดใช้งานผ่านมือถือหรือคอมเครื่องอื่น</h4>
+          <div class="cloud-share-content">
+            <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">
+              เมื่อเชื่อมต่อ Firebase สำเร็จ ข้อมูลและไฟล์แนบจะบันทึกอยู่บนคลาวด์กลาง ทำให้ทุกคนเปิดใช้งานร่วมกันได้แบบ Real-time:
+            </p>
+            <ul style="font-size: 12.5px; color: #334155; line-height: 1.6; margin-left: 18px; margin-bottom: 0;">
+              <li><b>วิธีที่ 1 (แนะนำที่สุด):</b> ใช้งานผ่านเว็บไซต์ GitHub Pages หรือ Firebase Hosting ส่งลิงก์ให้ทุกคนเปิดในมือถือหรือเซฟ Bookmark บนคอมได้ทันที</li>
+              <li><b>วิธีที่ 2:</b> ส่งไฟล์ <code>ACHIEVEMENT RECORD.html</code> นี้ให้เครื่องอื่นเปิดได้เลย ทุกเครื่องจะดึงข้อมูลและไฟล์แนบจากคลาวด์เดียวกันอัตโนมัติ</li>
+              <li><b>💡 การเปิดไฟล์ PDF / โฟลเดอร์ ข้ามเครื่อง:</b> เมื่อแนบไฟล์และบันทึกงาน ระบบจะซิงค์ขึ้นคลาวด์ให้อัตโนมัติ (และมีระบบ Auto-Sync สแกนไฟล์แนบในเครื่องขึ้นคลาวด์อัตโนมัติในพื้นหลัง) หรือหากต้องการบังคับส่งไฟล์แนบทั้งหมดในเครื่องขึ้นคลาวด์ทันที สามารถกดปุ่ม <b>"☁️ ซิงค์ไฟล์แนบทั้งหมดขึ้นคลาวด์"</b> ได้ตลอดเวลา</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Firebase Config Setup Card -->
+        <div class="cloud-config-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 class="cloud-card-title" style="margin: 0;">⚙️ ข้อมูลการเชื่อมต่อ GOOGLE FIREBASE (CONFIG)</h4>
+            <span style="font-size: 11px; color: #64748b;">(บันทึกถาวรในเครื่อง)</span>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">
+            วางข้อความ <code>firebaseConfig</code> ที่คัดลอกจาก Firebase Console (Project Settings &gt; Web App) ในช่องด้านล่าง:
+          </p>
+          <textarea id="firebaseConfigInput" class="form-control code-textarea" rows="7" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};'></textarea>
+          <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="handleDisconnectFirebase()" id="btnDisconnectFirebase">
+              ❌ ยกเลิกการเชื่อมต่อ (กลับไปใช้ LOCAL MODE)
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="handleSaveFirebaseConfig()">
+              💾 บันทึกและเชื่อมต่อ (CONNECT)
+            </button>
+          </div>
+        </div>
+
+        <!-- Step-by-Step Guide for Creating Firebase Project -->
+        <details class="cloud-guide-accordion">
+          <summary><b>📖 ยังไม่มีโปรเจกต์ Firebase? คลิกดูวิธีสร้างฟรีใน 2 นาที</b></summary>
+          <div class="cloud-guide-steps">
+            <ol style="font-size: 12.5px; color: #334155; line-height: 1.7; padding-left: 20px; margin-top: 10px;">
+              <li>เข้าสู่เว็บไซต์ <a href="https://console.firebase.google.com/" target="_blank" style="color: #2563eb; font-weight: 600;">console.firebase.google.com</a> แล้วล็อกอินด้วยบัญชี Google ของท่าน</li>
+              <li>กดปุ่ม <b>"Add project"</b> (สร้างโปรเจกต์) ตั้งชื่อ เช่น <code>achievement-record</code> แล้วกดยืนยัน</li>
+              <li>ไปที่เมนูซ้าย <b>Build &gt; Firestore Database</b> แล้วกด <b>"Create database"</b> (เลือก Location: <code>asia-southeast1</code> สิงคโปร์)</li>
+              <li>ในแท็บ <b>Rules</b> ของ Firestore ให้เปลี่ยนเป็น <code>allow read, write: if true;</code> เพื่อให้ทุกคนในฝ่ายอ่านและเขียนข้อมูลได้</li>
+              <li>ไปที่ไอคอนฟันเฟือง <b>Project Settings</b> มุมซ้ายบน เลื่อนลงมาที่หัวข้อ Your apps กดเลือกไอคอนเว็บ <b><code>&lt;/&gt;</code></b> เพื่อรับโค้ด <code>firebaseConfig</code> แล้วนำมาวางในช่องด้านบน</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCloudModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: PIN Authentication Login (Employee PIN) -->
+  <div id="authPinModal" class="modal-overlay">
+    <div class="modal-card modal-card-sm" style="max-width: 400px;">
+      <div class="modal-header" style="border-bottom: 1px solid #f1f5f9;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <span>🔐</span> เข้าสู่ระบบด้วยรหัส PIN (LOGIN)
+        </h3>
+        <button class="modal-close" onclick="closeAuthPinModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div class="pin-login-box">
+          <div class="pin-avatar-large" id="pinTargetAvatar">👤</div>
+          <p id="pinModalSubtext" style="font-size: 13px; color: #475569; margin-bottom: 16px; font-weight: 500;">
+            กรุณาระบุรหัส PIN ประจำตัวของคุณเพื่อเพิ่มหรือแก้ไขงาน
+          </p>
+
+          <div class="pin-display-container">
+            <div class="pin-input-wrapper">
+              <input type="password" id="pinInputField" class="pin-input-field" maxlength="8" placeholder="•••••" autocomplete="off" onkeydown="handlePinInputKeydown(event)" />
+              <button type="button" class="pin-toggle-visibility-btn" onclick="togglePinVisibility()" title="แสดง/ซ่อนรหัส PIN" aria-label="แสดงหรือซ่อนรหัส PIN">
+                <span id="pinVisibilityIcon">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="pinErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px; margin-bottom: 12px;"></div>
+
+          <!-- 2D Numeric Keypad -->
+          <div class="pin-keypad">
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('1')">1</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('2')">2</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('3')">3</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('4')">4</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('5')">5</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('6')">6</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('7')">7</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('8')">8</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('9')">9</button>
+            <button type="button" class="pin-key-btn action-btn clear-btn" onclick="clearPinKey()">CLEAR</button>
+            <button type="button" class="pin-key-btn" onclick="pressPinKey('0')">0</button>
+            <button type="button" class="pin-key-btn action-btn submit-btn" onclick="submitPinLogin()">OK</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 11px; color: #64748b;">PUBLIC VIEW: เข้าชมได้ทุกคน</span>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAuthPinModal()">ยกเลิก (CANCEL)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Change PIN -->
+  <div id="changePinModal" class="modal-overlay">
+    <div class="modal-card modal-card-sm" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🔑 เปลี่ยนรหัส PIN ของฉัน</h3>
+        <button class="modal-close" onclick="closeChangePinModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="currentPinInput">รหัส PIN ปัจจุบัน</label>
+          <input type="password" id="currentPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN เดิม" />
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="newPinInput">รหัส PIN ใหม่ (4-8 หลัก)</label>
+          <input type="password" id="newPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN ใหม่" />
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="confirmNewPinInput">ยืนยันรหัส PIN ใหม่</label>
+          <input type="password" id="confirmNewPinInput" class="form-control" maxlength="8" placeholder="กรอกรหัส PIN ใหม่อีกครั้ง" />
+        </div>
+        <div id="changePinErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeChangePinModal()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="submitChangePin()">บันทึกรหัส PIN ใหม่</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin View & Manage Team Accounts & PINs (ADMIN ONLY) -->
+  <div id="adminTeamPinsModal" class="modal-overlay">
+    <div class="modal-card modal-card-md" style="max-width: 580px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>🛡️</span> จัดการบัญชีและรหัส PIN ทีมงาน (ADMIN ONLY)
+        </h3>
+        <button class="modal-close" onclick="closeAdminTeamPinsModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; gap: 10px; flex-wrap: wrap;">
+          <div style="font-size: 12px; color: #1e40af; line-height: 1.4; flex: 1; min-width: 200px;">
+            👑 <strong>เฉพาะผู้ดูแลระบบ (ADMIN)</strong> สามารถดูรหัส PIN, แก้ไข, เพิ่ม หรือลบบัญชีสมาชิกได้
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button type="button" class="btn btn-outline btn-xs" id="btnAdminAddNewAcc" onclick="openAdminAddAccountModal()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #86efac; color: #166534; font-weight: 700;">
+              ➕ เพิ่มบัญชีใหม่
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" id="btnAdminToggleAllPins" onclick="toggleAdminAllPins()" style="background: #ffffff; white-space: nowrap; font-size: 11px; padding: 4px 10px; border-color: #93c5fd; color: #1e40af; font-weight: 600;">
+              👁️ แสดงรหัสทั้งหมด
+            </button>
+          </div>
+        </div>
+
+        <div id="adminTeamPinsList" class="admin-team-pins-list">
+          <!-- Dynamically populated by renderAdminTeamPinsModal() -->
+        </div>
+
+        <!-- Section: Deleted Accounts (Trash / Restore) -->
+        <div id="adminDeletedAccountsSection" class="admin-deleted-section" style="display: none;">
+          <div class="admin-deleted-header">
+            <span>🗑️ บัญชีที่ถูกลบชั่วคราว (<span id="adminDeletedAccountsCount">0</span> บัญชี)</span>
+            <span style="font-size: 10px; color: #e11d48; font-weight: normal;">*ข้อมูลเดิมยังคงอยู่ สามารถกดกู้คืนได้ตลอดเวลา</span>
+          </div>
+          <div id="adminDeletedAccountsList" class="admin-deleted-list">
+            <!-- Dynamically populated by renderAdminTeamPinsModal() -->
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; font-size: 11px; color: #64748b; line-height: 1.5; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+          💡 <strong>คำแนะนำ:</strong> แอดมินสามารถกด <strong>"✏️ แก้ไข"</strong> เพื่อเปลี่ยนชื่อหรือ PIN, กด <strong>"🗑️ ลบ"</strong> เพื่อลบบัญชีสมาชิกคนอื่น (ประวัติงานเดิมยังคงอยู่ครบ), หรือกด <strong>"↺ กู้คืน"</strong> หากต้องการนำบัญชีที่ลบกลับคืนมา
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminTeamPinsModal()">ปิดหน้าต่าง (CLOSE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Edit Account (Name & PIN) (ADMIN ONLY) -->
+  <div id="adminEditAccountModal" class="modal-overlay" style="z-index: 10050;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>✏️</span> แก้ไขข้อมูลบัญชีผู้ใช้งาน (ADMIN)
+        </h3>
+        <button class="modal-close" onclick="closeAdminEditAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <input type="hidden" id="adminEditAccId" value="" />
+
+        <!-- Account Badge Preview -->
+        <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div id="adminEditAccAvatar" style="font-size: 26px; width: 44px; height: 44px; border-radius: 10px; background: #ffffff; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0;">👤</div>
+          <div style="min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="adminEditAccRole" class="auth-user-role-badge member">MEMBER</span>
+              <span style="font-size: 11px; color: #64748b;">รหัสพนักงาน: <strong id="adminEditEmpId" style="color: #0f172a; font-family: monospace;">20524</strong></span>
+            </div>
+            <div style="font-size: 12px; color: #475569; margin-top: 3px; font-weight: 600;" id="adminEditCurrentNamePreview">ชื่อเดิม: SUTTHIPONG M.</div>
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccName" style="font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+            <span>ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span></span>
+          </label>
+          <input type="text" id="adminEditAccName" class="form-control" placeholder="เช่น SUTTHIPONG M." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อนี้จะแสดงในระบบและในตัวเลือกผู้รับผิดชอบงาน (Assignee)
+          </div>
+        </div>
+
+        <!-- Employee ID & Company in 2-column grid -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminEditAccEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminEditAccEmpId" class="form-control" placeholder="เช่น 20524" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminEditAccCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminEditAccCompany" class="form-control" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="adminEditAccDepartment" list="departmentOptionsList" class="form-control" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminEditAccPin" style="font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+            <span>รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span></span>
+          </label>
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <input type="text" id="adminEditAccPin" class="form-control" maxlength="8" placeholder="เช่น 20524" style="width: 100%; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 42px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleAdminEditPinVisibility()" style="position: absolute; right: 8px; font-size: 16px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="สลับแสดง/ซ่อนรหัส PIN">
+              <span id="adminEditPinEye">👁️</span>
+            </button>
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับบัญชีอื่น)
+          </div>
+        </div>
+
+        <!-- Option to update existing assignments -->
+        <div style="margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #1e40af; cursor: pointer; user-select: none; margin: 0;">
+            <input type="checkbox" id="adminEditUpdateExistingTasks" checked style="margin-top: 2px; accent-color: #2563eb;" />
+            <span style="line-height: 1.4;">อัปเดตชื่อผู้รับผิดชอบในประวัติผลงานเดิมของบุคคลนี้ด้วย (แนะนำ)</span>
+          </label>
+        </div>
+
+        <div id="adminEditAccountErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <div>
+          <button type="button" id="btnAdminEditDeleteThisAcc" class="admin-btn-delete" style="display: none;" onclick="triggerDeleteFromEditModal()">
+            🗑️ ลบบัญชีนี้ (DELETE)
+          </button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminEditAccountModal()">ยกเลิก (CANCEL)</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminEditAccount()">💾 บันทึกข้อมูล (SAVE)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Add New Account (ADMIN ONLY) -->
+  <div id="adminAddAccountModal" class="modal-overlay" style="z-index: 10050;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>➕</span> เพิ่มบัญชีผู้ใช้งานใหม่ (ADD MEMBER)
+        </h3>
+        <button class="modal-close" onclick="closeAdminAddAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <!-- Avatar selection -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+            เลือกไอคอนประจำตัว (AVATAR)
+          </label>
+          <div id="adminAddAvatarSelector" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="avatar-opt-btn active" data-avatar="👨‍💻" onclick="selectAdminAddAvatar('👨‍💻')">👨‍💻</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👨‍🔧" onclick="selectAdminAddAvatar('👨‍🔧')">👨‍🔧</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👨‍💼" onclick="selectAdminAddAvatar('👨‍💼')">👨‍💼</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👩‍💻" onclick="selectAdminAddAvatar('👩‍💻')">👩‍💻</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👩‍🔧" onclick="selectAdminAddAvatar('👩‍🔧')">👩‍🔧</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="🧑‍🏭" onclick="selectAdminAddAvatar('🧑‍🏭')">🧑‍🏭</button>
+            <button type="button" class="avatar-opt-btn" data-avatar="👤" onclick="selectAdminAddAvatar('👤')">👤</button>
+          </div>
+          <input type="hidden" id="adminAddAccAvatar" value="👨‍💻" />
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccName" style="font-weight: 700; color: #1e293b;">
+            ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="adminAddAccName" class="form-control" placeholder="เช่น SOMCHAI T." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อที่จะแสดงในรายการผู้รับผิดชอบงาน
+          </div>
+        </div>
+
+        <!-- Employee ID & Company -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminAddAccEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminAddAccEmpId" class="form-control" placeholder="เช่น 20528" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="adminAddAccCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="adminAddAccCompany" class="form-control" value="ORBRAY" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="adminAddAccDepartment" list="departmentOptionsList" class="form-control" value="PRODUCTION TECHNOLOGY" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="adminAddAccPin" style="font-weight: 700; color: #1e293b;">
+            รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="adminAddAccPin" class="form-control" maxlength="8" placeholder="เช่น 20528" style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px;" autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับผู้อื่น)
+          </div>
+        </div>
+
+        <div id="adminAddAccountErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminAddAccountModal()">ยกเลิก (CANCEL)</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveAdminAddAccount()">➕ บันทึกสร้างบัญชี (CREATE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Department Options Datalist -->
+  <datalist id="departmentOptionsList">
+    <option value="PRODUCTION TECHNOLOGY"></option>
+    <option value="ENGINEERING"></option>
+    <option value="PRODUCTION"></option>
+    <option value="QUALITY ASSURANCE (QA)"></option>
+    <option value="QUALITY CONTROL (QC)"></option>
+    <option value="MAINTENANCE"></option>
+    <option value="TOOL & DIE"></option>
+    <option value="R&D"></option>
+    <option value="PLANNING"></option>
+    <option value="FACILITY & UTILITY"></option>
+  </datalist>
+
+  <!-- Modal: User Profile (Edit Own Profile: Name, Employee ID, Company, PIN) -->
+  <div id="userProfileModal" class="modal-overlay" style="z-index: 10040;">
+    <div class="modal-card modal-card-sm" style="max-width: 440px;">
+      <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: #0f172a; font-size: 15px;">
+          <span>👤</span> ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
+        </h3>
+        <button class="modal-close" onclick="closeUserProfileModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <!-- Profile Header Badge -->
+        <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px;">
+          <div id="userProfileAvatar" style="font-size: 26px; width: 44px; height: 44px; border-radius: 10px; background: #ffffff; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0;">👤</div>
+          <div style="min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span id="userProfileRole" class="auth-user-role-badge member">MEMBER</span>
+              <span style="font-size: 11px; color: #64748b;">บัญชีผู้ใช้งานระบบ</span>
+            </div>
+            <div style="font-size: 12px; color: #475569; margin-top: 3px; font-weight: 600;" id="userProfileCurrentNamePreview">ชื่อปัจจุบัน: -</div>
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfileName" style="font-weight: 700; color: #1e293b;">
+            ชื่อ-นามสกุล / ชื่อที่แสดงในระบบ <span style="color: #ef4444;">*</span>
+          </label>
+          <input type="text" id="userProfileName" class="form-control" placeholder="เช่น JITTRAKAN K." autocomplete="off" />
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            💡 ชื่อนี้จะแสดงในประวัติผลงาน และในตัวเลือกผู้รับผิดชอบงาน (Assignee)
+          </div>
+        </div>
+
+        <!-- Employee ID & Company in 2-column grid -->
+        <div class="form-grid" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="userProfileEmpId" style="font-weight: 700; color: #1e293b;">
+              รหัสพนักงาน <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="userProfileEmpId" class="form-control" placeholder="เช่น 20523" style="font-family: monospace;" autocomplete="off" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="userProfileCompany" style="font-weight: 700; color: #1e293b;">
+              บริษัท / สังกัด <span style="color: #ef4444;">*</span>
+            </label>
+            <input type="text" id="userProfileCompany" class="form-control" placeholder="เช่น ORBRAY" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Department Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfileDepartment" style="font-weight: 700; color: #1e293b;">
+            แผนก / ฝ่าย (DEPARTMENT)
+          </label>
+          <input type="text" id="userProfileDepartment" list="departmentOptionsList" class="form-control" placeholder="เช่น PRODUCTION TECHNOLOGY, ENGINEERING" autocomplete="off" />
+        </div>
+
+        <!-- PIN Input -->
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" for="userProfilePin" style="font-weight: 700; color: #1e293b;">
+            รหัส PIN เข้าสู่ระบบ (4-8 หลัก) <span style="color: #ef4444;">*</span>
+          </label>
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <input type="password" id="userProfilePin" class="form-control" maxlength="8" placeholder="รหัส PIN สำหรับเข้าสู่ระบบ" style="width: 100%; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 15px; letter-spacing: 2px; padding-right: 42px;" autocomplete="off" />
+            <button type="button" class="btn-icon-admin-pin" onclick="toggleProfilePinVisibility()" style="position: absolute; right: 8px; font-size: 16px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="สลับแสดง/ซ่อนรหัส PIN">
+              <span id="userProfilePinEye">👁️</span>
+            </button>
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.4;">
+            🔒 รหัส PIN เฉพาะตัวเลข 4-8 หลัก (ห้ามซ้ำกับบัญชีอื่น)
+          </div>
+        </div>
+
+        <!-- Option to update existing assignments -->
+        <div style="margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #1e40af; cursor: pointer; user-select: none; margin: 0;">
+            <input type="checkbox" id="userProfileUpdateExistingTasks" checked style="margin-top: 2px; accent-color: #2563eb;" />
+            <span style="line-height: 1.4;">อัปเดตชื่อผู้รับผิดชอบในประวัติผลงานเดิมของฉันด้วย (แนะนำ)</span>
+          </label>
+        </div>
+
+        <div id="userProfileErrorMessage" style="font-size: 12px; color: #e11d48; font-weight: 700; min-height: 18px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeUserProfileModal()">ยกเลิก (CANCEL)</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveUserProfile()">💾 บันทึกโปรไฟล์ (SAVE)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date Helper for Print Header -->
+  <script>
+    document.getElementById('printDate').textContent = new Date().toLocaleDateString('th-TH', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  </script>
+
+  <!-- PDF.js for Smart Offline & Online PDF Job Request Auto-Fill -->
+  <script src="pdf.min.js"></script>
+  <!-- Job Requests Database (QR-PT-036-A) for Instant Auto-Fill -->
+  <script src="job_requests_db.js?v=20260909_8"></script>
+  <!-- Application Logic Script -->
+  <script src="app.js?v=20261016_v34"></script>
+
+  <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
+  <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
+    <div class="ios-action-sheet" onclick="event.stopPropagation()">
+      <div class="ios-action-header">
+        <span class="ios-action-header-icon" id="actionSheetIcon">📄</span>
+        <span class="ios-action-header-title" id="actionSheetTitle">TASK NAME</span>
+      </div>
+      <div class="ios-action-group">
+        <button type="button" class="ios-action-btn" onclick="executeActionSheetEdit()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          EDIT
+        </button>
+        <button type="button" class="ios-action-btn ios-action-btn-danger" onclick="executeActionSheetDelete()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          DELETE
+        </button>
+      </div>
+      <div class="ios-action-group ios-action-cancel-group">
+        <button type="button" class="ios-action-btn ios-action-btn-cancel" onclick="closeMobileActionSheet()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS Mobile Sort & Filter Sheet -->
+  <div id="mobileSortSheet" class="ios-action-sheet-overlay" onclick="closeMobileSortSheet(event)">
+    <div class="ios-action-sheet" onclick="event.stopPropagation()">
+      <div class="ios-action-header">
+        <span class="ios-action-header-title">SORT &amp; FILTER BY</span>
+      </div>
+      <div class="ios-action-group ios-action-scrollable">
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('newest')">📅 NEWEST</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('oldest')">📆 OLDEST</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('done')">✅ DONE</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('in_progress')">⏳ IN PROGRESS</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('wait')">⏱️ PENDING</button>
+        <button type="button" class="ios-action-btn" onclick="applyMobileSort('all')">⚡ ALL</button>
+      </div>
+      <div class="ios-action-group ios-action-cancel-group">
+        <button type="button" class="ios-action-btn ios-action-btn-cancel" onclick="closeMobileSortSheet()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS Mobile Tools Sheet -->
+  <div id="mobileToolsSheet" class="ios-action-sheet-overlay" onclick="closeMobileToolsSheet(event)">
+    <div class="ios-action-sheet" onclick="event.stopPropagation()">
+      <div class="ios-action-header">
+        <span class="ios-action-header-title">TOOLS &amp; SETTINGS</span>
+      </div>
+      <div class="ios-action-group ios-action-scrollable">
+        <button type="button" class="ios-action-btn" id="mobileToolsAuthBtn" onclick="closeMobileToolsSheet(); handleAuthHeaderClick();">
+          🔑 เข้าสู่ระบบ PIN / สลับบัญชี
+        </button>
+        <button type="button" class="ios-action-btn logged-in-only-item" id="mobileToolsProfileBtn" style="display: none;" onclick="closeMobileToolsSheet(); openUserProfileModal();">
+          👤 ข้อมูลโปรไฟล์ของฉัน (MY PROFILE)
+        </button>
+        <button type="button" class="ios-action-btn admin-only-item" id="mobileAdminTeamPinsBtn" style="display: none;" onclick="closeMobileToolsSheet(); openAdminTeamPinsModal();">
+          🛡️ จัดการบัญชีและรหัส PIN (ADMIN)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCloudModal();">
+          ☁️ CLOUD SYNC (คลาวด์ซิงค์)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openWorkspaceModal();">
+          🏢 จัดการหน้าบริษัท / งานส่วนตัว (WORKSPACES)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); openCategoryModal();">
+          📁 หมวดหมู่ (CATEGORIES)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); exportToExcel();">
+          📊 ส่งออก EXCEL (CSV)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); exportToJson();">
+          💾 สำรองข้อมูล (BACKUP JSON)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); document.getElementById('importFileInput').click();">
+          📥 นำเข้าข้อมูล (IMPORT JSON)
+        </button>
+        <button type="button" class="ios-action-btn" onclick="closeMobileToolsSheet(); window.print();">
+          🖨️ พิมพ์รายงาน / PDF
+        </button>
+      </div>
+      <div class="ios-action-group ios-action-cancel-group">
+        <button type="button" class="ios-action-btn ios-action-btn-cancel" onclick="closeMobileToolsSheet()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dime iOS-Style Floating Action Button (FAB) for One-Handed Thumb Access -->
+  <button type="button" class="mobile-dime-fab" onclick="openAchievementModal()" title="เพิ่มงานใหม่ (ADD TASK)" aria-label="เพิ่มงาน">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span class="dime-fab-text">เพิ่มงาน</span>
+  </button>
+
+  <!-- iOS Fixed Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <button type="button" class="mobile-tab-item active" data-mobile-tab="dashboard" onclick="switchMobileNavTab('dashboard')">
+      <div class="mobile-tab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="mobile-tab-label">DASHBOARD</div>
+    </button>
+    <button type="button" class="mobile-tab-item" data-mobile-tab="timeline" onclick="switchMobileNavTab('timeline')">
+      <div class="mobile-tab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="mobile-tab-label">TIMELINE</div>
+    </button>
+    <button type="button" class="mobile-tab-item" data-mobile-tab="tasks" onclick="switchMobileNavTab('tasks')">
+      <div class="mobile-tab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div class="mobile-tab-label">TASKS</div>
+    </button>
+    <button type="button" class="mobile-tab-item" data-mobile-tab="tools" onclick="openMobileToolsSheet()">
+      <div class="mobile-tab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="mobile-tab-label">SETTINGS</div>
+    </button>
+  </nav>
+
+  <!-- Floating Murata Red Scroll-To-Top Button -->
+  <button id="btnScrollTop" class="murata-floating-scroll-top" title="Scroll to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+</body>
+</html>

@@ -14319,6 +14319,19 @@ let tableMode = localStorage.getItem('orbray_table_mode') || 'compact'; // 'comp
 let isRequesterRankingVisible = localStorage.getItem(STORAGE_KEY_SHOW_RANKING) !== 'false';
 let isRankingExpanded = false;
 
+// Progressive DOM Card Rendering Limits (High-Performance Virtual Batching)
+let visibleCardLimit = 36;
+let cardIntersectionObserver = null;
+
+function resetVisibleCardLimit() {
+  visibleCardLimit = 36;
+}
+
+function loadMoreCards() {
+  visibleCardLimit += 36;
+  renderContent();
+}
+
 // Firebase & Cloud State
 let isFirebaseConnected = false;
 let firebaseDb = null;
@@ -16498,6 +16511,23 @@ function parseFirestoreRestValue(v) {
   return null;
 }
 
+let cloudRenderAllDebounceTimer = null;
+function scheduleCloudRenderAll(immediate = false) {
+  if (immediate) {
+    if (cloudRenderAllDebounceTimer) {
+      clearTimeout(cloudRenderAllDebounceTimer);
+      cloudRenderAllDebounceTimer = null;
+    }
+    renderAll();
+    return;
+  }
+  if (cloudRenderAllDebounceTimer) clearTimeout(cloudRenderAllDebounceTimer);
+  cloudRenderAllDebounceTimer = setTimeout(() => {
+    renderAll();
+    cloudRenderAllDebounceTimer = null;
+  }, 150);
+}
+
 function applyCloudAchievementsSnapshot(rawCloudItems, isInitial = false) {
   if (!Array.isArray(rawCloudItems) || rawCloudItems.length === 0) return;
 
@@ -16541,7 +16571,7 @@ function applyCloudAchievementsSnapshot(rawCloudItems, isInitial = false) {
     localStorage.setItem('orbray_achievements_synced_v5_102', 'true');
     saveAchievements();
     rehydrateFromIDBIfNeeded();
-    renderAll();
+    scheduleCloudRenderAll(isInitial);
     if (!isInitial) {
       showToast('☁️ ซิงค์ข้อมูลล่าสุดจากคลาวด์แล้ว');
     } else if (firebaseDb) {
@@ -16564,7 +16594,7 @@ function applyCloudAchievementsSnapshot(rawCloudItems, isInitial = false) {
   achievements = Array.from(mergedMap.values());
   saveAchievements();
   rehydrateFromIDBIfNeeded();
-  renderAll();
+  scheduleCloudRenderAll(isInitial);
 }
 
 async function fetchAchievementsViaRestFallback(projectId = 'orbray-techno-achievements', silent = true) {
@@ -18827,10 +18857,21 @@ function canUserEditTask(user, item) {
 
 // --- Setup Event Listeners ---
 function setupEventListeners() {
-  // Search Input & Murata Keyword Search Sync
+  // Search Input & Murata Keyword Search Sync with Debounced Rendering for 60fps responsiveness
   const searchInput = document.getElementById('searchInput');
   const murataKeywordInput = document.getElementById('murataKeywordInput');
   const btnMurataSearchClear = document.getElementById('btnMurataSearchClear');
+
+  let desktopSearchDebounceTimer = null;
+  function scheduleSearchRender(delay = 180) {
+    if (desktopSearchDebounceTimer) clearTimeout(desktopSearchDebounceTimer);
+    desktopSearchDebounceTimer = setTimeout(() => {
+      resetVisibleCardLimit();
+      renderContent();
+      renderRequesterRanking();
+      desktopSearchDebounceTimer = null;
+    }, delay);
+  }
 
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -18841,8 +18882,7 @@ function setupEventListeners() {
           btnMurataSearchClear.style.display = e.target.value ? 'block' : 'none';
         }
       }
-      renderContent();
-      renderRequesterRanking();
+      scheduleSearchRender(180);
     });
   }
 
@@ -18855,8 +18895,7 @@ function setupEventListeners() {
       if (btnMurataSearchClear) {
         btnMurataSearchClear.style.display = e.target.value ? 'block' : 'none';
       }
-      renderContent();
-      renderRequesterRanking();
+      scheduleSearchRender(180);
     });
 
     murataKeywordInput.addEventListener('keydown', (e) => {
@@ -18871,6 +18910,7 @@ function setupEventListeners() {
   const categoryFilter = document.getElementById('categoryFilter');
   if (categoryFilter) {
     categoryFilter.addEventListener('change', (e) => {
+      resetVisibleCardLimit();
       currentCategoryFilter = e.target.value;
       renderContent();
     });
@@ -18880,6 +18920,7 @@ function setupEventListeners() {
   const statusFilter = document.getElementById('statusFilter');
   if (statusFilter) {
     statusFilter.addEventListener('change', (e) => {
+      resetVisibleCardLimit();
       currentStatusFilter = e.target.value;
       renderContent();
       document.querySelectorAll('.status-summary-pill').forEach(p => p.classList.remove('active'));
@@ -18895,6 +18936,7 @@ function setupEventListeners() {
   const assigneeFilter = document.getElementById('assigneeFilter');
   if (assigneeFilter) {
     assigneeFilter.addEventListener('change', (e) => {
+      resetVisibleCardLimit();
       currentAssigneeFilter = e.target.value;
       renderContent();
     });
@@ -18903,6 +18945,7 @@ function setupEventListeners() {
   // Time Filter Chips
   document.querySelectorAll('[data-time-filter]').forEach(chip => {
     chip.addEventListener('click', () => {
+      resetVisibleCardLimit();
       document.querySelectorAll('[data-time-filter]').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       currentTimeFilter = chip.getAttribute('data-time-filter');
@@ -19664,6 +19707,7 @@ function renderWorkspaceSwitcher() {
 
 function switchWorkspace(wsId) {
   if (!wsId) return;
+  resetVisibleCardLimit();
   currentWorkspaceId = wsId;
   localStorage.setItem(STORAGE_KEY_CURRENT_WORKSPACE, currentWorkspaceId);
   renderAll();
@@ -19751,6 +19795,7 @@ function filterByAssignee(name) {
 
 function resetAllFilters() {
   currentSearch = '';
+  resetVisibleCardLimit();
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.value = '';
 
@@ -19930,8 +19975,13 @@ function renderCharts() {
 
   const ctxCat = document.getElementById('categoryChart');
   if (ctxCat) {
-    if (categoryChartInstance) categoryChartInstance.destroy();
-    categoryChartInstance = new Chart(ctxCat, {
+    if (categoryChartInstance) {
+      categoryChartInstance.data.labels = catLabels;
+      categoryChartInstance.data.datasets[0].data = catData;
+      categoryChartInstance.data.datasets[0].backgroundColor = catColors;
+      categoryChartInstance.update('none');
+    } else {
+      categoryChartInstance = new Chart(ctxCat, {
       type: 'doughnut',
       data: {
         labels: catLabels,
@@ -20005,6 +20055,7 @@ function renderCharts() {
       },
       plugins: [doughnutCenterTextPlugin]
     });
+    }
 
     if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => {
@@ -20044,8 +20095,12 @@ function renderCharts() {
 
   const ctxTrend = document.getElementById('trendChart');
   if (ctxTrend) {
-    if (trendChartInstance) trendChartInstance.destroy();
-    trendChartInstance = new Chart(ctxTrend, {
+    if (trendChartInstance) {
+      trendChartInstance.data.labels = statusLabels;
+      trendChartInstance.data.datasets[0].data = statusCounts;
+      trendChartInstance.update('none');
+    } else {
+      trendChartInstance = new Chart(ctxTrend, {
       type: 'bar',
       data: {
         labels: statusLabels,
@@ -20115,6 +20170,7 @@ function renderCharts() {
         }
       }
     });
+    }
   }
 
   renderEngineeringInsightsDashboard();
@@ -22027,10 +22083,14 @@ function renderContent() {
   }
 }
 
-// 1. Cards View (Clean Modern Cards for Desktop & Mobile)
+// 1. Cards View (Clean Modern Cards for Desktop & Mobile - Progressive Virtual Loading)
 function renderCardsView(container, items) {
+  const totalItems = items.length;
+  const itemsToRender = items.slice(0, visibleCardLimit);
+  const hasMore = totalItems > visibleCardLimit;
+
   let html = '<div class="cards-grid">';
-  items.forEach(item => {
+  itemsToRender.forEach(item => {
     const cat = categories.find(c => c.id === item.categoryId) || { name: 'ทั่วไป', icon: '📌', color: '#2563eb' };
     const statusHtml = getStatusPillHtml(item.status);
     const displayDate = item.completionDate || item.requestDate || '-';
@@ -22168,7 +22228,33 @@ function renderCardsView(container, items) {
     `;
   });
   html += '</div>';
+
+  if (hasMore) {
+    const remaining = totalItems - itemsToRender.length;
+    html += `
+      <div id="cardsLoadMoreSentinel" class="load-more-container" style="text-align: center; padding: 22px 10px 32px; width: 100%;">
+        <button type="button" class="btn btn-secondary load-more-btn" onclick="loadMoreCards()" style="font-weight: 700; padding: 11px 26px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; font-size: 13px;">
+          📂 แสดงผลงานเพิ่มเติม (แสดงแล้ว ${itemsToRender.length} จาก ${totalItems} งาน • เหลืออีก ${remaining})
+        </button>
+      </div>
+    `;
+  }
+
   container.innerHTML = html;
+
+  if (hasMore && typeof IntersectionObserver !== 'undefined') {
+    if (cardIntersectionObserver) cardIntersectionObserver.disconnect();
+    const sentinel = document.getElementById('cardsLoadMoreSentinel');
+    if (sentinel) {
+      cardIntersectionObserver = new IntersectionObserver((entries) => {
+        if (entries[0] && entries[0].isIntersecting) {
+          cardIntersectionObserver.disconnect();
+          loadMoreCards();
+        }
+      }, { rootMargin: '300px' });
+      cardIntersectionObserver.observe(sentinel);
+    }
+  }
 }
 
 // --- iOS Mobile Native Interaction Handlers ---
@@ -22353,25 +22439,43 @@ function switchMobileNavTab(tabName) {
   }
 }
 
+let mobileSearchDebounceTimer = null;
 function handleMobileSearch(val) {
-  currentSearch = val ? val.trim() : '';
+  currentSearch = val ? val.trim().toLowerCase() : '';
   const clearBtn = document.getElementById('mobileSearchClear');
   if (clearBtn) clearBtn.style.display = currentSearch ? 'flex' : 'none';
   const desktopSearch = document.getElementById('searchInput');
-  if (desktopSearch) desktopSearch.value = currentSearch;
+  if (desktopSearch && desktopSearch.value !== currentSearch) desktopSearch.value = currentSearch;
 
   const activeTab = document.querySelector('.mobile-tab-item.active')?.getAttribute('data-mobile-tab');
   if (activeTab === 'dashboard' && currentSearch.length > 0) {
     switchMobileNavTab('tasks');
-  } else {
-    renderContent();
   }
+
+  if (mobileSearchDebounceTimer) clearTimeout(mobileSearchDebounceTimer);
+  mobileSearchDebounceTimer = setTimeout(() => {
+    resetVisibleCardLimit();
+    renderContent();
+    renderRequesterRanking();
+    mobileSearchDebounceTimer = null;
+  }, 180);
 }
 
 function clearMobileSearch() {
+  if (mobileSearchDebounceTimer) {
+    clearTimeout(mobileSearchDebounceTimer);
+    mobileSearchDebounceTimer = null;
+  }
   const input = document.getElementById('mobileSearchInput');
   if (input) input.value = '';
-  handleMobileSearch('');
+  currentSearch = '';
+  const clearBtn = document.getElementById('mobileSearchClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  const desktopSearch = document.getElementById('searchInput');
+  if (desktopSearch) desktopSearch.value = '';
+  resetVisibleCardLimit();
+  renderContent();
+  renderRequesterRanking();
 }
 
 // 2. Timeline View
