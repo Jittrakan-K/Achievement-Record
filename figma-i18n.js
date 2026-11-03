@@ -959,8 +959,7 @@
       if (typeof msg === 'string' && TH.test(msg)) {
         args[0] = msg.split('\n').map(function (line) { var t = translate(line, false); return t === null ? line : t.trim(); }).join('\n');
       }
-      if (typeof args[0] === 'string') args[0] = args[0].toUpperCase();
-      return orig.apply(window, args);
+            return orig.apply(window, args);
     };
   });
 
@@ -968,7 +967,7 @@
   function hookCharts() {
     if (typeof Chart === 'undefined' || hookCharts.done) return;
     hookCharts.done = true;
-    function tr(v) { if (typeof v !== 'string') return v; if (TH.test(v)) { var t = translate(v, true); if (t !== null) v = t.trim(); } return v.toUpperCase(); }
+    function tr(v) { if (typeof v !== 'string') return v; if (TH.test(v)) { var t = translate(v, true); if (t !== null) v = t.trim(); } return v; }
     Chart.register({
       id: 'acreI18n',
       beforeUpdate: function (chart) {
@@ -984,7 +983,6 @@
   function start() {
     document.documentElement.setAttribute('lang', 'en');
     if (TH.test(document.title)) document.title = window.acreTranslate(document.title);
-    document.title = document.title.toUpperCase();
     hookCharts();
     walk(document.body);
     var pending = [], scheduled = false;

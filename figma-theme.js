@@ -30,7 +30,7 @@
     });
   }
   var EMOJI = /[\u2600-\u27BF\u2B00-\u2BFF\uFE0F\u200D]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDEFF]/g;
-  function clean(t) { if (typeof t !== 'string') return t; t = t.replace(EMOJI, '').replace(/^\s+/, ''); return (window.acreTranslateStrict && /[฀-๿]/.test(t)) ? window.acreTranslateStrict(t).toUpperCase() : t.toUpperCase(); }
+  function clean(t) { if (typeof t !== 'string') return t; t = t.replace(EMOJI, '').replace(/^\s+/, ''); return (window.acreTranslateStrict && /[฀-๿]/.test(t)) ? window.acreTranslateStrict(t) : t; }
   Chart.register({
     id: 'fxTypography',
     beforeDatasetsDraw: function (chart) {
@@ -90,6 +90,30 @@
       muts.forEach(function (m) {
         if (m.type === 'characterData') fixNode(m.target);
         else m.addedNodes.forEach(fixNode);
+      });
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+
+/* Options in drop-down lists: strip emoji so every choice is text only */
+(function () {
+  var EMO = /[☀-➿⬀-⯿️‍←-⇿⌀-⏿]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDEFF]/g;
+  function fix(root) {
+    var list = root.querySelectorAll ? root.querySelectorAll('option') : [];
+    if (root.tagName === 'OPTION') list = [root];
+    Array.prototype.forEach.call(list, function (o) {
+      var t = o.textContent;
+      if (EMO.test(t)) { EMO.lastIndex = 0; var n = t.replace(EMO, '').replace(/\s{2,}/g, ' ').trim(); if (n !== t) o.textContent = n; }
+      EMO.lastIndex = 0;
+    });
+  }
+  function start() {
+    fix(document);
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        if (m.type === 'characterData' && m.target.parentElement && m.target.parentElement.tagName === 'OPTION') fix(m.target.parentElement);
+        m.addedNodes && m.addedNodes.forEach(function (n) { if (n.nodeType === 1) fix(n); });
       });
     }).observe(document.body, { childList: true, subtree: true, characterData: true });
   }
