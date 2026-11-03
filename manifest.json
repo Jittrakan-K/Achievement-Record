@@ -1,6 +1,6 @@
 {
-  "name": "ACHIEVEMENT RECORD Task Tracker",
-  "short_name": "Achievement Record",
+  "name": "ACRE Task Tracker",
+  "short_name": "ACRE",
   "description": "Work Achievement Record & Tracker System",
   "start_url": "./index.html",
   "display": "standalone",
