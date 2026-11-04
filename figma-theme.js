@@ -3,7 +3,7 @@
   if (typeof Chart === 'undefined') return;
   var d = Chart.defaults;
   d.font.family = '"NoEmoji", "Helvetica Neue", Helvetica, Arial, "Noto Sans Thai", "Sarabun", sans-serif';
-  d.font.size = 12;
+  d.font.size = (window.innerWidth >= 769) ? 10 : 12;
   d.color = '#A0AEC0';
   d.borderColor = '#E2E8F0';
   if (d.plugins && d.plugins.tooltip) {

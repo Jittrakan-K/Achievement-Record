@@ -29,7 +29,7 @@
     return d.getDate() + ' ' + ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()] + ' ' + String(d.getFullYear()).slice(2);
   }
 
-  function row(it, i) {
+  function row(it, i, full) {
     var cats = []; try { cats = categories; } catch (e) {}
     var cat = (cats || []).find(function (c) { return c.id === it.categoryId; }) || { name: 'GENERAL', color: '#A0AEC0' };
     var s = st(it), xl = {};
@@ -54,23 +54,62 @@
     var desc = clean(it.description || '');
     var reqName = up(it.requestName || ''), dept = up(it.department || ''), fac = up(it.factory || '');
     var meta = dept || fac;
+    var codeTx = up(clean(it.code || '')); if (codeTx === '-' || codeTx.toLowerCase() === reqName.toLowerCase() || codeTx.toLowerCase() === meta.toLowerCase()) codeTx = '';
     var quote = clean(it.quotation || ''); if (quote === '-') quote = ''; quote = up(quote);
     var PAL = ['#3182CE', '#38B2AC', '#805AD5', '#DD6B20', '#D53F8C', '#319795', '#2F855A', '#B7791F'];
     var hk = 0, hs = (reqName || meta); for (var q = 0; q < hs.length; q++) hk = (hk * 31 + hs.charCodeAt(q)) >>> 0;
     var reqCol = PAL[hk % PAL.length];
 
+    var statusCell = '<td class="at-status"><div class="at-st-top"><span class="at-pill is-' + s + '">' + LABEL[s] + '</span>' +
+        (quote ? '<span class="at-quote" title="Quotation">Q: ' + esc(quote) + '</span>' : '') + '</div>' +
+        '<div class="at-st-meta"><span class="at-sub" title="Sub status">' + (!redundant ? esc(sub) : '&nbsp;') + '</span><b>' + pct + '%</b></div>' +
+        '<span class="at-bar"><span style="width:' + pct + '%"></span></span></td>';
+    var reqCell = '<td class="at-req">' + (reqName || meta ? '<div class="at-req-in"><span class="at-req-av" style="color:' + reqCol + ';background:' + reqCol + '1A">' + esc(initials(reqName || meta)) + '</span>' +
+        '<span class="at-req-tx">' + (reqName ? '<b>' + esc(reqName) + '</b>' : '') + (meta && meta.toLowerCase() !== reqName.toLowerCase() ? '<small>' + esc(meta) + '</small>' : '') + (codeTx ? '<em class="at-req-code" title="Request number">' + esc(codeTx) + '</em>' : '') + '</span></div>' : '<span class="at-dim">–</span>') + '</td>';
+    var taskCell = '<td class="at-task"><button type="button" class="at-title" onclick="viewAchievementDetail(\'' + id + '\')">' + esc(up(it.title || '-')) + '</button>' +
+        '<div class="at-tags">' +
+        '<span class="at-cat"><i style="background:' + esc(cat.color || '#A0AEC0') + '"></i>' + esc(clean(up(cat.name))) + '</span></div></td>';
+    var noteCell = '<td class="at-note">' + (note ? '<span class="at-note-main">' + esc(up(note)) + '</span>' : '') + (desc ? '<small>' + esc(up(desc)) + '</small>' : (note ? '' : '<span class="at-dim">–</span>')) + '</td>';
+    var filesCell = '<td class="at-files">' + (files || '<span class="at-dim">–</span>') + '</td>';
+    var actCell = '<span class="at-actions"><button type="button" class="at-icon" onclick="openAchievementModal(\'' + id + '\')" title="Edit">' + ICON.edit + '</button>' +
+        '<button type="button" class="at-icon is-danger" onclick="deleteAchievement(\'' + id + '\')" title="Delete">' + ICON.del + '</button></span>';
+    if (full) {
+      var dash = function (v) { v = clean(v || ''); return v && v !== '-' ? v : ''; };
+      var team = '';
+      if (it.assignee) team += '<div class="af-owner"><span class="at-av">' + esc(initials(it.assignee)) + '</span><b>' + esc(up(it.assignee)) + '</b></div>';
+      [['Tooling', xl.toolingTeam], ['Design', xl.designSupport], ['Maintenance', xl.maintenanceSupport]].forEach(function (p) {
+        var v = dash(p[1]); if (v) team += '<div class="af-line"><span>' + p[0] + '</span>' + esc(up(v)) + '</div>';
+      });
+      var jt = ''; try { jt = getJobTypeTitle(xl.jobType); } catch (e) { jt = xl.jobType || ''; }
+      var subJob = dash(strip(xl.subJobType || '')), pri = dash(xl.priority);
+      var priCls = /super/i.test(pri) ? 'is-super' : (/high/i.test(pri) ? 'is-high' : (/low/i.test(pri) ? 'is-low' : 'is-mid'));
+      var job = (dash(jt) ? '<b class="af-strong">' + esc(up(jt)) + '</b>' : '<span class="at-dim">–</span>') +
+        '<div class="af-sub">' + (subJob ? esc(up(subJob)) : '') + (subJob && pri ? ' · ' : '') + (pri ? '<span class="af-pri ' + priCls + '"><i></i>' + esc(up(pri)) + '</span>' : '') + '</div>';
+      var proc = dash(it.process), facv = dash(it.factory);
+      var loc = (facv ? '<b class="af-strong">' + esc(up(facv)) + '</b>' : '<span class="at-dim">–</span>') + (proc ? '<div class="af-sub">' + esc(up(proc)) + '</div>' : '');
+      var dates = '';
+      if (dash(xl.actionDate)) dates += '<div class="af-date"><span>Started</span>' + fmtDate(xl.actionDate) + '</div>';
+      if (it.completionDate) dates += '<div class="af-date is-done"><span>Done</span>' + fmtDate(it.completionDate) + '</div>';
+      if (!dates && it.requestDate) dates += '<div class="af-date"><span>Requested</span>' + fmtDate(it.requestDate) + '</div>';
+      return '<tr class="at-row is-' + s + '">' +
+        '<td class="at-no af-stick-a">' + (i + 1) + '</td>' + taskCell.replace('<td class="at-task">', '<td class="at-task af-stick-b">') + statusCell +
+        '<td class="af-team">' + (team || '<span class="at-dim">–</span>') + '</td>' +
+        '<td class="af-job">' + job + '</td>' + reqCell + '<td class="af-loc">' + loc + '</td>' +
+        '<td class="af-dates">' + (dates || '<span class="at-dim">–</span>') + '</td>' + noteCell + filesCell +
+        '<td class="at-end af-stick-c">' + actCell + '</td></tr>';
+    }
     return '<tr class="at-row is-' + s + '">' +
       '<td class="at-no">' + (i + 1) + '</td>' +
       '<td class="at-task"><button type="button" class="at-title" onclick="viewAchievementDetail(\'' + id + '\')">' + esc(up(it.title || '-')) + '</button>' +
-        '<div class="at-tags">' + (it.code ? '<span class="at-code">' + esc(up(it.code)) + '</span>' : '') +
+        '<div class="at-tags">' +
         '<span class="at-cat"><i style="background:' + esc(cat.color || '#A0AEC0') + '"></i>' + esc(clean(up(cat.name))) + '</span>' +
         '</div></td>' +
-      '<td class="at-status"><span class="at-pill is-' + s + '">' + LABEL[s] + '</span>' +
-        (!redundant ? '<span class="at-sub" title="Sub status">' + esc(sub) + '</span>' : '') +
-        '<span class="at-prog"><span class="at-bar"><span style="width:' + pct + '%"></span></span><b>' + pct + '%</b></span>' +
-        (quote ? '<span class="at-quote" title="Quotation">Q: ' + esc(quote) + '</span>' : '') + '</td>' +
+      '<td class="at-status"><div class="at-st-top"><span class="at-pill is-' + s + '">' + LABEL[s] + '</span>' +
+        (quote ? '<span class="at-quote" title="Quotation">Q: ' + esc(quote) + '</span>' : '') + '</div>' +
+        '<div class="at-st-meta"><span class="at-sub" title="Sub status">' + (!redundant ? esc(sub) : '&nbsp;') + '</span><b>' + pct + '%</b></div>' +
+        '<span class="at-bar"><span style="width:' + pct + '%"></span></span></td>' +
       '<td class="at-req">' + (reqName || meta ? '<div class="at-req-in"><span class="at-req-av" style="color:' + reqCol + ';background:' + reqCol + '1A">' + esc(initials(reqName || meta)) + '</span>' +
-        '<span class="at-req-tx">' + (reqName ? '<b>' + esc(reqName) + '</b>' : '') + (meta && meta.toLowerCase() !== reqName.toLowerCase() ? '<small>' + esc(meta) + '</small>' : '') + '</span></div>' : '<span class="at-dim">–</span>') + '</td>' +
+        '<span class="at-req-tx">' + (reqName ? '<b>' + esc(reqName) + '</b>' : '') + (meta && meta.toLowerCase() !== reqName.toLowerCase() ? '<small>' + esc(meta) + '</small>' : '') + (codeTx ? '<em class="at-req-code" title="Request number">' + esc(codeTx) + '</em>' : '') + '</span></div>' : '<span class="at-dim">–</span>') + '</td>' +
       '<td class="at-note">' + (note ? '<span class="at-note-main">' + esc(up(note)) + '</span>' : '') + (desc ? '<small>' + esc(up(desc)) + '</small>' : (note ? '' : '<span class="at-dim">–</span>')) + '</td>' +
       '<td class="at-owner">' + (it.assignee ? '<span class="at-av">' + esc(initials(it.assignee)) + '</span><span class="at-owner-name">' + esc(up(it.assignee)) + '</span>' : '<span class="at-dim">–</span>') + '</td>' +
       '<td class="at-files">' + (files || '<span class="at-dim">–</span>') + '</td>' +
@@ -80,23 +119,64 @@
       '</tr>';
   }
 
+  function counts(items) { var c = { done: 0, in_progress: 0, wait: 0, cancel: 0 }; items.forEach(function (it) { c[st(it)]++; }); return c; }
+  function summary(items, c) {
+    function item(k, label) { return '<span class="at-sum-item is-' + k + '"><i></i>' + label + '<b>' + c[k] + '</b></span>'; }
+    return '<div class="at-summary"><span class="at-sum-total"><b>' + items.length + '</b>Tasks</span>' +
+      item('done', 'Done') + item('in_progress', 'In Progress') + item('wait', 'Pending') + (c.cancel ? item('cancel', 'Cancelled') : '') + '</div>';
+  }
+  function modeToggle(full) {
+    return '<div class="at-mode"><button type="button" class="' + (full ? '' : 'on') + '" onclick="setTableMode(\'compact\')">Fit Screen</button>' +
+      '<button type="button" class="' + (full ? 'on' : '') + '" onclick="setTableMode(\'full\')">Full Columns</button></div>';
+  }
   function render(container, items) {
-    var c = { done: 0, in_progress: 0, wait: 0, cancel: 0 };
-    items.forEach(function (it) { c[st(it)]++; });
+    var c = counts(items);
     var html = '<div class="at-wrap">' +
-      '<div class="at-bar-top"><div class="at-summary"><b>' + items.length + '</b> TASKS' +
-        '<span class="at-sum-chip is-done">' + c.done + ' DONE</span><span class="at-sum-chip is-in_progress">' + c.in_progress + ' IN PROGRESS</span>' +
-        '<span class="at-sum-chip is-wait">' + c.wait + ' PENDING</span>' + (c.cancel ? '<span class="at-sum-chip is-cancel">' + c.cancel + ' CANCELLED</span>' : '') + '</div>' +
-        '<div class="at-mode"><button type="button" class="on" onclick="setTableMode(\'compact\')">FIT SCREEN</button><button type="button" onclick="setTableMode(\'full\')">FULL COLUMNS</button></div></div>';
+      '<div class="at-bar-top">' + summary(items, c) + modeToggle(false) + '</div>';
     if (!items.length) {
       html += '<div class="at-empty"><b>No tasks match your filters</b><span>Try another search or reset the filters.</span></div></div>';
     } else {
       html += '<div class="at-scroll"><table class="at-table"><thead><tr>' +
-        '<th class="at-no">#</th><th>TASK</th><th>STATUS</th><th>REQUESTER</th><th>NOTE</th><th>OWNER</th><th>FILES</th><th class="at-end">DATE</th>' +
-        '</tr></thead><tbody>' + items.map(row).join('') + '</tbody></table></div></div>';
+        '<th class="at-no">#</th><th>TASK</th><th>STATUS</th><th>REQUESTER</th><th>NOTE</th><th>OWNER</th><th class="at-files">FILES</th><th class="at-end">DATE</th>' +
+        '</tr></thead><tbody>' + items.map(function (it, i) { return row(it, i); }).join('') + '</tbody></table></div></div>';
     }
     container.innerHTML = html;
   }
+  function g(name, d) { try { return eval(name); } catch (e) { return d; } }
+  function sel(type, cur, label, opts) {
+    var on = cur && cur !== 'all';
+    var curLabel = 'All'; opts.forEach(function (o) { if (o[0] === cur) curLabel = o[1]; });
+    return '<label class="af-select' + (on ? ' is-on' : '') + '"><span>' + label + '</span><b>' + esc(curLabel) + '</b><select onchange="setExcelFilter(\'' + type + '\', this.value)">' +
+      '<option value="all"' + (on ? '' : ' selected') + '>All</option>' +
+      opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (cur === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>';
+  }
+  function renderFull(container, items) {
+    var c = counts(items), score = 0;
+    items.forEach(function (it) { try { var x = getTaskExcelTracking(it); score += (typeof x.achievement === 'number' ? x.achievement : 0); } catch (e) {} });
+    var avg = items.length ? (score / items.length * 100).toFixed(1) : '0.0';
+    var fs = g('currentSectionFilter', 'all'), fj = g('currentJobTypeFilter', 'all'), fsj = g('currentSubJobTypeFilter', 'all'), fp = g('currentPriorityFilter', 'all'), fss = g('currentSubStatusFilter', 'all');
+    var any = [fs, fj, fsj, fp, fss].some(function (v) { return v && v !== 'all'; });
+    var html = '<div class="at-wrap is-full">' +
+      '<div class="at-bar-top">' + summary(items, c) +
+        '<div class="af-right"><span class="af-score" title="Achievement score of the tasks shown"><span>Achievement</span><b>' + score.toFixed(1) + ' / ' + items.length + '</b><em>' + avg + '%</em></span>' + modeToggle(true) + '</div></div>' +
+      '<div class="af-filters">' +
+        sel('section', fs, 'Section', [['S0', 'S0 · Carried over'], ['S1', 'S1 · Day 1–15'], ['S2', 'S2 · Day 16–31']]) +
+        sel('jobType', fj, 'Job Type', [['D', 'Design'], ['R', 'Repair'], ['M', 'Modify'], ['I', 'Increase'], ['A', 'Assy / Install'], ['S', 'Simulation'], ['T', 'Training'], ['AC', 'Activity / 5S'], ['Q', 'Quote']]) +
+        sel('subJobType', fsj, 'Sub Job', [['01 In-house', 'In-House'], ['02 Outsource', 'Outsource'], ['All', 'In-House + Outsource']]) +
+        sel('priority', fp, 'Priority', [['Super High', 'Super High'], ['High', 'High'], ['Medium', 'Medium'], ['Low', 'Low']]) +
+        sel('subStatus', fss, 'Sub Status', [['00 Not Start', 'Not Start · 0%'], ['01 Req. Analysis', 'Req. Analysis · 10%'], ['02 Concept Design', 'Concept Design · 20%'], ['03 User Approval 1', 'User Approval 1 · 30%'], ['04 Detailed Drawing', 'Detailed Drawing · 40%'], ['05 Quote Request', 'Quote Request · 50%'], ['06 User Approval 2', 'User Approval 2 · 60%'], ['07 Supp. Proc.', 'Supplier Process · 70%'], ['08 P.Techno. Proc.', 'P.Techno Process · 80%'], ['09 Verification', 'Verification · 90%'], ['10 Finished', 'Finished · 100%'], ['Pending', 'Pending · 0%'], ['Cancel', 'Cancel · 100%']]) +
+        (any ? '<button type="button" class="af-clear" onclick="resetAllFilters()">Clear filters</button>' : '') +
+      '</div>';
+    if (!items.length) {
+      html += '<div class="at-empty"><b>No tasks match your filters</b><span>Try another search or reset the filters.</span></div></div>';
+    } else {
+      html += '<div class="at-scroll af-scroll"><table class="at-table af-table"><thead><tr>' +
+        '<th class="at-no af-stick-a">#</th><th class="af-stick-b">TASK</th><th>STATUS</th><th>TEAM</th><th>JOB TYPE</th><th>REQUESTER</th><th>LOCATION</th><th>DATES</th><th>NOTE</th><th class="at-files">FILES</th><th class="at-end af-stick-c">ACTIONS</th>' +
+        '</tr></thead><tbody>' + items.map(function (it, i) { return row(it, i, true); }).join('') + '</tbody></table></div></div>';
+    }
+    container.innerHTML = html;
+  }
+
 
   (function () { if (document.getElementById('fxTableCss')) return; var st = document.createElement('style'); st.id = 'fxTableCss'; st.textContent = `/* ==========================================================================
    Clean task table
@@ -133,13 +213,13 @@
 .at-quote { font-size: 10.5px; font-weight: 700; color: #C05621; }
 .at-status { }
 .at-pill { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 4px 9px; border-radius: 7px; color: #fff; }
-.at-pill.is-done { background: #48BB78; } .at-pill.is-in_progress { background: var(--primary); } .at-pill.is-wait { background: #F6AD55; } .at-pill.is-cancel { background: #CBD5E0; }
+.at-pill.is-done { background: #48BB78; } .at-pill.is-in_progress { background: var(--primary); } .at-pill.is-wait { background: #E53E3E; } .at-pill.is-cancel { background: #CBD5E0; }
 .at-sub { display: block; margin-top: 6px; font-size: 10px; font-weight: 700; color: #718096; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .at-prog { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .at-bar { flex: 1; height: 5px; border-radius: 99px; background: #EDF2F7; overflow: hidden; max-width: 90px; }
 .at-bar > span { display: block; height: 100%; border-radius: 99px; background: var(--primary); }
 .at-row.is-done .at-bar > span { background: #48BB78; }
-.at-row.is-wait .at-bar > span { background: #F6AD55; }
+.at-row.is-wait .at-bar > span { background: #E53E3E; }
 .at-row.is-cancel .at-bar > span { background: #CBD5E0; }
 .at-prog b { font-size: 11px; color: #4A5568; font-variant-numeric: tabular-nums; min-width: 30px; }
 .at-req b { display: block; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -173,16 +253,215 @@
 .at-req-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 html body .at-req-tx b { display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2 !important; font-size: 12.5px !important; font-weight: 600 !important; color: #2D3748 !important; line-height: 1.3 !important; white-space: normal !important; overflow: hidden; }
 html body .at-req-tx small { display: block !important; margin: 0 !important; font-size: 11px !important; font-weight: 500 !important; color: #A0AEC0 !important; line-height: 1.3 !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; }
-`; document.head.appendChild(st); })();
+
+/* balanced layout */
+html body .at-table th:nth-child(1) { width: 48px !important; } html body .at-table th:nth-child(2) { width: 22% !important; } html body .at-table th:nth-child(3) { width: 212px !important; }
+html body .at-table th:nth-child(4) { width: 15% !important; } html body .at-table th:nth-child(5) { width: auto !important; } html body .at-table th:nth-child(6) { width: 124px !important; }
+html body .at-table th.at-end { text-align: right; }
+html body .at-table:not(.af-table) th:nth-child(3), html body .at-table:not(.af-table) td.at-status { padding-left: 8px !important; padding-right: 36px !important; }
+html body .at-table:not(.af-table) th:nth-child(4), html body .at-table:not(.af-table) td.at-req { padding-left: 4px !important; }
+html body .at-st-top { flex-wrap: nowrap; }
+html body .at-table th:nth-child(7) { width: 84px !important; } html body .at-table th:nth-child(8) { width: 104px !important; }
+html body .at-table td { padding: 16px 14px; }
+html body .at-table th { padding: 12px 14px; }
+html body .at-table th.at-files, html body .at-table td.at-files { text-align: center; }
+html body .at-table td.at-files .at-file { margin: 2px; }
+.at-st-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+html body .at-st-top .at-quote { margin-top: 0 !important; padding: 3px 7px !important; }
+.at-st-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 8px; }
+html body .at-st-meta .at-sub { margin: 0; font-size: 10.5px; font-weight: 600; color: #718096; letter-spacing: 0; min-width: 0; }
+.at-st-meta b { font-size: 11px; font-weight: 700; color: #4A5568; font-variant-numeric: tabular-nums; }
+html body .at-status > .at-bar { display: block !important; max-width: 160px !important; width: 100% !important; height: 5px !important; margin-top: 6px; }
+html body .at-st-meta { max-width: 160px; }
+html body .at-av { width: 30px; height: 30px; border-radius: 10px; font-size: 10.5px; margin-right: 10px; }
+html body .at-owner-name { font-weight: 600; font-size: 12.5px; }
+html body .at-end .at-date { display: block; font-size: 12px; font-weight: 600; color: #718096; }
+html body .at-end .at-actions { display: inline-flex; gap: 6px; margin-top: 8px; }
+
+/* ---------- pills: text optically centred ---------- */
+html body .at-pill, html body .at-quote, html body .at-code, html body .pu-badge, html body .workspace-tab-count, html body .af-pri {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important; line-height: 1 !important; vertical-align: middle;
+}
+html body .at-pill { height: 22px; padding: 0 9px !important; }
+html body .at-quote { height: 22px; padding: 0 8px !important; }
+html body .at-code { height: 20px; padding: 0 7px !important; }
+html body .pu-badge { height: 24px; padding: 0 12px !important; font-size: 11.5px !important; }
+html body .workspace-tab-count { height: 20px !important; min-width: 26px !important; padding: 0 7px !important; }
+
+/* ---------- summary line ---------- */
+html body .at-summary { gap: 0 !important; font-size: 12.5px !important; font-weight: 500 !important; color: #718096 !important; letter-spacing: 0 !important; }
+.at-sum-total { display: inline-flex; align-items: baseline; gap: 6px; padding-right: 16px; margin-right: 16px; border-right: 1px solid #E2E8F0; color: #718096; font-weight: 600; }
+.at-sum-total b { font-size: 18px; font-weight: 700; color: #2D3748; letter-spacing: -.01em; }
+.at-sum-item { display: inline-flex; align-items: center; gap: 7px; margin-right: 18px; color: #718096; font-weight: 500; white-space: nowrap; }
+.at-sum-item:last-child { margin-right: 0; }
+.at-sum-item i { width: 8px; height: 8px; border-radius: 50%; background: #CBD5E0; }
+.at-sum-item b { color: #2D3748; font-weight: 700; font-variant-numeric: tabular-nums; }
+.at-sum-item.is-done i { background: #48BB78; } .at-sum-item.is-in_progress i { background: var(--primary); } .at-sum-item.is-wait i { background: #E53E3E; } .at-sum-item.is-cancel i { background: #CBD5E0; }
+html body .at-bar-top { padding: 16px 20px !important; }
+html body .at-mode button.on { background: #fff; color: #2D3748; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+/* ---------- finished rows: grey ---------- */
+html body .at-row.is-done > td { background: #F4F5F7 !important; }
+html body .at-row.is-done:hover > td { background: #EEF0F3 !important; }
+html body .at-row.is-done td.at-no { box-shadow: none !important; }
+html body .at-row.is-done .at-title { color: #4A5568; }
+html body .at-row.is-cancel > td { background: #FAFAFB !important; }
+html body .at-row.is-cancel .at-title { color: #A0AEC0; text-decoration: line-through; text-decoration-color: #CBD5E0; }
+
+/* ---------- full columns ---------- */
+.af-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.af-score { display: inline-flex; align-items: baseline; gap: 8px; font-size: 12px; color: #718096; font-weight: 500; padding-right: 12px; border-right: 1px solid #E2E8F0; }
+.af-score b { color: #2D3748; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.af-score em { font-style: normal; color: #2F855A; font-weight: 700; font-size: 12px; }
+.af-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid #EDF2F7; background: #FCFCFD; }
+.af-select { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 30px 0 12px; border: 1px solid #E2E8F0; border-radius: 10px; background: #fff; cursor: pointer; font-size: 12px; color: #718096; font-weight: 500; }
+.af-select::after { content: ''; position: absolute; right: 12px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid #A0AEC0; border-bottom: 1.5px solid #A0AEC0; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.af-select span { white-space: nowrap; }
+.af-select > b { font-weight: 700; color: #2D3748; white-space: nowrap; }
+.af-select.is-on > b { color: var(--primary); }
+html body .af-select select { -webkit-appearance: none; appearance: none; border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; height: auto !important; min-height: 0 !important; width: auto !important; font: inherit; font-size: 12px !important; font-weight: 700 !important; color: #2D3748 !important; cursor: pointer; outline: none; position: absolute; inset: 0; opacity: 0; }
+.af-select.is-on { border-color: color-mix(in srgb, var(--primary) 45%, #fff); background: color-mix(in srgb, var(--primary) 6%, #fff); color: var(--primary); }
+.af-clear { border: 0; background: none; color: #E53E3E; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0 6px; height: 34px; }
+.af-scroll { overflow-x: auto; }
+html body .af-table { min-width: 1960px !important; table-layout: fixed; }
+html body .af-table th:nth-child(1) { width: 48px !important; } html body .af-table th:nth-child(2) { width: 270px !important; } html body .af-table th:nth-child(3) { width: 184px !important; }
+html body .af-table th:nth-child(4) { width: 170px !important; } html body .af-table th:nth-child(5) { width: 160px !important; } html body .af-table th:nth-child(6) { width: 190px !important; }
+html body .af-table th:nth-child(7) { width: 160px !important; } html body .af-table th:nth-child(8) { width: 150px !important; } html body .af-table th:nth-child(9) { width: auto !important; }
+html body .af-table th:nth-child(10) { width: 120px !important; } html body .af-table th:nth-child(11) { width: 96px !important; }
+.af-stick-a, .af-stick-b, .af-stick-c { position: sticky; z-index: 2; background: #fff; }
+.af-stick-a { left: 0; } .af-stick-b { left: 48px; box-shadow: 1px 0 0 #EDF2F7; } .af-stick-c { right: 0; box-shadow: -1px 0 0 #EDF2F7; }
+html body .af-table thead th.af-stick-a, html body .af-table thead th.af-stick-b, html body .af-table thead th.af-stick-c { z-index: 3; background: #fff; }
+html body .af-table td.at-end { text-align: right; }
+html body .af-table td.at-end .at-actions { margin-top: 0 !important; opacity: 1; }
+.af-owner { display: flex; align-items: center; gap: 0; }
+.af-owner b { font-size: 12.5px; font-weight: 600; color: #2D3748; }
+.af-line { font-size: 11px; color: #4A5568; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.af-line span { display: inline-block; min-width: 72px; color: #A0AEC0; font-weight: 500; }
+.af-strong { display: block; font-size: 12.5px; font-weight: 600; color: #2D3748; line-height: 1.35; }
+.af-sub { margin-top: 4px; font-size: 11px; color: #A0AEC0; font-weight: 500; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.af-pri { gap: 5px; font-weight: 600; color: #718096; }
+.af-pri i { width: 6px; height: 6px; border-radius: 50%; background: #A0AEC0; }
+.af-pri.is-super i { background: #E53E3E; } .af-pri.is-super { color: #C53030; }
+.af-pri.is-high i { background: #DD6B20; } .af-pri.is-high { color: #C05621; }
+.af-pri.is-mid i { background: #3182CE; } .af-pri.is-low i { background: #A0AEC0; }
+.af-date { white-space: nowrap; display: flex; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: #4A5568; font-variant-numeric: tabular-nums; }
+.af-date + .af-date { margin-top: 5px; }
+.af-date span { color: #A0AEC0; font-weight: 500; font-size: 11px; }
+.af-date.is-done { color: #2F855A; }
+
+/* ---------- timeline ---------- */
+html body .atl { padding: 8px 24px 24px !important; }
+.atl-group { position: relative; }
+.atl-head { display: flex; align-items: baseline; gap: 10px; padding: 18px 0 12px; }
+.atl-head h4 { margin: 0; font-size: 15px; font-weight: 700; color: #2D3748; }
+.atl-head span { font-size: 12px; color: #A0AEC0; font-weight: 500; }
+.atl-list { position: relative; padding-left: 26px; }
+.atl-list::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; border-radius: 2px; background: #EDF2F7; }
+.atl-item { position: relative; margin-bottom: 12px; }
+.atl-item:last-child { margin-bottom: 0; }
+.atl-dot { position: absolute; left: -26px; top: 20px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid #CBD5E0; box-sizing: border-box; }
+.atl-item.is-done .atl-dot { border-color: #48BB78; background: #48BB78; box-shadow: inset 0 0 0 2px #fff; }
+.atl-item.is-in_progress .atl-dot { border-color: var(--primary); }
+.atl-item.is-wait .atl-dot { border-color: #E53E3E; }
+.atl-card { background: #fff; border: 1px solid #EDF2F7; border-radius: 14px; padding: 16px 18px; transition: border-color .15s ease, box-shadow .15s ease; }
+.atl-card:hover { border-color: #E2E8F0; box-shadow: 0 4px 14px rgba(15, 23, 42, .05); }
+.atl-item.is-done .atl-card { background: #F4F5F7; border-color: #F4F5F7; }
+.atl-item.is-cancel .atl-card { background: #FAFAFB; }
+.atl-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.atl-title { border: 0; background: none; padding: 0; font: inherit; text-align: left; cursor: pointer; font-size: 14px; font-weight: 700; color: #2D3748; line-height: 1.4; text-transform: uppercase !important; }
+.atl-title:hover { color: var(--primary); }
+html body .atl .at-tags { margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.atl-desc { margin: 10px 0 0; font-size: 12.5px; color: #718096; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.atl-note { margin: 8px 0 0; font-size: 12px; color: #4A5568; line-height: 1.5; padding-left: 10px; border-left: 2px solid #F6AD55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.atl-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(160, 174, 192, .2); }
+.atl-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: #A0AEC0; }
+.atl-meta b { color: #4A5568; font-weight: 600; }
+.atl-meta i { width: 3px; height: 3px; border-radius: 50%; background: #CBD5E0; }
+html body .atl .at-actions { margin-top: 0 !important; opacity: 1; }
+
+/* request number under the requester */
+html body .at-req-code { display: block; margin-top: 3px; font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--primary); letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .at-req-tx { gap: 1px !important; }
+html body .at-req-av { width: 32px !important; height: 32px !important; }
+html body .at-table td.at-task .at-tags { margin-top: 6px; }
+/* pills: fixed height + matching line-height so the label sits in the middle in any font */
+html body .at-pill, html body .at-quote, html body .pu-badge, html body .workspace-tab-count, html body .status-pill {
+  display: inline-block !important; vertical-align: middle; text-align: center; white-space: nowrap;
+}
+html body .at-pill, html body .at-quote { height: 22px !important; line-height: 23px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+html body .at-quote { line-height: 21px !important; }
+html body .pu-badge { height: 24px !important; line-height: 25px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+@supports (text-box: trim-both cap alphabetic) {
+  html body .at-pill, html body .at-quote, html body .pu-badge, html body .status-pill {
+    text-box: trim-both cap alphabetic; height: auto !important; line-height: 1 !important;
+  }
+  html body .at-pill { padding-top: 7px !important; padding-bottom: 7px !important; }
+  html body .at-quote { padding-top: 6px !important; padding-bottom: 6px !important; }
+  html body .pu-badge { padding-top: 8px !important; padding-bottom: 8px !important; }
+  html body .workspace-tab-count { text-box: trim-both cap alphabetic; height: auto !important; min-height: 0 !important; line-height: 1 !important; padding-top: 5px !important; padding-bottom: 5px !important; }
+}
+`; var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st); })();
+
+  /* ---------- Timeline view ---------- */
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function renderTimeline(container, items) {
+    var groups = {}, order = [];
+    items.forEach(function (it) {
+      var d = new Date(it.completionDate || it.requestDate || it.createdAt);
+      var key = isNaN(d) ? 'zz' : d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      if (!groups[key]) { groups[key] = []; order.push(key); }
+      groups[key].push(it);
+    });
+    order.sort().reverse();
+    var cats = []; try { cats = categories; } catch (e) {}
+    var html = '<div class="at-wrap atl">';
+    if (!items.length) html += '<div class="at-empty"><b>No tasks match your filters</b><span>Try another search or reset the filters.</span></div>';
+    order.forEach(function (key) {
+      var label = key === 'zz' ? 'No date' : MONTHS[parseInt(key.slice(5), 10) - 1] + ' ' + key.slice(0, 4);
+      html += '<section class="atl-group"><header class="atl-head"><h4>' + label + '</h4><span>' + groups[key].length + ' tasks</span></header><div class="atl-list">';
+      groups[key].forEach(function (it) {
+        var s = st(it), id = js(it.id);
+        var cat = (cats || []).find(function (c) { return c.id === it.categoryId; }) || { name: 'General', color: '#A0AEC0' };
+        var note = clean(it.note && it.note !== '-' ? it.note : ''), desc = clean(it.description || '');
+        var quote = clean(it.quotation || ''); if (quote === '-') quote = '';
+        var meta = [];
+        meta.push('<span>' + fmtDate(it.completionDate || it.requestDate) + '</span>');
+        if (it.requestName) meta.push('<span>Requested by <b>' + esc(up(it.requestName)) + '</b></span>');
+        if (it.assignee) meta.push('<span>Owner <b>' + esc(up(it.assignee)) + '</b></span>');
+        html += '<article class="atl-item is-' + s + '"><span class="atl-dot"></span><div class="atl-card">' +
+          '<div class="atl-top"><button type="button" class="atl-title" onclick="viewAchievementDetail(\'' + id + '\')">' + esc(up(it.title || '-')) + '</button>' +
+            '<span class="at-pill is-' + s + '">' + LABEL[s] + '</span></div>' +
+          '<div class="at-tags">' + (it.code ? '<span class="at-code">' + esc(up(it.code)) + '</span>' : '') +
+            (quote ? '<span class="at-quote">Q: ' + esc(up(quote)) + '</span>' : '') +
+            '<span class="at-cat"><i style="background:' + esc(cat.color || '#A0AEC0') + '"></i>' + esc(clean(up(cat.name))) + '</span></div>' +
+          (desc ? '<p class="atl-desc">' + esc(up(desc)) + '</p>' : '') +
+          (note ? '<p class="atl-note">' + esc(up(note)) + '</p>' : '') +
+          '<div class="atl-foot"><div class="atl-meta">' + meta.join('<i></i>') + '</div>' +
+            '<span class="at-actions"><button type="button" class="at-icon" onclick="openAchievementModal(\'' + id + '\')" title="Edit">' + ICON.edit + '</button>' +
+            '<button type="button" class="at-icon is-danger" onclick="deleteAchievement(\'' + id + '\')" title="Delete">' + ICON.del + '</button></span></div>' +
+          '</div></article>';
+      });
+      html += '</div></section>';
+    });
+    container.innerHTML = html + '</div>';
+  }
   var orig = window.renderTableView;
   if (typeof orig === 'function') {
     window.renderTableView = function (container, items) {
       var priv = false, mode = 'compact';
       try { priv = isPrivateProjectWorkspace(currentWorkspaceId); } catch (e) {}
       try { mode = tableMode; } catch (e) {}
-      if (priv || mode !== 'compact') return orig.apply(this, arguments);
-      render(container, items || []);
+      if (priv) return orig.apply(this, arguments);
+      if (mode !== 'compact') renderFull(container, items || []); else render(container, items || []);
     };
     try { if (typeof currentView !== 'undefined' && currentView === 'table') renderContent(); } catch (e) {}
+  }
+  var origTl = window.renderTimelineView;
+  if (typeof origTl === 'function') {
+    window.renderTimelineView = function (container, items) {
+      var priv = false; try { priv = isPrivateProjectWorkspace(currentWorkspaceId); } catch (e) {}
+      renderTimeline(container, items || []);
+    };
+    try { if (typeof currentView !== 'undefined' && currentView === 'timeline') renderContent(); } catch (e) {}
   }
 })();

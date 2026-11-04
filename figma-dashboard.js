@@ -97,7 +97,7 @@
   var STATUS_META = {
     done: { label: 'Done', icon: 'check', box: 'checkO', color: '#48BB78' },
     in_progress: { label: 'In progress', icon: 'bolt', box: 'bolt', color: '#4299E1' },
-    wait: { label: 'Pending', icon: 'clock', box: 'clockO', color: '#F6AD55' },
+    wait: { label: 'Pending', icon: 'clock', box: 'clockO', color: '#E53E3E' },
     cancel: { label: 'Cancelled', icon: 'x', box: 'xO', color: '#A0AEC0' }
   };
 
@@ -458,7 +458,7 @@ html body .system-top-sim-btn svg { width: 15px !important; height: 15px !import
 .pu-stack span { display: block; height: 100%; }
 .pu-seg-done { background: #48BB78; }
 .pu-seg-in_progress { background: var(--primary); }
-.pu-seg-wait { background: #F6AD55; }
+.pu-seg-wait { background: #E53E3E; }
 .pu-seg-cancel { background: #CBD5E0; }
 
 .pu-dark-feature { padding: 24px; justify-content: flex-start; }
@@ -730,13 +730,13 @@ html body .data-table tbody tr.row-status-done:hover td { background: #FBFCFD !i
 .at-quote { font-size: 10.5px; font-weight: 700; color: #C05621; }
 .at-status { }
 .at-pill { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 4px 9px; border-radius: 7px; color: #fff; }
-.at-pill.is-done { background: #48BB78; } .at-pill.is-in_progress { background: var(--primary); } .at-pill.is-wait { background: #F6AD55; } .at-pill.is-cancel { background: #CBD5E0; }
+.at-pill.is-done { background: #48BB78; } .at-pill.is-in_progress { background: var(--primary); } .at-pill.is-wait { background: #E53E3E; } .at-pill.is-cancel { background: #CBD5E0; }
 .at-sub { display: block; margin-top: 6px; font-size: 10px; font-weight: 700; color: #718096; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .at-prog { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .at-bar { flex: 1; height: 5px; border-radius: 99px; background: #EDF2F7; overflow: hidden; max-width: 90px; }
 .at-bar > span { display: block; height: 100%; border-radius: 99px; background: var(--primary); }
 .at-row.is-done .at-bar > span { background: #48BB78; }
-.at-row.is-wait .at-bar > span { background: #F6AD55; }
+.at-row.is-wait .at-bar > span { background: #E53E3E; }
 .at-row.is-cancel .at-bar > span { background: #CBD5E0; }
 .at-prog b { font-size: 11px; color: #4A5568; font-variant-numeric: tabular-nums; min-width: 30px; }
 .at-req b { display: block; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -836,16 +836,6 @@ html body .data-table tbody tr.row-status-done:hover td { background: #FBFCFD !i
 .at-req b { -webkit-line-clamp: 2 !important; white-space: normal !important; display: -webkit-box !important; -webkit-box-orient: vertical; overflow: hidden; }
 .at-req small { white-space: normal !important; }
 
-/* ==========================================================================
-   Overall scale: render the desktop UI at 88% (same as browser zoom 88%)
-   ========================================================================== */
-@media (min-width: 769px) {
-  html { zoom: 0.88; }
-  html body { min-height: 113.64vh !important; }
-  html body .app-header { height: 113.64vh !important; bottom: auto !important; }
-  html body .modal-overlay { height: 113.64vh !important; width: 113.64vw !important; }
-  html body[data-acre-page] main.container { min-height: calc(113.64vh - 80px) !important; }
-}
 /* initials badges stay in capitals */
 html body .pu-co-ico, html body .pu-av, html body .fxd-thumb, html body .fxd-avatar, html body .fx-acct-av, html body .at-av, html body .fx-photo-av span, html body .pu-thumb { text-transform: uppercase !important; }
 
@@ -871,7 +861,7 @@ html body .pu-co, html body .pu-co *, html body .pu-share-top b { text-transform
 /* lock the page (not only body) while a modal is open, so no empty scrollbar strip shows */
 html:has(body.modal-open) { overflow: hidden !important; }
 `;
-    document.head.appendChild(st);
+    var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st);
   }
   function init() {
     injectCss();

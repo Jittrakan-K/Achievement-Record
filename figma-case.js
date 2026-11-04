@@ -14,31 +14,33 @@
   KEEP['IN-HOUSE'] = 0;
   var TH = /[฀-๿]/;
 
-  function word(w, isFirst) {
+  function word(w, isFirst, isLast) {
     var U = w.toUpperCase();
     if (KEEP[U]) return U;
     if (/[a-z]/.test(w) && /[A-Z]/.test(w.slice(1))) return w;          // iOS, iPhone, PowerPoint
-    if (w.length === 1) return (U === 'A' && !isFirst) ? 'a' : U;         // single letters: Factory E, M/C
+    if (w.length === 1) return (U === 'A' && !isFirst && !isLast) ? 'a' : U;  // single letters: Factory E, M/C
     var lw = w.toLowerCase();
     if (!isFirst && SMALL[lw]) return lw;
     if (!/[AEIOUYaeiouy]/.test(w) && w.length <= 4) return U;              // vowel-less shorthand: MM, CM, PCS
     return lw.charAt(0).toUpperCase() + lw.slice(1);
   }
-  function token(t, isFirst) {
+  function token(t, isFirst, isLast) {
     if (/\d/.test(t)) return t;                                             // codes, dates, sizes
     if (/^\(?[A-Za-z]\.\)?$/.test(t)) return t.toUpperCase();               // initials: Nonthiya A.
     if (/^[^A-Za-z]*$/.test(t)) return t;
     var first = isFirst;
     return t.replace(/[A-Za-z]+(?:'[A-Za-z]+)?/g, function (w, off) {
-      var r = word(w, first && off === t.search(/[A-Za-z]/));
+      var r = word(w, first && off === t.search(/[A-Za-z]/), isLast && off + w.length === t.replace(/[^A-Za-z]+$/, '').length);
       return r;
     });
   }
   function title(s, cont) {
     if (!s || !/[A-Za-z]/.test(s)) return s;
     var first = !cont;
+    var lastTok = (s.match(/\S+/g) || []).length, ti = 0;
     return s.replace(/\S+/g, function (t) {
-      var out = token(t, first);
+      ti++;
+      var out = token(t, first, ti === lastTok);
       if (/^(e\.g\.|E\.G\.)$/.test(t)) { first = false; return 'e.g.'; }
       if (/[A-Za-z]/.test(t)) first = /[:!?]$/.test(t);
       else if (/^[—–•·|:]+$/.test(t)) first = true;
