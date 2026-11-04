@@ -72,3 +72,28 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 60); });
   else setTimeout(init, 60);
 })();
+
+/* ACRE — browser tab: title "ACRE" and a favicon in the workspace theme colour */
+(function () {
+  'use strict';
+  var last = '';
+  function svg(c) {
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='" + c + "'/>" +
+      "<rect x='15' y='15' width='34' height='34' rx='5' fill='none' stroke='#fff' stroke-width='5' stroke-linejoin='round'/>" +
+      "<path d='M26 15v34M15 26h34' fill='none' stroke='#fff' stroke-width='5' stroke-linecap='round'/></svg>";
+  }
+  function sync() {
+    if (document.title !== 'ACRE') document.title = 'ACRE';
+    var c = (getComputedStyle(document.documentElement).getPropertyValue('--primary') || '').trim() || '#005BAC';
+    if (c === last) return; last = c;
+    var href = 'data:image/svg+xml,' + encodeURIComponent(svg(c));
+    var link = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
+    if (!link) { link = document.createElement('link'); link.rel = 'icon'; link.type = 'image/svg+xml'; document.head.appendChild(link); }
+    link.href = href;
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', c);
+  }
+  sync();
+  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'class'] });
+  var t = document.querySelector('title'); if (t) new MutationObserver(function () { if (document.title !== 'ACRE') document.title = 'ACRE'; }).observe(t, { childList: true, characterData: true, subtree: true });
+  window.addEventListener('load', sync);
+})();

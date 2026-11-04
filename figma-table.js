@@ -301,8 +301,12 @@ html body .at-bar-top { padding: 16px 20px !important; }
 html body .at-mode button.on { background: #fff; color: #2D3748; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 
 /* ---------- finished rows: grey ---------- */
-html body .at-row.is-done > td { background: #F4F5F7 !important; }
-html body .at-row.is-done:hover > td { background: #EEF0F3 !important; }
+html body .at-row.is-done > td { background: #ECEEF1 !important; }
+html body .at-row.is-done:hover > td { background: #E5E8EC !important; }
+html body .at-row.is-wait > td { background: #FFF5F5 !important; }
+html body .at-row.is-wait:hover > td { background: #FFEDED !important; }
+html body .at-row.is-wait .at-bar { background: #FED7D7 !important; }
+html body .at-row.is-done .at-bar { background: #D9DDE3 !important; }
 html body .at-row.is-done td.at-no { box-shadow: none !important; }
 html body .at-row.is-done .at-title { color: #4A5568; }
 html body .at-row.is-cancel > td { background: #FAFAFB !important; }
@@ -365,7 +369,8 @@ html body .atl { padding: 8px 24px 24px !important; }
 .atl-item.is-wait .atl-dot { border-color: #E53E3E; }
 .atl-card { background: #fff; border: 1px solid #EDF2F7; border-radius: 14px; padding: 16px 18px; transition: border-color .15s ease, box-shadow .15s ease; }
 .atl-card:hover { border-color: #E2E8F0; box-shadow: 0 4px 14px rgba(15, 23, 42, .05); }
-.atl-item.is-done .atl-card { background: #F4F5F7; border-color: #F4F5F7; }
+.atl-item.is-done .atl-card { background: #ECEEF1; border-color: #ECEEF1; }
+.atl-item.is-wait .atl-card { background: #FFF5F5; border-color: #FED7D7; }
 .atl-item.is-cancel .atl-card { background: #FAFAFB; }
 .atl-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .atl-title { border: 0; background: none; padding: 0; font: inherit; text-align: left; cursor: pointer; font-size: 14px; font-weight: 700; color: #2D3748; line-height: 1.4; text-transform: uppercase !important; }
@@ -399,6 +404,42 @@ html body .pu-badge { height: 24px !important; line-height: 25px !important; pad
   html body .at-quote { padding-top: 6px !important; padding-bottom: 6px !important; }
   html body .pu-badge { padding-top: 8px !important; padding-bottom: 8px !important; }
   html body .workspace-tab-count { text-box: trim-both cap alphabetic; height: auto !important; min-height: 0 !important; line-height: 1 !important; padding-top: 5px !important; padding-bottom: 5px !important; }
+}
+
+/* task table: everything in capitals */
+html body .at-wrap:not(.atl), html body .at-wrap:not(.atl) * { text-transform: uppercase !important; }
+html body .at-wrap:not(.atl) .at-sum-item, html body .at-wrap:not(.atl) .at-sum-total, html body .at-wrap:not(.atl) .at-sub, html body .at-wrap:not(.atl) .at-cat { letter-spacing: .03em; }
+
+/* rows: every column starts on the same top line */
+html body .at-table:not(.af-table) td, html body .af-table td { vertical-align: top !important; }
+html body .at-table td.at-no { padding-top: 19px !important; }
+html body .at-title { line-height: 1.45 !important; padding-top: 2px !important; }
+html body .at-req-in { align-items: flex-start !important; }
+html body .at-req-av { margin-top: -2px; }
+html body .at-req-tx b { padding-top: 2px; }
+html body .at-note-main, html body .at-note > small:first-child { padding-top: 3px; }
+html body .at-owner { padding-top: 14px !important; }
+html body .at-owner .at-av { vertical-align: middle; }
+html body .at-files { padding-top: 12px !important; }
+html body .at-end .at-date { padding-top: 3px; }
+html body .at-end .at-actions { margin-top: 6px !important; }
+html body .at-row td.at-task .at-tags { margin-top: 5px; }
+html body .at-cat { display: inline-flex !important; align-items: center !important; line-height: 1 !important; gap: 6px !important; }
+html body .at-cat i { flex: none; width: 7px !important; height: 7px !important; border-radius: 2px; }
+/* summary line: one centre line */
+html body .at-summary { align-items: center !important; line-height: 1 !important; }
+html body .at-sum-total { align-items: center !important; gap: 7px !important; }
+html body .at-sum-total b { font-size: 16px !important; line-height: 1 !important; }
+html body .at-sum-item { line-height: 1 !important; }
+html body .at-sum-item b { line-height: 1 !important; }
+/* workspace tab: name and count on one centre line */
+html body .workspace-tab-btn { align-items: center !important; }
+html body .workspace-tab-name { line-height: 20px !important; }
+html body .workspace-tab-count { display: inline-flex !important; align-items: center !important; justify-content: center; height: 20px !important; line-height: 1 !important; padding: 0 7px !important; text-box: none !important; font-variant-numeric: tabular-nums; }
+@supports (text-box: trim-both cap alphabetic) {
+  html body .workspace-tab-name { line-height: 1 !important; text-box: trim-both cap alphabetic !important; }
+  html body .workspace-tab-count { display: inline-block !important; height: auto !important; line-height: 1 !important; padding: 5px 7px !important; text-box: trim-both cap alphabetic !important; }
+  html body .workspace-tab-btn, html body .workspace-tab-info { align-items: center !important; }
 }
 `; var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st); })();
 

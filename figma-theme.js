@@ -2,7 +2,7 @@
 (function () {
   if (typeof Chart === 'undefined') return;
   var d = Chart.defaults;
-  d.font.family = '"NoEmoji", "Helvetica Neue", Helvetica, Arial, "Noto Sans Thai", "Sarabun", sans-serif';
+  d.font.family = '"NoEmoji", "Inter", "IBM Plex Sans Thai", "Noto Sans Thai", "Helvetica Neue", Arial, sans-serif';
   d.font.size = (window.innerWidth >= 769) ? 10 : 12;
   d.color = '#A0AEC0';
   d.borderColor = '#E2E8F0';

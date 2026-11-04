@@ -1,11 +1,11 @@
 {
-  "name": "ACRE Task Tracker",
+  "name": "ACRE",
   "short_name": "ACRE",
   "description": "Work Achievement Record & Tracker System",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#E60012",
+  "theme_color": "#005BAC",
   "orientation": "portrait",
   "icons": [
     {

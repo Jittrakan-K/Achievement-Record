@@ -544,10 +544,11 @@ html body .system-top-sim-btn svg { width: 15px !important; height: 15px !import
 .pu-dark-chart-v .pu-wbar .pu-wbar-fill { max-height: none !important; }
 
 /* ==========================================================================
-   Title case is applied by figma-case.js; turn off every CSS uppercase rule
+   All interface text in capitals (typed values in inputs stay as typed)
    ========================================================================== */
 html body, html body *, html body *::before, html body *::after,
-html body input::placeholder, html body textarea::placeholder { text-transform: none !important; }
+html body input::placeholder, html body textarea::placeholder { text-transform: uppercase !important; }
+html body input, html body textarea, html body [contenteditable="true"], html body [contenteditable="true"] * { text-transform: none !important; }
 
 
 /* ==========================================================================
@@ -860,6 +861,203 @@ html body .pu-co, html body .pu-co *, html body .pu-share-top b { text-transform
 
 /* lock the page (not only body) while a modal is open, so no empty scrollbar strip shows */
 html:has(body.modal-open) { overflow: hidden !important; }
+
+/* ==========================================================================
+   Add / edit task form: one 6-column grid, calm labels, even fields
+   ========================================================================== */
+html body #achievementModal .modal-content { max-width: 780px !important; width: calc(100vw - 48px) !important; border-radius: 18px !important; }
+html body #achievementModal .modal-header { padding: 20px 28px !important; }
+html body #achievementModal .modal-header h2, html body #achievementModal .modal-header h3, html body #achievementModal .modal-title { font-size: 16px !important; font-weight: 700 !important; letter-spacing: .02em !important; }
+html body #achievementModal .modal-body {
+  display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 14px; row-gap: 18px;
+  padding: 24px 28px 28px !important; align-content: start;
+}
+html body #achievementModal .modal-body > * { grid-column: 1 / -1; margin: 0 !important; min-width: 0; }
+html body #achievementModal .modal-body > .form-grid, html body #achievementModal .modal-body > .form-grid-3,
+html body #achievementModal #fgExcelTrackingWrap, html body #achievementModal #fgExcelTrackingWrap > .form-grid, html body #achievementModal #fgExcelTrackingWrap > .form-grid-3 { display: contents; }
+html body #achievementModal .modal-body > .form-grid > .form-group { grid-column: span 3; margin: 0 !important; min-width: 0; }
+html body #achievementModal .modal-body > .form-grid-3 > .form-group,
+html body #achievementModal #fgExcelTrackingWrap > .form-grid > .form-group,
+html body #achievementModal #fgExcelTrackingWrap > .form-grid-3 > .form-group { grid-column: span 2; margin: 0 !important; min-width: 0; }
+html body #achievementModal #fgExcelTrackingWrap > .form-section-divider { grid-column: 1 / -1; }
+html body #achievementModal .form-group { margin: 0 !important; }
+
+/* labels */
+html body #achievementModal .form-label {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: 11px !important; font-weight: 600 !important; color: #718096 !important; letter-spacing: .05em !important;
+  margin: 0 0 7px !important; line-height: 1.2 !important; white-space: nowrap;
+}
+html body #achievementModal .form-label { justify-content: flex-start !important; }
+html body #achievementModal .form-label > small { margin-left: auto; }
+html body #achievementModal .form-label > span[style*="red"] { color: #E53E3E !important; margin-left: -4px; }
+html body #achievementModal .form-label small { font-size: 10px !important; font-weight: 500 !important; color: #A0AEC0 !important; letter-spacing: .03em; overflow: hidden; text-overflow: ellipsis; }
+html body #achievementModal .achv-label-badge { font-size: 10px !important; padding: 2px 7px !important; border-radius: 6px !important; background: color-mix(in srgb, var(--primary) 8%, #fff) !important; color: var(--primary) !important; border: 0 !important; }
+
+/* fields */
+html body #achievementModal .form-control {
+  height: 42px !important; min-height: 42px !important; padding: 0 14px !important; border-radius: 10px !important;
+  border: 1px solid #E2E8F0 !important; background-color: #fff !important; box-shadow: none !important;
+  font-size: 13px !important; font-weight: 500 !important; color: #2D3748 !important; width: 100% !important;
+}
+html body #achievementModal textarea.form-control { height: auto !important; min-height: 84px !important; padding: 12px 14px !important; line-height: 1.5 !important; resize: vertical; }
+html body #achievementModal select.form-control { padding-right: 36px !important; }
+html body #achievementModal .form-control:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent) !important; outline: none !important; }
+html body #achievementModal .form-control::placeholder { color: #A0AEC0 !important; font-weight: 400 !important; }
+
+/* workspace box */
+html body #achievementModal #fgWorkspaceSelector { background: #F7F9FC !important; border: 1px solid #EDF2F7 !important; border-radius: 14px !important; padding: 16px 18px !important; }
+html body #achievementModal #fgWorkspaceSelector .ws-selector-header { margin-bottom: 8px !important; }
+html body #achievementModal #fgWorkspaceSelector .form-label { margin: 0 !important; color: #2D3748 !important; }
+html body #achievementModal #fgWorkspaceSelector .btn { height: 30px !important; padding: 0 12px !important; font-size: 10.5px !important; border-radius: 8px !important; background: #fff !important; border: 1px solid #E2E8F0 !important; color: var(--primary) !important; }
+html body #achievementModal .ws-selector-hint { margin-top: 8px !important; font-size: 10.5px !important; color: #A0AEC0 !important; letter-spacing: .03em; }
+
+/* section titles: text + hairline */
+html body #achievementModal .form-section-divider {
+  display: flex !important; align-items: center; gap: 12px; background: none !important; border: 0 !important; padding: 6px 0 0 !important; margin: 4px 0 0 !important;
+  font-size: 11px !important; font-weight: 700 !important; color: #2D3748 !important; letter-spacing: .08em !important; border-radius: 0 !important;
+}
+html body #achievementModal .form-section-divider::after { content: ''; flex: 1; height: 1px; background: #EDF2F7; }
+
+/* attachments */
+html body #achievementModal .modal-body .btn-outline, html body #achievementModal #btnSelectPdf {
+  height: 38px !important; padding: 0 14px !important; border-radius: 10px !important; font-size: 11px !important; font-weight: 600 !important;
+  background: #fff !important; border: 1px solid #E2E8F0 !important; color: #2D3748 !important; display: inline-flex !important; align-items: center; gap: 8px;
+}
+html body #achievementModal input[type="file"].form-control, html body #achievementModal input[type="file"] { height: 42px !important; padding: 6px 8px !important; font-size: 12px !important; }
+html body #achievementModal input[type="file"]::file-selector-button {
+  height: 28px; margin-right: 12px; padding: 0 12px; border-radius: 8px; border: 1px solid #E2E8F0; background: #F7F9FC; color: #2D3748;
+  font: inherit; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer;
+}
+
+/* footer */
+html body #achievementModal .modal-footer { padding: 16px 28px !important; gap: 10px !important; }
+html body #achievementModal .modal-footer .btn { height: 40px !important; min-width: 96px; border-radius: 10px !important; font-size: 12px !important; font-weight: 700 !important; }
+
+@media (max-width: 768px) {
+  html body #achievementModal .modal-body { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 18px !important; }
+  html body #achievementModal .modal-body > .form-grid > .form-group,
+  html body #achievementModal .modal-body > .form-grid-3 > .form-group,
+  html body #achievementModal #fgExcelTrackingWrap > .form-grid > .form-group,
+  html body #achievementModal #fgExcelTrackingWrap > .form-grid-3 > .form-group { grid-column: 1 / -1; }
+}
+
+/* ==========================================================================
+   Work analytics (detailed insights)
+   ========================================================================== */
+html body .analytics-section > .section-header { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px; margin: 8px 0 18px !important; padding: 0 !important; border: 0 !important; }
+html body .analytics-section .section-title { display: flex !important; align-items: center !important; gap: 12px !important; font-size: 17px !important; font-weight: 700 !important; color: #2D3748 !important; letter-spacing: .02em !important; margin: 0 !important; }
+html body .analytics-section .section-title > svg { width: 34px !important; height: 34px !important; padding: 9px; border-radius: 11px; background: var(--primary); color: #fff; box-sizing: border-box; flex: none; }
+html body .ranking-toggle-btn { height: 34px !important; padding: 0 14px !important; border-radius: 10px !important; background: #fff !important; border: 1px solid #E2E8F0 !important; color: #A0AEC0 !important; font-size: 10.5px !important; font-weight: 700 !important; letter-spacing: .04em !important; display: inline-flex !important; align-items: center !important; gap: 8px !important; box-shadow: none !important; }
+html body .ranking-toggle-btn::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #CBD5E0; flex: none; }
+html body .ranking-toggle-btn.btn-active-toggle { color: #2D3748 !important; }
+html body .ranking-toggle-btn.btn-active-toggle::before { background: #48BB78; box-shadow: 0 0 0 3px rgba(72, 187, 120, .18); }
+html body #engInsightsToggleIcon, html body #rankingToggleIcon { display: none !important; }
+
+html body .analytics-section .chart-box { background: #fff !important; border: 0 !important; border-radius: 18px !important; box-shadow: 0 3.5px 5.5px rgba(0, 0, 0, .02) !important; padding: 22px 24px 24px !important; }
+html body .analytics-section .chart-title { display: flex !important; align-items: baseline !important; justify-content: space-between !important; gap: 16px !important; margin: 0 0 18px !important; padding: 0 !important; border: 0 !important; font-size: 14.5px !important; font-weight: 700 !important; color: #2D3748 !important; letter-spacing: .02em !important; line-height: 1.35 !important; }
+html body .analytics-section .eng-title-meta { font-size: 10.5px !important; font-weight: 600 !important; color: #A0AEC0 !important; background: none !important; border: 0 !important; padding: 0 !important; white-space: nowrap !important; letter-spacing: .05em !important; }
+
+/* status summary above the bar chart */
+html body .status-summary-pills { display: flex !important; flex-wrap: wrap !important; gap: 8px 20px !important; margin: -4px 0 16px !important; padding: 0 !important; background: none !important; border: 0 !important; }
+html body .status-summary-pill { display: inline-flex !important; align-items: center !important; gap: 7px !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; font-size: 11px !important; color: #718096 !important; cursor: pointer; border-radius: 0 !important; }
+html body .status-summary-pill .pill-dot { width: 8px !important; height: 8px !important; border-radius: 50% !important; }
+html body .status-summary-pill .pill-label { font-weight: 500 !important; color: #718096 !important; }
+html body .status-summary-pill .pill-count { font-weight: 700 !important; color: #2D3748 !important; }
+html body .status-summary-pill:hover .pill-label { color: #2D3748 !important; }
+html body .dot-wait, html body .pill-wait .pill-dot { background: #E53E3E !important; }
+
+/* donut + list cards */
+html body .eng-donut-layout { gap: 20px !important; }
+html body .eng-donut-center-num { font-size: 24px !important; font-weight: 700 !important; color: #2D3748 !important; letter-spacing: -.02em; }
+html body .eng-donut-center-lbl { font-size: 9.5px !important; font-weight: 600 !important; color: #A0AEC0 !important; letter-spacing: .08em !important; }
+html body .eng-flat-list { display: flex !important; flex-direction: column !important; gap: 14px !important; }
+html body .eng-flat-row { padding: 0 !important; margin: 0 !important; border: 0 !important; background: none !important; cursor: pointer; }
+html body .eng-flat-row-top { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px; margin: 0 0 7px !important; }
+html body .eng-flat-name { display: inline-flex !important; align-items: center !important; gap: 9px !important; min-width: 0; font-size: 11.5px !important; font-weight: 600 !important; color: #2D3748 !important; }
+html body .eng-flat-name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .eng-dot { width: 8px !important; height: 8px !important; border-radius: 50% !important; flex: none; }
+html body .eng-flat-val { display: inline-flex !important; align-items: baseline !important; gap: 10px !important; white-space: nowrap; }
+html body .eng-flat-count { font-size: 10.5px !important; color: #A0AEC0 !important; font-weight: 500 !important; }
+html body .eng-flat-count b { font-size: 12px !important; color: #2D3748 !important; font-weight: 700 !important; }
+html body .eng-flat-pct { min-width: 40px; text-align: right; font-size: 11px !important; font-weight: 600 !important; color: #718096 !important; }
+html body .eng-flat-track { height: 4px !important; border-radius: 99px !important; background: #EDF2F7 !important; overflow: hidden; }
+html body .eng-flat-row:hover .eng-flat-name { color: var(--primary) !important; }
+
+/* team tables */
+html body .eng-support-table { width: 100% !important; border-collapse: collapse !important; }
+html body .eng-support-table th { padding: 0 10px 10px !important; border-bottom: 1px solid #EDF2F7 !important; background: none !important; font-size: 10px !important; font-weight: 600 !important; color: #A0AEC0 !important; letter-spacing: .06em !important; text-align: left; white-space: nowrap; }
+html body .eng-support-table th:first-child, html body .eng-support-table td:first-child { padding-left: 0 !important; }
+html body .eng-support-table th:last-child, html body .eng-support-table td:last-child { padding-right: 0 !important; }
+html body .eng-support-table td { padding: 12px 10px !important; border-bottom: 1px solid #F1F3F6 !important; background: none !important; vertical-align: middle !important; font-size: 12px !important; color: #2D3748 !important; }
+html body .eng-support-table tr:last-child td { border-bottom: 0 !important; }
+html body .eng-sup-tr { cursor: pointer; }
+html body .eng-sup-tr:hover td { background: #F8F9FB !important; }
+html body .sup-td-name { display: flex !important; align-items: center !important; gap: 9px !important; white-space: nowrap; }
+html body .sup-color-bar { width: 8px !important; height: 8px !important; border-radius: 50% !important; flex: none; display: inline-block !important; }
+html body .sup-member-name { font-weight: 600 !important; color: #2D3748 !important; font-size: 12px !important; }
+html body .sup-role-tag { font-size: 9px !important; font-weight: 700 !important; letter-spacing: .06em !important; padding: 3px 7px !important; border-radius: 6px !important; border: 0 !important; background: #F1F3F6 !important; color: #718096 !important; }
+html body .sup-role-tag.role-tooling { background: #FFFAF0 !important; color: #C05621 !important; }
+html body .sup-role-tag.role-design { background: color-mix(in srgb, var(--primary) 8%, #fff) !important; color: var(--primary) !important; }
+html body .sup-td-status { white-space: nowrap; }
+html body .sup-tag { background: none !important; border: 0 !important; padding: 0 !important; margin: 0 12px 0 0 !important; font-size: 10.5px !important; font-weight: 600 !important; color: #A0AEC0 !important; }
+html body .sup-tag.tag-done { color: #2F855A !important; }
+html body .sup-td-count { white-space: nowrap; text-align: right; font-size: 10.5px !important; color: #A0AEC0 !important; }
+html body .sup-td-count b { font-size: 12px !important; color: #2D3748 !important; }
+html body .sup-all-pct { color: #A0AEC0 !important; margin-left: 4px; }
+html body .sup-inline-bar-wrap { display: flex !important; align-items: center !important; gap: 10px !important; justify-content: flex-end; }
+html body .sup-inline-bar-track { flex: 1; max-width: 90px; height: 4px !important; border-radius: 99px !important; background: #EDF2F7 !important; overflow: hidden; }
+html body .sup-inline-bar-fill { height: 100% !important; border-radius: 99px !important; }
+html body .sup-team-pct { min-width: 44px; text-align: right; font-size: 11.5px !important; font-weight: 700 !important; }
+
+/* bar lists: sub status, job type, department, process */
+html body .eng-flat-scroll { max-height: 300px !important; overflow-y: auto !important; padding-right: 10px !important; margin-right: -10px; scrollbar-width: thin; scrollbar-color: #E2E8F0 transparent; }
+html body .eng-flat-scroll::-webkit-scrollbar { width: 4px; } html body .eng-flat-scroll::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+html body .eng-line-row { display: grid !important; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) 128px !important; align-items: center !important; gap: 18px !important; padding: 11px 0 !important; margin: 0 !important; border: 0 !important; border-bottom: 1px solid #F1F3F6 !important; background: none !important; border-radius: 0 !important; cursor: pointer; }
+html body .eng-line-row:last-child { border-bottom: 0 !important; }
+html body .eng-line-left { display: flex !important; align-items: center !important; gap: 8px !important; min-width: 0; }
+html body .eng-line-title { font-size: 11.5px !important; font-weight: 600 !important; color: #2D3748 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .eng-line-sub { font-size: 9.5px !important; font-weight: 700 !important; color: #718096 !important; background: #F1F3F6 !important; border: 0 !important; padding: 3px 6px !important; border-radius: 6px !important; flex: none; }
+html body .eng-line-track { height: 4px !important; border-radius: 99px !important; background: #EDF2F7 !important; overflow: hidden; }
+html body .eng-line-right { display: flex !important; align-items: baseline !important; justify-content: flex-end !important; gap: 10px !important; white-space: nowrap; }
+html body .eng-line-count { font-size: 10.5px !important; color: #A0AEC0 !important; font-weight: 500 !important; }
+html body .eng-line-count b { font-size: 12px !important; color: #2D3748 !important; font-weight: 700 !important; }
+html body .eng-line-pct { min-width: 40px; text-align: right; font-size: 11px !important; font-weight: 600 !important; color: #718096 !important; }
+html body .eng-line-row:hover .eng-line-title { color: var(--primary) !important; }
+
+/* requester ranking */
+html body .requester-ranking-section { background: #fff !important; border: 0 !important; border-radius: 18px !important; box-shadow: 0 3.5px 5.5px rgba(0, 0, 0, .02) !important; padding: 22px 24px 24px !important; }
+html body .ranking-header { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px; padding: 0 0 18px !important; margin: 0 0 18px !important; border-bottom: 1px solid #EDF2F7 !important; }
+html body .ranking-main-title { display: flex !important; align-items: center !important; gap: 10px !important; font-size: 14.5px !important; font-weight: 700 !important; color: #2D3748 !important; letter-spacing: .02em !important; }
+html body .ranking-badge-count { font-size: 10px !important; font-weight: 700 !important; padding: 3px 8px !important; border-radius: 6px !important; background: #F1F3F6 !important; color: #718096 !important; border: 0 !important; }
+html body .ranking-subtitle { margin-top: 4px; font-size: 10.5px !important; color: #A0AEC0 !important; letter-spacing: .04em !important; }
+html body .ranking-header-controls .btn { height: 32px !important; padding: 0 12px !important; border-radius: 10px !important; font-size: 10.5px !important; font-weight: 700 !important; background: #fff !important; border: 1px solid #E2E8F0 !important; color: #4A5568 !important; box-shadow: none !important; }
+html body .ranking-cards-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; gap: 14px !important; }
+html body .ranking-cards-grid > .ranking-card { background: #F8F9FB !important; border: 1px solid transparent !important; border-radius: 14px !important; padding: 16px !important; box-shadow: none !important; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
+html body .ranking-cards-grid > .ranking-card:hover { background: #fff !important; border-color: #E2E8F0 !important; }
+html body .ranking-card-top { display: flex !important; align-items: flex-start !important; gap: 10px !important; margin-bottom: 14px !important; }
+html body .ranking-badge-pill { flex: none; font-size: 9.5px !important; font-weight: 700 !important; letter-spacing: .04em; padding: 4px 7px !important; border-radius: 6px !important; border: 0 !important; background: #EDF2F7 !important; color: #718096 !important; }
+html body .ranking-badge-pill.rank-1 { background: var(--primary) !important; color: #fff !important; }
+html body .ranking-badge-pill.rank-2, html body .ranking-badge-pill.rank-3 { background: color-mix(in srgb, var(--primary) 12%, #fff) !important; color: var(--primary) !important; }
+html body .ranking-user-info { flex: 1; min-width: 0; }
+html body .ranking-name { font-size: 12px !important; font-weight: 700 !important; color: #2D3748 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .ranking-meta { margin-top: 3px; font-size: 10px !important; color: #A0AEC0 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .ranking-count-box { flex: none; display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: 3px; }
+html body .ranking-count-val { font-size: 15px !important; font-weight: 700 !important; color: #2D3748 !important; line-height: 1 !important; }
+html body .ranking-count-val small { font-size: 9.5px !important; color: #A0AEC0 !important; font-weight: 600 !important; }
+html body .ranking-pct-val { font-size: 10px !important; font-weight: 700 !important; color: var(--primary) !important; background: none !important; border: 0 !important; padding: 0 !important; }
+html body .ranking-progress-bar { display: flex !important; height: 4px !important; border-radius: 99px !important; overflow: hidden; background: #EDF2F7 !important; gap: 0 !important; margin: 0 0 12px !important; }
+html body .r-bar-done, html body .r-dot-done { background: #48BB78 !important; }
+html body .r-bar-in-progress, html body .r-dot-in-progress { background: var(--primary) !important; }
+html body .r-bar-wait, html body .r-dot-wait { background: #E53E3E !important; }
+html body .r-bar-cancel, html body .r-dot-cancel { background: #CBD5E0 !important; }
+html body .ranking-status-row { display: flex !important; flex-wrap: wrap !important; gap: 6px 12px !important; }
+html body .r-stat { display: inline-flex !important; align-items: center !important; gap: 5px !important; background: none !important; border: 0 !important; padding: 0 !important; font-size: 9.5px !important; color: #A0AEC0 !important; font-weight: 600 !important; }
+html body .r-stat b { color: #2D3748 !important; }
+html body .r-dot { width: 6px !important; height: 6px !important; border-radius: 50% !important; }
+
+html body .analytics-section .chart-box .chart-title .eng-title-meta, html body .analytics-section .chart-box .chart-title .eng-title-meta * { color: #A0AEC0 !important; font-weight: 600 !important; }
+html body .requester-ranking-section { margin-left: 0 !important; margin-right: 0 !important; width: auto !important; }
 `;
     var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st);
   }
