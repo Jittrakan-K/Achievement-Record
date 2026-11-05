@@ -225,12 +225,9 @@
       '<label class="pu-select"><select onchange="fxDashSet(\'year\', this.value)" aria-label="Choose year">' + opts + '</select>' + icon('caret', 12) + '</label></div></div>' +
       '<div class="pu-line-wrap"><div class="pu-line-axis">' + ticks.map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' +
       '<div class="pu-line-plot"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-label="Monthly requested and completed tasks">' +
-      '<defs><linearGradient id="puTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--primary,#4FD1C5)" stop-opacity=".55"/><stop offset="1" style="stop-color:var(--primary,#4FD1C5)" stop-opacity="0"/></linearGradient>' +
-      '<linearGradient id="puInk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2D3748" stop-opacity=".22"/><stop offset="1" stop-color="#2D3748" stop-opacity="0"/></linearGradient></defs>' +
       '<g class="pu-grid">' + grid + '</g>' +
-      '<path d="' + ld + ' L' + W + ',' + H + ' L0,' + H + 'Z" fill="url(#puInk)"/>' +
-      '<path d="' + lr + ' L' + W + ',' + H + ' L0,' + H + 'Z" fill="url(#puTeal)"/>' +
-      '<path d="' + ld + '" fill="none" stroke="#2D3748" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + lr + ' L' + W + ',' + H + ' L0,' + H + 'Z" style="fill:var(--primary,#4FD1C5)" fill-opacity=".07"/>' +
+      '<path d="' + ld + '" fill="none" stroke="#A0AEC0" stroke-width="2" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + lr + '" fill="none" style="stroke:var(--primary,#4FD1C5)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
       '</svg><div class="pu-hit">' + req.map(function (n, i) { return '<span title="' + MONTHS[i] + ' ' + y + ' · requested ' + n + ' · done ' + done[i] + '"></span>'; }).join('') + '</div>' +
       '<div class="pu-line-x">' + MONTHS.map(function (mm) { return '<span>' + mm.charAt(0) + mm.slice(1).toLowerCase() + '</span>'; }).join('') + '</div></div></div></div>';
@@ -1175,6 +1172,155 @@ html body .webull-data-grid .data-item { min-width: 0; }
   html body .mobile-dime-fab > span, html body .mobile-dime-fab > *:not(svg) { display: none !important; }
   html body .mobile-dime-fab svg { width: 22px !important; height: 22px !important; margin: 0 !important; }
 }
+
+/* ==========================================================================
+   Unslop polish (2026-11-05)
+   ========================================================================== */
+/* sidebar: drop the decorative "Need help" card */
+html body .header-actions::after { content: none !important; display: none !important; }
+
+/* stat tiles are numbers: no filler icon tiles */
+html body .pu-stat .pu-icon-box { display: none !important; }
+html body .pu-stat .pu-stat-label { padding-right: 0 !important; }
+
+/* monthly requests: light surface, neutral bars, accent on the peak month only */
+html body .pu-dark-chart { background: #F7F8FA !important; box-shadow: none !important; border: 1px solid rgba(45, 55, 72, .06) !important; }
+html body .pu-wbar-track::before { background: #EDF2F7 !important; }
+html body .pu-wbar-fill { background: #CBD5E0 !important; box-shadow: none !important; }
+html body .pu-wbar.is-peak .pu-wbar-fill { background: var(--primary) !important; box-shadow: none !important; }
+html body .pu-wbar.is-now .pu-wbar-track::before { background: #E2E8F0 !important; }
+html body .pu-dark-chart-v .pu-wbar .pu-wbar-val { color: #718096 !important; font-weight: 600 !important; }
+html body .pu-dark-chart-v .pu-wbar.is-peak .pu-wbar-val { background: var(--primary) !important; color: #fff !important; }
+html body .pu-dark-chart-v .pu-wbar em { color: #A0AEC0 !important; font-weight: 500 !important; }
+html body .pu-dark-foot { border-top-color: #E2E8F0 !important; color: #A0AEC0 !important; }
+html body .pu-dark-foot b { color: #2D3748 !important; font-weight: 600 !important; }
+html body .pu-dark-foot small { color: #A0AEC0 !important; }
+
+/* monthly overview legend: done is the neutral line */
+html body .pu-legend i.ink { background: #A0AEC0 !important; }
+
+/* initials avatars and department marks: one quiet neutral, not a rainbow */
+html body .pu-av, html body .pu-co-ico, html body .at-req-av, html body .pu-thumb {
+  background: #EDF2F7 !important; color: #4A5568 !important; box-shadow: none !important;
+}
+html body .pu-avs .pu-av, html body .pu-stack .pu-av { box-shadow: 0 0 0 2px #fff !important; }
+
+/* requester status: quiet text with a dot instead of a filled pill */
+html body .pu-badge { background: none !important; padding: 0 !important; height: auto !important; color: #2F855A !important; font-size: 10.5px !important; font-weight: 600 !important; letter-spacing: .04em; display: inline-flex !important; align-items: center !important; gap: 6px; text-box: none !important; }
+html body .pu-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+html body .pu-badge.off { color: #A0AEC0 !important; }
+
+/* weights: hierarchy from size and colour, 600 at most */
+html body h1, html body h2, html body h3, html body h4, html body b, html body strong,
+html body .pu-title, html body .pu-head h2, html body .at-title, html body .atl-title, html body .chart-title,
+html body .pu-stat-value, html body .pu-comp-num, html body .at-req-tx b, html body .at-owner-name,
+html body .ios-card-title, html body .card-title, html body .modal-header h2, html body .modal-title,
+html body .ranking-name, html body .sup-member-name, html body .eng-line-title, html body .eng-flat-name { font-weight: 600 !important; }
+
+/* signature: request numbers and quotations set like stamped document numbers */
+html body .at-req-code, html body .at-code, html body .badge-code, html body .at-quote, html body .badge-quotation, html body .pu-mono {
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important; font-weight: 500 !important; letter-spacing: 0 !important;
+}
+html body .pu-dark-foot span, html body .pu-dark-foot .pu-fs > span { color: #A0AEC0 !important; }
+html body .pu-avs .pu-av { width: 26px !important; height: 26px !important; min-width: 26px; margin-left: -6px !important; border: 0 !important; box-shadow: 0 0 0 2px #fff !important; font-size: 8.5px !important; font-weight: 600 !important; letter-spacing: 0 !important; overflow: visible !important; }
+html body .pu-avs .pu-av:first-child { margin-left: 0 !important; }
+html body .pu-avs .pu-av.more { background: #fff !important; color: #A0AEC0 !important; box-shadow: 0 0 0 1px #E2E8F0 inset, 0 0 0 2px #fff !important; }
+
+/* team tables: role tags in one column */
+html body .eng-support-table td.sup-td-name { display: table-cell !important; white-space: nowrap !important; }
+html body .sup-td-name .sup-color-bar { display: inline-block !important; vertical-align: middle; margin-right: 10px; }
+html body .sup-td-name .sup-member-name { display: inline-block !important; width: 150px; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .sup-td-name .sup-role-tag { display: inline-block !important; vertical-align: middle; margin-left: 4px; }
+
+/* ranking: TOP n badge text centred in its box and on the name block */
+html body .ranking-card-top { align-items: center !important; }
+html body .ranking-badge-pill { display: inline-block !important; line-height: 1 !important; padding: 6px 8px !important; }
+@supports (text-box: trim-both cap alphabetic) {
+  html body .ranking-badge-pill, html body .sup-role-tag { text-box: trim-both cap alphabetic; line-height: 1 !important; }
+  html body .ranking-badge-pill { padding: 7px 8px !important; }
+  html body .sup-role-tag { padding: 5px 7px !important; }
+}
+
+/* team tables: fit the card, never scroll sideways */
+html body .eng-table-list { overflow: visible !important; }
+html body .eng-support-table { table-layout: fixed !important; width: 100% !important; min-width: 0 !important; }
+html body .eng-support-table th:nth-child(1) { width: 38% !important; }
+html body .eng-support-table th:nth-child(2) { width: 24% !important; }
+html body .eng-support-table th:nth-child(3) { width: 17% !important; text-align: right !important; }
+html body .eng-support-table th:nth-child(4) { width: 21% !important; text-align: right !important; }
+html body .eng-support-table td { overflow: hidden; }
+html body .sup-td-name .sup-member-name { width: 112px !important; }
+html body .sup-td-status { white-space: normal !important; }
+html body .sup-tag { margin-right: 8px !important; white-space: nowrap; }
+html body .sup-td-count { white-space: nowrap; }
+html body .sup-all-pct { display: block; margin: 2px 0 0 !important; font-size: 10px !important; }
+html body .sup-inline-bar-track { max-width: 64px !important; min-width: 24px; }
+html body .sup-team-pct { min-width: 40px !important; }
+
+/* team tables v2: status on one line, even column rhythm */
+html body .eng-support-table th:nth-child(1) { width: 34% !important; }
+html body .eng-support-table th:nth-child(2) { width: 31% !important; }
+html body .eng-support-table th:nth-child(3) { width: 15% !important; }
+html body .eng-support-table th:nth-child(4) { width: 20% !important; }
+html body .eng-support-table th, html body .eng-support-table td { padding-left: 8px !important; padding-right: 8px !important; }
+html body .eng-support-table th:first-child, html body .eng-support-table td:first-child { padding-left: 0 !important; }
+html body .eng-support-table th:last-child, html body .eng-support-table td:last-child { padding-right: 0 !important; }
+html body .eng-support-table td { padding-top: 14px !important; padding-bottom: 14px !important; vertical-align: middle !important; }
+html body .sup-td-name .sup-member-name { width: 104px !important; }
+html body .sup-td-name .sup-color-bar { margin-right: 8px !important; }
+html body .sup-td-status { white-space: nowrap !important; }
+html body .sup-tag { margin-right: 10px !important; font-size: 10px !important; }
+html body .sup-tag:last-child { margin-right: 0 !important; }
+html body .sup-td-count { text-align: right !important; line-height: 1.25; }
+html body .sup-inline-bar-wrap { gap: 8px !important; }
+html body .eng-support-table th:nth-child(2), html body .eng-support-table td.sup-td-status { padding-left: 14px !important; }
+html body .eng-support-table th:nth-child(1) { width: 36% !important; } html body .eng-support-table th:nth-child(2) { width: 30% !important; } html body .eng-support-table th:nth-child(4) { width: 19% !important; }
+html body .sup-td-name .sup-member-name { width: 108px !important; }
+
+/* card titles that carry a meta line: title on one line, meta below it */
+html body .analytics-section .chart-title { flex-wrap: wrap !important; row-gap: 4px !important; }
+html body .analytics-section .chart-title > span:first-child { white-space: nowrap !important; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+html body .analytics-section .chart-title .eng-title-meta { flex: 0 0 auto; }
+
+/* team tables: breathing room between count and share */
+html body .eng-support-table th:nth-child(3) { width: 15% !important; }
+html body .eng-support-table th:nth-child(4), html body .eng-support-table td.sup-td-bar { padding-left: 24px !important; }
+html body .eng-support-table th:nth-child(4) { width: 21% !important; }
+html body .sup-inline-bar-track { max-width: 56px !important; }
+
+/* top requesters: fixed, even columns */
+html body .pu-authors table { table-layout: fixed !important; width: 100% !important; }
+html body .pu-authors table th:nth-child(1) { width: 40%; }
+html body .pu-authors table th:nth-child(2) { width: 22%; }
+html body .pu-authors table th:nth-child(3) { width: 20%; }
+html body .pu-authors table th:nth-child(4) { width: 18%; text-align: right !important; }
+html body .pu-authors table td:nth-child(4) { text-align: right !important; }
+html body .pu-authors table th, html body .pu-authors table td { padding-left: 12px !important; padding-right: 12px !important; }
+html body .pu-authors table th:first-child, html body .pu-authors table td:first-child { padding-left: 0 !important; }
+html body .pu-authors table th:last-child, html body .pu-authors table td:last-child { padding-right: 0 !important; }
+html body .pu-authors .pu-author b, html body .pu-authors .pu-author small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+html body .pu-authors .pu-author > span:last-child { min-width: 0; }
+@media (max-width: 768px) { html body .pu-authors table th:nth-child(1) { width: 66%; } html body .pu-authors table th:nth-child(2) { width: 34%; } }
+
+/* top requesters v2: name column + three equal centred columns */
+html body .pu-authors table th:nth-child(1) { width: 43% !important; }
+html body .pu-authors table th:nth-child(2), html body .pu-authors table th:nth-child(3), html body .pu-authors table th:nth-child(4) { width: 19% !important; }
+html body .pu-authors table th:nth-child(n+2), html body .pu-authors table td:nth-child(n+2) { text-align: center !important; }
+html body .pu-authors table td:nth-child(2) b, html body .pu-authors table td:nth-child(2) small { display: block; }
+html body .pu-authors table td:last-child, html body .pu-authors table th:last-child { padding-right: 12px !important; }
+@media (max-width: 768px) {
+  html body .pu-authors table th:nth-child(1) { width: 66% !important; }
+  html body .pu-authors table th:nth-child(2) { width: 34% !important; }
+  html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2) { text-align: right !important; }
+}
+/* top requesters v3: same alignment pattern as the team tables */
+html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2),
+html body .pu-authors table th:nth-child(3), html body .pu-authors table td:nth-child(3) { text-align: left !important; }
+html body .pu-authors table th:nth-child(4), html body .pu-authors table td:nth-child(4) { text-align: right !important; padding-right: 0 !important; }
+html body .pu-authors table th:nth-child(1) { width: 42% !important; }
+html body .pu-authors table th:nth-child(2) { width: 20% !important; }
+html body .pu-authors table th:nth-child(3) { width: 22% !important; }
+html body .pu-authors table th:nth-child(4) { width: 16% !important; }
 `;
     var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st);
   }

@@ -115,3 +115,23 @@
   var s = document.getElementById('achvJobType');
   if (s) new MutationObserver(function () { setTimeout(apply, 0); }).observe(s, { childList: true, subtree: true, characterData: true });
 })();
+
+/* ACRE — team tables: short column headers so they never collide */
+(function () {
+  'use strict';
+  var MAP = [[/count\s*\(%\s*of\s*all\)/i, 'Tasks'], [/team\s*share\s*\(%\)/i, 'Share']];
+  function fix(root) {
+    (root || document).querySelectorAll('.eng-support-table th').forEach(function (th) {
+      var t = th.textContent.trim();
+      MAP.forEach(function (m) { if (m[0].test(t)) th.textContent = m[1]; });
+    });
+  }
+  function watch() {
+    ['engDesignSupportContainer', 'engMaintSupportContainer'].forEach(function (id) {
+      var el = document.getElementById(id); if (!el || el.__fxw) return; el.__fxw = 1;
+      fix(el); new MutationObserver(function () { fix(el); }).observe(el, { childList: true, subtree: true, characterData: true });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch); else watch();
+  setTimeout(watch, 1500);
+})();

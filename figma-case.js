@@ -49,7 +49,7 @@
     });
   }
   var _t = title;
-  title = function (s, c) { var r = _t(s, c); return typeof r === 'string' ? r.replace(/\bin Progress\b/g, 'In Progress').replace(/\bin-House\b/g, 'In-House').replace(/\bSupp\.\s*Proc\.?/gi, 'Supplier Process').replace(/\bMantenance\b/gi, 'Maintenance').replace(/\bUpload PDF \(Upload PDF\)/gi, 'Upload PDF') : r; };
+  title = function (s, c) { var r = _t(s, c); return typeof r === 'string' ? r.replace(/\bin Progress\b/g, 'In Progress').replace(/\bin-House\b/g, 'In-House').replace(/\bSupp\.\s*Proc\.?/gi, 'Supplier Process').replace(/\bMantenance\b/gi, 'Maintenance').replace(/(^|[^\d.,])1 Tasks\b/g, '$11 Task').replace(/\bUpload PDF \(Upload PDF\)/gi, 'Upload PDF') : r; };
   window.acreTitle = title;
 
   var SKIP = 'script,style,textarea,input,code,pre,[contenteditable="true"],.no-case';

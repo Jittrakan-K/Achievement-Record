@@ -10674,6 +10674,118 @@ html body .ios-card-more-btn{ width: 23.52px !important; height: 23.52px !import
 html body .mobile-dime-fab{ width: 43.68px !important; height: 43.68px !important; min-width: 0 !important; padding: 0 !important; border-radius: 13.44px !important; bottom: calc(70.56px + env(safe-area-inset-bottom, 0px)) !important; right: 15.12px !important; justify-content: center !important; box-shadow: 0 6.72px 16.8px rgba(var(--primary-rgb), .32) !important; }
 html body .mobile-dime-fab > span, html body .mobile-dime-fab > *:not(svg){ display: none !important; }
 html body .mobile-dime-fab svg{ width: 18.48px !important; height: 18.48px !important; margin: 0 !important; }}
+html body .header-actions::after{ content: none !important; display: none !important; }
+html body .pu-stat .pu-icon-box{ display: none !important; }
+html body .pu-stat .pu-stat-label{ padding-right: 0 !important; }
+html body .pu-dark-chart{ background: #F7F8FA !important; box-shadow: none !important; border: 1px solid rgba(45, 55, 72, .06) !important; }
+html body .pu-wbar-track::before{ background: #EDF2F7 !important; }
+html body .pu-wbar-fill{ background: #CBD5E0 !important; box-shadow: none !important; }
+html body .pu-wbar.is-peak .pu-wbar-fill{ background: var(--primary) !important; box-shadow: none !important; }
+html body .pu-wbar.is-now .pu-wbar-track::before{ background: #E2E8F0 !important; }
+html body .pu-dark-chart-v .pu-wbar .pu-wbar-val{ color: #718096 !important; font-weight: 600 !important; }
+html body .pu-dark-chart-v .pu-wbar.is-peak .pu-wbar-val{ background: var(--primary) !important; color: #fff !important; }
+html body .pu-dark-chart-v .pu-wbar em{ color: #A0AEC0 !important; font-weight: 500 !important; }
+html body .pu-dark-foot{ border-top-color: #E2E8F0 !important; color: #A0AEC0 !important; }
+html body .pu-dark-foot b{ color: #2D3748 !important; font-weight: 600 !important; }
+html body .pu-dark-foot small{ color: #A0AEC0 !important; }
+html body .pu-legend i.ink{ background: #A0AEC0 !important; }
+html body .pu-av, html body .pu-co-ico, html body .at-req-av, html body .pu-thumb{
+  background: #EDF2F7 !important; color: #4A5568 !important; box-shadow: none !important;
+}
+html body .pu-avs .pu-av, html body .pu-stack .pu-av{ box-shadow: 0 0 0 2px #fff !important; }
+html body .pu-badge{ background: none !important; padding: 0 !important; height: auto !important; color: #2F855A !important; font-size: 8.82px !important; font-weight: 600 !important; letter-spacing: .04em; display: inline-flex !important; align-items: center !important; gap: 5.04px; text-box: none !important; }
+html body .pu-badge::before{ content: ""; width: 5.04px; height: 5.04px; border-radius: 50%; background: currentColor; flex: none; }
+html body .pu-badge.off{ color: #A0AEC0 !important; }
+html body h1, html body h2, html body h3, html body h4, html body b, html body strong,
+html body .pu-title, html body .pu-head h2, html body .at-title, html body .atl-title, html body .chart-title,
+html body .pu-stat-value, html body .pu-comp-num, html body .at-req-tx b, html body .at-owner-name,
+html body .ios-card-title, html body .card-title, html body .modal-header h2, html body .modal-title,
+html body .ranking-name, html body .sup-member-name, html body .eng-line-title, html body .eng-flat-name{ font-weight: 600 !important; }
+html body .at-req-code, html body .at-code, html body .badge-code, html body .at-quote, html body .badge-quotation, html body .pu-mono{
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important; font-weight: 500 !important; letter-spacing: 0 !important;
+}
+html body .pu-dark-foot span, html body .pu-dark-foot .pu-fs > span{ color: #A0AEC0 !important; }
+html body .pu-avs .pu-av{ width: 21.84px !important; height: 21.84px !important; min-width: 21.84px; margin-left: -5.04px !important; border: 0 !important; box-shadow: 0 0 0 2px #fff !important; font-size: 7.14px !important; font-weight: 600 !important; letter-spacing: 0 !important; overflow: visible !important; }
+html body .pu-avs .pu-av:first-child{ margin-left: 0 !important; }
+html body .pu-avs .pu-av.more{ background: #fff !important; color: #A0AEC0 !important; box-shadow: 0 0 0 1px #E2E8F0 inset, 0 0 0 2px #fff !important; }
+html body .eng-support-table td.sup-td-name{ display: table-cell !important; white-space: nowrap !important; }
+html body .sup-td-name .sup-color-bar{ display: inline-block !important; vertical-align: middle; margin-right: 8.4px; }
+html body .sup-td-name .sup-member-name{ display: inline-block !important; width: 126px; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .sup-td-name .sup-role-tag{ display: inline-block !important; vertical-align: middle; margin-left: 3.36px; }
+html body .ranking-card-top{ align-items: center !important; }
+html body .ranking-badge-pill{ display: inline-block !important; line-height: 1 !important; padding: 5.04px 6.72px !important; }
+@supports (text-box: trim-both cap alphabetic) {html body .ranking-badge-pill, html body .sup-role-tag{ text-box: trim-both cap alphabetic; line-height: 1 !important; }
+html body .ranking-badge-pill{ padding: 5.88px 6.72px !important; }
+html body .sup-role-tag{ padding: 4.2px 5.88px !important; }}
+html body .eng-table-list{ overflow: visible !important; }
+html body .eng-support-table{ table-layout: fixed !important; width: 100% !important; min-width: 0 !important; }
+html body .eng-support-table th:nth-child(1){ width: 38% !important; }
+html body .eng-support-table th:nth-child(2){ width: 24% !important; }
+html body .eng-support-table th:nth-child(3){ width: 17% !important; text-align: right !important; }
+html body .eng-support-table th:nth-child(4){ width: 21% !important; text-align: right !important; }
+html body .eng-support-table td{ overflow: hidden; }
+html body .sup-td-name .sup-member-name{ width: 94.08px !important; }
+html body .sup-td-status{ white-space: normal !important; }
+html body .sup-tag{ margin-right: 6.72px !important; white-space: nowrap; }
+html body .sup-td-count{ white-space: nowrap; }
+html body .sup-all-pct{ display: block; margin: 2px 0 0 !important; font-size: 8.4px !important; }
+html body .sup-inline-bar-track{ max-width: 53.76px !important; min-width: 20.16px; }
+html body .sup-team-pct{ min-width: 33.6px !important; }
+html body .eng-support-table th:nth-child(1){ width: 34% !important; }
+html body .eng-support-table th:nth-child(2){ width: 31% !important; }
+html body .eng-support-table th:nth-child(3){ width: 15% !important; }
+html body .eng-support-table th:nth-child(4){ width: 20% !important; }
+html body .eng-support-table th, html body .eng-support-table td{ padding-left: 6.72px !important; padding-right: 6.72px !important; }
+html body .eng-support-table th:first-child, html body .eng-support-table td:first-child{ padding-left: 0 !important; }
+html body .eng-support-table th:last-child, html body .eng-support-table td:last-child{ padding-right: 0 !important; }
+html body .eng-support-table td{ padding-top: 11.76px !important; padding-bottom: 11.76px !important; vertical-align: middle !important; }
+html body .sup-td-name .sup-member-name{ width: 87.36px !important; }
+html body .sup-td-name .sup-color-bar{ margin-right: 6.72px !important; }
+html body .sup-td-status{ white-space: nowrap !important; }
+html body .sup-tag{ margin-right: 8.4px !important; font-size: 8.4px !important; }
+html body .sup-tag:last-child{ margin-right: 0 !important; }
+html body .sup-td-count{ text-align: right !important; line-height: 1.25; }
+html body .sup-inline-bar-wrap{ gap: 6.72px !important; }
+html body .eng-support-table th:nth-child(2), html body .eng-support-table td.sup-td-status{ padding-left: 11.76px !important; }
+html body .eng-support-table th:nth-child(1){ width: 36% !important; }
+html body .eng-support-table th:nth-child(2){ width: 30% !important; }
+html body .eng-support-table th:nth-child(4){ width: 19% !important; }
+html body .sup-td-name .sup-member-name{ width: 90.72px !important; }
+html body .analytics-section .chart-title{ flex-wrap: wrap !important; row-gap: 3.36px !important; }
+html body .analytics-section .chart-title > span:first-child{ white-space: nowrap !important; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+html body .analytics-section .chart-title .eng-title-meta{ flex: 0 0 auto; }
+html body .eng-support-table th:nth-child(3){ width: 15% !important; }
+html body .eng-support-table th:nth-child(4), html body .eng-support-table td.sup-td-bar{ padding-left: 20.16px !important; }
+html body .eng-support-table th:nth-child(4){ width: 21% !important; }
+html body .sup-inline-bar-track{ max-width: 47.04px !important; }
+html body .pu-authors table{ table-layout: fixed !important; width: 100% !important; }
+html body .pu-authors table th:nth-child(1){ width: 40%; }
+html body .pu-authors table th:nth-child(2){ width: 22%; }
+html body .pu-authors table th:nth-child(3){ width: 20%; }
+html body .pu-authors table th:nth-child(4){ width: 18%; text-align: right !important; }
+html body .pu-authors table td:nth-child(4){ text-align: right !important; }
+html body .pu-authors table th, html body .pu-authors table td{ padding-left: 10.08px !important; padding-right: 10.08px !important; }
+html body .pu-authors table th:first-child, html body .pu-authors table td:first-child{ padding-left: 0 !important; }
+html body .pu-authors table th:last-child, html body .pu-authors table td:last-child{ padding-right: 0 !important; }
+html body .pu-authors .pu-author b, html body .pu-authors .pu-author small{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+html body .pu-authors .pu-author > span:last-child{ min-width: 0; }
+@media (max-width: 768px) {html body .pu-authors table th:nth-child(1){ width: 66%; }
+html body .pu-authors table th:nth-child(2){ width: 34%; }}
+html body .pu-authors table th:nth-child(1){ width: 43% !important; }
+html body .pu-authors table th:nth-child(2), html body .pu-authors table th:nth-child(3), html body .pu-authors table th:nth-child(4){ width: 19% !important; }
+html body .pu-authors table th:nth-child(n/**/+2), html body .pu-authors table td:nth-child(n/**/+2){ text-align: center !important; }
+html body .pu-authors table td:nth-child(2) b, html body .pu-authors table td:nth-child(2) small{ display: block; }
+html body .pu-authors table td:last-child, html body .pu-authors table th:last-child{ padding-right: 10.08px !important; }
+@media (max-width: 768px) {html body .pu-authors table th:nth-child(1){ width: 66% !important; }
+html body .pu-authors table th:nth-child(2){ width: 34% !important; }
+html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2){ text-align: right !important; }}
+html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2),
+html body .pu-authors table th:nth-child(3), html body .pu-authors table td:nth-child(3){ text-align: left !important; }
+html body .pu-authors table th:nth-child(4), html body .pu-authors table td:nth-child(4){ text-align: right !important; padding-right: 0 !important; }
+html body .pu-authors table th:nth-child(1){ width: 42% !important; }
+html body .pu-authors table th:nth-child(2){ width: 20% !important; }
+html body .pu-authors table th:nth-child(3){ width: 22% !important; }
+html body .pu-authors table th:nth-child(4){ width: 16% !important; }
 .at-wrap{ background: #fff; border-radius: 12.6px; box-shadow: 0 2.94px 4.62px rgba(0,0,0,.02); overflow: hidden; }
 .at-bar-top{ display: flex; align-items: center; justify-content: space-between; gap: 10.08px; padding: 11.76px 15.12px; border-bottom: 1px solid #EDF2F7; flex-wrap: wrap; }
 .at-summary{ display: flex; align-items: center; gap: 6.72px; font-size: 10.08px; font-weight: 700; color: #A0AEC0; letter-spacing: .03em; flex-wrap: wrap; }
@@ -11590,4 +11702,116 @@ html body .ios-card-more-btn{ width: 23.52px !important; height: 23.52px !import
 html body .mobile-dime-fab{ width: 43.68px !important; height: 43.68px !important; min-width: 0 !important; padding: 0 !important; border-radius: 13.44px !important; bottom: calc(70.56px + env(safe-area-inset-bottom, 0px)) !important; right: 15.12px !important; justify-content: center !important; box-shadow: 0 6.72px 16.8px rgba(var(--primary-rgb), .32) !important; }
 html body .mobile-dime-fab > span, html body .mobile-dime-fab > *:not(svg){ display: none !important; }
 html body .mobile-dime-fab svg{ width: 18.48px !important; height: 18.48px !important; margin: 0 !important; }}
+html body .header-actions::after{ content: none !important; display: none !important; }
+html body .pu-stat .pu-icon-box{ display: none !important; }
+html body .pu-stat .pu-stat-label{ padding-right: 0 !important; }
+html body .pu-dark-chart{ background: #F7F8FA !important; box-shadow: none !important; border: 1px solid rgba(45, 55, 72, .06) !important; }
+html body .pu-wbar-track::before{ background: #EDF2F7 !important; }
+html body .pu-wbar-fill{ background: #CBD5E0 !important; box-shadow: none !important; }
+html body .pu-wbar.is-peak .pu-wbar-fill{ background: var(--primary) !important; box-shadow: none !important; }
+html body .pu-wbar.is-now .pu-wbar-track::before{ background: #E2E8F0 !important; }
+html body .pu-dark-chart-v .pu-wbar .pu-wbar-val{ color: #718096 !important; font-weight: 600 !important; }
+html body .pu-dark-chart-v .pu-wbar.is-peak .pu-wbar-val{ background: var(--primary) !important; color: #fff !important; }
+html body .pu-dark-chart-v .pu-wbar em{ color: #A0AEC0 !important; font-weight: 500 !important; }
+html body .pu-dark-foot{ border-top-color: #E2E8F0 !important; color: #A0AEC0 !important; }
+html body .pu-dark-foot b{ color: #2D3748 !important; font-weight: 600 !important; }
+html body .pu-dark-foot small{ color: #A0AEC0 !important; }
+html body .pu-legend i.ink{ background: #A0AEC0 !important; }
+html body .pu-av, html body .pu-co-ico, html body .at-req-av, html body .pu-thumb{
+  background: #EDF2F7 !important; color: #4A5568 !important; box-shadow: none !important;
+}
+html body .pu-avs .pu-av, html body .pu-stack .pu-av{ box-shadow: 0 0 0 2px #fff !important; }
+html body .pu-badge{ background: none !important; padding: 0 !important; height: auto !important; color: #2F855A !important; font-size: 8.82px !important; font-weight: 600 !important; letter-spacing: .04em; display: inline-flex !important; align-items: center !important; gap: 5.04px; text-box: none !important; }
+html body .pu-badge::before{ content: ""; width: 5.04px; height: 5.04px; border-radius: 50%; background: currentColor; flex: none; }
+html body .pu-badge.off{ color: #A0AEC0 !important; }
+html body h1, html body h2, html body h3, html body h4, html body b, html body strong,
+html body .pu-title, html body .pu-head h2, html body .at-title, html body .atl-title, html body .chart-title,
+html body .pu-stat-value, html body .pu-comp-num, html body .at-req-tx b, html body .at-owner-name,
+html body .ios-card-title, html body .card-title, html body .modal-header h2, html body .modal-title,
+html body .ranking-name, html body .sup-member-name, html body .eng-line-title, html body .eng-flat-name{ font-weight: 600 !important; }
+html body .at-req-code, html body .at-code, html body .badge-code, html body .at-quote, html body .badge-quotation, html body .pu-mono{
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important; font-weight: 500 !important; letter-spacing: 0 !important;
+}
+html body .pu-dark-foot span, html body .pu-dark-foot .pu-fs > span{ color: #A0AEC0 !important; }
+html body .pu-avs .pu-av{ width: 21.84px !important; height: 21.84px !important; min-width: 21.84px; margin-left: -5.04px !important; border: 0 !important; box-shadow: 0 0 0 2px #fff !important; font-size: 7.14px !important; font-weight: 600 !important; letter-spacing: 0 !important; overflow: visible !important; }
+html body .pu-avs .pu-av:first-child{ margin-left: 0 !important; }
+html body .pu-avs .pu-av.more{ background: #fff !important; color: #A0AEC0 !important; box-shadow: 0 0 0 1px #E2E8F0 inset, 0 0 0 2px #fff !important; }
+html body .eng-support-table td.sup-td-name{ display: table-cell !important; white-space: nowrap !important; }
+html body .sup-td-name .sup-color-bar{ display: inline-block !important; vertical-align: middle; margin-right: 8.4px; }
+html body .sup-td-name .sup-member-name{ display: inline-block !important; width: 126px; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .sup-td-name .sup-role-tag{ display: inline-block !important; vertical-align: middle; margin-left: 3.36px; }
+html body .ranking-card-top{ align-items: center !important; }
+html body .ranking-badge-pill{ display: inline-block !important; line-height: 1 !important; padding: 5.04px 6.72px !important; }
+@supports (text-box: trim-both cap alphabetic) {html body .ranking-badge-pill, html body .sup-role-tag{ text-box: trim-both cap alphabetic; line-height: 1 !important; }
+html body .ranking-badge-pill{ padding: 5.88px 6.72px !important; }
+html body .sup-role-tag{ padding: 4.2px 5.88px !important; }}
+html body .eng-table-list{ overflow: visible !important; }
+html body .eng-support-table{ table-layout: fixed !important; width: 100% !important; min-width: 0 !important; }
+html body .eng-support-table th:nth-child(1){ width: 38% !important; }
+html body .eng-support-table th:nth-child(2){ width: 24% !important; }
+html body .eng-support-table th:nth-child(3){ width: 17% !important; text-align: right !important; }
+html body .eng-support-table th:nth-child(4){ width: 21% !important; text-align: right !important; }
+html body .eng-support-table td{ overflow: hidden; }
+html body .sup-td-name .sup-member-name{ width: 94.08px !important; }
+html body .sup-td-status{ white-space: normal !important; }
+html body .sup-tag{ margin-right: 6.72px !important; white-space: nowrap; }
+html body .sup-td-count{ white-space: nowrap; }
+html body .sup-all-pct{ display: block; margin: 2px 0 0 !important; font-size: 8.4px !important; }
+html body .sup-inline-bar-track{ max-width: 53.76px !important; min-width: 20.16px; }
+html body .sup-team-pct{ min-width: 33.6px !important; }
+html body .eng-support-table th:nth-child(1){ width: 34% !important; }
+html body .eng-support-table th:nth-child(2){ width: 31% !important; }
+html body .eng-support-table th:nth-child(3){ width: 15% !important; }
+html body .eng-support-table th:nth-child(4){ width: 20% !important; }
+html body .eng-support-table th, html body .eng-support-table td{ padding-left: 6.72px !important; padding-right: 6.72px !important; }
+html body .eng-support-table th:first-child, html body .eng-support-table td:first-child{ padding-left: 0 !important; }
+html body .eng-support-table th:last-child, html body .eng-support-table td:last-child{ padding-right: 0 !important; }
+html body .eng-support-table td{ padding-top: 11.76px !important; padding-bottom: 11.76px !important; vertical-align: middle !important; }
+html body .sup-td-name .sup-member-name{ width: 87.36px !important; }
+html body .sup-td-name .sup-color-bar{ margin-right: 6.72px !important; }
+html body .sup-td-status{ white-space: nowrap !important; }
+html body .sup-tag{ margin-right: 8.4px !important; font-size: 8.4px !important; }
+html body .sup-tag:last-child{ margin-right: 0 !important; }
+html body .sup-td-count{ text-align: right !important; line-height: 1.25; }
+html body .sup-inline-bar-wrap{ gap: 6.72px !important; }
+html body .eng-support-table th:nth-child(2), html body .eng-support-table td.sup-td-status{ padding-left: 11.76px !important; }
+html body .eng-support-table th:nth-child(1){ width: 36% !important; }
+html body .eng-support-table th:nth-child(2){ width: 30% !important; }
+html body .eng-support-table th:nth-child(4){ width: 19% !important; }
+html body .sup-td-name .sup-member-name{ width: 90.72px !important; }
+html body .analytics-section .chart-title{ flex-wrap: wrap !important; row-gap: 3.36px !important; }
+html body .analytics-section .chart-title > span:first-child{ white-space: nowrap !important; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+html body .analytics-section .chart-title .eng-title-meta{ flex: 0 0 auto; }
+html body .eng-support-table th:nth-child(3){ width: 15% !important; }
+html body .eng-support-table th:nth-child(4), html body .eng-support-table td.sup-td-bar{ padding-left: 20.16px !important; }
+html body .eng-support-table th:nth-child(4){ width: 21% !important; }
+html body .sup-inline-bar-track{ max-width: 47.04px !important; }
+html body .pu-authors table{ table-layout: fixed !important; width: 100% !important; }
+html body .pu-authors table th:nth-child(1){ width: 40%; }
+html body .pu-authors table th:nth-child(2){ width: 22%; }
+html body .pu-authors table th:nth-child(3){ width: 20%; }
+html body .pu-authors table th:nth-child(4){ width: 18%; text-align: right !important; }
+html body .pu-authors table td:nth-child(4){ text-align: right !important; }
+html body .pu-authors table th, html body .pu-authors table td{ padding-left: 10.08px !important; padding-right: 10.08px !important; }
+html body .pu-authors table th:first-child, html body .pu-authors table td:first-child{ padding-left: 0 !important; }
+html body .pu-authors table th:last-child, html body .pu-authors table td:last-child{ padding-right: 0 !important; }
+html body .pu-authors .pu-author b, html body .pu-authors .pu-author small{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+html body .pu-authors .pu-author > span:last-child{ min-width: 0; }
+@media (max-width: 768px) {html body .pu-authors table th:nth-child(1){ width: 66%; }
+html body .pu-authors table th:nth-child(2){ width: 34%; }}
+html body .pu-authors table th:nth-child(1){ width: 43% !important; }
+html body .pu-authors table th:nth-child(2), html body .pu-authors table th:nth-child(3), html body .pu-authors table th:nth-child(4){ width: 19% !important; }
+html body .pu-authors table th:nth-child(n/**/+2), html body .pu-authors table td:nth-child(n/**/+2){ text-align: center !important; }
+html body .pu-authors table td:nth-child(2) b, html body .pu-authors table td:nth-child(2) small{ display: block; }
+html body .pu-authors table td:last-child, html body .pu-authors table th:last-child{ padding-right: 10.08px !important; }
+@media (max-width: 768px) {html body .pu-authors table th:nth-child(1){ width: 66% !important; }
+html body .pu-authors table th:nth-child(2){ width: 34% !important; }
+html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2){ text-align: right !important; }}
+html body .pu-authors table th:nth-child(2), html body .pu-authors table td:nth-child(2),
+html body .pu-authors table th:nth-child(3), html body .pu-authors table td:nth-child(3){ text-align: left !important; }
+html body .pu-authors table th:nth-child(4), html body .pu-authors table td:nth-child(4){ text-align: right !important; padding-right: 0 !important; }
+html body .pu-authors table th:nth-child(1){ width: 42% !important; }
+html body .pu-authors table th:nth-child(2){ width: 20% !important; }
+html body .pu-authors table th:nth-child(3){ width: 22% !important; }
+html body .pu-authors table th:nth-child(4){ width: 16% !important; }
 }

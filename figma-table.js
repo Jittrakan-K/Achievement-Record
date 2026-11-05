@@ -26,7 +26,7 @@
   function fmtDate(v) {
     if (!v) return '–';
     var d = new Date(v); if (isNaN(d)) return esc(v);
-    return d.getDate() + ' ' + ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()] + ' ' + String(d.getFullYear()).slice(2);
+    return d.getDate() + ' ' + ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()] + ' ' + d.getFullYear();
   }
 
   function row(it, i, full) {
