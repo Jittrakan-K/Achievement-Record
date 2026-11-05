@@ -56,12 +56,13 @@
     var meta = dept || fac;
     var codeTx = up(clean(it.code || '')); if (codeTx === '-' || codeTx.toLowerCase() === reqName.toLowerCase() || codeTx.toLowerCase() === meta.toLowerCase()) codeTx = '';
     var quote = clean(it.quotation || ''); if (quote === '-') quote = ''; quote = up(quote);
+    var qList = quote ? quote.split(/\s*[,/;]\s*|\s+/).filter(Boolean) : [];
     var PAL = ['#3182CE', '#38B2AC', '#805AD5', '#DD6B20', '#D53F8C', '#319795', '#2F855A', '#B7791F'];
     var hk = 0, hs = (reqName || meta); for (var q = 0; q < hs.length; q++) hk = (hk * 31 + hs.charCodeAt(q)) >>> 0;
     var reqCol = PAL[hk % PAL.length];
 
     var statusCell = '<td class="at-status"><div class="at-st-top"><span class="at-pill is-' + s + '">' + LABEL[s] + '</span>' +
-        (quote ? '<span class="at-quote" title="Quotation">Q: ' + esc(quote) + '</span>' : '') + '</div>' +
+        (quote ? '<span class="at-quote" title="Quotation: ' + esc(quote) + '">Q: ' + esc(qList[0]) + (qList.length > 1 ? '<em class="at-quote-more">+' + (qList.length - 1) + '</em>' : '') + '</span>' : '') + '</div>' +
         '<div class="at-st-meta"><span class="at-sub" title="Sub status">' + (!redundant ? esc(sub) : '&nbsp;') + '</span><b>' + pct + '%</b></div>' +
         '<span class="at-bar"><span style="width:' + pct + '%"></span></span></td>';
     var reqCell = '<td class="at-req">' + (reqName || meta ? '<div class="at-req-in"><span class="at-req-av" style="color:' + reqCol + ';background:' + reqCol + '1A">' + esc(initials(reqName || meta)) + '</span>' +
@@ -105,7 +106,7 @@
         '<span class="at-cat"><i style="background:' + esc(cat.color || '#A0AEC0') + '"></i>' + esc(clean(up(cat.name))) + '</span>' +
         '</div></td>' +
       '<td class="at-status"><div class="at-st-top"><span class="at-pill is-' + s + '">' + LABEL[s] + '</span>' +
-        (quote ? '<span class="at-quote" title="Quotation">Q: ' + esc(quote) + '</span>' : '') + '</div>' +
+        (quote ? '<span class="at-quote" title="Quotation: ' + esc(quote) + '">Q: ' + esc(qList[0]) + (qList.length > 1 ? '<em class="at-quote-more">+' + (qList.length - 1) + '</em>' : '') + '</span>' : '') + '</div>' +
         '<div class="at-st-meta"><span class="at-sub" title="Sub status">' + (!redundant ? esc(sub) : '&nbsp;') + '</span><b>' + pct + '%</b></div>' +
         '<span class="at-bar"><span style="width:' + pct + '%"></span></span></td>' +
       '<td class="at-req">' + (reqName || meta ? '<div class="at-req-in"><span class="at-req-av" style="color:' + reqCol + ';background:' + reqCol + '1A">' + esc(initials(reqName || meta)) + '</span>' +
@@ -113,9 +114,9 @@
       '<td class="at-note">' + (note ? '<span class="at-note-main">' + esc(up(note)) + '</span>' : '') + (desc ? '<small>' + esc(up(desc)) + '</small>' : (note ? '' : '<span class="at-dim">–</span>')) + '</td>' +
       '<td class="at-owner">' + (it.assignee ? '<span class="at-av">' + esc(initials(it.assignee)) + '</span><span class="at-owner-name">' + esc(up(it.assignee)) + '</span>' : '<span class="at-dim">–</span>') + '</td>' +
       '<td class="at-files">' + (files || '<span class="at-dim">–</span>') + '</td>' +
-      '<td class="at-end"><span class="at-date">' + fmtDate(it.completionDate || it.requestDate) + '</span>' +
-        '<span class="at-actions"><button type="button" class="at-icon" onclick="openAchievementModal(\'' + id + '\')" title="Edit">' + ICON.edit + '</button>' +
-        '<button type="button" class="at-icon is-danger" onclick="deleteAchievement(\'' + id + '\')" title="Delete">' + ICON.del + '</button></span></td>' +
+      '<td class="at-end is-swapped"><span class="at-actions"><button type="button" class="at-icon" onclick="openAchievementModal(\'' + id + '\')" title="Edit">' + ICON.edit + '</button>' +
+        '<button type="button" class="at-icon is-danger" onclick="deleteAchievement(\'' + id + '\')" title="Delete">' + ICON.del + '</button></span>' +
+        '<span class="at-date">' + fmtDate(it.completionDate || it.requestDate) + '</span></td>' +
       '</tr>';
   }
 
@@ -441,6 +442,56 @@ html body .workspace-tab-count { display: inline-flex !important; align-items: c
   html body .workspace-tab-count { display: inline-block !important; height: auto !important; line-height: 1 !important; padding: 5px 7px !important; text-box: trim-both cap alphabetic !important; }
   html body .workspace-tab-btn, html body .workspace-tab-info { align-items: center !important; }
 }
+
+/* vertical rhythm: status and requester blocks share one height with even gaps */
+html body .at-table td { padding-top: 16px !important; padding-bottom: 16px !important; }
+html body .at-status .at-st-top { height: 22px; align-items: center; }
+html body .at-status .at-st-meta { margin-top: 8px !important; height: 14px; align-items: center !important; line-height: 14px !important; }
+html body .at-status .at-st-meta .at-sub, html body .at-status .at-st-meta b { line-height: 14px !important; }
+html body .at-status > .at-bar { margin-top: 8px !important; height: 5px !important; }
+html body .at-req-in { align-items: flex-start !important; }
+html body .at-req-av { margin-top: 0 !important; width: 36px !important; height: 36px !important; }
+html body .at-req-tx { gap: 0 !important; }
+html body .at-req-tx b { padding-top: 0 !important; line-height: 20px !important; }
+html body .at-req-tx small { margin-top: 4px !important; line-height: 14px !important; }
+html body .at-req-code { margin-top: 4px !important; line-height: 15px !important; }
+html body .at-title { padding-top: 0 !important; line-height: 20px !important; }
+html body .at-row td.at-task .at-tags { margin-top: 6px !important; }
+
+/* requester + status lines: equal optical gaps (cap height to baseline), any font */
+@supports (text-box: trim-both cap alphabetic) {
+  html body .at-req-tx b, html body .at-req-tx small, html body .at-req-code,
+  html body .at-status .at-st-meta .at-sub, html body .at-status .at-st-meta b {
+    text-box: trim-both cap alphabetic !important; line-height: 1.35 !important;
+  }
+  html body .at-req-tx { display: flex !important; flex-direction: column !important; gap: 9px !important; padding-top: 6px; }
+  html body .at-req-tx small, html body .at-req-code { margin-top: 0 !important; }
+  /* trimmed lines keep their ellipsis but must not clip the glyphs: give the clip box room, cancel it in layout */
+  html body .at-req-tx b, html body .at-req-tx small, html body .at-req-code,
+  html body .at-status .at-st-meta .at-sub, html body .at-status .at-st-meta b {
+    padding-top: 4px !important; padding-bottom: 4px !important; margin-top: -4px !important; margin-bottom: -4px !important;
+  }
+  html body .at-status .at-st-top { height: auto; }
+  html body .at-status .at-st-meta { height: auto !important; margin-top: 9px !important; align-items: flex-end !important; line-height: 1 !important; }
+  html body .at-status > .at-bar { margin-top: 9px !important; }
+}
+
+/* quotation: first number + count of the rest (all numbers in the tooltip) */
+html body .at-quote { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html body .at-quote-more { font-style: normal; margin-left: 5px; padding-left: 5px; border-left: 1px solid #FBD38D; color: #DD6B20; font-weight: 700; }
+/* owner / files / date: room for two attachment chips, date and actions on one right edge */
+html body .at-table:not(.af-table) th:nth-child(6) { width: 136px !important; }
+html body .at-table:not(.af-table) th:nth-child(7) { width: 128px !important; }
+html body .at-table:not(.af-table) th:nth-child(8) { width: 92px !important; }
+html body .at-table td.at-files { white-space: nowrap; text-align: center; }
+html body .at-table td.at-files .at-file { margin: 0 2px !important; vertical-align: top; }
+html body .at-owner { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .at-table td.at-end { text-align: right; }
+html body .at-end .at-actions { justify-content: flex-end; }
+
+/* date column: actions on top, date underneath */
+html body .at-end.is-swapped .at-actions { display: inline-flex !important; margin-top: -3px !important; }
+html body .at-end.is-swapped .at-date { display: block; margin-top: 10px !important; padding-top: 0 !important; }
 `; var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st); })();
 
   /* ---------- Timeline view ---------- */

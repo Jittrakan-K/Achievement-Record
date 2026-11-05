@@ -1058,6 +1058,123 @@ html body .r-dot { width: 6px !important; height: 6px !important; border-radius:
 
 html body .analytics-section .chart-box .chart-title .eng-title-meta, html body .analytics-section .chart-box .chart-title .eng-title-meta * { color: #A0AEC0 !important; font-weight: 600 !important; }
 html body .requester-ranking-section { margin-left: 0 !important; margin-right: 0 !important; width: auto !important; }
+
+/* ==========================================================================
+   Profile photo block: avatar + (name · role) / actions / hint, centred
+   ========================================================================== */
+html body .fx-photo-box { grid-template-columns: 76px minmax(0, 1fr) !important; gap: 18px !important; padding: 18px 20px !important; align-items: center !important; border-radius: 16px !important; }
+html body .fx-photo-av { width: 76px !important; height: 76px !important; border-radius: 20px !important; }
+html body .fx-photo-info { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; column-gap: 8px !important; row-gap: 0 !important; }
+html body .fx-photo-info > b { font-size: 15px !important; line-height: 20px !important; max-width: calc(100% - 80px); }
+html body .fx-photo-info > .fx-acct-role { margin: 0 !important; }
+html body .fx-photo-info > .fx-photo-actions { flex-basis: 100%; margin: 10px 0 0 !important; }
+html body .fx-photo-info > small { flex-basis: 100%; margin-top: 8px; font-size: 10.5px !important; letter-spacing: .04em; }
+
+/* ==========================================================================
+   Card location tags: one line, extra text fades into an ellipsis
+   ========================================================================== */
+html body .card-location-tags { display: flex !important; flex-wrap: nowrap !important; gap: 6px !important; overflow: hidden; min-width: 0; }
+html body .card-location-tags .badge-dept { flex: 0 1 auto; min-width: 0; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; }
+html body .card-location-tags .badge-dept:first-child { flex-shrink: 0; }
+
+/* ==========================================================================
+   Mobile (≤ 768px): calmer type, compact cards, no cramped columns
+   ========================================================================== */
+@media (max-width: 768px) {
+  html body { letter-spacing: 0 !important; }
+  /* dashboard cards */
+  html body .pu-card { padding: 18px !important; border-radius: 18px !important; }
+  html body .pu-title { font-size: 15px !important; }
+  html body .pu-sub { font-size: 11px !important; }
+  html body .pu-card-head { gap: 10px !important; align-items: flex-start !important; }
+  html body .pu-text-link { font-size: 10.5px !important; white-space: nowrap; }
+  html body .pu-section-head, html body .pu-overview-head { align-items: flex-start !important; }
+  /* stat tiles: label / number / note on the left, icon top-right */
+  html body .pu-stat { position: relative !important; display: block !important; padding: 16px !important; min-height: 0 !important; text-align: left !important; }
+  html body .pu-stat .pu-icon-box { position: absolute !important; top: 14px !important; right: 14px !important; width: 32px !important; height: 32px !important; margin: 0 !important; border-radius: 10px !important; }
+  html body .pu-stat .pu-stat-label { font-size: 10px !important; padding-right: 40px; }
+  html body .pu-stat .pu-stat-value { font-size: 22px !important; margin: 6px 0 4px !important; }
+  html body .pu-stat .pu-stat-meta { font-size: 10px !important; line-height: 1.35 !important; }
+  html body .pu-stats { gap: 12px !important; }
+  /* top requesters: drop the badge and % columns, keep name + count */
+  html body .pu-authors table th:nth-child(3), html body .pu-authors table td:nth-child(3),
+  html body .pu-authors table th:nth-child(4), html body .pu-authors table td:nth-child(4) { display: none !important; }
+  html body .pu-authors table td, html body .pu-authors table th { padding-left: 0 !important; padding-right: 0 !important; }
+  html body .pu-authors table td:nth-child(2), html body .pu-authors table th:nth-child(2) { text-align: right !important; white-space: nowrap; }
+  html body .pu-authors .pu-author b { font-size: 12.5px !important; line-height: 1.3 !important; }
+  html body .pu-authors .pu-author small, html body .pu-authors td small { font-size: 10.5px !important; }
+  html body .pu-authors .pu-av.lg { width: 36px !important; height: 36px !important; min-width: 36px; font-size: 11px !important; border-radius: 10px !important; }
+
+  /* timeline */
+  html body .atl { padding: 0 16px 18px !important; }
+  html body .atl-head { padding: 16px 0 10px !important; }
+  html body .atl-head h4 { font-size: 13.5px !important; }
+  html body .atl-list { padding-left: 20px !important; }
+  html body .atl-list::before { left: 4px !important; }
+  html body .atl-dot { left: -20px !important; top: 18px !important; width: 12px !important; height: 12px !important; border-width: 2.5px !important; }
+  html body .atl-card { padding: 14px !important; border-radius: 14px !important; }
+  html body .atl-top { gap: 10px !important; }
+  html body .atl-title { font-size: 12.5px !important; line-height: 1.4 !important; }
+  html body .atl-top .at-pill { flex: none; font-size: 9px !important; padding-left: 8px !important; padding-right: 8px !important; }
+  html body .atl .at-tags { gap: 6px !important; }
+  html body .atl-desc { font-size: 11.5px !important; }
+  html body .atl-note { font-size: 11px !important; }
+  html body .atl-foot { flex-wrap: nowrap !important; align-items: flex-end !important; gap: 10px !important; }
+  html body .atl-meta { flex-direction: column !important; align-items: flex-start !important; gap: 4px !important; font-size: 10.5px !important; min-width: 0; }
+  html body .atl-meta > i { display: none !important; }
+  html body .atl-meta > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+  /* task cards */
+  html body .ios-card, html body .achievement-card { border-radius: 18px !important; }
+  html body .ios-card-title, html body .card-title { font-size: 13.5px !important; line-height: 1.4 !important; }
+  html body .webull-data-grid { gap: 10px 12px !important; padding: 12px !important; }
+  html body .data-label { font-size: 9.5px !important; }
+  html body .data-val { font-size: 11.5px !important; }
+  html body .card-location-tags .badge-dept { font-size: 9.5px !important; }
+}
+
+/* card: request number + quotation always on one line */
+html body .webull-data-grid .data-item > div[style*="flex-wrap"] { flex-wrap: nowrap !important; min-width: 0; overflow: hidden; gap: 6px !important; }
+html body .webull-data-grid .data-item > div[style*="flex-wrap"] > .badge-code { flex: 0 1 auto; min-width: 0; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; }
+html body .webull-data-grid .data-item > div[style*="flex-wrap"] > .badge-quotation { flex: 0 0 auto; white-space: nowrap !important; }
+html body .webull-data-grid .data-item { min-width: 0; }
+
+/* ==========================================================================
+   Mobile round 2
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* no visible scrollbars */
+  html, body, html body * { scrollbar-width: none !important; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar, html body *::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
+
+  /* status filter pills: four equal pills that always fit the screen */
+  html body .mobile-quick-filter-scroll { display: grid !important; grid-template-columns: auto 1.5fr 1.15fr 1fr; gap: 6px !important; overflow: visible !important; padding-left: 16px !important; padding-right: 16px !important; }
+  html body .mobile-filter-pill { min-width: 0 !important; width: 100% !important; height: 32px !important; padding: 0 8px !important; gap: 5px !important; justify-content: center !important; font-size: 9.5px !important; letter-spacing: .02em !important; white-space: nowrap !important; overflow: hidden; border-radius: 10px !important; }
+  html body .mobile-filter-pill .pill-dot { width: 6px !important; height: 6px !important; flex: none; }
+  html body .mobile-filter-pill .pill-badge { font-size: 9px !important; padding: 2px 5px !important; min-width: 0 !important; flex: none; }
+  html body .mobile-filter-pill[data-status-filter="cancel"] { display: none !important; }
+
+  /* overview header: subtitle on one line */
+  html body .pu-head { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 10px !important; }
+  html body .pu-head > div { flex: 1; min-width: 0; }
+  html body .pu-head p { white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; font-size: 10.5px !important; }
+  html body .pu-head .pu-text-link { flex: none; font-size: 10px !important; margin-top: 3px; }
+
+  /* task card header: smaller category + status, centred on one line */
+  html body .ios-card-header-bar { display: flex !important; align-items: center !important; gap: 8px !important; padding: 12px 14px !important; min-height: 0 !important; }
+  html body .ios-card-header-bar > div:first-child { flex-wrap: nowrap !important; }
+  html body .ios-card-cat-badge { display: inline-flex !important; align-items: center !important; height: 22px !important; padding: 0 8px !important; border-radius: 7px !important; font-size: 9.5px !important; line-height: 1 !important; max-width: 100%; }
+  html body .ios-card-cat-badge .cat-name { font-size: 9.5px !important; font-weight: 700 !important; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html body .ios-card-header-right { display: flex !important; align-items: center !important; gap: 6px !important; }
+  html body .ios-card-header-right .status-pill { height: 22px !important; padding: 0 8px !important; font-size: 9.5px !important; border-radius: 7px !important; display: inline-flex !important; align-items: center !important; line-height: 1 !important; }
+  html body .ios-card-header-right .status-pill .status-dot-sm { display: none !important; }
+  html body .ios-card-more-btn { width: 28px !important; height: 28px !important; border-radius: 8px !important; }
+
+  /* add task: round icon button, lifted off the tab bar */
+  html body .mobile-dime-fab { width: 52px !important; height: 52px !important; min-width: 0 !important; padding: 0 !important; border-radius: 16px !important; bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; right: 18px !important; justify-content: center !important; box-shadow: 0 8px 20px rgba(var(--primary-rgb), .32) !important; }
+  html body .mobile-dime-fab > span, html body .mobile-dime-fab > *:not(svg) { display: none !important; }
+  html body .mobile-dime-fab svg { width: 22px !important; height: 22px !important; margin: 0 !important; }
+}
 `;
     var sc = document.getElementById('fxScaleCss'); if (sc) document.head.insertBefore(st, sc); else document.head.appendChild(st);
   }
