@@ -97,3 +97,21 @@
   var t = document.querySelector('title'); if (t) new MutationObserver(function () { if (document.title !== 'ACRE') document.title = 'ACRE'; }).observe(t, { childList: true, characterData: true, subtree: true });
   window.addEventListener('load', sync);
 })();
+
+/* ACRE — job type dropdown: show what each code means */
+(function () {
+  'use strict';
+  var L = { D: 'D (DESIGN)', R: 'R (REPAIR)', M: 'M (MODIFY)', I: 'I (INCREASE)', A: 'A (ASSY/INSTALL)', S: 'S (SIMULATION)',
+    'D-A': 'D-A (DESIGN + ASSY/INSTALL)', 'D-I': 'D-I (DESIGN + INCREASE)', 'D-I-A': 'D-I-A (DESIGN + INCREASE + ASSY)', 'I-A': 'I-A (INCREASE + ASSY/INSTALL)',
+    'R-A': 'R-A (REPAIR + ASSY/INSTALL)', 'M-I': 'M-I (MODIFY + INCREASE)', 'M-A': 'M-A (MODIFY + ASSY/INSTALL)', 'D-M': 'D-M (DESIGN + MODIFY)',
+    'D-M-I': 'D-M-I (DESIGN + MODIFY + INCREASE)', 'I-R': 'I-R (INCREASE + REPAIR)', 'R-D': 'R-D (REPAIR + DESIGN)', 'I-M': 'I-M (INCREASE + MODIFY)',
+    T: 'T (TRAINING)', AC: 'AC (ACTIVITY / 5S)', Q: 'Q (QUOTATION)', '': '-- AUTO --' };
+  function apply() {
+    var s = document.getElementById('achvJobType'); if (!s) return; s.classList.add('no-case');
+    Array.prototype.forEach.call(s.options, function (o) { var t = L[o.value]; if (t && o.textContent !== t) o.textContent = t; });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply); else apply();
+  setTimeout(apply, 500); setTimeout(apply, 2000);
+  var s = document.getElementById('achvJobType');
+  if (s) new MutationObserver(function () { setTimeout(apply, 0); }).observe(s, { childList: true, subtree: true, characterData: true });
+})();

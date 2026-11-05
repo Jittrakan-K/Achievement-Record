@@ -23,11 +23,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20261029_v36_opt">
-  <link rel="stylesheet" href="figma-theme.css?v=20261103_v57">
-  <link rel="stylesheet" id="fxScaleCss" href="figma-scale.css?v=20261103_v57">
+  <link rel="stylesheet" href="figma-theme.css?v=20261103_v59">
+  <link rel="stylesheet" id="fxScaleCss" href="figma-scale.css?v=20261103_v59">
   <!-- Chart.js CDN for Real-time Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="figma-theme.js?v=20261103_v57"></script>
+  <script src="figma-theme.js?v=20261103_v59"></script>
   <!-- Google Firebase SDK (v10 compat) for Multi-Device Real-Time Cloud Sync -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -895,28 +895,28 @@
             <div class="form-group">
               <label class="form-label" for="achvJobType">JOB TYPE (ประเภทงาน)</label>
               <select id="achvJobType" class="form-control">
-                <option value="">-- อัตโนมัติ (AUTO) --</option>
-                <option value="D">D (DESIGN - ออกแบบ)</option>
-                <option value="R">R (REPAIR - ซ่อมแซม)</option>
-                <option value="M">M (MODIFY - ดัดแปลง/แก้ไข)</option>
-                <option value="I">I (INCREASE - สร้างเพิ่ม/สั่งซื้อ)</option>
-                <option value="A">A (ASSY/INSTALL - ประกอบ/ติดตั้ง)</option>
-                <option value="S">S (SIMULATION - จำลอง)</option>
+                <option value="">-- AUTO --</option>
+                <option value="D">D (DESIGN)</option>
+                <option value="R">R (REPAIR)</option>
+                <option value="M">M (MODIFY)</option>
+                <option value="I">I (INCREASE)</option>
+                <option value="A">A (ASSY/INSTALL)</option>
+                <option value="S">S (SIMULATION)</option>
                 <option value="D-A">D-A (DESIGN + ASSY/INSTALL)</option>
                 <option value="D-I">D-I (DESIGN + INCREASE)</option>
-                <option value="D-I-A">D-I-A (DESIGN + INC + ASSY)</option>
+                <option value="D-I-A">D-I-A (DESIGN + INCREASE + ASSY)</option>
                 <option value="I-A">I-A (INCREASE + ASSY/INSTALL)</option>
                 <option value="R-A">R-A (REPAIR + ASSY/INSTALL)</option>
                 <option value="M-I">M-I (MODIFY + INCREASE)</option>
                 <option value="M-A">M-A (MODIFY + ASSY/INSTALL)</option>
                 <option value="D-M">D-M (DESIGN + MODIFY)</option>
-                <option value="D-M-I">D-M-I (DESIGN + MODIFY + INC)</option>
+                <option value="D-M-I">D-M-I (DESIGN + MODIFY + INCREASE)</option>
                 <option value="I-R">I-R (INCREASE + REPAIR)</option>
                 <option value="R-D">R-D (REPAIR + DESIGN)</option>
                 <option value="I-M">I-M (INCREASE + MODIFY)</option>
-                <option value="T">T (TRAINING - ฝึกอบรม)</option>
-                <option value="AC">AC (ACTIVITY - กิจกรรม 5ส.)</option>
-                <option value="Q">Q (QUOTATION - เสนอราคา)</option>
+                <option value="T">T (TRAINING)</option>
+                <option value="AC">AC (ACTIVITY / 5S)</option>
+                <option value="Q">Q (QUOTATION)</option>
               </select>
             </div>
 
@@ -1887,12 +1887,12 @@
   <script src="job_requests_db.js?v=20260909_8"></script>
   <!-- Application Logic Script -->
   <script src="app.js?v=20261029_v36_opt"></script>
-  <script src="figma-dashboard.js?v=20261103_v57"></script>
-  <script src="figma-table.js?v=20261103_v57"></script>
-  <script src="figma-pages.js?v=20261103_v57"></script>
-  <script src="figma-profile.js?v=20261103_v57"></script>
-  <script src="figma-i18n.js?v=20261103_v57"></script>
-  <script src="figma-case.js?v=20261103_v57"></script>
+  <script src="figma-dashboard.js?v=20261103_v59"></script>
+  <script src="figma-table.js?v=20261103_v59"></script>
+  <script src="figma-pages.js?v=20261103_v59"></script>
+  <script src="figma-profile.js?v=20261103_v59"></script>
+  <script src="figma-i18n.js?v=20261103_v59"></script>
+  <script src="figma-case.js?v=20261103_v59"></script>
 
   <!-- iOS Mobile Action Sheet for Card (Edit / Delete / Cancel) -->
   <div id="mobileActionSheet" class="ios-action-sheet-overlay" onclick="closeMobileActionSheet(event)">
