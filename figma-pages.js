@@ -77,11 +77,22 @@
 (function () {
   'use strict';
   var last = '';
-  function svg(c) {
-    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='" + c + "'/>" +
-      "<rect x='15' y='15' width='34' height='34' rx='5' fill='none' stroke='#fff' stroke-width='5' stroke-linejoin='round'/>" +
-      "<path d='M26 15v34M15 26h34' fill='none' stroke='#fff' stroke-width='5' stroke-linecap='round'/></svg>";
+  function acreMark(c, size) {
+    var cx = 32, cy = 32, r = 19, n = 10, gap = 15, done = 8, segs = '';
+    for (var i = 0; i < n; i++) {
+      var a0 = (-90 + i * 36 + gap / 2) * Math.PI / 180, a1 = (-90 + (i + 1) * 36 - gap / 2) * Math.PI / 180;
+      var x0 = (cx + r * Math.cos(a0)).toFixed(2), y0 = (cy + r * Math.sin(a0)).toFixed(2), x1 = (cx + r * Math.cos(a1)).toFixed(2), y1 = (cy + r * Math.sin(a1)).toFixed(2);
+      segs += "<path d='M" + x0 + " " + y0 + " A" + r + " " + r + " 0 0 1 " + x1 + " " + y1 + "' stroke='#fff' stroke-opacity='" + (i < done ? 1 : .32) + "'/>";
+    }
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'" + (size ? " width='" + size + "' height='" + size + "'" : "") + ">" +
+      "<defs><linearGradient id='acreT' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#fff' stop-opacity='.12'/><stop offset='1' stop-color='#000' stop-opacity='.08'/></linearGradient></defs>" +
+      "<rect width='64' height='64' rx='16' fill='" + c + "'/><rect width='64' height='64' rx='16' fill='url(#acreT)'/>" +
+      "<rect x='.5' y='.5' width='63' height='63' rx='15.5' fill='none' stroke='#fff' stroke-opacity='.14'/>" +
+      "<g fill='none' stroke-width='4' stroke-linecap='round'>" + segs + "</g>" +
+      "<path d='M24.5 32.6l5.2 5.2 9.8-10.6' fill='none' stroke='#fff' stroke-width='4.6' stroke-linecap='round' stroke-linejoin='round'/></svg>";
   }
+  window.acreMark = acreMark;
+  function svg(c) { return acreMark(c); }
   function sync() {
     if (document.title !== 'ACRE') document.title = 'ACRE';
     var c = (getComputedStyle(document.documentElement).getPropertyValue('--primary') || '').trim() || '#005BAC';
@@ -91,6 +102,9 @@
     if (!link) { link = document.createElement('link'); link.rel = 'icon'; link.type = 'image/svg+xml'; document.head.appendChild(link); }
     link.href = href;
     var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', c);
+    document.querySelectorAll('.brand-app-icon, .mobile-brand-icon-circle').forEach(function (el) {
+      el.classList.add('acre-mark'); el.innerHTML = acreMark(c).replace(/acreT/g, 'acreT' + Math.random().toString(36).slice(2, 7));
+    });
   }
   sync();
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'class'] });

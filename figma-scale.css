@@ -10786,6 +10786,14 @@ html body .pu-authors table th:nth-child(1){ width: 42% !important; }
 html body .pu-authors table th:nth-child(2){ width: 20% !important; }
 html body .pu-authors table th:nth-child(3){ width: 22% !important; }
 html body .pu-authors table th:nth-child(4){ width: 16% !important; }
+html body .brand-app-icon.acre-mark, html body .mobile-brand-icon-circle.acre-mark{
+  width: 30.24px !important; height: 30.24px !important; min-width: 30.24px !important; padding: 0 !important; border: 0 !important;
+  background: none !important; border-radius: 8.4px !important; overflow: hidden; box-shadow: 0 1px 2px rgba(15, 23, 42, .12) !important; display: inline-flex !important;
+}
+html body .acre-mark svg{ width: 100% !important; height: 100% !important; stroke: none !important; display: block; }
+html body .brand-section{ align-items: center !important; gap: 10.08px !important; }
+html body .brand-title-accent{ font-size: 14.28px !important; font-weight: 600 !important; letter-spacing: .08em !important; color: #1A202C !important; }
+@media (max-width: 768px) {html body .mobile-brand-icon-circle.acre-mark{ width: 26.88px !important; height: 26.88px !important; min-width: 26.88px !important; border-radius: 7.56px !important; }}
 .at-wrap{ background: #fff; border-radius: 12.6px; box-shadow: 0 2.94px 4.62px rgba(0,0,0,.02); overflow: hidden; }
 .at-bar-top{ display: flex; align-items: center; justify-content: space-between; gap: 10.08px; padding: 11.76px 15.12px; border-bottom: 1px solid #EDF2F7; flex-wrap: wrap; }
 .at-summary{ display: flex; align-items: center; gap: 6.72px; font-size: 10.08px; font-weight: 700; color: #A0AEC0; letter-spacing: .03em; flex-wrap: wrap; }
@@ -11814,4 +11822,12 @@ html body .pu-authors table th:nth-child(1){ width: 42% !important; }
 html body .pu-authors table th:nth-child(2){ width: 20% !important; }
 html body .pu-authors table th:nth-child(3){ width: 22% !important; }
 html body .pu-authors table th:nth-child(4){ width: 16% !important; }
+html body .brand-app-icon.acre-mark, html body .mobile-brand-icon-circle.acre-mark{
+  width: 30.24px !important; height: 30.24px !important; min-width: 30.24px !important; padding: 0 !important; border: 0 !important;
+  background: none !important; border-radius: 8.4px !important; overflow: hidden; box-shadow: 0 1px 2px rgba(15, 23, 42, .12) !important; display: inline-flex !important;
+}
+html body .acre-mark svg{ width: 100% !important; height: 100% !important; stroke: none !important; display: block; }
+html body .brand-section{ align-items: center !important; gap: 10.08px !important; }
+html body .brand-title-accent{ font-size: 14.28px !important; font-weight: 600 !important; letter-spacing: .08em !important; color: #1A202C !important; }
+@media (max-width: 768px) {html body .mobile-brand-icon-circle.acre-mark{ width: 26.88px !important; height: 26.88px !important; min-width: 26.88px !important; border-radius: 7.56px !important; }}
 }
